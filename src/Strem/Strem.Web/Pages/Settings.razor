@@ -1,0 +1,80 @@
+﻿@page "/settings"
+@using Serilog
+@using System.IO
+@using System.Text
+@using Strem.Core.State
+@using Strem.Infrastructure.Services.Persistence.App
+@using Strem.Infrastructure.Services.Persistence.User
+
+@inject ILogger Logger;
+@inject ILoadAppVariablesPipeline LoadUserPipeline;
+@inject ILoadUserVariablesPipeline LoadAppPipeline;
+@inject IAppState AppState;
+
+<div class="container">
+  <p class="title">Settings</p>
+  
+    <article class="message is-warning">
+        <p class="message-header">
+            Logs
+            <a @onclick="RefreshLogs">
+                <span class="icon is-small">
+                    <i class="fas fa-rotate-right"></i>
+                </span>
+            </a>
+        </p>
+        <div class="panel-block">
+            <code style="white-space: pre-wrap; max-height: 400px; overflow-y: auto; width: 100%;">@Logs</code>
+        </div>
+    </article>
+    
+     <article class="message is-info">
+        <p class="message-header">
+        </p>
+         <div class="panel-block">
+             <div class="field">
+                 <div class="tags has-addons">
+                     <span class="tag">User Data File</span>
+                     <span class="tag is-info">@LoadUserPipeline.VariableFilePath</span>
+                 </div>
+            </div>
+             <div class="field">
+                 <div class="tags has-addons">
+                     <span class="tag">App Data File</span>
+                     <span class="tag is-info">@LoadAppPipeline.VariableFilePath</span>
+                 </div>
+             </div>
+         </div>
+      </article>
+</div>
+
+@code {
+    public string Logs { get; set; }
+    
+    public async Task RefreshLogs()
+    {
+        var logPattern = "*.log";
+        var logPath = "./logs";
+        var file = new DirectoryInfo(logPath).GetFileSystemInfos().MaxBy(o => o.LastWriteTime);
+
+        if (file == null)
+        {
+            Logs = "";
+            return;
+        }
+
+        Logs = await LoadFileContent(file.FullName);
+    }
+
+    public async Task<string> LoadFileContent(string filePath)
+    {
+        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (var sr = new StreamReader(fs, Encoding.Default))
+        { return await sr.ReadToEndAsync(); }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshLogs();
+    }
+}

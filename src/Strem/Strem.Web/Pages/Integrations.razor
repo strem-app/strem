@@ -1,0 +1,41 @@
+﻿@page "/integrations"
+@using Strem.Twitch.Services
+
+@inject ITwitchOAuthClient TwitchOAuthClient
+
+<div class="container">
+    <p class="title">Integrations</p>
+    
+    <article class="message is-info">
+        <p class="message-header">
+            Twitch
+            <a>
+                <span class="icon is-small">
+                    <i class="fab fa-twitch"></i>
+                </span>
+            </a>
+        </p>
+        <div class="panel-block">
+            <div class="field">
+                <label class="label">Twitch Username</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="Your Username Here">
+                </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button class="button is-link">Connect To Twitch</button>
+              </div>
+            </div>
+        </div>
+    </article>
+</div>
+
+@code {
+
+    public void ConnectToTwitch()
+    {
+        TwitchOAuthClient.AttemptLogin();
+    }
+    
+}
