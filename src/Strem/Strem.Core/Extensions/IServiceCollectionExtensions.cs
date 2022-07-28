@@ -10,6 +10,13 @@ public static class IServiceCollectionExtensions
         dependencyModule.Setup(services);
         return services;
     }
+    
+    public static IServiceCollection AddModules(this IServiceCollection services, params IDependencyModule[] dependencyModules)
+    {
+        foreach(var dependencyModule in dependencyModules)
+        { dependencyModule.Setup(services); }
+        return services;
+    }
         
     public static IServiceCollection AddModule<T>(this IServiceCollection services) where T : IDependencyModule, new()
     { return services.AddModule(new T()); }

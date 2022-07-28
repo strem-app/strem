@@ -1,12 +1,10 @@
 ﻿@page "/settings"
-@using Serilog
 @using System.IO
 @using System.Text
 @using Strem.Core.State
 @using Strem.Infrastructure.Services.Persistence.App
 @using Strem.Infrastructure.Services.Persistence.User
 
-@inject ILogger Logger;
 @inject ILoadAppVariablesPipeline LoadUserPipeline;
 @inject ILoadUserVariablesPipeline LoadAppPipeline;
 @inject IAppState AppState;
@@ -15,37 +13,68 @@
   <p class="title">Settings</p>
   
     <article class="message is-warning">
-        <p class="message-header">
+        <div class="message-header">
             Logs
             <a @onclick="RefreshLogs">
                 <span class="icon is-small">
                     <i class="fas fa-rotate-right"></i>
                 </span>
             </a>
-        </p>
-        <div class="panel-block">
-            <code style="white-space: pre-wrap; max-height: 400px; overflow-y: auto; width: 100%;">@Logs</code>
+        </div>
+        <div class="message-body" style="white-space: pre-wrap; max-height: 400px; overflow-y: auto;">
+            <code style="width: 100%; height: 100%;">@Logs</code>
+        </div>
+    </article>
+    
+    <article class="message is-info">
+        <div class="message-header">UserData: @LoadUserPipeline.VariableFilePath</div>
+        <div class="message-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Context</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var variable in AppState.UserVariables.GetAll())
+                {
+                    <tr>
+                        <td>@variable.Key.Key</td>
+                        <td>@variable.Key.Context</td>
+                        <td>@variable.Value</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </article>
     
      <article class="message is-info">
-        <p class="message-header">
-        </p>
-         <div class="panel-block">
-             <div class="field">
-                 <div class="tags has-addons">
-                     <span class="tag">User Data File</span>
-                     <span class="tag is-info">@LoadUserPipeline.VariableFilePath</span>
-                 </div>
-            </div>
-             <div class="field">
-                 <div class="tags has-addons">
-                     <span class="tag">App Data File</span>
-                     <span class="tag is-info">@LoadAppPipeline.VariableFilePath</span>
-                 </div>
-             </div>
-         </div>
-      </article>
+          <div class="message-header">AppData: @LoadAppPipeline.VariableFilePath</div>
+          <div class="message-body">
+             <table class="table">
+                 <thead>
+                 <tr>
+                     <th>Name</th>
+                     <th>Context</th>
+                     <th>Value</th>
+                 </tr>
+                 </thead>
+                 <tbody>
+                 @foreach (var variable in AppState.AppVariables.GetAll())
+                 {
+                     <tr>
+                         <td>@variable.Key.Key</td>
+                         <td>@variable.Key.Context</td>
+                         <td>@variable.Value</td>
+                     </tr>
+                 }
+                 </tbody>
+             </table>
+          </div>
+    </article>
 </div>
 
 @code {

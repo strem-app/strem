@@ -44,8 +44,14 @@ public class InfrastructureModule : IDependencyModule
         services.AddSingleton<ILoadUserVariablesPipeline, LoadUserVariablesPipeline>();
 
         // State
-        services.AddSingleton<StateFileCreator>();
-        services.AddSingleton<IAppState>(x => CreateAppState(x).GetAwaiter().GetResult());
+        services.AddSingleton<IStateFileHandler, StateFileHandler>();
+        services.AddSingleton<IAppState>(LoadAppState);
+    }
+
+    public IAppState LoadAppState(IServiceProvider services)
+    {
+        var stateFileHandler = services.GetService<IStateFileHandler>();
+        return Task.Run(async () => await stateFileHandler.LoadAppState()).Result;
     }
     
     public ILogger SetupLogger()
@@ -55,20 +61,5 @@ public class InfrastructureModule : IDependencyModule
             .WriteTo.Console()
             .WriteTo.File("logs/strem.log", rollingInterval: RollingInterval.Day)
             .CreateLogger();
-    }
-
-    public async Task<AppState> CreateAppState(IServiceProvider services)
-    {
-        var appVariableLoader = services.GetService<ILoadAppVariablesPipeline>();
-        var userVariableLoader = services.GetService<ILoadUserVariablesPipeline>();
-        
-        var appVariables = appVariableLoader.Execute().GetAwaiter().GetResult();
-        var userVariables = userVariableLoader.Execute().GetAwaiter().GetResult();
-
-        return new AppState(
-            userVariables ?? new Variables(),
-            appVariables ?? new Variables(),
-            new Variables()
-        );
     }
 }

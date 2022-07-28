@@ -3,14 +3,11 @@ using Photino.Blazor;
 using Serilog;
 using Strem.Core.Events;
 using Strem.Core.Extensions;
-using Strem.Core.State;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Modules;
 using Strem.Infrastructure.Services.Api;
-using Strem.Infrastructure.Services.Persistence;
-using Strem.Infrastructure.Services.Persistence.App;
-using Strem.Infrastructure.Services.Persistence.User;
 using Strem.Twitch.Controllers;
+using Strem.Twitch.Modules;
 using Strem.Web;
 
 namespace Strem;
@@ -20,7 +17,7 @@ public class Program
     public static PhotinoBlazorApp CreateApp(string[] args)
     {
         var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
-        appBuilder.Services.AddModule(new InfrastructureModule());
+        appBuilder.Services.AddModules(new InfrastructureModule(), new TwitchModule());
         appBuilder.RootComponents.Add<App>("#app");
         return appBuilder.Build();
     }
@@ -29,7 +26,6 @@ public class Program
     public static void Main(string[] args)
     {
         var app = CreateApp(args);
-        var stateFileCreator = app.Services.GetService<StateFileCreator>();
         var logger = app.Services.GetService<ILogger>();
         var eventBus = app.Services.GetService<IEventBus>();
 
@@ -39,7 +35,6 @@ public class Program
             app.MainWindow.OpenAlertWindow("Fatal exception", error.ExceptionObject.ToString());
         };
 
-        stateFileCreator.CreateStateFilesIfMissing().GetAwaiter().GetResult();
         eventBus.Receive<ErrorEvent>().Subscribe(x => logger.Error($"[{x.Source}] {x.Message}"));
         logger.Information("Starting Up Strem");
         

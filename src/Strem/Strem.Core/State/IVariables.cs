@@ -2,7 +2,8 @@ namespace Strem.Core.State;
 
 public interface IVariables
 {
-    public string Get(StateEntry stateEntry);
-    public void Set(StateEntry stateEntry, string value);
-    public void Delete(StateEntry stateEntry);
+    string Get(StateEntry stateEntry);
+    void Set(StateEntry stateEntry, string value);
+    void Delete(StateEntry stateEntry);
+    IEnumerable<KeyValuePair<StateEntry, string>> GetAll();
 }
