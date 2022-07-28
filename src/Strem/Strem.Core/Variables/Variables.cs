@@ -1,7 +1,7 @@
 using System.Reactive.Subjects;
 using Newtonsoft.Json;
 
-namespace Strem.Core.State;
+namespace Strem.Core.Variables;
 
 public class Variables : IVariables
 {
@@ -15,6 +15,7 @@ public class Variables : IVariables
     public Variables(Dictionary<VariableEntry, string> state = null)
     { Data = state ?? new Dictionary<VariableEntry, string>(); }
 
+    public bool Has(VariableEntry variableEntry) => Data.ContainsKey(variableEntry);
     public string Get(VariableEntry variableEntry) => Data.ContainsKey(variableEntry) ? Data[variableEntry] : string.Empty;
     public IEnumerable<KeyValuePair<VariableEntry, string>> GetAll() => Data;
     

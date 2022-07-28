@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strem", "Strem\Strem.csproj", "{D123423B-E3F3-4DEB-B0EF-4D5DE77F223F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strem.Web", "Strem.Web\Strem.Web.csproj", "{BD331435-3EBF-45D4-9000-11F7AAA2260E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strem.UI", "Strem.UI\Strem.UI.csproj", "{BD331435-3EBF-45D4-9000-11F7AAA2260E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strem.Infrastructure", "Strem.Infrastructure\Strem.Infrastructure.csproj", "{C3F33C08-A81A-4E0F-A9EE-370588503873}"
 EndProject

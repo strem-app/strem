@@ -3,7 +3,6 @@
 public class TwitchVariables
 {
     public static readonly string TwitchContext = "twitch";
-
-    public static readonly string OAuthState = "oauth-state";
-    public static readonly string OAuthToken = "oauth-token";
+ 
+    public static readonly string UserChannel = "user-channel";
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Strem.Core.State;
+using Strem.Core.Variables;
 
 namespace Strem.UnitTests.SanityTests;
 

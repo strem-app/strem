@@ -6,6 +6,7 @@ using Persistity.Flow.Pipelines;
 using Persistity.Flow.Steps.Types;
 using Persistity.Processors.Encryption;
 using Strem.Core.State;
+using Strem.Core.Variables;
 
 namespace Strem.Infrastructure.Services.Persistence.Generic;
 

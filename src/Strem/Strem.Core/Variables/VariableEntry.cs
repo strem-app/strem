@@ -1,5 +1,4 @@
-﻿namespace Strem.Core.State;
-
+﻿namespace Strem.Core.Variables;
 
 public struct VariableEntry
 {

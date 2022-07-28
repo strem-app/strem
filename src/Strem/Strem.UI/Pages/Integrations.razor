@@ -1,0 +1,76 @@
+﻿@page "/integrations"
+@using Strem.Twitch.Services
+@using Strem.Core.State
+@using Strem.Core.Extensions
+@using Strem.Core.Variables
+@using Strem.Twitch.Variables
+
+@inject ITwitchOAuthClient TwitchOAuthClient
+@inject IAppState AppState
+
+<div class="container">
+    <p class="title">Integrations</p>
+    
+    <article class="message is-info">
+        <p class="message-header">
+            Twitch
+            <a>
+                <span class="icon is-small">
+                    <i class="fab fa-twitch"></i>
+                </span>
+            </a>
+        </p>
+        <div class="message-body">
+            <div class="field">
+                <label class="label">Twitch Username</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="Your Username Here" @bind="Username" />
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <div class="buttons">
+                        <button class="button is-info" @onclick="SetUsername">Set Username</button>
+                        @if (AppState.AppVariables.Has(CommonVariables.OAuthToken, TwitchVariables.TwitchContext))
+                        {
+                            <button class="button is-danger" @onclick="DisconnectFromTwitch">Disconnect From Twitch</button>
+                        }
+                        else
+                        {
+                            <button class="button is-success" @onclick="ConnectToTwitch">Connect To Twitch</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+</div>
+
+@code {
+
+    public string Username { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (AppState.AppVariables.Has(TwitchVariables.UserChannel, TwitchVariables.TwitchContext))
+        {
+            Username = AppState.AppVariables.Get(TwitchVariables.UserChannel, TwitchVariables.TwitchContext);
+        }
+    }
+
+    public void ConnectToTwitch()
+    {
+        TwitchOAuthClient.RequestOAuthToken();
+    }
+
+    public void SetUsername()
+    {
+        AppState.AppVariables.Set(TwitchVariables.UserChannel, TwitchVariables.TwitchContext, Username);
+    }
+    
+    public void DisconnectFromTwitch()
+    {
+        TwitchOAuthClient.RequestOAuthToken();
+    }
+    
+}

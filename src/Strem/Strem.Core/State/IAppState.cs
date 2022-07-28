@@ -1,4 +1,6 @@
-﻿namespace Strem.Core.State;
+﻿using Strem.Core.Variables;
+
+namespace Strem.Core.State;
 
 public interface IAppState
 {

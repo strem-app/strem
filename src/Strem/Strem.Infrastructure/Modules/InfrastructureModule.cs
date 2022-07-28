@@ -10,6 +10,7 @@ using Strem.Core.Events.Broker;
 using Strem.Core.State;
 using Strem.Core.Threading;
 using Strem.Core.Utils;
+using Strem.Core.Variables;
 using Strem.Infrastructure.Services.Api;
 using Strem.Infrastructure.Services.Logging;
 using Strem.Infrastructure.Services.Persistence;

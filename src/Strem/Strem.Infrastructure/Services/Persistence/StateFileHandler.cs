@@ -1,4 +1,5 @@
 ﻿using Strem.Core.State;
+using Strem.Core.Variables;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.User;
 

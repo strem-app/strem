@@ -2,6 +2,7 @@
 using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.Core.Utils;
+using Strem.Core.Variables;
 using Strem.Infrastructure.Services;
 using Strem.Infrastructure.Services.Web;
 using Strem.Twitch.Variables;
@@ -34,7 +35,7 @@ public class TwitchOAuthClient : ITwitchOAuthClient
     public void RequestOAuthToken()
     {
         var randomState = Randomizer.RandomString();
-        AppState.TransientVariables.Set(TwitchVariables.OAuthState, TwitchVariables.TwitchContext, randomState);
+        AppState.TransientVariables.Set(CommonVariables.OAuthState, TwitchVariables.TwitchContext, randomState);
         
         var scopeQueryData = Uri.EscapeDataString(string.Join(" ", RequiredScopes));
         var queryData = $"client_id={ClientId}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";

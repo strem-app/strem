@@ -22,7 +22,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
       <ProjectReference Include="..\Strem.Twitch\Strem.Twitch.csproj" />
-      <ProjectReference Include="..\Strem.Web\Strem.Web.csproj" />
+      <ProjectReference Include="..\Strem.UI\Strem.UI.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,3 +1,5 @@
+using Strem.Core.Variables;
+
 namespace Strem.Core.State;
 
 public class AppState : IAppState

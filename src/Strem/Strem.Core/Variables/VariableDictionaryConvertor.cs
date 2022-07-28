@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Strem.Core.State;
+namespace Strem.Core.Variables;
 
 public class VariableDictionaryConvertor : JsonConverter
 {
