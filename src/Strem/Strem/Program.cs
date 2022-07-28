@@ -3,9 +3,12 @@ using Photino.Blazor;
 using Serilog;
 using Strem.Core.Events;
 using Strem.Core.Extensions;
+using Strem.Core.State;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Modules;
 using Strem.Infrastructure.Services.Api;
+using Strem.Infrastructure.Services.Logging;
+using Strem.Infrastructure.Services.Persistence;
 using Strem.Twitch.Controllers;
 using Strem.Twitch.Modules;
 using Strem.Web;
@@ -28,6 +31,9 @@ public class Program
         var app = CreateApp(args);
         var logger = app.Services.GetService<ILogger>();
         var eventBus = app.Services.GetService<IEventBus>();
+        var appState = app.Services.GetService<IAppState>();
+        var autoSaver = app.Services.GetService<IStateAutoSaver>();
+        var autoLogger = app.Services.GetService<IAutoLogger>();
 
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {
@@ -35,12 +41,13 @@ public class Program
             app.MainWindow.OpenAlertWindow("Fatal exception", error.ExceptionObject.ToString());
         };
 
-        eventBus.Receive<ErrorEvent>().Subscribe(x => logger.Error($"[{x.Source}] {x.Message}"));
         logger.Information("Starting Up Strem");
         
         //TODO: Solve this hack with webhost service collection separation
         WebHostHackExtensions.EventBus = eventBus;
         WebHostHackExtensions.Logger = logger;
+        WebHostHackExtensions.AppState = appState;
+        WebHostHackExtensions.ServiceLocator = app.Services;
         
         var apiHostConfiguration = new ApiHostConfiguration(
             new[] { typeof(TwitchController).Assembly },
@@ -50,6 +57,10 @@ public class Program
         logger.Information("Starting Internal Host");
         webHost.StartHost(apiHostConfiguration);
         logger.Information($"Started Internal Host: {ApiWebHost.InternalPort}");
+        
+        logger.Information("Enabling State Auto Saving");
+        autoSaver.EnableAutoSaving();
+        autoLogger.EnableAutoLogging();
         
         app.MainWindow
             .SetTitle("Strem")

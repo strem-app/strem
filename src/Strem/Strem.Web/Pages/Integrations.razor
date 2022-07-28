@@ -15,7 +15,7 @@
                 </span>
             </a>
         </p>
-        <div class="panel-block">
+        <div class="message-body">
             <div class="field">
                 <label class="label">Twitch Username</label>
                 <div class="control">
@@ -24,7 +24,7 @@
             </div>
             <div class="field">
               <div class="control">
-                <button class="button is-link">Connect To Twitch</button>
+                <button class="button is-link" @onclick="ConnectToTwitch">Connect To Twitch</button>
               </div>
             </div>
         </div>
@@ -35,7 +35,7 @@
 
     public void ConnectToTwitch()
     {
-        TwitchOAuthClient.AttemptLogin();
+        TwitchOAuthClient.RequestOAuthToken();
     }
     
 }

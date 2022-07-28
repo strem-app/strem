@@ -4,9 +4,9 @@ namespace Strem.Twitch.Events;
 
 public class TwitchOAuthedEvent
 {
-    public TwitchOAuthResponse OAuthData { get; set; }
+    public TwitchOAuthClientPayload OAuthData { get; set; }
 
-    public TwitchOAuthedEvent(TwitchOAuthResponse oAuthData)
+    public TwitchOAuthedEvent(TwitchOAuthClientPayload oAuthData)
     {
         OAuthData = oAuthData;
     }

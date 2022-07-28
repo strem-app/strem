@@ -41,7 +41,7 @@
                 @foreach (var variable in AppState.UserVariables.GetAll())
                 {
                     <tr>
-                        <td>@variable.Key.Key</td>
+                        <td>@variable.Key.Name</td>
                         <td>@variable.Key.Context</td>
                         <td>@variable.Value</td>
                     </tr>
@@ -51,30 +51,55 @@
         </div>
     </article>
     
-     <article class="message is-info">
-          <div class="message-header">AppData: @LoadAppPipeline.VariableFilePath</div>
-          <div class="message-body">
-             <table class="table">
-                 <thead>
-                 <tr>
-                     <th>Name</th>
-                     <th>Context</th>
-                     <th>Value</th>
-                 </tr>
-                 </thead>
-                 <tbody>
-                 @foreach (var variable in AppState.AppVariables.GetAll())
-                 {
-                     <tr>
-                         <td>@variable.Key.Key</td>
-                         <td>@variable.Key.Context</td>
-                         <td>@variable.Value</td>
-                     </tr>
-                 }
-                 </tbody>
-             </table>
-          </div>
+    <article class="message is-info">
+        <div class="message-header">AppData: @LoadAppPipeline.VariableFilePath</div>
+        <div class="message-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Context</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var variable in AppState.AppVariables.GetAll())
+                {
+                    <tr>
+                        <td>@variable.Key.Name</td>
+                        <td>@variable.Key.Context</td>
+                        <td>@variable.Value</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     </article>
+    
+    <article class="message is-info">
+              <div class="message-header">Transient Data</div>
+              <div class="message-body">
+                 <table class="table">
+                     <thead>
+                     <tr>
+                         <th>Name</th>
+                         <th>Context</th>
+                         <th>Value</th>
+                     </tr>
+                     </thead>
+                     <tbody>
+                     @foreach (var variable in AppState.TransientVariables.GetAll())
+                     {
+                         <tr>
+                             <td>@variable.Key.Name</td>
+                             <td>@variable.Key.Context</td>
+                             <td>@variable.Value</td>
+                         </tr>
+                     }
+                     </tbody>
+                 </table>
+              </div>
+        </article>
 </div>
 
 @code {

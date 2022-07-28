@@ -13,7 +13,8 @@ public class ApiWebHost : IApiWebHost
     {
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddRouting();
-        builder.Services.AddControllers(x =>
+        builder.Services.AddRazorPages();
+        builder.Services.AddControllersWithViews(x =>
         {
             x.Filters.Add<LogActionFilter>();
         });
@@ -45,6 +46,7 @@ public class ApiWebHost : IApiWebHost
         }
         
         app.UseRouting();
+        app.UseStaticFiles();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

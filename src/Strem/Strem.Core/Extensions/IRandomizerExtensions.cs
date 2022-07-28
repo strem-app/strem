@@ -9,7 +9,7 @@ public static class IRandomizerExtensions
     public static string RandomString(this IRandomizer randomizer, int length = 10)
     {
         var randomChars = Enumerable.Range(0, length)
-            .Select(x => (char)AsciiCharCodes[randomizer.Random(0, AsciiCharCodes.Length)]);
+            .Select(x => (char)AsciiCharCodes[randomizer.Random(0, AsciiCharCodes.Length-1)]);
 
         return string.Join("", randomChars);
     }
