@@ -16,7 +16,6 @@ namespace Strem.Twitch.Services.OAuth;
 
 public class TwitchOAuthClient : ITwitchOAuthClient
 {
-    public static readonly string ClientId = "yejalwgrfnh5vcup3db5bdxkko2xh1";  
     public static readonly string OAuthCallbackUrl = "http://localhost:56721/api/twitch/oauth";
 
     public static readonly string TwitchApiUrl = "https://id.twitch.tv/oauth2";  
@@ -50,10 +49,10 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         Logger.Information("Starting Twitch Implicit OAuth Process");
         
         var randomState = Randomizer.RandomString();
-        AppState.TransientVariables.Set(CommonVariables.OAuthState, TwitchVariables.TwitchContext, randomState);
+        AppState.TransientVariables.Set(CommonVariables.OAuthState, TwitchVars.TwitchContext, randomState);
         
         var scopeQueryData = Uri.EscapeDataString(string.Join(" ", RequiredScopes));
-        var queryData = $"client_id={ClientId}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";
+        var queryData = $"client_id={TwitchVars.TwitchClientId}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";
         var completeUrl = $"{TwitchApiUrl}/{AuthorizeEndpoint}?{queryData}";
         WebLoader.LoadUrl(completeUrl);
     }
@@ -69,20 +68,22 @@ public class TwitchOAuthClient : ITwitchOAuthClient
 
     public void UpdateTokenState(TwitchOAuthValidationPayload payload)
     {
-        AppState.SetTwitchVar(TwitchVariables.Username, payload.Login);
+        AppState.SetTwitchVar(TwitchVars.Username, payload.Login);
+        AppState.SetTwitchVar(TwitchVars.UserId, payload.UserId);
 
         var actualExpiry = DateTime.Now.AddSeconds(payload.ExpiresIn);
-        AppState.SetTwitchVar(TwitchVariables.TokenExpiry, actualExpiry.ToString("u"));
+        AppState.SetTwitchVar(TwitchVars.TokenExpiry, actualExpiry.ToString("u"));
 
         var scopes = string.Join(",", payload.Scopes);
-        AppState.SetTwitchVar(TwitchVariables.OAuthScopes, scopes);
+        AppState.SetTwitchVar(TwitchVars.OAuthScopes, scopes);
     }
 
     public void ClearTokenState()
     {
-        AppState.DeleteTwitchVar(TwitchVariables.Username);
-        AppState.DeleteTwitchVar(TwitchVariables.TokenExpiry);
-        AppState.DeleteTwitchVar(TwitchVariables.OAuthScopes);
+        AppState.DeleteTwitchVar(TwitchVars.Username);
+        AppState.DeleteTwitchVar(TwitchVars.UserId);
+        AppState.DeleteTwitchVar(TwitchVars.TokenExpiry);
+        AppState.DeleteTwitchVar(TwitchVars.OAuthScopes);
         AppState.DeleteTwitchVar(CommonVariables.OAuthToken);
     }
     
@@ -120,7 +121,7 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         var restClient = new RestClient(TwitchApiUrl);
         var restRequest = new RestRequest(RevokeEndpoint, Method.Post);
         restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-        restRequest.AddStringBody($"client_id={ClientId}&token={accessToken}", DataFormat.None);
+        restRequest.AddStringBody($"client_id={TwitchVars.TwitchClientId}&token={accessToken}", DataFormat.None);
 
         var response = await restClient.ExecuteAsync(restRequest);
         if (!response.IsSuccessful)

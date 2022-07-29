@@ -7,8 +7,6 @@ using Strem.Core.Plugins;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Modules;
 using Strem.Infrastructure.Services.Api;
-using Strem.Infrastructure.Services.Logging;
-using Strem.Infrastructure.Services.Persistence;
 using Strem.Twitch.Controllers;
 using Strem.Twitch.Modules;
 using Strem.Web;
@@ -38,18 +36,16 @@ public class Program
         var app = CreateApp(args);
         var logger = app.Services.GetService<ILogger>();
         var eventBus = app.Services.GetService<IEventBus>();
-        var autoSaver = app.Services.GetService<IStateAutoSaver>();
-        var autoLogger = app.Services.GetService<IAutoLogger>();
-
-        Task.Run(async () => await StartAllPlugins(app.Services)).Wait();
-
+        logger.Information("Starting Up Strem");
+        
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {
             logger.Error(error.ExceptionObject.ToString());
             app.MainWindow.OpenAlertWindow("Fatal exception", error.ExceptionObject.ToString());
         };
 
-        logger.Information("Starting Up Strem");
+        logger.Information("Starting Plugins");
+        Task.Run(async () => await StartAllPlugins(app.Services)).Wait();
         
         //TODO: Solve this hack with webhost service collection separation
         WebHostHackExtensions.EventBus = eventBus;
@@ -64,10 +60,6 @@ public class Program
         webHost.StartHost(apiHostConfiguration);
         logger.Information($"Started Internal Host: {ApiWebHost.InternalPort}");
         
-        logger.Information("Enabling State Auto Saving");
-        autoSaver.EnableAutoSaving();
-        autoLogger.EnableAutoLogging();
-        
         app.MainWindow
             .SetTitle("Strem")
             .SetDevToolsEnabled(true)
@@ -75,7 +67,7 @@ public class Program
             .SetUseOsDefaultSize(false)
             .Load("./wwwroot/index.html");
         
-        logger.Information("Strem Initializing");
+        logger.Information("Strem Initialized");
         app.Run();
         webHost.StopHost();
         logger.Information("Strem Stopped");

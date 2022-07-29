@@ -7,12 +7,13 @@ using Serilog;
 using Strem.Core.DI;
 using Strem.Core.Events;
 using Strem.Core.Events.Broker;
+using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Core.Threading;
 using Strem.Core.Utils;
 using Strem.Core.Variables;
+using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
-using Strem.Infrastructure.Services.Logging;
 using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.User;
@@ -58,11 +59,10 @@ public class InfrastructureModule : IDependencyModule
 
         // State
         services.AddSingleton<IStateFileHandler, StateFileHandler>();
-        services.AddSingleton<IStateAutoSaver, StateAutoSaver>();
         services.AddSingleton<IAppState>(LoadAppState);
         
-        // Logging
-        services.AddSingleton<IAutoLogger, AutoLogger>();
+        // Plugin (this isnt technically a plugin I know)
+        services.AddSingleton<IPluginStartup, InfrastructurePluginStartup>();
     }
 
     public IAppState LoadAppState(IServiceProvider services)
