@@ -4,4 +4,5 @@ public interface ITwitchOAuthClient
 {
     void StartAuthorisationProcess();
     Task<bool> ValidateToken();
+    Task<bool> RevokeToken();
 }

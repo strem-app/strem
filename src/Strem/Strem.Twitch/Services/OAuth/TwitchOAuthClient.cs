@@ -6,6 +6,7 @@ using Strem.Core.State;
 using Strem.Core.Utils;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Services.Web;
+using Strem.Twitch.Events;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Models;
 using Strem.Twitch.Variables;
@@ -106,6 +107,30 @@ public class TwitchOAuthClient : ITwitchOAuthClient
 
         var payload = JsonConvert.DeserializeObject<TwitchOAuthValidationPayload>(response.Content);
         UpdateTokenState(payload);
+        return true;
+    }
+    
+    public async Task<bool> RevokeToken()
+    {
+        Logger.Information("Revoking Twitch Token");
+
+        var accessToken = AttemptGetAccessToken();
+        if (accessToken == null) { return false; }
+
+        var restClient = new RestClient(TwitchApiUrl);
+        var restRequest = new RestRequest(RevokeEndpoint, Method.Post);
+        restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+        restRequest.AddStringBody($"client_id={ClientId}&token={accessToken}", DataFormat.None);
+
+        var response = await restClient.ExecuteAsync(restRequest);
+        if (!response.IsSuccessful)
+        {
+            EventBus.PublishAsync(new ErrorEvent($"{SourceName}:Revoke", response.Content ?? "unknown error revoking"));
+            return false;
+        }
+        
+        EventBus.PublishAsync(new TwitchOAuthRevokedEvent());
+        ClearTokenState();
         return true;
     }
 }
