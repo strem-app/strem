@@ -33,7 +33,8 @@ public class ApiWebHost : IApiWebHost
             foreach (var assembly in configuration.ControllerAssemblies)
             { mvcBuilder.AddApplicationPart(assembly); }
         }
-        
+
+        builder.Logging.ClearProviders();
         return builder.Build();
     }
     

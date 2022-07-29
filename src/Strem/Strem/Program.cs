@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Photino.Blazor;
-using Serilog;
 using Strem.Core.Events;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
@@ -34,7 +34,7 @@ public class Program
     public static void Main(string[] args)
     {
         var app = CreateApp(args);
-        var logger = app.Services.GetService<ILogger>();
+        var logger = app.Services.GetService<ILogger<Program>>();
         var eventBus = app.Services.GetService<IEventBus>();
         logger.Information("Starting Up Strem");
         

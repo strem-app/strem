@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Strem.Core.Events;
-using Strem.Core.State;
-using ILogger = Serilog.ILogger;
 
 namespace Strem.Infrastructure.Extensions;
 

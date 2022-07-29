@@ -18,7 +18,6 @@ using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.User;
 using Strem.Infrastructure.Services.Web;
-using ILogger = Serilog.ILogger;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 
 namespace Strem.Infrastructure.Modules;
@@ -33,6 +32,9 @@ public class InfrastructureModule : IDependencyModule
             Converters = new List<JsonConverter> { new VariableDictionaryConvertor() },
             Formatting = Formatting.Indented
         };
+        
+        // Logging
+        services.AddLogging(x => x.AddSerilog(SetupLogger()));
         
         // General
         services.AddSingleton<IMessageBroker, MessageBroker>();
@@ -71,10 +73,10 @@ public class InfrastructureModule : IDependencyModule
         return Task.Run(async () => await stateFileHandler.LoadAppState()).Result;
     }
     
-    public ILogger SetupLogger()
+    public Serilog.ILogger SetupLogger()
     {
         return new LoggerConfiguration()
-            .MinimumLevel.Debug()
+            .MinimumLevel.Information()
             .WriteTo.Console()
             .WriteTo.File("logs/strem.log", rollingInterval: RollingInterval.Day)
             .CreateLogger();

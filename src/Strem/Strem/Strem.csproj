@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <PackageReference Include="Photino.Blazor" Version="2.1.7" />
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>
 

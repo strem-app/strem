@@ -6,21 +6,20 @@ using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.User;
-using ILogger = Serilog.ILogger;
 
 namespace Strem.Infrastructure.Plugin;
 
 public class InfrastructurePluginStartup : IPluginStartup, IDisposable
 {
-    private CompositeDisposable _subs;
+    private readonly CompositeDisposable _subs = new();
     
     public ISaveUserVariablesPipeline UserVariableSaver { get; }
     public ISaveAppVariablesPipeline AppVariableSaver { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
-    public ILogger Logger { get; }
+    public ILogger<InfrastructurePluginStartup> Logger { get; }
 
-    public InfrastructurePluginStartup(ISaveUserVariablesPipeline userVariableSaver, ISaveAppVariablesPipeline appVariableSaver, IEventBus eventBus, IAppState appState, ILogger logger)
+    public InfrastructurePluginStartup(ISaveUserVariablesPipeline userVariableSaver, ISaveAppVariablesPipeline appVariableSaver, IEventBus eventBus, IAppState appState, ILogger<InfrastructurePluginStartup> logger)
     {
         UserVariableSaver = userVariableSaver;
         AppVariableSaver = appVariableSaver;
@@ -31,7 +30,6 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
 
     public async Task StartPlugin()
     {
-        _subs = new CompositeDisposable();
         AppState.UserVariables.OnVariableChanged
             .Throttle(TimeSpan.FromSeconds(5))
             .Subscribe(_ => UserVariableSaver.Execute(AppState.UserVariables))

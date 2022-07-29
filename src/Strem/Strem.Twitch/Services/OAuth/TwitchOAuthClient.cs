@@ -10,7 +10,6 @@ using Strem.Twitch.Events;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Models;
 using Strem.Twitch.Variables;
-using ILogger = Serilog.ILogger;
 
 namespace Strem.Twitch.Services.OAuth;
 
@@ -33,9 +32,9 @@ public class TwitchOAuthClient : ITwitchOAuthClient
     public IAppState AppState { get; }
     public IEventBus EventBus { get; }
     public IRandomizer Randomizer { get; }
-    public ILogger Logger { get; }
+    public ILogger<TwitchOAuthClient> Logger { get; }
 
-    public TwitchOAuthClient(IWebLoader webLoader, IAppState appState, IRandomizer randomizer, IEventBus eventBus, ILogger logger)
+    public TwitchOAuthClient(IWebLoader webLoader, IAppState appState, IRandomizer randomizer, IEventBus eventBus, ILogger<TwitchOAuthClient> logger)
     {
         WebLoader = webLoader;
         AppState = appState;

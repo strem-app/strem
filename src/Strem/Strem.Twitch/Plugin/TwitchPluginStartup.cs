@@ -9,21 +9,20 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.OAuth;
 using Strem.Twitch.Variables;
 using TwitchLib.Api.Interfaces;
-using ILogger = Serilog.ILogger;
 
 namespace Strem.Twitch.Plugin;
 
 public class TwitchPluginStartup : IPluginStartup, IDisposable
 {
-    private CompositeDisposable _subs;
+    private CompositeDisposable _subs = new();
     
     public ITwitchOAuthClient TwitchOAuthClient { get; }
     public ITwitchAPI TwitchApi { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
-    public ILogger Logger { get; }
+    public ILogger<TwitchPluginStartup> Logger { get; }
 
-    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, IEventBus eventBus, IAppState appState, ITwitchAPI twitchApi, ILogger logger)
+    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, IEventBus eventBus, IAppState appState, ITwitchAPI twitchApi, ILogger<TwitchPluginStartup> logger)
     {
         TwitchOAuthClient = twitchOAuthClient;
         EventBus = eventBus;
@@ -34,7 +33,6 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
 
     public async Task StartPlugin()
     {
-        _subs = new CompositeDisposable();
         Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.RevalidatePeriodInMins))
             .Subscribe(x => VerifyToken())
             .AddTo(_subs);
