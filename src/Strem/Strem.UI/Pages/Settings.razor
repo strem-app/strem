@@ -7,6 +7,8 @@
 
 @inject ILoadAppVariablesPipeline LoadUserPipeline;
 @inject ILoadUserVariablesPipeline LoadAppPipeline;
+@inject ISaveAppVariablesPipeline SaveAppPipeline;
+@inject ISaveUserVariablesPipeline SaveUserPipeline;
 @inject IAppState AppState;
 
 <div class="container">
@@ -27,7 +29,14 @@
     </article>
     
     <article class="message is-info">
-        <div class="message-header">UserData: @LoadUserPipeline.VariableFilePath</div>
+        <div class="message-header">
+            UserData: @LoadUserPipeline.VariableFilePath
+            <a @onclick="SaveUserData">
+                <span class="icon is-small">
+                    <i class="fas fa-floppy-disk"></i>
+                </span>
+            </a>
+        </div>
         <div class="message-body">
             <table class="table">
                 <thead>
@@ -52,7 +61,14 @@
     </article>
     
     <article class="message is-info">
-        <div class="message-header">AppData: @LoadAppPipeline.VariableFilePath</div>
+        <div class="message-header">
+            AppData: @LoadAppPipeline.VariableFilePath
+            <a @onclick="SaveAppData">
+                <span class="icon is-small">
+                    <i class="fas fa-floppy-disk"></i>
+                </span>
+            </a>
+        </div>
         <div class="message-body">
             <table class="table">
                 <thead>
@@ -126,6 +142,9 @@
         using (var sr = new StreamReader(fs, Encoding.Default))
         { return await sr.ReadToEndAsync(); }
     }
+
+    public void SaveAppData() => SaveAppPipeline.Execute(AppState.AppVariables);
+    public void SaveUserData() => SaveUserPipeline.Execute(AppState.UserVariables);
 
     protected override async Task OnInitializedAsync()
     {

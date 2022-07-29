@@ -29,7 +29,8 @@ public class InfrastructureModule : IDependencyModule
         // Tertiary
         JsonConvert.DefaultSettings = () => new JsonSerializerSettings
         {
-            Converters = new List<JsonConverter> { new VariableDictionaryConvertor() }
+            Converters = new List<JsonConverter> { new VariableDictionaryConvertor() },
+            Formatting = Formatting.Indented
         };
         
         // General

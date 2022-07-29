@@ -3,7 +3,7 @@ using Photino.Blazor;
 using Serilog;
 using Strem.Core.Events;
 using Strem.Core.Extensions;
-using Strem.Core.State;
+using Strem.Core.Plugins;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Modules;
 using Strem.Infrastructure.Services.Api;
@@ -24,6 +24,13 @@ public class Program
         appBuilder.RootComponents.Add<App>("#app");
         return appBuilder.Build();
     }
+
+    public static async Task StartAllPlugins(IServiceProvider services)
+    {
+        var startupServices = services.GetServices<IPluginStartup>();
+        foreach (var startupService in startupServices)
+        { await startupService.StartPlugin(); }
+    }
     
     [STAThread]
     public static void Main(string[] args)
@@ -33,6 +40,8 @@ public class Program
         var eventBus = app.Services.GetService<IEventBus>();
         var autoSaver = app.Services.GetService<IStateAutoSaver>();
         var autoLogger = app.Services.GetService<IAutoLogger>();
+
+        Task.Run(async () => await StartAllPlugins(app.Services)).Wait();
 
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {

@@ -4,6 +4,8 @@ using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
+using Strem.Twitch.Events;
+using Strem.Twitch.Extensions;
 using Strem.Twitch.Models;
 using Strem.Twitch.Variables;
 
@@ -56,7 +58,8 @@ public class TwitchController : Controller
             return BadRequest($"Twitch couldn't complete OAuth: {errorEvent.Message}");
         }
 
-        AppState.AppVariables.Set(CommonVariables.OAuthToken, TwitchVariables.TwitchContext, payload.AccessToken);
+        AppState.SetTwitchVar(CommonVariables.OAuthToken, payload.AccessToken);
+        this.PublishAsyncEvent(new TwitchOAuthSuccessEvent());
         return Ok("Punch It Chewie!");
     }
 }

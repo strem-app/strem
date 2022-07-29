@@ -1,13 +1,20 @@
 ﻿@page "/integrations"
-@using Strem.Twitch.Services
+
 @using Strem.Core.State
 @using Strem.Core.Extensions
 @using Strem.Core.Variables
+@using Strem.Twitch.Extensions
 @using Strem.Twitch.Services.OAuth
 @using Strem.Twitch.Variables
+@using System.Reactive.Linq
+@using System.Reactive.Disposables
+@using Strem.Core.Events
+@using Strem.Twitch.Events
 
 @inject ITwitchOAuthClient TwitchOAuthClient
 @inject IAppState AppState
+@inject IEventBus EventBus
+@implements IDisposable
 
 <div class="container">
     <p class="title">Integrations</p>
@@ -25,14 +32,13 @@
             <div class="field">
                 <label class="label">Twitch Username</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="Your Username Here" @bind="Username" />
+                    <input class="input" type="text" placeholder="Link Your Twitch Account" value="@Username" disabled/>
                 </div>
             </div>
             <div class="field">
                 <div class="control">
                     <div class="buttons">
-                        <button class="button is-info" @onclick="SetUsername">Set Username</button>
-                        @if (AppState.AppVariables.Has(CommonVariables.OAuthToken, TwitchVariables.TwitchContext))
+                        @if (IsTwitchAccountLinked)
                         {
                             <button class="button is-danger" @onclick="DisconnectFromTwitch">Disconnect From Twitch</button>
                         }
@@ -49,29 +55,47 @@
 
 @code {
 
+    private CompositeDisposable _subs = new();
+    
     public string Username { get; set; }
+    public bool IsTwitchAccountLinked { get; set; }
 
     protected override void OnInitialized()
     {
-        if (AppState.AppVariables.Has(TwitchVariables.UserChannel, TwitchVariables.TwitchContext))
-        {
-            Username = AppState.AppVariables.Get(TwitchVariables.UserChannel, TwitchVariables.TwitchContext);
-        }
-    }
+        IsTwitchAccountLinked = AppState.HasTwitchOAuth();
+        
+        if (AppState.HasTwitchVar(TwitchVariables.Username))
+        { Username = AppState.GetTwitchVar(TwitchVariables.Username); }
 
+        AppState.AppVariables.OnVariableChanged
+            .Where(x => x.Name == TwitchVariables.Username && x.Context == TwitchVariables.TwitchContext)
+            .Subscribe(x =>
+            {
+                Username = AppState.GetTwitchVar(TwitchVariables.Username);
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+        
+        EventBus.Receive<TwitchOAuthSuccessEvent>()
+            .Subscribe(x =>
+            {
+                IsTwitchAccountLinked = true;
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+    }
+    
     public void ConnectToTwitch()
     {
-        TwitchOAuthClient.Authorize();
-    }
-
-    public void SetUsername()
-    {
-        AppState.AppVariables.Set(TwitchVariables.UserChannel, TwitchVariables.TwitchContext, Username);
+        TwitchOAuthClient.StartAuthorisationProcess();
     }
     
     public void DisconnectFromTwitch()
     {
-        TwitchOAuthClient.Authorize();
+        TwitchOAuthClient.StartAuthorisationProcess();
     }
-    
+
+    public void Dispose()
+    { _subs?.Dispose(); }
+
 }
