@@ -3,6 +3,7 @@
 @using Strem.Core.State
 @using Strem.Core.Extensions
 @using Strem.Core.Variables
+@using Strem.Twitch.Services.OAuth
 @using Strem.Twitch.Variables
 
 @inject ITwitchOAuthClient TwitchOAuthClient
@@ -60,7 +61,7 @@
 
     public void ConnectToTwitch()
     {
-        TwitchOAuthClient.RequestOAuthToken();
+        TwitchOAuthClient.Authorize();
     }
 
     public void SetUsername()
@@ -70,7 +71,7 @@
     
     public void DisconnectFromTwitch()
     {
-        TwitchOAuthClient.RequestOAuthToken();
+        TwitchOAuthClient.Authorize();
     }
     
 }

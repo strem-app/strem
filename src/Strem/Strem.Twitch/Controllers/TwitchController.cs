@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Strem.Core.Events;
 using Strem.Core.Extensions;
+using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
 using Strem.Twitch.Models;
@@ -12,6 +13,13 @@ namespace Strem.Twitch.Controllers;
 [Route("api/twitch")]
 public class TwitchController : Controller
 {
+    public IAppState AppState { get; }
+    
+    public TwitchController()
+    {
+        AppState = this.GetService<IAppState>();
+    }
+
     [HttpGet]
     public IActionResult Index()
     { return Ok("Twitch Works Fine"); }
@@ -40,7 +48,7 @@ public class TwitchController : Controller
             return BadRequest($"Twitch couldn't complete OAuth: {errorEvent.Message}");
         }
 
-        var existingState = this.GetAppState().TransientVariables.Get(CommonVariables.OAuthState, TwitchVariables.TwitchContext);
+        var existingState = AppState.TransientVariables.Get(CommonVariables.OAuthState, TwitchVariables.TwitchContext);
         if (payload.State != existingState)
         {
             var errorEvent = new ErrorEvent("Twitch Client Callback OAuth", $"OAuth state does not match request state");
@@ -48,7 +56,7 @@ public class TwitchController : Controller
             return BadRequest($"Twitch couldn't complete OAuth: {errorEvent.Message}");
         }
 
-        WebHostHackExtensions.AppState.AppVariables.Set(CommonVariables.OAuthToken, TwitchVariables.TwitchContext, payload.AccessToken);
+        AppState.AppVariables.Set(CommonVariables.OAuthToken, TwitchVariables.TwitchContext, payload.AccessToken);
         return Ok("Punch It Chewie!");
     }
 }

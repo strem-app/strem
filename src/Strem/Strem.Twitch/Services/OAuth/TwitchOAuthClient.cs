@@ -1,13 +1,11 @@
-﻿using RestSharp;
-using Strem.Core.Extensions;
+﻿using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.Core.Utils;
 using Strem.Core.Variables;
-using Strem.Infrastructure.Services;
 using Strem.Infrastructure.Services.Web;
 using Strem.Twitch.Variables;
 
-namespace Strem.Twitch.Services;
+namespace Strem.Twitch.Services.OAuth;
 
 public class TwitchOAuthClient : ITwitchOAuthClient
 {
@@ -16,6 +14,8 @@ public class TwitchOAuthClient : ITwitchOAuthClient
 
     public static readonly string TwitchApi = "https://id.twitch.tv/oauth2";  
     public static readonly string AuthorizeEndpoint = "authorize";
+    public static readonly string ValidateEndpoint = "validate";
+    public static readonly string RevokeEndpoint = "revoke";
     
     public static readonly string[] RequiredScopes = {
         "chat:read", "chat:edit"
@@ -32,7 +32,18 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         Randomizer = randomizer;
     }
 
-    public void RequestOAuthToken()
+    public void Authorize()
+    {
+        var randomState = Randomizer.RandomString();
+        AppState.TransientVariables.Set(CommonVariables.OAuthState, TwitchVariables.TwitchContext, randomState);
+        
+        var scopeQueryData = Uri.EscapeDataString(string.Join(" ", RequiredScopes));
+        var queryData = $"client_id={ClientId}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";
+        var completeUrl = $"{TwitchApi}/{AuthorizeEndpoint}?{queryData}";
+        WebLoader.LoadUrl(completeUrl);
+    }
+    
+    public void Validate(string accessToken)
     {
         var randomState = Randomizer.RandomString();
         AppState.TransientVariables.Set(CommonVariables.OAuthState, TwitchVariables.TwitchContext, randomState);

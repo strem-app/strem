@@ -1,5 +1,6 @@
 ﻿using Strem.Core.DI;
 using Strem.Twitch.Services;
+using Strem.Twitch.Services.OAuth;
 
 namespace Strem.Twitch.Modules;
 

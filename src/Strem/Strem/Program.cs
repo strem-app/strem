@@ -31,7 +31,6 @@ public class Program
         var app = CreateApp(args);
         var logger = app.Services.GetService<ILogger>();
         var eventBus = app.Services.GetService<IEventBus>();
-        var appState = app.Services.GetService<IAppState>();
         var autoSaver = app.Services.GetService<IStateAutoSaver>();
         var autoLogger = app.Services.GetService<IAutoLogger>();
 
@@ -45,8 +44,6 @@ public class Program
         
         //TODO: Solve this hack with webhost service collection separation
         WebHostHackExtensions.EventBus = eventBus;
-        WebHostHackExtensions.Logger = logger;
-        WebHostHackExtensions.AppState = appState;
         WebHostHackExtensions.ServiceLocator = app.Services;
         
         var apiHostConfiguration = new ApiHostConfiguration(
