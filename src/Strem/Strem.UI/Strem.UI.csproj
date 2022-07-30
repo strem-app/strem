@@ -18,4 +18,8 @@
       <ProjectReference Include="..\Strem.Twitch\Strem.Twitch.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components" />
+    </ItemGroup>
+
 </Project>
