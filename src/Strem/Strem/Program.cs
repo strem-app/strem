@@ -9,7 +9,7 @@ using Strem.Infrastructure.Modules;
 using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Controllers;
 using Strem.Twitch.Modules;
-using Strem.Web;
+using Strem.UI;
 
 namespace Strem;
 

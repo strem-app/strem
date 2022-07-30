@@ -1,0 +1,21 @@
+﻿.accordion.is-expanded > a
+{
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.accordion > a > span.tag
+{
+    background-color: rgba(255,255,255,0.5);
+}
+
+.accordion.is-expanded > div
+{
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.accordion.is-collapsed > div
+{
+    display: none;
+}
