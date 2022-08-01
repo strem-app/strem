@@ -12,6 +12,7 @@ public class VariableDictionaryConvertorSanityTests
         var expectedDictionary = new Dictionary<VariableEntry, string>();
         expectedDictionary.Add(new VariableEntry("test1", "context1"), "value1");
         expectedDictionary.Add(new VariableEntry("test2", "context2"), "value2");
+        expectedDictionary.Add(new VariableEntry("test3"), "value3");
 
         JsonConvert.DefaultSettings = () => new JsonSerializerSettings
         {

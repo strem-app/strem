@@ -7,6 +7,8 @@ using Serilog;
 using Strem.Core.DI;
 using Strem.Core.Events;
 using Strem.Core.Events.Broker;
+using Strem.Core.Flows;
+using Strem.Core.Flows.Processors;
 using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Core.Threading;
@@ -62,6 +64,9 @@ public class InfrastructureModule : IDependencyModule
         // State
         services.AddSingleton<IStateFileHandler, StateFileHandler>();
         services.AddSingleton<IAppState>(LoadAppState);
+        
+        // Flows
+        services.AddSingleton<IFlowStringProcessor, FlowStringProcessor>();
         
         // Plugin (this isnt technically a plugin I know)
         services.AddSingleton<IPluginStartup, InfrastructurePluginStartup>();

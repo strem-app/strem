@@ -21,7 +21,10 @@ public class VariableDictionaryConvertor : JsonConverter
         {
             var jObject = new JObject();
             jObject.Add("name", entry.Key.Name);
-            jObject.Add("context", entry.Key.Context);
+            
+            if(!string.IsNullOrEmpty(entry.Key.Context))
+            { jObject.Add("context", entry.Key.Context); }
+            
             jObject.Add("value", entry.Value);
             jArray.Add(jObject);
         }
@@ -37,8 +40,13 @@ public class VariableDictionaryConvertor : JsonConverter
         var jArray = JArray.Load(reader);
         foreach (JObject entry in jArray)
         {
-            var stateEntry = new VariableEntry(entry["name"].ToString(), entry["context"].ToString());
-            dictionary.Add(stateEntry, entry["value"].ToString());
+            VariableEntry variableEntry;
+            if (entry.ContainsKey("context"))
+            { variableEntry = new VariableEntry(entry["name"].ToString(), entry["context"].ToString()); }
+            else
+            { variableEntry = new VariableEntry(entry["name"].ToString()); }
+            
+            dictionary.Add(variableEntry, entry["value"].ToString());
         }
         return dictionary;
     }

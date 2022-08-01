@@ -2,7 +2,7 @@
 
 public struct VariableEntry
 {
-    public const string DefaultContext = "global";
+    public const string DefaultContext = "";
 
     public readonly string Name;
     public readonly string Context;
