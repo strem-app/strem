@@ -1,7 +1,5 @@
 ﻿namespace Strem.Core.Flows.Triggers;
 
-public interface IFlowTriggerData
+public interface IFlowTriggerData : IFlowElementData
 {
-    string Version { get; }
-    string TriggerCode { get; }
 }

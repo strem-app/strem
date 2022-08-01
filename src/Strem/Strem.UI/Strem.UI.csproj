@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Strem.Twitch\Strem.Twitch.csproj" />
+      <ProjectReference Include="..\Strem.Flows.Default\Strem.Flows.Default.csproj" />
     </ItemGroup>
 
     <ItemGroup>

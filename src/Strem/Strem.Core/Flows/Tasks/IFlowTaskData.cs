@@ -1,7 +1,5 @@
 ﻿namespace Strem.Core.Flows.Tasks;
 
-public interface IFlowTaskData
+public interface IFlowTaskData : IFlowElementData
 {
-    string Version { get; }
-    string TaskCode { get; }
 }

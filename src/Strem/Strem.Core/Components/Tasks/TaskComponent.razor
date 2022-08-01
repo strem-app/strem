@@ -1,0 +1,11 @@
+﻿<Accordion Title="@Title" StyleType="is-info">
+    @ChildContent
+</Accordion>
+
+@code {
+    [Parameter] 
+    public RenderFragment ChildContent  { get; set; }
+    
+    [Parameter]
+    public string Title { get; set; }
+}

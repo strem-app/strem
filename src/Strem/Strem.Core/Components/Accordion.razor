@@ -1,26 +1,12 @@
 ﻿<div class="accordion @(IsExpanded ? "is-expanded": "is-collapsed")">
-    <a class="button is-success has-text-left" @onclick="() => IsExpanded = !IsExpanded">
+    <a class="button @(StyleType) has-text-left" @onclick="() => IsExpanded = !IsExpanded">
         <span>@Title</span>
         <span class="tag is-rounded is-pulled-right">
             <i class="fas @(IsExpanded ? "fa-caret-up" : "fa-caret-down")"></i>
         </span>
     </a>
     <div class="box">
-      <div class="field is-grouped">
-          <p class="control is-expanded">
-            <div class="select">
-                <select>
-                  <option>Starts With</option>
-                  <option>Contains</option>
-                  <option>Ends With</option>
-                  <option>Regex</option>
-                </select>
-              </div>
-          </p>
-          <p class="control is-expanded">
-            <input class="input" type="text" placeholder="Text To Match">
-          </p>
-        </div>
+        @ChildContent 
     </div>
 </div>
 
@@ -28,7 +14,11 @@
     public bool IsExpanded { get; set; }
     
     [Parameter]
+    public string StyleType { get; set; } = "is-success";
+    
+    [Parameter] 
+    public RenderFragment ChildContent  { get; set; }
+    
+    [Parameter]
     public string Title { get; set; }
-    
-    
 }

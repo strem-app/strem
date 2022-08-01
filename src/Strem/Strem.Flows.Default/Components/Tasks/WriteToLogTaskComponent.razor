@@ -1,0 +1,15 @@
+﻿@using Strem.Flows.Default.Flows.Tasks.Data
+
+<TaskComponent Title="Write Text To File">
+    <div class="field">
+      <label class="label">Text To Log</label>
+      <div class="control">
+        <input class="input" type="text" placeholder="i.e Something Happened With Value V(something)" @bind="Data.Text">
+      </div>
+    </div>
+</TaskComponent>
+
+@code {
+    [Parameter]
+    public WriteToLogTaskData Data { get; set; }
+}

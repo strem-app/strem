@@ -1,47 +1,53 @@
 ﻿@page "/"
+@using Strem.Flows.Default.Flows.Tasks.Data
+@using Strem.Flows.Default.Flows.Triggers.Data
 
 <div class="container is-fluid">
-    <div class="columns">
-      <div class="column is-one-quarter">
-        <aside class="menu">
-          <p class="menu-label">
-            General
-          </p>
-          <ul class="menu-list">
-            <li><a>Dashboard</a></li>
-            <li><a>Customers</a></li>
-          </ul>
-        </aside>
-      </div>
-      <div class="column">
-        <aside class="menu">
-          <p class="menu-label">
-            Triggers
-          </p>
-          <ul class="menu-list">
-            <li class="block"><Accordion Title="Manually Triggered"></Accordion></li>
-            <li class="block"><Accordion Title="On Twitch Chat Starts With &QUOT;Something Cool&QUOT;"></Accordion></li>
-            <li class="block"><Accordion Title="On Command &QUOT;Something Cool&QUOT;"></Accordion></li>
-          </ul>
-          <p class="menu-label">
-            Tasks
-          </p>
-          <ul class="menu-list">
-            <li class="notification is-info"><a>Write To Log</a></li>
-            <li class="notification is-info"><a>Set Variable</a></li>
-          </ul>
-        </aside>
-      </div>
-      <div class="column is-one-quarter">
-        <aside class="menu">
-          <p class="menu-label">
-            General
-          </p>
-          <ul class="menu-list">
-            <li><a>Write To Log</a></li>
-            <li><a>Set Variable</a></li>
-          </ul>
-        </aside>
-      </div>
+  <div class="columns">
+    <div class="column is-one-quarter">
+      <aside class="menu">
+        <p class="menu-label">
+          General
+        </p>
+        <ul class="menu-list">
+          <li><a>Dashboard</a></li>
+          <li><a>Customers</a></li>
+        </ul>
+      </aside>
     </div>
+    <div class="column">
+      <aside class="menu">
+        <p class="menu-label">
+          Triggers
+        </p>
+        <ul class="menu-list">
+          <li class="block"><OnIntervalTriggerComponent Data="TriggerData"></OnIntervalTriggerComponent></li>
+        </ul>
+        <p class="menu-label">
+          Tasks
+        </p>
+        <ul class="menu-list">
+          <li class="block"><WriteToLogTaskComponent Data="TaskData"></WriteToLogTaskComponent></li>
+        </ul>
+      </aside>
+    </div>
+    <div class="column is-one-quarter">
+      <aside class="menu">
+        <p class="menu-label">
+          General
+        </p>
+        <ul class="menu-list">
+          <li><a>Write To Log</a></li>
+          <li><a>Set Variable</a></li>
+        </ul>
+      </aside>
+    </div>
+  </div>
 </div>
+
+@code {
+
+  public WriteToLogTaskData TaskData { get; set; } = new();
+  public OnIntervalTriggerData TriggerData { get; set; } = new();
+
+}
