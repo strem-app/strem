@@ -33,6 +33,7 @@ public class InfrastructureModule : IDependencyModule
         JsonConvert.DefaultSettings = () => new JsonSerializerSettings
         {
             Converters = new List<JsonConverter> { new VariableDictionaryConvertor() },
+            TypeNameHandling = TypeNameHandling.Auto,
             Formatting = Formatting.Indented
         };
         

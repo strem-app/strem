@@ -2,9 +2,11 @@
 using System.Reactive.Linq;
 using Strem.Core.Events;
 using Strem.Core.Extensions;
+using Strem.Core.Flows;
 using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Infrastructure.Services.Persistence.App;
+using Strem.Infrastructure.Services.Persistence.Flows;
 using Strem.Infrastructure.Services.Persistence.User;
 
 namespace Strem.Infrastructure.Plugin;
@@ -15,16 +17,20 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     
     public ISaveUserVariablesPipeline UserVariableSaver { get; }
     public ISaveAppVariablesPipeline AppVariableSaver { get; }
+    public ISaveFlowStorePipeline FlowStoreSaver { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
+    public IFlowStore FlowStore { get; }
     public ILogger<InfrastructurePluginStartup> Logger { get; }
 
-    public InfrastructurePluginStartup(ISaveUserVariablesPipeline userVariableSaver, ISaveAppVariablesPipeline appVariableSaver, IEventBus eventBus, IAppState appState, ILogger<InfrastructurePluginStartup> logger)
+    public InfrastructurePluginStartup(ISaveUserVariablesPipeline userVariableSaver, ISaveAppVariablesPipeline appVariableSaver, ISaveFlowStorePipeline flowStoreSaver, IEventBus eventBus, IAppState appState, IFlowStore flowStore, ILogger<InfrastructurePluginStartup> logger)
     {
         UserVariableSaver = userVariableSaver;
         AppVariableSaver = appVariableSaver;
+        FlowStoreSaver = flowStoreSaver;
         EventBus = eventBus;
         AppState = appState;
+        FlowStore = flowStore;
         Logger = logger;
     }
 
@@ -49,6 +55,11 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
             .AddTo(_subs);
 
         EventBus.Receive<ErrorEvent>().Subscribe(x => Logger.Error($"[{x.Source}]: {x.Message}"));
+        
+        
+        Observable.Interval(TimeSpan.FromMinutes(2))
+            .Subscribe(x => FlowStoreSaver.Execute(FlowStore))
+            .AddTo(_subs);
     }
 
     public void Dispose()

@@ -2,10 +2,12 @@
 
 @using Strem.Core.Flows
 @using Strem.Core.Flows.Registries
+@using Strem.Infrastructure.Services.Persistence.Flows
 
-@inject ITaskRegistry TaskRegistry;
-@inject ITriggerRegistry TriggerRegistry;
+@inject ISaveFlowStorePipeline SaveFlowStore
+@inject IFlowStore FlowStore
 
+<button @onclick="SaveFlows">SAVE</button>
 <div class="container is-fluid">
   <div class="columns">
     <div class="column is-one-quarter">
@@ -14,7 +16,7 @@
     <div class="column">
     @if (CurrentFlow == null)
     {
-      <p class="title">Select a flow to edit</p>
+      <p class="title has-text-centered">Select a flow to edit</p>
     }
     else
     {
@@ -45,4 +47,8 @@
     CurrentFlow.TriggerData.Add(data);
   }
 
+  public void SaveFlows()
+  {
+    SaveFlowStore.Execute(FlowStore);
+  }
 }
