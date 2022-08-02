@@ -1,0 +1,43 @@
+﻿@using Strem.Core.Flows
+@using Strem.Core.Flows.Registries
+@using Strem.Core.Flows.Tasks
+@using Strem.Core.Flows.Triggers
+
+@inject ITaskRegistry TaskRegistry;
+@inject ITriggerRegistry TriggerRegistry;
+
+<p class="title">Editing Flows For: @Flow.Name</p>
+<aside class="menu">
+  <p class="menu-label">
+    Triggers
+  </p>
+  <ul class="menu-list">
+    @foreach (var data in Flow.TriggerData)
+    {
+      <li class="block">
+        <DynamicComponent Type="GetComponentFor(data)" Parameters="GetProps(data)"></DynamicComponent>
+      </li>
+    }
+  </ul>
+  <p class="menu-label">
+    Tasks
+  </p>
+  <ul class="menu-list">
+    @foreach (var data in Flow.TaskData)
+    {
+      <li class="block">
+        <DynamicComponent Type="GetComponentFor(data)" Parameters="GetProps(data)"></DynamicComponent>
+      </li>
+    }
+  </ul>
+</aside>
+
+@code {
+  [Parameter]
+  public Flow Flow { get; set; }
+  
+  public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
+  public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
+  public Dictionary<string, object> GetProps(IFlowTaskData data) => new() { { "Data", data } };
+  public Dictionary<string, object> GetProps(IFlowTriggerData data) => new() { { "Data", data } };
+}

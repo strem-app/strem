@@ -1,0 +1,33 @@
+﻿@using Strem.Core.Flows.Registries
+
+@inject ITaskRegistry TaskRegistry;
+@inject ITriggerRegistry TriggerRegistry;
+
+<aside class="menu">
+  <p class="menu-label">
+    Triggers - General
+  </p>
+  <ul class="menu-list">
+    @foreach (var trigger in TriggerRegistry.GetAll())
+    {
+      <li><a class="has-tooltip-left has-tooltip-multiline" data-tooltip="@trigger.Trigger.Description" @onclick="() => OnTriggerSelected.InvokeAsync(trigger)">@trigger.Trigger.Name</a></li>
+    }
+  </ul>
+  <p class="menu-label">
+    Tasks - General
+  </p>
+  <ul class="menu-list">
+    @foreach (var task in TaskRegistry.GetAll())
+    {
+      <li><a class="has-tooltip-left has-tooltip-multiline" data-tooltip="@task.Task.Description"  @onclick="() => OnTaskSelected.InvokeAsync(task)">@task.Task.Name</a></li>
+    }
+  </ul>
+</aside>
+
+@code {
+  [Parameter] 
+  public EventCallback<TaskDescriptor> OnTaskSelected { get; set; }
+  
+  [Parameter] 
+  public EventCallback<TriggerDescriptor> OnTriggerSelected { get; set; }
+}

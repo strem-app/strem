@@ -1,0 +1,55 @@
+﻿@using Strem.Core.Flows
+@using Strem.Core.Extensions
+
+@inject IFlowStore FlowStore;
+
+<aside class="menu">
+  <p class="menu-label">
+    <span>User Flows</span>
+    <a class="tag is-primary m-sm" @onclick="CreateNewFlow">+ Add</a>
+  </p>
+  <ul class="menu-list">
+    @foreach (var flow in FlowStore.Flows)
+    {
+      <li>
+        <a class="@(SelectedFlowId == flow.Id ? "is-active" : "")" 
+           @onclick="() => SelectFlow(flow)">@flow.Name</a>
+      </li>
+    }
+  </ul>
+</aside>
+
+<Modal IsVisible="ShowModal">
+  <FlowCreator OnFlowCreated="OnFlowCreated" OnFlowCancelled="OnFlowCancelled"></FlowCreator>
+</Modal>
+
+@code {
+  [Parameter] 
+  public EventCallback<Flow> OnFlowSelected { get; set; }
+
+  public bool ShowModal { get; set; } = false;
+  public Guid SelectedFlowId { get; set; }
+
+  public void OnFlowCreated(Flow newFlow)
+  {
+    FlowStore.Add(newFlow);
+    SelectFlow(newFlow);
+    ShowModal = false;
+  }
+
+  public void OnFlowCancelled()
+  {
+    ShowModal = false;
+  }
+
+  public void SelectFlow(Flow selectedFlow)
+  {
+    SelectedFlowId = selectedFlow.Id;
+    OnFlowSelected.InvokeAsync(selectedFlow);
+  }
+
+  public void CreateNewFlow()
+  {
+    ShowModal = true;
+  }
+}

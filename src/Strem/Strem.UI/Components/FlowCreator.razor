@@ -1,0 +1,47 @@
+﻿@using Strem.Core.Flows
+<p class="title">Create Flow</p>
+<div class="field">
+    <label class="label">Name</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e Play A Meme" @bind-value="NewFlowName">
+    </div>
+</div>
+<div class="field">
+    <label class="label">Category</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e Memes" @bind-value="NewFlowCategory">
+    </div>
+</div>
+<div class="field">
+  <div class="control">
+    <button class="button is-success" @onclick="CreateFlow">Create</button>
+  </div>
+  <div class="control">
+    <button class="button is-link is-light" @onclick="CancelFlow">Cancel</button>
+  </div>
+</div>
+
+@code {
+    [Parameter] 
+    public EventCallback<Flow> OnFlowCreated { get; set; }
+    [Parameter] 
+    public EventCallback OnFlowCancelled { get; set; }
+    
+    public string NewFlowName { get; set; }
+    public string NewFlowCategory { get; set; }
+
+    public void CreateFlow()
+    {
+        var newFlow = new Flow(Guid.NewGuid(), NewFlowName, NewFlowCategory);
+        NewFlowName = string.Empty;
+        NewFlowCategory = string.Empty;
+        OnFlowCreated.InvokeAsync(newFlow);
+    }
+
+    public void CancelFlow()
+    {
+        NewFlowName = string.Empty;
+        NewFlowCategory = string.Empty;
+        OnFlowCancelled.InvokeAsync();
+    }
+}

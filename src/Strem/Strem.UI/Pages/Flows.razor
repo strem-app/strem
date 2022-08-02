@@ -1,10 +1,7 @@
 ﻿@page "/"
-@using Strem.Flows.Default.Flows.Tasks.Data
-@using Strem.Flows.Default.Flows.Triggers.Data
+
 @using Strem.Core.Flows
 @using Strem.Core.Flows.Registries
-@using Strem.Core.Flows.Tasks
-@using Strem.Core.Flows.Triggers
 
 @inject ITaskRegistry TaskRegistry;
 @inject ITriggerRegistry TriggerRegistry;
@@ -12,81 +9,30 @@
 <div class="container is-fluid">
   <div class="columns">
     <div class="column is-one-quarter">
-      <aside class="menu">
-        <p class="menu-label">
-          User Flows
-        </p>
-        <ul class="menu-list">
-          @foreach (var flow in UserFlows)
-          {
-            <li><a>@flow.Name</a></li>
-          }
-        </ul>
-      </aside>
+      <FlowStoreMenu OnFlowSelected="x => CurrentFlow = x"></FlowStoreMenu>
     </div>
     <div class="column">
-      <aside class="menu">
-        <p class="menu-label">
-          Triggers
-        </p>
-        <ul class="menu-list">
-          @foreach (var data in CurrentFlow.TriggerData)
-          {
-            <li class="block">
-              <DynamicComponent Type="GetComponentFor(data)" Parameters="GetProps(data)"></DynamicComponent>
-            </li>
-          }
-        </ul>
-        <p class="menu-label">
-          Tasks
-        </p>
-        <ul class="menu-list">
-          @foreach (var data in CurrentFlow.TaskData)
-          {
-            <li class="block">
-              <DynamicComponent Type="GetComponentFor(data)" Parameters="GetProps(data)"></DynamicComponent>
-            </li>
-          }
-        </ul>
-      </aside>
+    @if (CurrentFlow == null)
+    {
+      <p class="title">Select a flow to edit</p>
+    }
+    else
+    {
+      <FlowEditor Flow="CurrentFlow"></FlowEditor>
+    }
     </div>
     <div class="column is-one-quarter">
-      <aside class="menu">
-        <p class="menu-label">
-          Triggers - General
-        </p>
-        <ul class="menu-list">
-          @foreach (var trigger in TriggerRegistry.GetAll())
-          {
-            <li><a class="has-tooltip-left has-tooltip-multiline" data-tooltip="@trigger.Trigger.Description" @onclick="() => AddTrigger(trigger)">@trigger.Trigger.Name</a></li>
-          }
-        </ul>
-        <p class="menu-label">
-          Tasks - General
-        </p>
-        <ul class="menu-list">
-          @foreach (var task in TaskRegistry.GetAll())
-          {
-            <li><a class="has-tooltip-left has-tooltip-multiline" data-tooltip="@task.Task.Description"  @onclick="() => AddTask(task)">@task.Task.Name</a></li>
-          }
-        </ul>
-      </aside>
+    @if (CurrentFlow != null)
+    {
+      <FlowElementsMenu OnTaskSelected="AddTask" OnTriggerSelected="AddTrigger"></FlowElementsMenu>
+    }
     </div>
   </div>
 </div>
 
 @code {
-
-  public WriteToLogTaskData TaskData { get; set; } = new();
-  public OnIntervalTriggerData TriggerData { get; set; } = new();
-
-  public List<Flow> UserFlows { get; set; } = new();
+  public Flow CurrentFlow { get; set; }
   
-  public Flow CurrentFlow { get; set; } = new()
-  {
-    Name = "Some Amazing Flow"
-  };
-
   public void AddTask(TaskDescriptor descriptor)
   {
     var data = descriptor.Data();
@@ -99,8 +45,4 @@
     CurrentFlow.TriggerData.Add(data);
   }
 
-  public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
-  public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
-  public Dictionary<string, object> GetProps(IFlowTaskData data) => new() { { "Data", data } };
-  public Dictionary<string, object> GetProps(IFlowTriggerData data) => new() { { "Data", data } };
 }

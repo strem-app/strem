@@ -18,6 +18,7 @@ using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
 using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.App;
+using Strem.Infrastructure.Services.Persistence.Flows;
 using Strem.Infrastructure.Services.Persistence.User;
 using Strem.Infrastructure.Services.Web;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
@@ -60,10 +61,13 @@ public class InfrastructureModule : IDependencyModule
         services.AddSingleton<ILoadAppVariablesPipeline, LoadAppVariablesPipeline>();
         services.AddSingleton<ISaveUserVariablesPipeline, SaveUserVariablesPipeline>();
         services.AddSingleton<ILoadUserVariablesPipeline, LoadUserVariablesPipeline>();
+        services.AddSingleton<ILoadFlowStorePipeline, LoadFlowStorePipeline>();
+        services.AddSingleton<ISaveFlowStorePipeline, SaveFlowStorePipeline>();
 
-        // State
-        services.AddSingleton<IStateFileHandler, StateFileHandler>();
+        // State/Stores
+        services.AddSingleton<IAppFileHandler, AppFileHandler>();
         services.AddSingleton<IAppState>(LoadAppState);
+        services.AddSingleton<IFlowStore>(LoadFlowStore);
         
         // Flows
         services.AddSingleton<IFlowStringProcessor, FlowStringProcessor>();
@@ -74,8 +78,14 @@ public class InfrastructureModule : IDependencyModule
 
     public IAppState LoadAppState(IServiceProvider services)
     {
-        var stateFileHandler = services.GetService<IStateFileHandler>();
+        var stateFileHandler = services.GetService<IAppFileHandler>();
         return Task.Run(async () => await stateFileHandler.LoadAppState()).Result;
+    }
+    
+    public IFlowStore LoadFlowStore(IServiceProvider services)
+    {
+        var stateFileHandler = services.GetService<IAppFileHandler>();
+        return Task.Run(async () => await stateFileHandler.LoadFlowStore()).Result;
     }
     
     public Serilog.ILogger SetupLogger()

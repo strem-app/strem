@@ -1,27 +1,34 @@
-﻿using Strem.Core.State;
+﻿using Strem.Core.Flows;
+using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Services.Persistence.App;
+using Strem.Infrastructure.Services.Persistence.Flows;
 using Strem.Infrastructure.Services.Persistence.User;
 
 namespace Strem.Infrastructure.Services.Persistence;
 
-public class StateFileHandler : IStateFileHandler
+public class AppFileHandler : IAppFileHandler
 {
     public ISaveUserVariablesPipeline UserVariableSaver { get; }
     public ISaveAppVariablesPipeline AppVariableSaver { get; }
     
     public ILoadUserVariablesPipeline UserVariableLoader { get; }
     public ILoadAppVariablesPipeline AppVariableLoader { get; }
+    
+    public ILoadFlowStorePipeline FlowStoreLoader { get; }
+    public ISaveFlowStorePipeline FlowStoreSaver { get; }
 
-    public StateFileHandler(ISaveUserVariablesPipeline userVariableSaver, ISaveAppVariablesPipeline appVariableSaver, ILoadUserVariablesPipeline userVariableLoader, ILoadAppVariablesPipeline appVariableLoader)
+    public AppFileHandler(ISaveUserVariablesPipeline userVariableSaver, ISaveAppVariablesPipeline appVariableSaver, ILoadUserVariablesPipeline userVariableLoader, ILoadAppVariablesPipeline appVariableLoader, ILoadFlowStorePipeline flowStoreLoader, ISaveFlowStorePipeline flowStoreSaver)
     {
         UserVariableSaver = userVariableSaver;
         AppVariableSaver = appVariableSaver;
         UserVariableLoader = userVariableLoader;
         AppVariableLoader = appVariableLoader;
+        FlowStoreLoader = flowStoreLoader;
+        FlowStoreSaver = flowStoreSaver;
     }
 
-    public async Task CreateStateFilesIfMissing()
+    public async Task CreateAppFilesIfMissing()
     {
         if(!Directory.Exists(PathHelper.AppDirectory))
         { Directory.CreateDirectory(PathHelper.AppDirectory); }
@@ -33,11 +40,15 @@ public class StateFileHandler : IStateFileHandler
         var appFilePath = AppVariableSaver.VariableFilePath;
         if (!File.Exists(appFilePath))
         { await AppVariableSaver.Execute(new Variables()); }
+        
+        var flowStoreFilePath = FlowStoreSaver.FlowStoreFilePath;
+        if (!File.Exists(flowStoreFilePath))
+        { await FlowStoreSaver.Execute(new FlowStore()); }
     }
     
     public async Task<AppState> LoadAppState()
     {
-        await CreateStateFilesIfMissing();
+        await CreateAppFilesIfMissing();
         var appVariables = await AppVariableLoader.Execute();
         var userVariables = await UserVariableLoader.Execute();
 
@@ -47,7 +58,14 @@ public class StateFileHandler : IStateFileHandler
             new Variables()
         );
     }
-    
+
+    public async Task<FlowStore> LoadFlowStore()
+    {
+        await CreateAppFilesIfMissing();
+        var flowStore = await FlowStoreLoader.Execute();
+        return flowStore ?? new FlowStore();
+    }
+
     public async Task SaveAppState(IAppState appState)
     {
         await AppVariableSaver.Execute(appState.AppVariables);
