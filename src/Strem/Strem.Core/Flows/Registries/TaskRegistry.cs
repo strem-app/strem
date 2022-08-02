@@ -4,15 +4,15 @@ namespace Strem.Core.Flows.Registries;
 
 public class TaskRegistry : ITaskRegistry
 {
-    public List<IFlowTask> Tasks { get; }
+    public List<TaskDescriptor> Tasks { get; }
 
-    public TaskRegistry(IEnumerable<IFlowTask> tasks = null)
+    public TaskRegistry(IEnumerable<TaskDescriptor> tasks = null)
     {
-        Tasks = tasks?.ToList() ?? new List<IFlowTask>();
+        Tasks = tasks?.ToList() ?? new List<TaskDescriptor>();
     }
 
-    public void Add(IFlowTask task) => Tasks.Add(task);
-    public void Remove(IFlowTask task) => Tasks.Remove(task);
-    public IFlowTask Get(string taskCode) => Tasks.SingleOrDefault(x => x.Code == taskCode);
-    public IEnumerable<IFlowTask> GetAll() => Tasks;
+    public void Add(TaskDescriptor task) => Tasks.Add(task);
+    public void Remove(TaskDescriptor task) => Tasks.Remove(task);
+    public TaskDescriptor Get(string taskCode) => Tasks.SingleOrDefault(x => x.Task.Code == taskCode);
+    public IEnumerable<TaskDescriptor> GetAll() => Tasks;
 }

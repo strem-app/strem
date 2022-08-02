@@ -3,6 +3,6 @@ using Strem.Core.Registries;
 
 namespace Strem.Core.Flows.Registries;
 
-public interface ITaskRegistry : IRegistry<IFlowTask>
+public interface ITaskRegistry : IRegistry<TaskDescriptor>
 {
 }

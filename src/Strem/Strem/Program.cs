@@ -4,6 +4,7 @@ using Photino.Blazor;
 using Strem.Core.Events;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
+using Strem.Flows.Default.Modules;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Modules;
 using Strem.Infrastructure.Services.Api;
@@ -18,7 +19,7 @@ public class Program
     public static PhotinoBlazorApp CreateApp(string[] args)
     {
         var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
-        appBuilder.Services.AddModules(new InfrastructureModule(), new TwitchModule());
+        appBuilder.Services.AddModules(new InfrastructureModule(), new TwitchModule(), new DefaultFlowsModule());
         appBuilder.RootComponents.Add<App>("#app");
         return appBuilder.Build();
     }

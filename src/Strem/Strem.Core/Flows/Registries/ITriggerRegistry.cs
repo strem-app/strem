@@ -3,6 +3,6 @@ using Strem.Core.Registries;
 
 namespace Strem.Core.Flows.Registries;
 
-public interface ITriggerRegistry : IRegistry<IFlowTrigger>
+public interface ITriggerRegistry : IRegistry<TriggerDescriptor>
 {
 }

@@ -4,15 +4,15 @@ namespace Strem.Core.Flows.Registries;
 
 public class TriggerRegistry : ITriggerRegistry
 {
-    public List<IFlowTrigger> Triggers { get; }
+    public List<TriggerDescriptor> Triggers { get; }
 
-    public TriggerRegistry(IEnumerable<IFlowTrigger> triggers = null)
+    public TriggerRegistry(IEnumerable<TriggerDescriptor> triggers = null)
     {
-        Triggers = triggers?.ToList() ?? new List<IFlowTrigger>();
+        Triggers = triggers?.ToList() ?? new List<TriggerDescriptor>();
     }
 
-    public void Add(IFlowTrigger trigger) => Triggers.Add(trigger);
-    public void Remove(IFlowTrigger trigger) => Triggers.Remove(trigger);
-    public IFlowTrigger Get(string taskCode) => Triggers.SingleOrDefault(x => x.Code == taskCode);
-    public IEnumerable<IFlowTrigger> GetAll() => Triggers;
+    public void Add(TriggerDescriptor trigger) => Triggers.Add(trigger);
+    public void Remove(TriggerDescriptor trigger) => Triggers.Remove(trigger);
+    public TriggerDescriptor Get(string taskCode) => Triggers.SingleOrDefault(x => x.Trigger.Code == taskCode);
+    public IEnumerable<TriggerDescriptor> GetAll() => Triggers;
 }
