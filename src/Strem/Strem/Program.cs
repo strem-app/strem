@@ -2,7 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Photino.Blazor;
 using Strem.Core.Events;
+using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Plugins;
 using Strem.Flows.Default.Modules;
 using Strem.Infrastructure.Extensions;
@@ -67,6 +69,11 @@ public class Program
             .SetSize(1920, 1080)
             .SetUseOsDefaultSize(false)
             .Load("./wwwroot/index.html");
+        
+        logger.Information("Starting Flow Execution Engine");
+        var executionEngine = app.Services.GetService<IFlowExecutionEngine>();
+        executionEngine.StartEngine();
+        logger.Information("Started Flow Execution Engine");
         
         logger.Information("Strem Initialized");
         app.Run();

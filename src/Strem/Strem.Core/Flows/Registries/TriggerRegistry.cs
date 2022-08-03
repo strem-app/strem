@@ -1,18 +1,17 @@
-﻿using Strem.Core.Flows.Triggers;
-
-namespace Strem.Core.Flows.Registries;
+﻿namespace Strem.Core.Flows.Registries;
 
 public class TriggerRegistry : ITriggerRegistry
 {
-    public List<TriggerDescriptor> Triggers { get; }
+    public Dictionary<string, TriggerDescriptor> Triggers { get; }
 
     public TriggerRegistry(IEnumerable<TriggerDescriptor> triggers = null)
     {
-        Triggers = triggers?.ToList() ?? new List<TriggerDescriptor>();
+        Triggers = triggers?.ToDictionary(x => x.Trigger.Code, x => x) 
+                   ?? new Dictionary<string, TriggerDescriptor>();
     }
 
-    public void Add(TriggerDescriptor trigger) => Triggers.Add(trigger);
-    public void Remove(TriggerDescriptor trigger) => Triggers.Remove(trigger);
-    public TriggerDescriptor Get(string taskCode) => Triggers.SingleOrDefault(x => x.Trigger.Code == taskCode);
-    public IEnumerable<TriggerDescriptor> GetAll() => Triggers;
+    public void Add(TriggerDescriptor trigger) => Triggers.Add(trigger.Trigger.Code, trigger);
+    public void Remove(TriggerDescriptor trigger) => Triggers.Remove(trigger.Trigger.Code);
+    public TriggerDescriptor Get(string taskCode) => Triggers.ContainsKey(taskCode) ? Triggers[taskCode] : null;
+    public IEnumerable<TriggerDescriptor> GetAll() => Triggers.Values;
 }

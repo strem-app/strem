@@ -2,10 +2,7 @@
 
 namespace Strem.Core.Flows.Tasks;
 
-public interface IFlowTask : IFlowElement {}
-
-public interface IFlowTask<in T>: IFlowTask 
-    where T : IFlowTaskData
+public interface IFlowTask : IFlowElement
 {
-    Task Execute(T data, IVariables flowVars);
+    Task Execute(object data, IVariables flowVars);
 }

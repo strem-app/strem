@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Strem.Core.Events;
+using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.State;
@@ -68,6 +69,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         if (channelInformation != null && channelInformation.Data.Length > 0)
         {
             var channelData = channelInformation.Data[0];
+            AppState.TransientVariables.Set(TwitchVars.Username, TwitchVars.TwitchContext, channelData.BroadcasterName);
             AppState.TransientVariables.Set(TwitchVars.ChannelTitle, TwitchVars.TwitchContext, channelData.Title);
             AppState.TransientVariables.Set(TwitchVars.ChannelGame, TwitchVars.TwitchContext, channelData.GameName);
         }

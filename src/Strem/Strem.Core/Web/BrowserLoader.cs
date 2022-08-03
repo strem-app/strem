@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Strem.Infrastructure.Services.Web;
+namespace Strem.Core.Web;
 
-public class WebLoader : IWebLoader
+public class BrowserLoader : IBrowserLoader
 {
     public void LoadUrl(string url)
     {

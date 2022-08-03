@@ -3,9 +3,12 @@
 @using Strem.Core.Flows
 @using Strem.Core.Flows.Registries
 @using Strem.Infrastructure.Services.Persistence.Flows
+@using Strem.Core.Events.Bus
+@using Strem.Core.Events
 
 @inject ISaveFlowStorePipeline SaveFlowStore
 @inject IFlowStore FlowStore
+@inject IEventBus EventBus
 
 <div class="container is-fluid">
   <div class="columns is-variable is-6">
@@ -39,12 +42,14 @@
   {
     var data = descriptor.Data();
     CurrentFlow.TaskData.Add(data);
+    EventBus.PublishAsync(new FlowChangedEvent(CurrentFlow.Id));
   }
 
   public void AddTrigger(TriggerDescriptor descriptor)
   {
     var data = descriptor.Data();
     CurrentFlow.TriggerData.Add(data);
+    EventBus.PublishAsync(new FlowChangedEvent(CurrentFlow.Id));
   }
 
   public void SaveFlows()

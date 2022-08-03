@@ -18,21 +18,15 @@ public class DefaultFlowsModule : IDependencyModule
     public void Setup(IServiceCollection services)
     {
         // Tasks
-        services.AddSingleton<IFlowTask<WriteToLogTaskData>, WriteToLogTask>();
+        services.AddSingleton<FlowTask<WriteToLogTaskData>, WriteToLogTask>();
         
         // Task Descriptors
         services.AddTaskDescriptor<WriteToLogTaskData, WriteToLogTaskComponent>();
         
         // Triggers
-        services.AddSingleton<IFlowTrigger<OnIntervalTriggerData>, OnIntervalTrigger>();
+        services.AddSingleton<FlowTrigger<OnIntervalTriggerData>, OnIntervalTrigger>();
         
         // Trigger Descriptors
         services.AddTriggerDescriptor<OnIntervalTriggerData, OnIntervalTriggerComponent>();
-        
-        // Registries
-        services.AddSingleton<ITaskRegistry, TaskRegistry>();
-        services.AddSingleton<ITriggerRegistry, TriggerRegistry>();
     }
-
-
 }

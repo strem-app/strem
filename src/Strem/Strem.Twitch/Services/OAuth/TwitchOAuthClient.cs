@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
 using Strem.Core.Events;
+using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.Core.Utils;
 using Strem.Core.Variables;
-using Strem.Infrastructure.Services.Web;
+using Strem.Core.Web;
 using Strem.Twitch.Events;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Models;
@@ -28,15 +29,15 @@ public class TwitchOAuthClient : ITwitchOAuthClient
 
     public static readonly string SourceName = "TwitchOAuthClient";
     
-    public IWebLoader WebLoader { get; }
+    public IBrowserLoader BrowserLoader { get; }
     public IAppState AppState { get; }
     public IEventBus EventBus { get; }
     public IRandomizer Randomizer { get; }
     public ILogger<TwitchOAuthClient> Logger { get; }
 
-    public TwitchOAuthClient(IWebLoader webLoader, IAppState appState, IRandomizer randomizer, IEventBus eventBus, ILogger<TwitchOAuthClient> logger)
+    public TwitchOAuthClient(IBrowserLoader browserLoader, IAppState appState, IRandomizer randomizer, IEventBus eventBus, ILogger<TwitchOAuthClient> logger)
     {
-        WebLoader = webLoader;
+        BrowserLoader = browserLoader;
         AppState = appState;
         Randomizer = randomizer;
         EventBus = eventBus;
@@ -53,7 +54,7 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         var scopeQueryData = Uri.EscapeDataString(string.Join(" ", RequiredScopes));
         var queryData = $"client_id={TwitchVars.TwitchClientId}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";
         var completeUrl = $"{TwitchApiUrl}/{AuthorizeEndpoint}?{queryData}";
-        WebLoader.LoadUrl(completeUrl);
+        BrowserLoader.LoadUrl(completeUrl);
     }
 
     public string AttemptGetAccessToken()

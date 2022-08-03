@@ -1,7 +1,7 @@
 ﻿using Strem.Core.Events.Broker;
 using Strem.Core.Threading;
 
-namespace Strem.Core.Events;
+namespace Strem.Core.Events.Bus;
 
 public class EventBus : IEventBus
 {

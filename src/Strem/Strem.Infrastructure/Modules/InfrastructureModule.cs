@@ -7,20 +7,23 @@ using Serilog;
 using Strem.Core.DI;
 using Strem.Core.Events;
 using Strem.Core.Events.Broker;
+using Strem.Core.Events.Bus;
 using Strem.Core.Flows;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
+using Strem.Core.Flows.Registries;
 using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Core.Threading;
 using Strem.Core.Utils;
 using Strem.Core.Variables;
+using Strem.Core.Web;
 using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
 using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.Flows;
 using Strem.Infrastructure.Services.Persistence.User;
-using Strem.Infrastructure.Services.Web;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 
 namespace Strem.Infrastructure.Modules;
@@ -45,7 +48,7 @@ public class InfrastructureModule : IDependencyModule
         services.AddSingleton<IThreadHandler, ThreadHandler>();
         services.AddSingleton<IEventBus, EventBus>();
         services.AddSingleton<IRandomizer>(new DefaultRandomizer(new Random()));
-        services.AddSingleton<IWebLoader, WebLoader>();
+        services.AddSingleton<IBrowserLoader, BrowserLoader>();
         
         // Hosting
         services.AddSingleton<IApiWebHost, ApiWebHost>();
@@ -72,6 +75,9 @@ public class InfrastructureModule : IDependencyModule
         
         // Flows
         services.AddSingleton<IFlowStringProcessor, FlowStringProcessor>();
+        services.AddSingleton<ITaskRegistry, TaskRegistry>();
+        services.AddSingleton<ITriggerRegistry, TriggerRegistry>();
+        services.AddSingleton<IFlowExecutionEngine, FlowExecutionEngine>();
         
         // Plugin (this isnt technically a plugin I know)
         services.AddSingleton<IPluginStartup, InfrastructurePluginStartup>();

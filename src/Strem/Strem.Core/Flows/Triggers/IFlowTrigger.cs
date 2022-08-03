@@ -3,10 +3,7 @@ using Strem.Core.Variables;
 
 namespace Strem.Core.Flows.Triggers;
 
-public interface IFlowTrigger : IFlowElement {}
-
-public interface IFlowTrigger<in T> : IFlowTrigger 
-    where T : IFlowTriggerData
+public interface IFlowTrigger : IFlowElement
 {
-    IObservable<Unit> Execute(T data, IVariables flowVars);
+    IObservable<IVariables> Execute(object data);
 }

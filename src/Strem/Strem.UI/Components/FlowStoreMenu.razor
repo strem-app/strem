@@ -1,7 +1,10 @@
 ﻿@using Strem.Core.Flows
 @using Strem.Core.Extensions
+@using Strem.Core.Events.Bus
+@using Strem.Core.Events
 
 @inject IFlowStore FlowStore;
+@inject IEventBus EventBus;
 
 <aside class="menu">
   <p class="menu-label">
@@ -35,6 +38,8 @@
     FlowStore.Add(newFlow);
     SelectFlow(newFlow);
     ShowModal = false;
+    
+    EventBus.PublishAsync(new FlowAddedEvent(newFlow.Id));
   }
 
   public void OnFlowCancelled()

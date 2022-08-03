@@ -1,4 +1,4 @@
-namespace Strem.Core.Events;
+namespace Strem.Core.Events.Bus;
 
 /// <summary>
 /// This interface provides basic Publish and Subscriber style interactions throughout the application

@@ -8,18 +8,20 @@ using Strem.Flows.Default.Flows.Triggers.Data;
 
 namespace Strem.Flows.Default.Flows.Triggers;
 
-public class OnIntervalTrigger : IFlowTrigger<OnIntervalTriggerData>
+public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
 {
     public static readonly string TriggerCode = "on-interval";
     public static readonly string TriggerVersion = "1.0.0";
-    public string Code => TriggerCode;
-    public string Version => TriggerVersion;
+    public override string Code => TriggerCode;
+    public override string Version => TriggerVersion;
 
-    public string Name => "On Interval";
-    public string Description => "Triggers the flow every time the interval is met";
+    public override string Name => "On Interval";
+    public override string Description => "Triggers the flow every time the interval is met";
     
-    public IObservable<Unit> Execute(OnIntervalTriggerData data, IVariables flowVars)
+    public override IObservable<IVariables> Execute(OnIntervalTriggerData data)
     {
+        var variables = new Variables();
+        
         TimeSpan timespan;
         switch (data.IntervalUnits)
         {
@@ -30,8 +32,8 @@ public class OnIntervalTrigger : IFlowTrigger<OnIntervalTriggerData>
         }
 
         if (data.StartImmediately)
-        { return Observable.Timer(TimeSpan.Zero, timespan).ToUnit(); }
+        { return Observable.Timer(TimeSpan.Zero, timespan).Select(x => variables); }
 
-        return Observable.Interval(timespan).ToUnit();
+        return Observable.Interval(timespan).Select(x => variables);
     }
 }

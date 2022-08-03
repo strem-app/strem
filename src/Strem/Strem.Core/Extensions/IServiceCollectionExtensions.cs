@@ -28,7 +28,7 @@ public static class IServiceCollectionExtensions
         where TData : IFlowTaskData, new()
     {
         return serviceCollection.AddSingleton(x => 
-            new TaskDescriptor(x.GetService<IFlowTask<TData>>(),
+            new TaskDescriptor(x.GetService<FlowTask<TData>>(),
             () => new TData(), typeof(TComponent)));
     }
     
@@ -36,7 +36,7 @@ public static class IServiceCollectionExtensions
         where TData : IFlowTriggerData, new()
     {
         return serviceCollection.AddSingleton(x => 
-            new TriggerDescriptor(x.GetService<IFlowTrigger<TData>>(),
+            new TriggerDescriptor(x.GetService<FlowTrigger<TData>>(),
             () => new TData(), typeof(TComponent)));
     }
 }

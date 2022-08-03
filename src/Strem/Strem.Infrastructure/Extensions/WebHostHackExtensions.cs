@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Strem.Core.Events;
+using Strem.Core.Events.Bus;
 
 namespace Strem.Infrastructure.Extensions;
 
