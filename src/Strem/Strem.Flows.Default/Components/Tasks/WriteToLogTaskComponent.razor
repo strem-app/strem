@@ -1,6 +1,6 @@
 ﻿@using Strem.Flows.Default.Flows.Tasks.Data
 
-<TaskComponent Title="Write Text To File">
+<TaskComponent Title="Write Text To File" OnRequestedDeletion="OnRequestedDeletion">
     <div class="field">
       <label class="label">Text To Log</label>
       <div class="control">
@@ -12,4 +12,7 @@
 @code {
     [Parameter]
     public WriteToLogTaskData Data { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnRequestedDeletion { get; set; }
 }

@@ -2,7 +2,10 @@
 @using Strem.Core.Flows.Registries
 @using Strem.Core.Flows.Tasks
 @using Strem.Core.Flows.Triggers
+@using Strem.Core.Events.Bus
+@using Strem.Core.Events.Flows
 
+@inject IEventBus EventBus;
 @inject ITaskRegistry TaskRegistry;
 @inject ITriggerRegistry TriggerRegistry;
 
@@ -38,6 +41,29 @@
   
   public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
   public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
-  public Dictionary<string, object> GetProps(IFlowTaskData data) => new() { { "Data", data } };
-  public Dictionary<string, object> GetProps(IFlowTriggerData data) => new() { { "Data", data } };
+  
+  public Dictionary<string, object> GetProps(IFlowTaskData data) => new() {
+    {"Data", data },
+    {"OnRequestedDeletion", EventCallback.Factory.Create(this, () => RemoveTaskData(data) )}
+  };
+  
+  public Dictionary<string, object> GetProps(IFlowTriggerData data) => new() {
+    {"Data", data },
+    {"OnRequestedDeletion", EventCallback.Factory.Create(this, () => RemoveTriggerData(data) )},
+    {"OnRequestedReset", EventCallback.Factory.Create(this, () => ResetTriggers(data) )}
+  };
+
+  public void RemoveTaskData(IFlowTaskData data)
+  {
+    Flow.TaskData.Remove(data);
+  }
+
+  public void RemoveTriggerData(IFlowTriggerData data)
+  {
+    Flow.TriggerData.Remove(data);
+    EventBus.PublishAsync(new FlowTriggersChangedEvent(Flow.Id));
+  }
+
+  public void ResetTriggers(IFlowTriggerData data)
+  { EventBus.PublishAsync(new FlowTriggersChangedEvent(Flow.Id)); }
 }

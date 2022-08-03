@@ -1,10 +1,10 @@
 ﻿namespace Strem.Core.Events.Flows;
 
-public class FlowRemovedEvent
+public class FlowTriggersChangedEvent
 {
     public Guid FlowId { get; }
 
-    public FlowRemovedEvent(Guid flowId)
+    public FlowTriggersChangedEvent(Guid flowId)
     {
         FlowId = flowId;
     }

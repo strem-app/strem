@@ -1,10 +1,24 @@
 ﻿<Accordion Title="@Title" StyleType="is-success">
-    @ChildContent 
+    @ChildContent
+    <div class="field is-grouped is-grouped-right">
+        <div class="control">
+            <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync()">Delete Trigger</button>
+        </div>
+          <div class="control">
+            <button class="button is-info" @onclick="() => OnRequestedReset.InvokeAsync()">Reset Trigger</button>
+          </div>
+    </div>
 </Accordion>
 
 @code {
     [Parameter] 
     public RenderFragment ChildContent  { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnRequestedDeletion { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnRequestedReset { get; set; }
     
     [Parameter]
     public string Title { get; set; }

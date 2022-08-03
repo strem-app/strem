@@ -5,6 +5,7 @@
 @using Strem.Infrastructure.Services.Persistence.Flows
 @using Strem.Core.Events.Bus
 @using Strem.Core.Events
+@using Strem.Core.Events.Flows
 
 @inject ISaveFlowStorePipeline SaveFlowStore
 @inject IFlowStore FlowStore
@@ -13,7 +14,7 @@
 <div class="container is-fluid">
   <div class="columns is-variable is-6">
     <div class="column is-one-quarter">
-      <button @onclick="SaveFlows">SAVE</button>
+      <button class="button is-info" @onclick="SaveFlows">Force Flow Save</button>
       <FlowStoreMenu OnFlowSelected="x => CurrentFlow = x"></FlowStoreMenu>
     </div>
     <div class="column">
@@ -42,14 +43,14 @@
   {
     var data = descriptor.Data();
     CurrentFlow.TaskData.Add(data);
-    EventBus.PublishAsync(new FlowChangedEvent(CurrentFlow.Id));
+    EventBus.PublishAsync(new FlowTasksChangedEvent(CurrentFlow.Id));
   }
 
   public void AddTrigger(TriggerDescriptor descriptor)
   {
     var data = descriptor.Data();
     CurrentFlow.TriggerData.Add(data);
-    EventBus.PublishAsync(new FlowChangedEvent(CurrentFlow.Id));
+    EventBus.PublishAsync(new FlowTriggersChangedEvent(CurrentFlow.Id));
   }
 
   public void SaveFlows()

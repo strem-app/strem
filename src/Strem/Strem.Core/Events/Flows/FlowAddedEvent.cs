@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Events;
+﻿namespace Strem.Core.Events.Flows;
 
 public class FlowAddedEvent
 {

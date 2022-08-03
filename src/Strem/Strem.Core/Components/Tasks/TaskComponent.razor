@@ -1,10 +1,18 @@
 ﻿<Accordion Title="@Title" StyleType="is-info">
     @ChildContent
+    <div class="field is-grouped is-grouped-right">
+      <div class="control">
+        <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync()">Delete Task</button>
+      </div>
+    </div>
 </Accordion>
 
 @code {
     [Parameter] 
     public RenderFragment ChildContent  { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnRequestedDeletion { get; set; }
     
     [Parameter]
     public string Title { get; set; }

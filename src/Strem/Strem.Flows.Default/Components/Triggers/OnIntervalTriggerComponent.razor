@@ -1,7 +1,7 @@
 ﻿@using Strem.Flows.Default.Flows.Triggers.Data
 @using Strem.Core.Utils
 
-<TriggerComponent Title="@Title">
+<TriggerComponent Title="@Title" OnRequestedDeletion="OnRequestedDeletion" OnRequestedReset="OnRequestedReset">
     <div class="field">
         <label class="label">Interval Type</label>
         <div class="control">
@@ -35,6 +35,12 @@
 @code {
     [Parameter]
     public OnIntervalTriggerData Data { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnRequestedDeletion { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnRequestedReset { get; set; }
     
     public string Title => $"Trigger Every {Data.IntervalValue} {Data.IntervalUnits}";
 }

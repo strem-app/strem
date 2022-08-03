@@ -2,6 +2,7 @@
 using System.Reactive.Linq;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
+using Strem.Core.Events.Flows;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Registries;
 using Strem.Core.Variables;
@@ -38,8 +39,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             .Subscribe(x => RemoveFlow(x.FlowId))
             .AddTo(InternalSubs);
         
-        EventBus.Receive<FlowChangedEvent>()
-            .Throttle(TimeSpan.FromSeconds(5))
+        EventBus.Receive<FlowTriggersChangedEvent>()
             .Subscribe(x =>
             {
                 RemoveFlow(x.FlowId);
