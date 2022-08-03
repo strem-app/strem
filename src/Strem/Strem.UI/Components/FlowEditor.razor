@@ -18,7 +18,8 @@
     @foreach (var data in Flow.TriggerData)
     {
       <li class="block">
-        <DynamicComponent Type="GetComponentFor(data)" Parameters="GetProps(data)"></DynamicComponent>
+        <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" 
+                          OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers"/>
       </li>
     }
   </ul>
@@ -29,7 +30,7 @@
     @foreach (var data in Flow.TaskData)
     {
       <li class="block">
-        <DynamicComponent Type="GetComponentFor(data)" Parameters="GetProps(data)"></DynamicComponent>
+        <TaskComponent Data="data" ComponentType="GetComponentFor(data)" OnRequestedDeletion="RemoveTaskData"/>
       </li>
     }
   </ul>
@@ -41,11 +42,6 @@
   
   public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
   public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
-  
-  public Dictionary<string, object> GetProps(IFlowTaskData data) => new() {
-    {"Data", data },
-    {"OnRequestedDeletion", EventCallback.Factory.Create(this, () => RemoveTaskData(data) )}
-  };
   
   public Dictionary<string, object> GetProps(IFlowTriggerData data) => new() {
     {"Data", data },

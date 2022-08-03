@@ -1,25 +1,41 @@
-﻿<Accordion Title="@Title" StyleType="is-success">
-    @ChildContent
+﻿@using Strem.Core.Flows.Tasks
+@using Strem.Core.Flows.Triggers
+
+<Accordion Title="@Title" StyleType="is-success">
+    <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
     <div class="field is-grouped is-grouped-right">
         <div class="control">
-            <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync()">Delete Trigger</button>
+            <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Trigger</button>
         </div>
           <div class="control">
-            <button class="button is-info" @onclick="() => OnRequestedReset.InvokeAsync()">Reset Trigger</button>
+            <button class="button is-info" @onclick="() => OnRequestedReset.InvokeAsync(Data)">Reset Trigger</button>
           </div>
     </div>
 </Accordion>
 
 @code {
-    [Parameter] 
-    public RenderFragment ChildContent  { get; set; }
+    [Parameter]
+    public Type ComponentType { get; set; }
+    
+    [Parameter]
+    public IFlowTriggerData Data { get; set; }
     
     [Parameter] 
-    public EventCallback OnRequestedDeletion { get; set; }
+    public EventCallback<IFlowTriggerData> OnRequestedDeletion { get; set; }
     
     [Parameter] 
-    public EventCallback OnRequestedReset { get; set; }
+    public EventCallback<IFlowTriggerData> OnRequestedReset { get; set; }
     
     [Parameter]
     public string Title { get; set; }
+    
+    public Dictionary<string, object> GetProps() => new() {
+        {"Data", Data },
+        {"OnTitleChanged", EventCallback.Factory.Create<string>(this, OnTitleChanged)}
+    };
+    
+    public void OnTitleChanged(string newTitle)
+    {
+        Title = newTitle;
+    }
 }

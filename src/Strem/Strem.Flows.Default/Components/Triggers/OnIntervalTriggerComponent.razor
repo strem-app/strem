@@ -1,46 +1,37 @@
 ﻿@using Strem.Flows.Default.Flows.Triggers.Data
 @using Strem.Core.Utils
+@using Strem.Core.Flows.Triggers
 
-<TriggerComponent Title="@Title" OnRequestedDeletion="OnRequestedDeletion" OnRequestedReset="OnRequestedReset">
-    <div class="field">
-        <label class="label">Interval Type</label>
-        <div class="control">
-            <div class="select">
-                <select @bind="Data.IntervalUnits">
-                    @foreach (var timeUnit in Enum.GetValues(typeof(TimeUnit)))
-                    {
-                        <option value="@timeUnit">@((TimeUnit)timeUnit)</option>
-                    }
-                </select>
-            </div>
+@inherits CustomTriggerComponent<OnIntervalTriggerData>
+
+<div class="field">
+    <label class="label">Interval Type</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.IntervalUnits">
+                @foreach (var timeUnit in Enum.GetValues(typeof(TimeUnit)))
+                {
+                    <option value="@timeUnit">@((TimeUnit)timeUnit)</option>
+                }
+            </select>
         </div>
     </div>
-    <div class="field">
-        <label class="label">Interval Value</label>
-        <div class="control">
-            <input class="input" type="text" placeholder="i.e 5" @bind-value="Data.IntervalValue">
-        </div>
+</div>
+<div class="field">
+    <label class="label">Interval Value</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e 5" @bind="Data.IntervalValue">
     </div>
-    <div class="field">
-      <div class="control">
-        <label class="checkbox">
-          <input type="checkbox" @bind-value="Data.StartImmediately">
-          Should It Trigger On Start Too?
-        </label>
-      </div>
-    </div>
-</TriggerComponent>
-
+</div>
+<div class="field">
+  <div class="control">
+    <label class="checkbox">
+      <input type="checkbox" @bind="Data.StartImmediately">
+      Should It Trigger On Start Too?
+    </label>
+  </div>
+</div>
 
 @code {
-    [Parameter]
-    public OnIntervalTriggerData Data { get; set; }
-    
-    [Parameter] 
-    public EventCallback OnRequestedDeletion { get; set; }
-    
-    [Parameter] 
-    public EventCallback OnRequestedReset { get; set; }
-    
-    public string Title => $"Trigger Every {Data.IntervalValue} {Data.IntervalUnits}";
+    public override string Title => $"Trigger Every {Data.IntervalValue} {Data.IntervalUnits}";
 }
