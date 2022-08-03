@@ -1,4 +1,5 @@
 ﻿@using Strem.Core.Flows.Registries
+@using Strem.Core.Flows
 
 @inject ITaskRegistry TaskRegistry;
 @inject ITriggerRegistry TriggerRegistry;
@@ -10,7 +11,10 @@
   <ul class="menu-list">
     @foreach (var trigger in TriggerRegistry.GetAll())
     {
-      <li><a class="has-tooltip-left has-tooltip-multiline" data-tooltip="@trigger.Trigger.Description" @onclick="() => OnTriggerSelected.InvokeAsync(trigger)">@trigger.Trigger.Name</a></li>
+      if (!DoesFlowContainTrigger(trigger))
+      {
+        <li><a class="has-tooltip-left has-tooltip-multiline" data-tooltip="@trigger.Trigger.Description" @onclick="() => OnTriggerSelected.InvokeAsync(trigger)">@trigger.Trigger.Name</a></li>
+      }
     }
   </ul>
   <p class="menu-label">
@@ -25,9 +29,15 @@
 </aside>
 
 @code {
+  [Parameter]
+  public Flow Flow { get; set; }
+  
   [Parameter] 
   public EventCallback<TaskDescriptor> OnTaskSelected { get; set; }
   
   [Parameter] 
   public EventCallback<TriggerDescriptor> OnTriggerSelected { get; set; }
+
+  public bool DoesFlowContainTrigger(TriggerDescriptor triggerDescriptor)
+  { return Flow.TriggerData.Any(x => x.Code == triggerDescriptor.Trigger.Code); }
 }

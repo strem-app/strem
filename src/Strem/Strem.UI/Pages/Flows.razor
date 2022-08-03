@@ -26,7 +26,7 @@
     <div class="column is-one-quarter">
     @if (CurrentFlow != null)
     {
-      <FlowElementsMenu OnTaskSelected="AddTask" OnTriggerSelected="AddTrigger"></FlowElementsMenu>
+      <FlowElementsMenu Flow="CurrentFlow" OnTaskSelected="AddTask" OnTriggerSelected="AddTrigger"></FlowElementsMenu>
     }
     </div>
   </div>
