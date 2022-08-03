@@ -5,10 +5,10 @@
 @using Strem.Infrastructure.Services.Persistence.App
 @using Strem.Infrastructure.Services.Persistence.User
 
-@inject ILoadAppVariablesPipeline LoadUserPipeline;
-@inject ILoadUserVariablesPipeline LoadAppPipeline;
-@inject ISaveAppVariablesPipeline SaveAppPipeline;
-@inject ISaveUserVariablesPipeline SaveUserPipeline;
+@inject ILoadAppDataPipeline LoadUserPipeline;
+@inject ILoadUserDataPipeline LoadAppPipeline;
+@inject ISaveAppDataPipeline SaveAppPipeline;
+@inject ISaveUserDataPipeline SaveUserPipeline;
 @inject IAppState AppState;
 
 <div class="container">
@@ -30,7 +30,7 @@
     
     <article class="message is-info">
         <div class="message-header">
-            UserData: @LoadUserPipeline.VariableFilePath
+            UserData: @LoadUserPipeline.DataFilePath
             <a @onclick="SaveUserData">
                 <span class="icon is-small">
                     <i class="fas fa-floppy-disk"></i>
@@ -62,7 +62,7 @@
     
     <article class="message is-info">
         <div class="message-header">
-            AppData: @LoadAppPipeline.VariableFilePath
+            AppData: @LoadAppPipeline.DataFilePath
             <a @onclick="SaveAppData">
                 <span class="icon is-small">
                     <i class="fas fa-floppy-disk"></i>

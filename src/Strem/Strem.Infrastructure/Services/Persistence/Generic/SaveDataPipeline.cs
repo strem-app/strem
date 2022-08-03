@@ -5,20 +5,18 @@ using Persistity.Flow.Builders;
 using Persistity.Flow.Pipelines;
 using Persistity.Flow.Steps.Types;
 using Persistity.Processors.Encryption;
-using Strem.Core.State;
-using Strem.Core.Variables;
 
 namespace Strem.Infrastructure.Services.Persistence.Generic;
 
-public abstract class SaveVariablesPipeline : FlowPipeline, ISaveVariablesPipeline
+public abstract class SaveDataPipeline<T> : FlowPipeline, ISaveDataPipeline<T>
 {
     public ISerializer Serializer { get; }
     public IEncryptor Encryptor { get; }
 
-    public abstract string VariableFilePath { get; }
+    public abstract string DataFilePath { get; }
     public abstract bool IsEncrypted { get; }
     
-    public SaveVariablesPipeline(PipelineBuilder pipelineBuilder, ISerializer serializer, IEncryptor encryptor)
+    public SaveDataPipeline(PipelineBuilder pipelineBuilder, ISerializer serializer, IEncryptor encryptor)
     {
         Serializer = serializer;
         Encryptor = encryptor;
@@ -35,10 +33,10 @@ public abstract class SaveVariablesPipeline : FlowPipeline, ISaveVariablesPipeli
         { buildState = buildState.ProcessWith(new EncryptDataProcessor(Encryptor)); }
             
         return buildState
-            .ThenSendTo(new FileEndpoint(VariableFilePath))
+            .ThenSendTo(new FileEndpoint(DataFilePath))
             .BuildSteps();
     }
 
-    public async Task Execute(IVariables variables)
-    { await base.Execute(variables); }
+    public async Task Execute(T data)
+    { await base.Execute(data); }
 }

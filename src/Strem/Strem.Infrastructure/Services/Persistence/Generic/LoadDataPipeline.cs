@@ -10,15 +10,15 @@ using Strem.Core.Variables;
 
 namespace Strem.Infrastructure.Services.Persistence.Generic;
 
-public abstract class LoadVariablesPipeline : FlowPipeline, ILoadVariablesPipeline
+public abstract class LoadDataPipeline<T> : FlowPipeline, ILoadDataPipeline<T>
 {
     public IDeserializer Deserializer { get; }
     public IEncryptor Encryptor { get; }
     
-    public abstract string VariableFilePath { get; }
+    public abstract string DataFilePath { get; }
     public abstract bool IsEncrypted { get; }
 
-    public LoadVariablesPipeline(PipelineBuilder pipelineBuilder, IDeserializer deserializer, IEncryptor encryptor)
+    public LoadDataPipeline(PipelineBuilder pipelineBuilder, IDeserializer deserializer, IEncryptor encryptor)
     {
         Deserializer = deserializer;
         Encryptor = encryptor;
@@ -28,16 +28,16 @@ public abstract class LoadVariablesPipeline : FlowPipeline, ILoadVariablesPipeli
     protected IEnumerable<IPipelineStep> BuildSteps(PipelineBuilder builder)
     {
         var buildState = builder
-            .StartFrom(new FileEndpoint(VariableFilePath));
+            .StartFrom(new FileEndpoint(DataFilePath));
 
         if (IsEncrypted)
         { buildState = buildState.ProcessWith(new DecryptDataProcessor(Encryptor)); }
             
         return buildState
-            .DeserializeWith<Variables>(Deserializer)
+            .DeserializeWith<T>(Deserializer)
             .BuildSteps();
     }
 
-    public async Task<IVariables> Execute()
-    { return (Variables)await base.Execute(); }
+    public async Task<T> Execute()
+    { return (T)await base.Execute(); }
 }

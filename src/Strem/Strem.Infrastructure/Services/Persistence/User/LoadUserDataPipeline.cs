@@ -1,16 +1,17 @@
 ﻿using Persistity.Core.Serialization;
 using Persistity.Encryption;
 using Persistity.Flow.Builders;
+using Strem.Core.Variables;
 using Strem.Infrastructure.Services.Persistence.Generic;
 
 namespace Strem.Infrastructure.Services.Persistence.User;
 
-public class LoadUserVariablesPipeline : LoadVariablesPipeline, ILoadUserVariablesPipeline
+public class LoadUserDataPipeline : LoadDataPipeline<Variables>, ILoadUserDataPipeline
 {
-    public override string VariableFilePath => $"{PathHelper.AppDirectory}user.dat";
+    public override string DataFilePath => $"{PathHelper.AppDirectory}user.dat";
     public override bool IsEncrypted => false;
 
-    public LoadUserVariablesPipeline(PipelineBuilder pipelineBuilder, IDeserializer deserializer, IEncryptor encryptor)
+    public LoadUserDataPipeline(PipelineBuilder pipelineBuilder, IDeserializer deserializer, IEncryptor encryptor)
         : base(pipelineBuilder, deserializer, encryptor)
     {
     }

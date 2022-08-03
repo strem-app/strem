@@ -1,10 +1,8 @@
-using Persistity.Flow.Pipelines;
 using Strem.Core.Flows;
+using Strem.Infrastructure.Services.Persistence.Generic;
 
 namespace Strem.Infrastructure.Services.Persistence.Flows;
 
-public interface ISaveFlowStorePipeline : IFlowPipeline
+public interface ISaveFlowStorePipeline : ISaveDataPipeline<IFlowStore>
 {
-    public Task Execute(FlowStore flowStore);
-    string FlowStoreFilePath { get; }
 }

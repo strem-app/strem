@@ -1,10 +1,8 @@
-using Persistity.Flow.Pipelines;
 using Strem.Core.Flows;
+using Strem.Infrastructure.Services.Persistence.Generic;
 
 namespace Strem.Infrastructure.Services.Persistence.Flows;
 
-public interface ILoadFlowStorePipeline : IFlowPipeline
+public interface ILoadFlowStorePipeline : ILoadDataPipeline<FlowStore>
 {
-    public Task<FlowStore> Execute();
-    string FlowStoreFilePath { get; }
 }

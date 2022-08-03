@@ -7,10 +7,10 @@
 @inject ISaveFlowStorePipeline SaveFlowStore
 @inject IFlowStore FlowStore
 
-<button @onclick="SaveFlows">SAVE</button>
 <div class="container is-fluid">
-  <div class="columns">
+  <div class="columns is-variable is-6">
     <div class="column is-one-quarter">
+      <button @onclick="SaveFlows">SAVE</button>
       <FlowStoreMenu OnFlowSelected="x => CurrentFlow = x"></FlowStoreMenu>
     </div>
     <div class="column">

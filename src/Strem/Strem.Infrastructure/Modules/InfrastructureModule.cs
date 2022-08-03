@@ -58,10 +58,10 @@ public class InfrastructureModule : IDependencyModule
         services.AddSingleton<PipelineBuilder>();
         
         // Persistence
-        services.AddSingleton<ISaveAppVariablesPipeline, SaveAppVariablesPipeline>();
-        services.AddSingleton<ILoadAppVariablesPipeline, LoadAppVariablesPipeline>();
-        services.AddSingleton<ISaveUserVariablesPipeline, SaveUserVariablesPipeline>();
-        services.AddSingleton<ILoadUserVariablesPipeline, LoadUserVariablesPipeline>();
+        services.AddSingleton<ISaveAppDataPipeline, SaveAppDataPipeline>();
+        services.AddSingleton<ILoadAppDataPipeline, LoadAppDataPipeline>();
+        services.AddSingleton<ISaveUserDataPipeline, SaveUserDataPipeline>();
+        services.AddSingleton<ILoadUserDataPipeline, LoadUserDataPipeline>();
         services.AddSingleton<ILoadFlowStorePipeline, LoadFlowStorePipeline>();
         services.AddSingleton<ISaveFlowStorePipeline, SaveFlowStorePipeline>();
 
