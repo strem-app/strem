@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Triggers;
+using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Utils;
 using Strem.Core.Variables;
@@ -21,16 +22,12 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
 
     public override string Name => "On Interval";
     public override string Description => "Triggers the flow every time the interval is met";
-    
-    public ILogger<WriteToLogTask> Logger { get; }
-    public IFlowStringProcessor FlowStringProcessor { get; }
 
-    public OnIntervalTrigger(ILogger<WriteToLogTask> logger, IFlowStringProcessor flowStringProcessor)
+    public OnIntervalTrigger(ILogger<IFlowTrigger> logger, IFlowStringProcessor flowStringProcessor, IAppState appState) 
+        : base(logger, flowStringProcessor, appState)
     {
-        Logger = logger;
-        FlowStringProcessor = flowStringProcessor;
     }
-    
+
     public override IObservable<IVariables> Execute(OnIntervalTriggerData data)
     {
         var variables = new Variables();

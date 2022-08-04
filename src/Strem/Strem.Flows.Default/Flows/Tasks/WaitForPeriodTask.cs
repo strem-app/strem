@@ -2,6 +2,7 @@
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
+using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Flows.Tasks.Data;
 
@@ -17,13 +18,9 @@ public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
     public override string Name => "Wait For Period";
     public override string Description => "Sets a variable for use later within the process";
 
-    public IFlowStringProcessor FlowStringProcessor { get; }
-    public ILogger<WaitForPeriodTask> Logger { get; }
-
-    public WaitForPeriodTask(IFlowStringProcessor flowStringProcessor, ILogger<WaitForPeriodTask> logger)
+    public WaitForPeriodTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState) 
+        : base(logger, flowStringProcessor, appState)
     {
-        FlowStringProcessor = flowStringProcessor;
-        Logger = logger;
     }
 
     public override async Task Execute(WaitForPeriodTaskData data, IVariables flowVars)

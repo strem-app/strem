@@ -2,6 +2,7 @@
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
+using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Flows.Tasks.Data;
 
@@ -17,13 +18,9 @@ public class WriteToLogTask : FlowTask<WriteToLogTaskData>
     public override string Name => "Write To Log";
     public override string Description => "Writes the text out to the log file, useful for debugging";
 
-    public ILogger<WriteToLogTask> Logger { get; }
-    public IFlowStringProcessor FlowStringProcessor { get; }
-
-    public WriteToLogTask(ILogger<WriteToLogTask> logger, IFlowStringProcessor flowStringProcessor)
+    public WriteToLogTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState) 
+        : base(logger, flowStringProcessor, appState)
     {
-        Logger = logger;
-        FlowStringProcessor = flowStringProcessor;
     }
 
     public override async Task Execute(WriteToLogTaskData data, IVariables flowVars)
