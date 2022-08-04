@@ -16,10 +16,8 @@ namespace Strem.Flows.Default.Flows.Triggers;
 
 public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
 {
-    public static readonly string TriggerCode = "on-interval";
-    public static readonly string TriggerVersion = "1.0.0";
-    public override string Code => TriggerCode;
-    public override string Version => TriggerVersion;
+    public override string Code => OnIntervalTriggerData.TriggerCode;
+    public override string Version => OnIntervalTriggerData.TriggerVersion;
 
     public override string Name => "On Interval";
     public override string Description => "Triggers the flow every time the interval is met";

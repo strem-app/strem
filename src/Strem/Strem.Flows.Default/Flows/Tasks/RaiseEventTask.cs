@@ -11,10 +11,8 @@ namespace Strem.Flows.Default.Flows.Tasks;
 
 public class RaiseEventTask : FlowTask<RaiseEventTaskData>
 {
-    public static readonly string TaskCode = "raise-event";
-    public static readonly string TaskVersion = "1.0.0";
-    public override string Code => TaskCode;
-    public override string Version => TaskVersion;
+    public override string Code => RaiseEventTaskData.TaskCode;
+    public override string Version => RaiseEventTaskData.TaskVersion;
     
     public override string Name => "Raise An Event";
     public override string Description => "Raises an event for other flows to listen to";

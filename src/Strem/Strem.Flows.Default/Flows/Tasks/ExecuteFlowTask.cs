@@ -13,10 +13,8 @@ namespace Strem.Flows.Default.Flows.Tasks;
 
 public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
 {
-    public static readonly string TaskCode = "execute-flow";
-    public static readonly string TaskVersion = "1.0.0";
-    public override string Code => TaskCode;
-    public override string Version => TaskVersion;
+    public override string Code => ExecuteFlowTaskData.TaskCode;
+    public override string Version => ExecuteFlowTaskData.TaskVersion;
     
     public override string Name => "Execute Flow";
     public override string Description => "Executes an existing flow";

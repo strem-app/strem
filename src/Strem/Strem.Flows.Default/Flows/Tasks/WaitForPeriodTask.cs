@@ -11,10 +11,8 @@ namespace Strem.Flows.Default.Flows.Tasks;
 
 public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
 {
-    public static readonly string TaskCode = "wait-for-period";
-    public static readonly string TaskVersion = "1.0.0";
-    public override string Code => TaskCode;
-    public override string Version => TaskVersion;
+    public override string Code => WaitForPeriodTaskData.TaskCode;
+    public override string Version => WaitForPeriodTaskData.TaskVersion;
     
     public override string Name => "Wait For Period";
     public override string Description => "Sets a variable for use later within the process";

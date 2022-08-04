@@ -6,8 +6,11 @@ namespace Strem.Flows.Default.Flows.Tasks.Data;
 
 public class WaitForPeriodTaskData : IFlowTaskData
 {
-    public string Code => WaitForPeriodTask.TaskCode;
-    public string Version { get; set; } = WaitForPeriodTask.TaskVersion;
+    public static readonly string TaskCode = "wait-for-period";
+    public static readonly string TaskVersion = "1.0.0";
+    
+    public string Code => TaskCode;
+    public string Version { get; set; } = TaskVersion;
     
     public string WaitAmount { get; set; }
     public TimeUnit WaitUnits { get; set; }

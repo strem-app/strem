@@ -13,10 +13,8 @@ namespace Strem.Flows.Default.Flows.Triggers;
 
 public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
 {
-    public static readonly string TriggerCode = "on-event-raised";
-    public static readonly string TriggerVersion = "1.0.0";
-    public override string Code => TriggerCode;
-    public override string Version => TriggerVersion;
+    public override string Code => OnEventRaisedTriggerData.TriggerCode;
+    public override string Version => OnEventRaisedTriggerData.TriggerVersion;
 
     public override string Name => "On Event Raised";
     public override string Description => "Triggers when the matching event is raised";

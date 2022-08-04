@@ -11,10 +11,8 @@ namespace Strem.Flows.Default.Flows.Tasks;
 
 public class WriteToLogTask : FlowTask<WriteToLogTaskData>
 {
-    public static readonly string TaskCode = "write-to-log";
-    public static readonly string TaskVersion = "1.0.0";
-    public override string Code => TaskCode;
-    public override string Version => TaskVersion;
+    public override string Code => WriteToLogTaskData.TaskCode;
+    public override string Version => WriteToLogTaskData.TaskVersion;
     
     public override string Name => "Write To Log";
     public override string Description => "Writes the text out to the log file, useful for debugging";

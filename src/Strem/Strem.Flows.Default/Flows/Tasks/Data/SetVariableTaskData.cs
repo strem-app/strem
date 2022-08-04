@@ -5,8 +5,11 @@ namespace Strem.Flows.Default.Flows.Tasks.Data;
 
 public class SetVariableTaskData : IFlowTaskData
 {
-    public string Code => SetVariableTask.TaskCode;
-    public string Version { get; set; } = SetVariableTask.TaskVersion;
+    public static readonly string TaskCode = "set-variable";
+    public static readonly string TaskVersion = "1.0.0";
+    
+    public string Code => TaskCode;
+    public string Version { get; set; } = TaskVersion;
     
     public string Name { get; set; }
     public string Context { get; set; }
