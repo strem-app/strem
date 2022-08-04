@@ -18,14 +18,14 @@ public static class IServiceCollectionComponentExtensions
     public static readonly Type FlowTriggerType = typeof(FlowTrigger<>);
     public static readonly Type FlowTriggerComponentType = typeof(CustomTriggerComponent<>);
 
-    public static Type[] WhereClassesImplement(this Type[] types, Type interfaceType)
+    public static Type[] WhereClassesImplement(this IEnumerable<Type> types, Type interfaceType)
     {
         return types
             .Where(p => p.IsClass && !p.IsAbstract && p != FlowTaskInterfaceType && p.GetInterfaces().Any(i => i == interfaceType))
             .ToArray();
     }
     
-    public static Type[] WhereClassesInheritFrom(this Type[] types, Type baseClassType)
+    public static Type[] WhereClassesInheritFrom(this IEnumerable<Type> types, Type baseClassType)
     {
         return types
             .Where(p => !p.IsInterface && !p.IsAbstract && baseClassType.IsAssignableFrom(p))

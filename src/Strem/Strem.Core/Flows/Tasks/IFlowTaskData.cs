@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Flows.Tasks;
+namespace Strem.Core.Flows.Tasks;
 
 public interface IFlowTaskData : IFlowElementData
 {

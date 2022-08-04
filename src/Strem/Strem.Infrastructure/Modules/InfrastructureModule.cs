@@ -35,7 +35,11 @@ public class InfrastructureModule : IDependencyModule
         // Tertiary
         JsonConvert.DefaultSettings = () => new JsonSerializerSettings
         {
-            Converters = new List<JsonConverter> { new VariableDictionaryConvertor() },
+            Converters = new List<JsonConverter>
+            {
+                new VariableDictionaryConvertor(), 
+                new FlowTaskDataConvertor(), new FlowTriggerDataConvertor()
+            },
             TypeNameHandling = TypeNameHandling.Auto,
             Formatting = Formatting.Indented
         };
