@@ -1,0 +1,26 @@
+﻿@using Strem.Flows.Default.Flows.Tasks.Data
+
+@inherits CustomTaskComponent<RaiseEventTaskData>
+
+<div class="field">
+    <label class="label">Event Name</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e user-redeemed-points" @bind="Data.EventName">
+    </div>
+</div>
+<div class="field">
+    <label class="label">Optional Data</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e V(chat-user, twitch) or any text" @bind="Data.Data">
+    </div>
+</div>
+
+@code {
+    public override string Title => GenerateTitle();
+
+    public string GenerateTitle()
+    {
+        var dataSection = string.IsNullOrEmpty(Data.Data) ? "" : " With Data";
+        return $"Raise Event <strong>{Data.EventName}{dataSection}</strong>";
+    }
+}
