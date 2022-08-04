@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Flows.Triggers;
+using Strem.Core.Types;
 using Strem.Core.Utils;
 using Strem.Flows.Default.Flows.Tasks;
 
@@ -10,6 +11,6 @@ public class OnIntervalTriggerData : IFlowTriggerData
     public string Version { get; set; } = OnIntervalTrigger.TriggerVersion;
     
     public bool StartImmediately { get; set; }
-    public int IntervalValue { get; set; }
+    public string IntervalValue { get; set; }
     public TimeUnit IntervalUnits { get; set; }
 }

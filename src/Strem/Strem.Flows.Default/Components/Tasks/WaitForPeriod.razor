@@ -1,0 +1,25 @@
+﻿@using Strem.Flows.Default.Flows.Tasks.Data
+@using Strem.Core.Types
+
+@inherits CustomTaskComponent<WaitForPeriodTaskData>
+
+<div class="field">
+    <label class="label">Period Type</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.WaitUnits">
+                <EnumSelectOptions EnumType="typeof(TimeUnit)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="field">
+    <label class="label">Interval Value</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e 5 or dynamic vars" @bind="Data.WaitAmount">
+    </div>
+</div>
+
+@code {
+    public override string Title => $"Wait For <strong>{Data.WaitAmount} {Data.WaitUnits}</strong>";
+}

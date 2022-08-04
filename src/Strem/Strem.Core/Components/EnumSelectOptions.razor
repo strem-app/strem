@@ -1,0 +1,9 @@
+﻿@foreach (var timeUnit in Enum.GetValues(EnumType))
+{
+    <option value="@timeUnit">@(timeUnit)</option>
+}
+
+@code {
+    [Parameter]
+    public Type EnumType { get; set; }
+}

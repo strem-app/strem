@@ -1,6 +1,6 @@
 ﻿<div class="accordion @(IsExpanded ? "is-expanded": "is-collapsed")">
     <a class="button @(StyleType) has-text-left" @onclick="() => IsExpanded = !IsExpanded">
-        <span>@Title</span>
+        <span>@((MarkupString)Title)</span>
         <span class="tag is-rounded is-pulled-right">
             <i class="fas @(IsExpanded ? "fa-caret-up" : "fa-caret-down")"></i>
         </span>

@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Utils;
+﻿namespace Strem.Core.Types;
 
 public enum TimeUnit
 {

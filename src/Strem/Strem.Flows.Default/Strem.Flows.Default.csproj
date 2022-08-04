@@ -24,4 +24,8 @@
       <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Types" />
+    </ItemGroup>
+
 </Project>

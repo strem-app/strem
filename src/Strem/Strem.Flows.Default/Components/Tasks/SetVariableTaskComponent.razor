@@ -1,0 +1,48 @@
+﻿@using Strem.Flows.Default.Flows.Tasks.Data
+@using Strem.Core.Types
+
+@inherits CustomTaskComponent<SetVariableTaskData>
+
+<div class="field">
+    <label class="label">Variable Name</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e deaths" @bind="Data.Name">
+    </div>
+</div>
+<div class="field">
+    <label class="label">Optional Context</label>
+    <div class="control">
+        <input class="input has-tooltip-multiline" type="text" 
+               data-tooltip="The context is optional and allows you to use the same variable name but tie it to some other context" 
+               placeholder="i.e V(channel-game, twitch)" @bind="Data.Context">
+    </div>
+</div>
+<div class="field">
+    <label class="label">Variable Scope</label>
+    <div class="control">
+        <div class="select has-tooltip-multiline" data-tooltip="Persisted are available even after app closes, Application is available until app closes, Flow is only for the rest of this flow">
+            <select @bind="Data.Scope">
+                <EnumSelectOptions EnumType="typeof(VariableScope)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="field">
+    <label class="label">Variable Value</label>
+    <div class="control">
+        <input class="input has-tooltip-multiline" type="text" 
+               data-tooltip="The value can be anything, a bit of text, a number and accepts var inputs" 
+               placeholder="i.e 1" @bind="Data.Value">
+    </div>
+</div>
+
+@code {
+    public override string Title => GenerateTitle();
+
+    public string GenerateTitle()
+    {
+        var contextSection = string.IsNullOrEmpty(Data.Context) ? "" : $":{Data.Context}";
+        return $"Set Variable <strong>{Data.Name}{contextSection}</strong> In <strong>{Data.Scope}</strong> Scope";
+    }
+}

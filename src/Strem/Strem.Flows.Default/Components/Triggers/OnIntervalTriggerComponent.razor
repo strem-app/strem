@@ -1,6 +1,5 @@
 ﻿@using Strem.Flows.Default.Flows.Triggers.Data
-@using Strem.Core.Utils
-@using Strem.Core.Flows.Triggers
+@using Strem.Core.Types
 
 @inherits CustomTriggerComponent<OnIntervalTriggerData>
 
@@ -9,10 +8,7 @@
     <div class="control">
         <div class="select">
             <select @bind="Data.IntervalUnits">
-                @foreach (var timeUnit in Enum.GetValues(typeof(TimeUnit)))
-                {
-                    <option value="@timeUnit">@((TimeUnit)timeUnit)</option>
-                }
+                <EnumSelectOptions EnumType="typeof(TimeUnit)"></EnumSelectOptions>
             </select>
         </div>
     </div>
@@ -20,7 +16,7 @@
 <div class="field">
     <label class="label">Interval Value</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e 5" @bind="Data.IntervalValue">
+        <input class="input" type="text" placeholder="i.e 5 or dynamic vars" @bind="Data.IntervalValue">
     </div>
 </div>
 <div class="field">
@@ -33,5 +29,5 @@
 </div>
 
 @code {
-    public override string Title => $"Trigger Every {Data.IntervalValue} {Data.IntervalUnits}";
+    public override string Title => $"Trigger Every <strong>{Data.IntervalValue} {Data.IntervalUnits}</strong>";
 }
