@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
@@ -18,8 +19,7 @@ public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
     public override string Name => "Wait For Period";
     public override string Description => "Sets a variable for use later within the process";
 
-    public WaitForPeriodTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState) 
-        : base(logger, flowStringProcessor, appState)
+    public WaitForPeriodTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
 

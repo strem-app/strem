@@ -5,6 +5,7 @@ using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Executors;
+using Strem.Core.Flows.Registries;
 using Strem.Core.Plugins;
 using Strem.Flows.Default.Modules;
 using Strem.Infrastructure.Extensions;
@@ -31,6 +32,21 @@ public class Program
         var startupServices = services.GetServices<IPluginStartup>();
         foreach (var startupService in startupServices)
         { await startupService.StartPlugin(); }
+    }
+
+    public static async Task StartExecutionEngine(IServiceProvider services)
+    {
+        var executionEngine = services.GetService<IFlowExecutionEngine>();
+
+        var taskRegistry = services.GetService<ITaskRegistry>();
+        var taskDescriptors = services.GetServices<TaskDescriptor>();
+        taskRegistry.AddMany(taskDescriptors);
+        
+        var triggerRegistry = services.GetService<ITriggerRegistry>();
+        var triggerDescriptors = services.GetServices<TriggerDescriptor>();
+        triggerRegistry.AddMany(triggerDescriptors);
+        
+        executionEngine.StartEngine();
     }
     
     [STAThread]
@@ -71,8 +87,7 @@ public class Program
             .Load("./wwwroot/index.html");
         
         logger.Information("Starting Flow Execution Engine");
-        var executionEngine = app.Services.GetService<IFlowExecutionEngine>();
-        executionEngine.StartEngine();
+        Task.Run(async () => await StartExecutionEngine(app.Services)).Wait();
         logger.Information("Started Flow Execution Engine");
         
         logger.Information("Strem Initialized");

@@ -2,14 +2,7 @@
 
 public class TaskRegistry : ITaskRegistry
 {
-    public Dictionary<string, TaskDescriptor> Tasks { get; }
-
-    public TaskRegistry(IEnumerable<TaskDescriptor> tasks = null)
-    {
-        Tasks = tasks?.ToDictionary(x => x.Task.Code, x => x) 
-                ?? new Dictionary<string, TaskDescriptor>();
-    }
-
+    public Dictionary<string, TaskDescriptor> Tasks { get; } = new();
     public void Add(TaskDescriptor task) => Tasks.Add(task.Task.Code, task);
     public void Remove(TaskDescriptor task) => Tasks.Remove(task.Task.Code);
     public TaskDescriptor Get(string taskCode) => Tasks.ContainsKey(taskCode) ? Tasks[taskCode] : null;

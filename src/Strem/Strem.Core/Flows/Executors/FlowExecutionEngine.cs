@@ -1,6 +1,4 @@
 ﻿using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Events.Flows;
 using Strem.Core.Extensions;

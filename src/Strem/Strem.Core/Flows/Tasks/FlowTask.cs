@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Processors;
+﻿using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Processors;
 using Strem.Core.State;
 using Strem.Core.Variables;
 
@@ -12,15 +13,17 @@ public abstract class FlowTask<T> : IFlowTask
     public abstract string Name { get; }
     public abstract string Description { get; }
     
+    public IEventBus EventBus { get; }
     public ILogger<IFlowTask> Logger { get; }
     public IFlowStringProcessor FlowStringProcessor { get; }
     public IAppState AppState { get; }
 
-    protected FlowTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState)
+    protected FlowTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus)
     {
         Logger = logger;
         FlowStringProcessor = flowStringProcessor;
         AppState = appState;
+        EventBus = eventBus;
     }
 
     public Task Execute(object data, IVariables flowVars)

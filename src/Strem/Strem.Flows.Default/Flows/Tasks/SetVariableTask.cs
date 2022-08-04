@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
@@ -19,8 +20,7 @@ public class SetVariableTask : FlowTask<SetVariableTaskData>
     public override string Name => "Set A Variable";
     public override string Description => "Sets a variable for use later within the process";
 
-    public SetVariableTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState) 
-        : base(logger, flowStringProcessor, appState)
+    public SetVariableTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
 

@@ -1,0 +1,32 @@
+﻿@using Strem.Flows.Default.Flows.Tasks.Data
+@using Strem.Core.Flows
+
+@inherits CustomTaskComponent<ExecuteFlowTaskData>
+
+@inject IFlowStore FlowStore;
+
+<div class="field">
+    <label class="label">Flow</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.FlowName">
+                @foreach (var flow in FlowStore.Flows)
+                {
+                    <option value="@flow.Name">@(flow.Name)</option>
+                }
+            </select>
+        </div>
+    </div>
+</div>
+<div class="field">
+  <div class="control">
+    <label class="checkbox">
+      <input type="checkbox" @bind="Data.WaitForCompletion">
+      Wait For Flow To Finish?
+    </label>
+  </div>
+</div>
+
+@code {
+    public override string Title => $"Execute Flow <strong>{Data.FlowName}</strong>";
+}

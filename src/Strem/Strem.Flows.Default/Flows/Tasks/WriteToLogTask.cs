@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
@@ -18,8 +19,7 @@ public class WriteToLogTask : FlowTask<WriteToLogTaskData>
     public override string Name => "Write To Log";
     public override string Description => "Writes the text out to the log file, useful for debugging";
 
-    public WriteToLogTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState) 
-        : base(logger, flowStringProcessor, appState)
+    public WriteToLogTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
 
