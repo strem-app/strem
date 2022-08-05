@@ -1,0 +1,50 @@
+﻿namespace Strem.Twitch.Types;
+
+public class ApiScopes
+{
+    public static readonly string ReadAnalyticsExtensions = "analytics:read:extensions";
+    public static readonly string ReadAnalyticsGames = "analytics:read:games";
+    public static readonly string ReadBits = "bits:read";
+    public static readonly string RunChannelCommercials = "channel:edit:commercial";
+    public static readonly string ManageChannelBroadcast = "channel:manage:broadcast";
+    public static readonly string ManageChannelExtensions = "channel:manage:extensions";
+    public static readonly string ManageChannelModerators = "channel:manage:moderators";
+    public static readonly string ManageChannelPolls = "channel:manage:polls";
+    public static readonly string ManageChannelPredications = "channel:manage:predictions";
+    public static readonly string ManageChannelRaids = "channel:manage:raids";
+    public static readonly string ManageChannelRedemptions = "channel:manage:redemptions";
+    public static readonly string ManageChannelSchedule = "channel:manage:schedule";
+    public static readonly string ManageChannelVideos = "channel:manage:videos";
+    public static readonly string ManageChannelEditors = "channel:read:editors";
+    public static readonly string ReadChannelGoals = "channel:read:goals";
+    public static readonly string ReadChannelHypeTrain = "channel:read:hype_train";
+    public static readonly string ReadChannelPolls = "channel:read:polls";
+    public static readonly string ReadChannelPredictions = "channel:read:predictions";
+    public static readonly string ReadChannelRedemptions = "channel:read:redemptions";
+    public static readonly string ReadChannelStreamKey = "channel:read:stream_key";
+    public static readonly string ReadChannelSubscriptions = "channel:read:subscriptions";
+    public static readonly string ReadChannelVips = "channel:read:vips";
+    public static readonly string ManageChannelVips = "channel:manage:vips";
+    public static readonly string ManageClips = "clips:edit";
+    public static readonly string ReadModeration = "moderation:read";
+    public static readonly string ManageModerationAnnouncements = "moderator:manage:announcements";
+    public static readonly string ManageModerationAutomod = "moderator:manage:automod";
+    public static readonly string ReadModerationAutomodSettings = "moderator:read:automod_settings";
+    public static readonly string ManageModerationAutomodSettings = "moderator:manage:automod_settings";
+    public static readonly string ManageModerationBannedUsers = "moderator:manage:banned_users";
+    public static readonly string ReadModerationBlockedTerms = "moderator:read:blocked_terms";
+    public static readonly string ManageModerationBlockedTerms = "moderator:manage:blocked_terms";
+    public static readonly string ManageModerationChatMessages = "moderator:manage:chat_messages";
+    public static readonly string ReadModerationChatSettings = "moderator:read:chat_settings";
+    public static readonly string ManageModerationChatSettings = "moderator:manage:chat_settings";
+    public static readonly string ManageUser = "user:edit";
+    public static readonly string ManageUserFollows = "user:edit:follows";
+    public static readonly string ManageUsersBlockedUsers = "user:manage:blocked_users";
+    public static readonly string ReadUsersBlockedUsers = "user:read:blocked_users";
+    public static readonly string ReadUsersBroadcast = "user:read:broadcast";
+    public static readonly string ManageUsersChatColours = "user:manage:chat_color";
+    public static readonly string ReadUsersEmail = "user:read:email";
+    public static readonly string ReadUsersFollows = "user:read:follows";
+    public static readonly string ReadUsersSubscriptions = "user:read:subscriptions";
+    public static readonly string ManageUsersWhispers = "user:manage:whispers";
+}

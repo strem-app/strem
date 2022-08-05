@@ -1,9 +1,11 @@
-﻿using Strem.Core.DI;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Strem.Core.DI;
 using Strem.Core.Plugins;
 using Strem.Twitch.Plugin;
 using Strem.Twitch.Services;
 using Strem.Twitch.Services.OAuth;
 using TwitchLib.Api;
+using TwitchLib.Api.Core.HttpCallHandlers;
 using TwitchLib.Api.Interfaces;
 using TwitchLib.Client;
 using TwitchLib.Client.Interfaces;
@@ -18,7 +20,6 @@ public class TwitchModule : IDependencyModule
         services.AddSingleton<IPluginStartup, TwitchPluginStartup>();
         
         // General
-        services.AddSingleton<ITwitchClient, TwitchClient>();
         services.AddSingleton<ITwitchAPI, TwitchAPI>();
         
         // OAuth

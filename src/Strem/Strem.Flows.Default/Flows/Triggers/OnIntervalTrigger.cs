@@ -18,11 +18,10 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
     public override string Name => "On Interval";
     public override string Description => "Triggers the flow every time the interval is met";
 
-    public OnIntervalTrigger(ILogger<IFlowTrigger> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) 
-        : base(logger, flowStringProcessor, appState, eventBus)
+    public OnIntervalTrigger(ILogger<FlowTrigger<OnIntervalTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
-    
+
     public override bool CanExecute() => true;
 
     public override IObservable<IVariables> Execute(OnIntervalTriggerData data)

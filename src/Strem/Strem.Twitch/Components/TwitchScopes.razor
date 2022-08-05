@@ -1,0 +1,134 @@
+﻿@using Strem.Twitch.Types
+
+<div class="box">
+    <div class="columns">
+        <div class="column">
+            <div class="field">
+                <label class="label">Chat Permissions</label>
+                <div class="control">
+                    <div class="select">
+                        <select value="@ChatAccess" @onchange="x => { ChatAccess = Enum.Parse<ScopeAccess>(x.Value.ToString()); RequestScopeChange(); }">
+                            <EnumSelectOptions EnumType="typeof(ScopeAccess)"></EnumSelectOptions>
+                        </select>
+                    </div>
+                </div>
+                 <p class="help">Chat permissions cover being able to read/manage chat messages and whispers</p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="field">
+                <label class="label">Channel Permissions</label>
+                <div class="control">
+                    <div class="select">
+                        <select value="@ChannelAccess" @onchange="x => { ChannelAccess = Enum.Parse<ScopeAccess>(x.Value.ToString()); RequestScopeChange(); }">
+                            <EnumSelectOptions EnumType="typeof(ScopeAccess)"></EnumSelectOptions>
+                        </select>
+                    </div>
+                </div>
+                <p class="help">Channel permissions cover being able to read/manage channel titles, games, clips, redemptions etc</p>
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="field">
+                <label class="label">Moderation Permissions</label>
+                <div class="control">
+                    <div class="select">
+                        <select value="@ModerationAccess" @onchange="x => { ModerationAccess = Enum.Parse<ScopeAccess>(x.Value.ToString()); RequestScopeChange(); }">
+                            <EnumSelectOptions EnumType="typeof(ScopeAccess)"></EnumSelectOptions>
+                        </select>
+                    </div>
+                </div>
+                <p class="help">Moderation permissions cover being able to manage banned users, blocked terms, chat room settings etc</p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="field">
+                <label class="label">User Permissions</label>
+                <div class="control">
+                    <div class="select">
+                        <select value="@UserAccess" @onchange="x => { UserAccess = Enum.Parse<ScopeAccess>(x.Value.ToString()); RequestScopeChange(); }">
+                            <EnumSelectOptions EnumType="typeof(ScopeAccess)"></EnumSelectOptions>
+                        </select>
+                    </div>
+                </div>
+                <p class="help">User permissions cover being able to read/manage followers, blocked users, user settings etc</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public string[] ReadChatScopes = new[] { ChatScopes.ReadChat, ChatScopes.ReadWhispers };
+    public string[] ManageChatScopes = new[] { ChatScopes.SendChat, ChatScopes.SendWhisper, ChatScopes.ModerateChannel };
+    public string[] ReadChannelScopes = new[]
+    {
+        ApiScopes.ReadChannelGoals, ApiScopes.ReadBits, ApiScopes.ReadChannelPolls, ApiScopes.ReadChannelPredictions, 
+        ApiScopes.ReadChannelRedemptions, ApiScopes.ReadChannelSubscriptions, ApiScopes.ReadChannelVips,
+        ApiScopes.ReadChannelHypeTrain
+    };
+    public string[] ManageChannelScopes = new[]
+    {
+        ApiScopes.ManageChannelBroadcast, ApiScopes.ManageChannelEditors, ApiScopes.ManageChannelExtensions,
+        ApiScopes.ManageChannelModerators, ApiScopes.ManageChannelPolls, ApiScopes.ManageChannelPredications,
+        ApiScopes.ManageChannelRaids, ApiScopes.ManageChannelRedemptions, ApiScopes.ManageChannelSchedule,
+        ApiScopes.ManageChannelVideos, ApiScopes.ManageChannelVips
+    };
+    
+    public ScopeAccess ChatAccess { get; set; }
+    public ScopeAccess ChannelAccess { get; set; }
+    public ScopeAccess ModerationAccess { get; set; }
+    public ScopeAccess UserAccess { get; set; }
+    
+    [Parameter]
+    public string[] ExistingScopes { get; set; } = Array.Empty<string>();
+    
+    [Parameter]
+    public EventCallback<string[]> OnScopesChanged { get; set; }
+
+    public bool HasScopesFor(string[] requiredScopes)
+    {
+        return requiredScopes.All(x => ExistingScopes.Contains(x));
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (HasScopesFor(ManageChatScopes)){ ChatAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ReadChatScopes)) { ChatAccess = ScopeAccess.ReadOnly; }
+        else { ChatAccess = ScopeAccess.None; }
+        
+        if (HasScopesFor(ManageChannelScopes)){ ChannelAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ReadChannelScopes)) { ChannelAccess = ScopeAccess.ReadOnly; }
+        else { ChannelAccess = ScopeAccess.None; }
+    }
+
+    public void RequestScopeChange()
+    {
+        var newScopes = new List<string>();
+        switch (ChatAccess)
+        {
+            case ScopeAccess.Full:
+                newScopes.AddRange(ReadChatScopes);
+                newScopes.AddRange(ManageChatScopes);
+                break;
+            case ScopeAccess.ReadOnly:
+                newScopes.AddRange(ReadChatScopes);
+                break;
+        }
+        
+        switch (ChannelAccess)
+        {
+            case ScopeAccess.Full:
+                newScopes.AddRange(ReadChannelScopes);
+                newScopes.AddRange(ManageChannelScopes);
+                break;
+            case ScopeAccess.ReadOnly:
+                newScopes.AddRange(ReadChannelScopes);
+                break;
+        }
+
+        OnScopesChanged.InvokeAsync(newScopes.ToArray());
+    }
+}

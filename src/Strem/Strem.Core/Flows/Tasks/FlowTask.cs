@@ -14,11 +14,11 @@ public abstract class FlowTask<T> : IFlowTask
     public abstract string Description { get; }
     
     public IEventBus EventBus { get; }
-    public ILogger<IFlowTask> Logger { get; }
+    public ILogger<FlowTask<T>> Logger { get; }
     public IFlowStringProcessor FlowStringProcessor { get; }
     public IAppState AppState { get; }
 
-    protected FlowTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus)
+    protected FlowTask(ILogger<FlowTask<T>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus)
     {
         Logger = logger;
         FlowStringProcessor = flowStringProcessor;

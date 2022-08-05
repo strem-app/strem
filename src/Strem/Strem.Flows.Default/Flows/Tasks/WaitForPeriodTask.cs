@@ -17,10 +17,10 @@ public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
     public override string Name => "Wait For Period";
     public override string Description => "Sets a variable for use later within the process";
 
-    public WaitForPeriodTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
+    public WaitForPeriodTask(ILogger<FlowTask<WaitForPeriodTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
-    
+
     public override bool CanExecute() => true;
 
     public override async Task Execute(WaitForPeriodTaskData data, IVariables flowVars)

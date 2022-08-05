@@ -18,10 +18,10 @@ public class SetVariableTask : FlowTask<SetVariableTaskData>
     public override string Name => "Set A Variable";
     public override string Description => "Sets a variable for use later within the process";
 
-    public SetVariableTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
+    public SetVariableTask(ILogger<FlowTask<SetVariableTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
-    
+
     public override bool CanExecute() => true;
 
     public override async Task Execute(SetVariableTaskData data, IVariables flowVars)

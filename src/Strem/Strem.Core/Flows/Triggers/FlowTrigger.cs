@@ -13,12 +13,12 @@ public abstract class FlowTrigger<T> : IFlowTrigger
     public abstract string Name { get; }
     public abstract string Description { get; }
     
-    public ILogger<IFlowTrigger> Logger { get; }
+    public ILogger<FlowTrigger<T>> Logger { get; }
     public IFlowStringProcessor FlowStringProcessor { get; }
     public IAppState AppState { get; }
     public IEventBus EventBus { get; }
 
-    protected FlowTrigger(ILogger<IFlowTrigger> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus)
+    protected FlowTrigger(ILogger<FlowTrigger<T>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus)
     {
         Logger = logger;
         FlowStringProcessor = flowStringProcessor;

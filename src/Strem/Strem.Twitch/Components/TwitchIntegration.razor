@@ -15,7 +15,6 @@
 @inject ITwitchOAuthClient TwitchOAuthClient
 @inject IAppState AppState
 @inject IEventBus EventBus
-@inject ITwitchAPI TwitchApi;
 
 @implements IDisposable
 
@@ -29,16 +28,19 @@
         </a>
     </p>
     <div class="message-body">
-        
-        <label class="label">Connected Account</label>
+        <label class="label">Connection Details</label>
         <div class="field is-grouped">
             <div class="control is-expanded">
                 <input class="input" type="text" placeholder="Account Not Linked" value="@Username" disabled/>
             </div>
             <div class="control">
-                @if (IsTwitchAccountLinked)
+                @if (IsTwitchAccountLinked && !HavePermissionsChanged)
                 {
                     <a class="button is-danger" @onclick="DisconnectFromTwitch">Disconnect From Twitch</a>
+                }
+                else if (IsTwitchAccountLinked && HavePermissionsChanged)
+                {
+                    <a class="button is-warning" @onclick="ConnectToTwitch">Request New Permissions</a>
                 }
                 else
                 {
@@ -46,6 +48,8 @@
                 }
             </div>
         </div>
+        <label class="label">Requested Privilages</label>
+        <TwitchScopes ExistingScopes="CurrentScopes" OnScopesChanged="RequestNewScopeAccess"></TwitchScopes>
     </div>
 </article>
 
@@ -55,11 +59,20 @@
     
     public string Username { get; set; }
     public bool IsTwitchAccountLinked { get; set; }
+    public bool HavePermissionsChanged { get; set; }
+    public string[] CurrentScopes { get; set; } = Array.Empty<string>();
+    public string[] NewScopes { get; set; } = Array.Empty<string>();
 
     protected override async Task OnInitializedAsync()
     {
         IsTwitchAccountLinked = AppState.HasTwitchOAuth();
         Username = AppState.GetTwitchVar(TwitchVars.Username);
+
+        if (IsTwitchAccountLinked)
+        {
+            CurrentScopes = AppState.GetTwitchScopes();
+            NewScopes = CurrentScopes.ToArray();
+        }
 
         AppState.AppVariables.OnVariableChanged
             .Where(x => x.Name == TwitchVars.Username && x.Context == TwitchVars.TwitchContext)
@@ -90,12 +103,18 @@
 
     public void ConnectToTwitch()
     {
-        TwitchOAuthClient.StartAuthorisationProcess();
+        TwitchOAuthClient.StartAuthorisationProcess(NewScopes);
     }
 
     public void DisconnectFromTwitch()
     {
         TwitchOAuthClient.RevokeToken();
+    }
+    
+    public void RequestNewScopeAccess(string[] newScopes)
+    {
+        NewScopes = newScopes;
+        HavePermissionsChanged = true;
     }
 
     public void Dispose()

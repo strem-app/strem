@@ -5,8 +5,6 @@ namespace Strem.Infrastructure.Services.Api;
 
 public class ApiWebHost : IApiWebHost
 {
-    public static readonly int InternalPort = 56721;
-    
     public WebApplication Host { get; protected set; }
 
     public WebApplication CreateApplication(ApiHostConfiguration configuration = null)
@@ -28,13 +26,15 @@ public class ApiWebHost : IApiWebHost
         var mvcBuilder = builder.Services.AddMvcCore();
         mvcBuilder.AddApplicationPart(GetType().Assembly);
         
-        if (configuration?.ControllerAssemblies != null)
+        if(configuration?.ControllerAssemblies != null)
         {
             foreach (var assembly in configuration.ControllerAssemblies)
             { mvcBuilder.AddApplicationPart(assembly); }
         }
 
-        builder.Logging.ClearProviders();
+        if(!builder.Environment.IsDevelopment())
+        { builder.Logging.ClearProviders(); }
+        
         return builder.Build();
     }
     
@@ -52,7 +52,7 @@ public class ApiWebHost : IApiWebHost
         {
             endpoints.MapControllers();
         });
-        app.RunAsync($"http://localhost:{InternalPort}");
+        app.RunAsync($"http://localhost:{ApiHostConfiguration.ApiHostPort}");
 
         Host = app;
     }

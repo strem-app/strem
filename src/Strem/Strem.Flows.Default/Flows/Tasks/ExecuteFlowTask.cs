@@ -22,7 +22,7 @@ public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
     public IFlowExecutionEngine FlowExecutionEngine { get; }
     public IFlowStore FlowStore { get; }
 
-    public ExecuteFlowTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutionEngine flowExecutionEngine, IFlowStore flowStore) : base(logger, flowStringProcessor, appState, eventBus)
+    public ExecuteFlowTask(ILogger<FlowTask<ExecuteFlowTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutionEngine flowExecutionEngine, IFlowStore flowStore) : base(logger, flowStringProcessor, appState, eventBus)
     {
         FlowExecutionEngine = flowExecutionEngine;
         FlowStore = flowStore;

@@ -19,11 +19,10 @@ public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
     public override string Name => "On Event Raised";
     public override string Description => "Triggers when the matching event is raised";
 
-    public OnEventRaisedTrigger(ILogger<IFlowTrigger> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) 
-        : base(logger, flowStringProcessor, appState, eventBus)
+    public OnEventRaisedTrigger(ILogger<FlowTrigger<OnEventRaisedTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
-    
+
     public override bool CanExecute() => true;
 
     public override IObservable<IVariables> Execute(OnEventRaisedTriggerData data)

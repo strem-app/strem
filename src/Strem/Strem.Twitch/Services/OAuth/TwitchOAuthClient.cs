@@ -7,6 +7,7 @@ using Strem.Core.State;
 using Strem.Core.Utils;
 using Strem.Core.Variables;
 using Strem.Core.Web;
+using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Events;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Models;
@@ -16,18 +17,12 @@ namespace Strem.Twitch.Services.OAuth;
 
 public class TwitchOAuthClient : ITwitchOAuthClient
 {
-    public static readonly string OAuthCallbackUrl = "http://localhost:56721/api/twitch/oauth";
+    public static readonly string OAuthCallbackUrl = $"http://localhost:{ApiHostConfiguration.ApiHostPort}/api/twitch/oauth";
 
     public static readonly string TwitchApiUrl = "https://id.twitch.tv/oauth2";  
     public static readonly string AuthorizeEndpoint = "authorize";
     public static readonly string ValidateEndpoint = "validate";
     public static readonly string RevokeEndpoint = "revoke";
-    
-    public static readonly string[] RequiredScopes = {
-        "chat:read", "chat:edit"
-    };
-
-    public static readonly string SourceName = "TwitchOAuthClient";
     
     public IBrowserLoader BrowserLoader { get; }
     public IAppState AppState { get; }
@@ -44,14 +39,14 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         Logger = logger;
     }
 
-    public void StartAuthorisationProcess()
+    public void StartAuthorisationProcess(string[] requiredScopes)
     {
         Logger.Information("Starting Twitch Implicit OAuth Process");
         
         var randomState = Randomizer.RandomString();
         AppState.TransientVariables.Set(CommonVariables.OAuthState, TwitchVars.TwitchContext, randomState);
         
-        var scopeQueryData = Uri.EscapeDataString(string.Join(" ", RequiredScopes));
+        var scopeQueryData = Uri.EscapeDataString(string.Join(" ", requiredScopes));
         var queryData = $"client_id={TwitchVars.TwitchClientId}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";
         var completeUrl = $"{TwitchApiUrl}/{AuthorizeEndpoint}?{queryData}";
         BrowserLoader.LoadUrl(completeUrl);
@@ -62,7 +57,7 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         if (AppState.HasTwitchOAuth())
         { return AppState.GetTwitchOAuthToken(); }
         
-        EventBus.PublishAsync(new ErrorEvent(SourceName, "Cannot find OAuth Token In Vars for request to Twitch OAuth API"));
+        Logger.Error("Cannot find OAuth Token In Vars for request to Twitch OAuth API");
         return null;
     }
 
@@ -101,7 +96,7 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         var response = await restClient.ExecuteAsync(restRequest);
         if (!response.IsSuccessful)
         {
-            EventBus.PublishAsync(new ErrorEvent($"{SourceName}:Validation", response.Content ?? "unknown error validating"));
+            Logger.Error($"Validation Error: {response.Content ?? "unknown error validating"}");
             ClearTokenState();
             return false;
         }
@@ -126,7 +121,7 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         var response = await restClient.ExecuteAsync(restRequest);
         if (!response.IsSuccessful)
         {
-            EventBus.PublishAsync(new ErrorEvent($"{SourceName}:Revoke", response.Content ?? "unknown error revoking"));
+            Logger.Error($"Revoke Error: {response.Content ?? "unknown error revoking"}");
             return false;
         }
         

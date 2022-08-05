@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Photino.Blazor;
+using Strem.Core.DI;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
@@ -72,12 +73,12 @@ public class Program
         
         var apiHostConfiguration = new ApiHostConfiguration(
             new[] { typeof(TwitchController).Assembly },
-            new[] { new InfrastructureModule() });
+            new IDependencyModule[] { new InfrastructureModule(), new TwitchModule() });
         
         var webHost = app.Services.GetService<IApiWebHost>();
         logger.Information("Starting Internal Host");
         webHost.StartHost(apiHostConfiguration);
-        logger.Information($"Started Internal Host: {ApiWebHost.InternalPort}");
+        logger.Information($"Started Internal Host: http://localhost:{ApiHostConfiguration.ApiHostPort}");
         
         app.MainWindow
             .SetTitle("Strem")

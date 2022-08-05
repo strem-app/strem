@@ -14,4 +14,8 @@ public static class IAppSettingsExtensions
 
     public static bool HasTwitchOAuth(this IAppState state) => state.HasTwitchVar(CommonVariables.OAuthToken);
     public static string GetTwitchOAuthToken(this IAppState state) => state.GetTwitchVar(CommonVariables.OAuthToken);
+    public static string GetTwitchUsername(this IAppState state) => state.GetTwitchVar(TwitchVars.Username);
+    
+    public static bool HasTwitchScope(this IAppState state, string scope) => state.GetTwitchVar(TwitchVars.OAuthScopes).Contains(scope);
+    public static string[] GetTwitchScopes(this IAppState state) => state.GetTwitchVar(TwitchVars.OAuthScopes).Split(",");
 }

@@ -28,94 +28,9 @@
         </div>
     </article>
     
-    <article class="message is-info">
-        <div class="message-header">
-            UserData: @LoadUserPipeline.DataFilePath
-            <a @onclick="SaveUserData">
-                <span class="icon is-small">
-                    <i class="fas fa-floppy-disk"></i>
-                </span>
-            </a>
-        </div>
-        <div class="message-body">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Context</th>
-                    <th>Value</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var variable in AppState.UserVariables.GetAll())
-                {
-                    <tr>
-                        <td>@variable.Key.Name</td>
-                        <td>@variable.Key.Context</td>
-                        <td>@variable.Value</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </article>
-    
-    <article class="message is-info">
-        <div class="message-header">
-            AppData: @LoadAppPipeline.DataFilePath
-            <a @onclick="SaveAppData">
-                <span class="icon is-small">
-                    <i class="fas fa-floppy-disk"></i>
-                </span>
-            </a>
-        </div>
-        <div class="message-body">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Context</th>
-                    <th>Value</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var variable in AppState.AppVariables.GetAll())
-                {
-                    <tr>
-                        <td>@variable.Key.Name</td>
-                        <td>@variable.Key.Context</td>
-                        <td>@variable.Value</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </article>
-    
-    <article class="message is-info">
-              <div class="message-header">Transient Data</div>
-              <div class="message-body">
-                 <table class="table">
-                     <thead>
-                     <tr>
-                         <th>Name</th>
-                         <th>Context</th>
-                         <th>Value</th>
-                     </tr>
-                     </thead>
-                     <tbody>
-                     @foreach (var variable in AppState.TransientVariables.GetAll())
-                     {
-                         <tr>
-                             <td>@variable.Key.Name</td>
-                             <td>@variable.Key.Context</td>
-                             <td>@variable.Value</td>
-                         </tr>
-                     }
-                     </tbody>
-                 </table>
-              </div>
-        </article>
+    <VariablesViewer Title="@($"UserData: {LoadUserPipeline.DataFilePath}")" Variables="@AppState.UserVariables" OnRequestSave="SaveUserData"/>
+    <VariablesViewer Title="@($"AppData: {LoadAppPipeline.DataFilePath}")" Variables="@AppState.AppVariables" OnRequestSave="SaveAppData"/>
+    <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables"/>
 </div>
 
 @code {

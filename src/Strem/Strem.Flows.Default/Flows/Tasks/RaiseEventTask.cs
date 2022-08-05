@@ -17,10 +17,10 @@ public class RaiseEventTask : FlowTask<RaiseEventTaskData>
     public override string Name => "Raise An Event";
     public override string Description => "Raises an event for other flows to listen to";
 
-    public RaiseEventTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
+    public RaiseEventTask(ILogger<FlowTask<RaiseEventTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
-    
+
     public override bool CanExecute() => true;
 
     public override async Task Execute(RaiseEventTaskData data, IVariables flowVars)
