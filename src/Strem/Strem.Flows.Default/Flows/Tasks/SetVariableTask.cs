@@ -21,6 +21,8 @@ public class SetVariableTask : FlowTask<SetVariableTaskData>
     public SetVariableTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
+    
+    public override bool CanExecute() => true;
 
     public override async Task Execute(SetVariableTaskData data, IVariables flowVars)
     {

@@ -21,6 +21,8 @@ public class WriteToLogTask : FlowTask<WriteToLogTaskData>
     {
     }
 
+    public override bool CanExecute() => true;
+    
     public override async Task Execute(WriteToLogTaskData data, IVariables flowVars)
     {
         var processedText = FlowStringProcessor.Process(data.Text, flowVars);

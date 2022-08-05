@@ -1,5 +1,4 @@
-﻿using System.Reactive;
-using Strem.Core.Events.Bus;
+﻿using Strem.Core.Events.Bus;
 using Strem.Core.Flows.Processors;
 using Strem.Core.State;
 using Strem.Core.Variables;
@@ -28,6 +27,8 @@ public abstract class FlowTrigger<T> : IFlowTrigger
     }
 
     public abstract IObservable<IVariables> Execute(T data);
+
+    public abstract bool CanExecute();
 
     public IObservable<IVariables> Execute(object data)
     {

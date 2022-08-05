@@ -20,6 +20,8 @@ public class RaiseEventTask : FlowTask<RaiseEventTaskData>
     public RaiseEventTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
+    
+    public override bool CanExecute() => true;
 
     public override async Task Execute(RaiseEventTaskData data, IVariables flowVars)
     {

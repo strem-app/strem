@@ -1,15 +1,11 @@
-﻿using System.Reactive;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Triggers;
 using Strem.Core.State;
-using Strem.Core.Types;
-using Strem.Core.Utils;
 using Strem.Core.Variables;
-using Strem.Flows.Default.Flows.Tasks;
 using Strem.Flows.Default.Flows.Triggers.Data;
 
 namespace Strem.Flows.Default.Flows.Triggers;
@@ -26,6 +22,8 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
         : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
+    
+    public override bool CanExecute() => true;
 
     public override IObservable<IVariables> Execute(OnIntervalTriggerData data)
     {

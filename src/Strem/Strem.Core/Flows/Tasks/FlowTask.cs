@@ -26,6 +26,8 @@ public abstract class FlowTask<T> : IFlowTask
         EventBus = eventBus;
     }
 
+    public abstract bool CanExecute();
+
     public Task Execute(object data, IVariables flowVars)
     {
         if(data is T typedData)

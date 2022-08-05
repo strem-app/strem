@@ -23,6 +23,8 @@ public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
         : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
+    
+    public override bool CanExecute() => true;
 
     public override IObservable<IVariables> Execute(OnEventRaisedTriggerData data)
     {

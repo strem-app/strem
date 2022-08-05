@@ -28,6 +28,8 @@ public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
         FlowStore = flowStore;
     }
 
+    public override bool CanExecute() => true;
+
     public override async Task Execute(ExecuteFlowTaskData data, IVariables flowVars)
     {
         var flowToExecute = FlowStore.Flows.SingleOrDefault(x => x.Name == data.FlowName);

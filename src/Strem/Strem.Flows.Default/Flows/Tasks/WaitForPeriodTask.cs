@@ -20,6 +20,8 @@ public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
     public WaitForPeriodTask(ILogger<IFlowTask> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
     }
+    
+    public override bool CanExecute() => true;
 
     public override async Task Execute(WaitForPeriodTaskData data, IVariables flowVars)
     {
