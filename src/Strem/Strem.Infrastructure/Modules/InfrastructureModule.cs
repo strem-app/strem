@@ -5,7 +5,6 @@ using Persistity.Flow.Builders;
 using Persistity.Serializers.Json;
 using Serilog;
 using Strem.Core.DI;
-using Strem.Core.Events;
 using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
 using Strem.Core.Flows;
@@ -40,7 +39,7 @@ public class InfrastructureModule : IDependencyModule
                 new VariableDictionaryConvertor(), 
                 new FlowTaskDataConvertor(), new FlowTriggerDataConvertor()
             },
-            TypeNameHandling = TypeNameHandling.Auto,
+            //TypeNameHandling = TypeNameHandling.Auto,
             Formatting = Formatting.Indented
         };
         

@@ -1,4 +1,38 @@
-﻿.accordion.is-expanded > a
+﻿@font-face {
+    font-family: "Quicksand";
+    src: url("/webfonts/quicksand/Quicksand-Light.ttf") format('truetype');
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Quicksand";
+    src: url("/webfonts/quicksand/Quicksand-Regular.ttf") format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Quicksand";
+    src: url("/webfonts/quicksand/Quicksand-SemiBold.ttf") format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Quicksand";
+    src: url("/webfonts/quicksand/Quicksand-Bold.ttf") format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+body
+{
+    font-family: "Quicksand";
+    font-weight: 400;
+    font-style: normal;
+}
+
+.accordion.is-expanded > a
 {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -18,4 +52,20 @@
 .accordion.is-collapsed > div
 {
     display: none;
+}
+
+.is-running {
+    box-shadow: 0 0 0 0 rgba(51, 217, 178, 1);
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(51, 217, 178, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(51, 217, 178, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(51, 217, 178, 0); }
+}
+
+.is-leveled
+{
+    width: 100%;
 }

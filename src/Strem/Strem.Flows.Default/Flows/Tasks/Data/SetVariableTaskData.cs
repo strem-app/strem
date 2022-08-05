@@ -8,6 +8,7 @@ public class SetVariableTaskData : IFlowTaskData
     public static readonly string TaskCode = "set-variable";
     public static readonly string TaskVersion = "1.0.0";
     
+    public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     

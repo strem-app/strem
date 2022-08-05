@@ -66,7 +66,12 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             }
             
             trigger.Execute(triggerData)
-                .Subscribe(vars => ExecuteFlow(flow, vars))
+                .Subscribe(vars =>
+                {
+                    EventBus.PublishAsync(new FlowTriggerStarted(flow.Id, triggerData.Id));
+                    ExecuteFlow(flow, vars);
+                    EventBus.PublishAsync(new FlowTriggerFinished(flow.Id, triggerData.Id));
+                })
                 .AddTo(flowSubs);
         }
     }
@@ -88,6 +93,8 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         if (flowVariables == null)
         { flowVariables = new Variables.Variables(); }
         
+        EventBus.PublishAsync(new FlowStartedEvent(flow.Id));
+        
         foreach (var taskData in flow.TaskData)
         {
             var task = TaskRegistry.Get(taskData.Code)?.Task;
@@ -98,8 +105,20 @@ public class FlowExecutionEngine : IFlowExecutionEngine
                 continue;
             }
             
-            await task.Execute(taskData, flowVariables);
+            EventBus.PublishAsync(new FlowTaskStarted(flow.Id, taskData.Id));
+            try
+            { await task.Execute(taskData, flowVariables); }
+            catch (Exception ex)
+            {
+                Logger.Error($"Error Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}] | Error: {ex.Message}");
+                EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
+                EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
+                return;
+            }
+            EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
         }
+        
+        EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
     }
 
     public void Dispose()

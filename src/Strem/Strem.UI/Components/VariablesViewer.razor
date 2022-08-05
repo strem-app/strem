@@ -1,35 +1,35 @@
 ﻿@using Strem.Core.Variables
 <article class="message is-info">
-        <div class="message-header">
-            <span>@Title</span>
-            <a @onclick="OnRequestSave">
-                <span class="icon is-small">
-                    <i class="fas fa-floppy-disk"></i>
-                </span>
-            </a>
-        </div>
-        <div class="message-body">
-            <table class="table">
-                <thead>
+    <div class="message-header">
+        <span>@Title</span>
+        <a @onclick="OnRequestSave">
+            <span class="icon is-small">
+                <i class="fas fa-floppy-disk"></i>
+            </span>
+        </a>
+    </div>
+    <div class="message-body">
+        <table class="table is-leveled">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Context</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var variable in Variables.GetAll())
+            {
                 <tr>
-                    <th>Name</th>
-                    <th>Context</th>
-                    <th>Value</th>
+                    <td>@variable.Key.Name</td>
+                    <td>@variable.Key.Context</td>
+                    <td style="word-break: break-all;">@variable.Value</td>
                 </tr>
-                </thead>
-                <tbody>
-                @foreach (var variable in Variables.GetAll())
-                {
-                    <tr>
-                        <td>@variable.Key.Name</td>
-                        <td>@variable.Key.Context</td>
-                        <td style="word-break: break-all;">@variable.Value</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </article>
+            }
+            </tbody>
+        </table>
+    </div>
+</article>
 
 @code {
     [Parameter]

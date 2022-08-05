@@ -1,0 +1,46 @@
+﻿@page "/logs"
+@using System.IO
+@using Strem.Core.State
+@using Strem.Infrastructure.Services.Persistence.App
+@using Strem.Infrastructure.Services.Persistence.User
+
+@inject ILoadAppDataPipeline LoadUserPipeline;
+@inject ILoadUserDataPipeline LoadAppPipeline;
+@inject ISaveAppDataPipeline SaveAppPipeline;
+@inject ISaveUserDataPipeline SaveUserPipeline;
+@inject IAppState AppState;
+
+<div class="container is-fluid">
+    <p class="title">Logs & Information</p>
+    <Accordion Title="Latest Logs" StyleType="is-warning">
+        <LogViewer LogPath="@LatestLogFile"/>
+    </Accordion>
+    
+    <Accordion Title="Application Variables" StyleType="is-warning">
+        <VariablesViewer Title="@($"UserData: {LoadUserPipeline.DataFilePath}")" Variables="@AppState.UserVariables" OnRequestSave="SaveUserData"/>
+        <VariablesViewer Title="@($"AppData: {LoadAppPipeline.DataFilePath}")" Variables="@AppState.AppVariables" OnRequestSave="SaveAppData"/>
+        <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables"/>
+    </Accordion>
+</div>
+
+@code {
+    const string LogPath = "./logs";
+
+    public string LatestLogFile { get; set; }
+    public void SaveAppData() => SaveAppPipeline.Execute(AppState.AppVariables);
+    public void SaveUserData() => SaveUserPipeline.Execute(AppState.UserVariables);
+
+    protected override async Task OnInitializedAsync()
+    {
+        LatestLogFile = GetLatestLogFile();
+    }
+
+    public string GetLatestLogFile()
+    {
+        var file = new DirectoryInfo(LogPath)
+            .GetFileSystemInfos()
+            .MaxBy(o => o.LastWriteTime);
+
+        return file?.FullName ?? string.Empty;
+    }
+}

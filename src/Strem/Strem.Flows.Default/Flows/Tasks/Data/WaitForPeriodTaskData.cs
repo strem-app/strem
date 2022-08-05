@@ -9,6 +9,7 @@ public class WaitForPeriodTaskData : IFlowTaskData
     public static readonly string TaskCode = "wait-for-period";
     public static readonly string TaskVersion = "1.0.0";
     
+    public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     

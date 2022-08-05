@@ -1,5 +1,5 @@
 ﻿@using Strem.Core.Flows.Tasks
-<Accordion Title="@Title" StyleType="is-info">
+<Accordion Title="@Title" StyleType="@(IsRunning ? "is-info is-running" : "is-info ")">
     <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
     <div class="field is-grouped is-grouped-right">
         <div class="control">
@@ -15,6 +15,9 @@
     
     [Parameter]
     public IFlowTaskData Data { get; set; }
+    
+    [Parameter]
+    public bool IsRunning { get; set; }
     
     [Parameter] 
     public EventCallback<IFlowTaskData> OnRequestedDeletion { get; set; }

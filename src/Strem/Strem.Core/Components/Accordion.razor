@@ -1,6 +1,6 @@
-﻿<div class="accordion @(IsExpanded ? "is-expanded": "is-collapsed")">
-    <a class="button @(StyleType) has-text-left" @onclick="() => IsExpanded = !IsExpanded">
-        <span>@((MarkupString)Title)</span>
+﻿<div class="block accordion @(IsExpanded ? "is-expanded": "is-collapsed")">
+    <a class="button is-flex @(StyleType) has-text-left" @onclick="() => IsExpanded = !IsExpanded">
+        <span class="has-text-weight-semibold is-leveled">@((MarkupString)Title)</span>
         <span class="tag is-rounded is-pulled-right">
             <i class="fas @(IsExpanded ? "fa-caret-up" : "fa-caret-down")"></i>
         </span>
@@ -11,7 +11,9 @@
 </div>
 
 @code {
-    public bool IsExpanded { get; set; }
+
+    [Parameter]
+    public bool IsExpanded { get; set; } = false;
     
     [Parameter]
     public string StyleType { get; set; } = "is-success";

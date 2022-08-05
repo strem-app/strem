@@ -2,6 +2,7 @@
 
 public interface IFlowElementData
 {
-    string Version { get; }
+    Guid Id { get; set; }
+    string Version { get; set; }
     string Code { get; }
 }

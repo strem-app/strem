@@ -1,7 +1,7 @@
 ﻿@using Strem.Core.Flows.Tasks
 @using Strem.Core.Flows.Triggers
 
-<Accordion Title="@Title" StyleType="is-success">
+<Accordion Title="@Title" StyleType="@(IsRunning ? "is-success is-running" : "is-success")">
     <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
     <div class="field is-grouped is-grouped-right">
         <div class="control">
@@ -19,6 +19,9 @@
     
     [Parameter]
     public IFlowTriggerData Data { get; set; }
+    
+    [Parameter]
+    public bool IsRunning { get; set; }
     
     [Parameter] 
     public EventCallback<IFlowTriggerData> OnRequestedDeletion { get; set; }

@@ -1,0 +1,45 @@
+﻿@using System.IO
+@using System.Text
+@using Strem.Infrastructure.Extensions
+
+<div class="block">
+    <label class="label">@LogPath</label>
+    <div class="block" style="white-space: pre-wrap; max-height: 400px; overflow-y: auto;">
+        <code style="width: 100%; height: 100%; overflow: auto;">@LatestLogContent</code>
+    </div>
+    <button class="button is-info" @onclick="RefreshLogs">
+        <span class="icon is-small">
+          <i class="fas fa-rotate-right"></i>
+        </span>
+        <span>Refresh Logs</span>
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public string LogPath { get; set; }
+
+    [Parameter]
+    public int LinesToRead { get; set; } = 100;
+    
+    public string LatestLogContent { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    { await RefreshLogs(); }
+
+    public async Task RefreshLogs()
+    { LatestLogContent = await LoadFileContent(LogPath); }
+
+    public async Task<string> LoadFileContent(string filePath)
+    {
+        if (!File.Exists(filePath))
+        { return string.Empty; }
+        
+        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (var sr = new StreamReader(fs, Encoding.Default))
+        {
+            var last100Lines = await sr.TailAsync(100);
+            return string.Join("\n", last100Lines.Reverse());
+        }
+    }
+}

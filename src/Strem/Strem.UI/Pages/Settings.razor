@@ -1,68 +1,10 @@
 ﻿@page "/settings"
-@using System.IO
-@using System.Text
-@using Strem.Core.State
-@using Strem.Infrastructure.Services.Persistence.App
-@using Strem.Infrastructure.Services.Persistence.User
-
-@inject ILoadAppDataPipeline LoadUserPipeline;
-@inject ILoadUserDataPipeline LoadAppPipeline;
-@inject ISaveAppDataPipeline SaveAppPipeline;
-@inject ISaveUserDataPipeline SaveUserPipeline;
-@inject IAppState AppState;
 
 <div class="container">
   <p class="title">Settings</p>
   
-    <article class="message is-warning">
-        <div class="message-header">
-            Logs
-            <a @onclick="RefreshLogs">
-                <span class="icon is-small">
-                    <i class="fas fa-rotate-right"></i>
-                </span>
-            </a>
-        </div>
-        <div class="message-body" style="white-space: pre-wrap; max-height: 400px; overflow-y: auto;">
-            <code style="width: 100%; height: 100%;">@Logs</code>
-        </div>
-    </article>
-    
-    <VariablesViewer Title="@($"UserData: {LoadUserPipeline.DataFilePath}")" Variables="@AppState.UserVariables" OnRequestSave="SaveUserData"/>
-    <VariablesViewer Title="@($"AppData: {LoadAppPipeline.DataFilePath}")" Variables="@AppState.AppVariables" OnRequestSave="SaveAppData"/>
-    <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables"/>
 </div>
 
 @code {
-    public string Logs { get; set; }
-    
-    public async Task RefreshLogs()
-    {
-        var logPattern = "*.log";
-        var logPath = "./logs";
-        var file = new DirectoryInfo(logPath).GetFileSystemInfos().MaxBy(o => o.LastWriteTime);
-
-        if (file == null)
-        {
-            Logs = "";
-            return;
-        }
-
-        Logs = await LoadFileContent(file.FullName);
-    }
-
-    public async Task<string> LoadFileContent(string filePath)
-    {
-        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-        using (var sr = new StreamReader(fs, Encoding.Default))
-        { return await sr.ReadToEndAsync(); }
-    }
-
-    public void SaveAppData() => SaveAppPipeline.Execute(AppState.AppVariables);
-    public void SaveUserData() => SaveUserPipeline.Execute(AppState.UserVariables);
-
-    protected override async Task OnInitializedAsync()
-    {
-        await RefreshLogs();
-    }
+   
 }
