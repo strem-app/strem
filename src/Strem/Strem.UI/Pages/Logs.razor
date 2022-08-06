@@ -12,11 +12,11 @@
 
 <div class="container is-fluid">
     <p class="title">Logs & Information</p>
-    <Accordion Title="Latest Logs" StyleType="is-warning">
+    <Accordion Title="Latest Logs" StyleType="is-warning" IsExpanded="true">
         <LogViewer LogPath="@LatestLogFile"/>
     </Accordion>
     
-    <Accordion Title="Application Variables" StyleType="is-warning">
+    <Accordion Title="Application Variables" StyleType="is-warning" IsExpanded="true">
         <VariablesViewer Title="@($"UserData: {LoadUserPipeline.DataFilePath}")" Variables="@AppState.UserVariables" OnRequestSave="SaveUserData"/>
         <VariablesViewer Title="@($"AppData: {LoadAppPipeline.DataFilePath}")" Variables="@AppState.AppVariables" OnRequestSave="SaveAppData"/>
         <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables"/>
