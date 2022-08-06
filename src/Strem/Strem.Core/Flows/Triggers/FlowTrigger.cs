@@ -12,6 +12,7 @@ public abstract class FlowTrigger<T> : IFlowTrigger
     public abstract string Code { get; }
     public abstract string Name { get; }
     public abstract string Description { get; }
+    public abstract VariableOutput[] VariableOutputs { get; }
     
     public ILogger<FlowTrigger<T>> Logger { get; }
     public IFlowStringProcessor FlowStringProcessor { get; }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Triggers;
 using Strem.Core.State;
@@ -17,6 +18,7 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
 
     public override string Name => "On Interval";
     public override string Description => "Triggers the flow every time the interval is met";
+    public override VariableOutput[] VariableOutputs { get; } = Array.Empty<VariableOutput>();
 
     public OnIntervalTrigger(ILogger<FlowTrigger<OnIntervalTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {

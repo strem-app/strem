@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Triggers;
 using Strem.Core.State;
@@ -16,8 +17,11 @@ public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
     public override string Code => OnEventRaisedTriggerData.TriggerCode;
     public override string Version => OnEventRaisedTriggerData.TriggerVersion;
 
+    public static VariableEntry EventDataVariable = new("event-data");
+
     public override string Name => "On Event Raised";
     public override string Description => "Triggers when the matching event is raised";
+    public override VariableOutput[] VariableOutputs { get; } = new[] { EventDataVariable.ToOutput() };
 
     public OnEventRaisedTrigger(ILogger<FlowTrigger<OnEventRaisedTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
@@ -32,7 +36,7 @@ public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
             .Select(x =>
             {
                 var newVariables = new Variables();
-                newVariables.Set("event-data", x.Data);
+                newVariables.Set(EventDataVariable, x.Data);
                 return newVariables;
             });
     }

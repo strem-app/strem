@@ -23,7 +23,11 @@
     <ItemGroup>
       <Folder Include="Components" />
       <Folder Include="Events" />
-      <Folder Include="Flows" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
+      <ProjectReference Include="..\Strem.Twitch\Strem.Twitch.csproj" />
     </ItemGroup>
 
 </Project>
