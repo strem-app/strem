@@ -5,6 +5,7 @@ using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
 using Strem.Twitch.Events;
+using Strem.Twitch.Events.OAuth;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Models;
 using Strem.Twitch.Variables;

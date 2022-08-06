@@ -9,6 +9,7 @@ using Strem.Core.Variables;
 using Strem.Core.Web;
 using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Events;
+using Strem.Twitch.Events.OAuth;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Models;
 using Strem.Twitch.Variables;

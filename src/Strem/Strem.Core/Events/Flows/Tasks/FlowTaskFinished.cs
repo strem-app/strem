@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Events.Flows;
+﻿namespace Strem.Core.Events.Flows.Tasks;
 
 public class FlowTaskFinished
 {

@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Events.Flows;
+﻿namespace Strem.Core.Events.Flows.Triggers;
 
 public class FlowTriggerFinished
 {

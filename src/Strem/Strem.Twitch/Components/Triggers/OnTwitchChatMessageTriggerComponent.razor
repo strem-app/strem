@@ -1,0 +1,111 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Components.Triggers;
+@using Strem.Core.Types
+@using Strem.Twitch.Flows.Triggers.Data;
+@using TwitchLib.Client.Enums
+@using System.Text.RegularExpressions
+
+@inherits CustomTriggerComponent<OnTwitchChatMessageTriggerData>
+
+<div class="field">
+    <label class="label">Message Content Requirements</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.MatchType">
+                <EnumSelectOptions EnumType="typeof(TextMatch)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    <p class="help">This will only trigger if the text matches your requirements</p>
+</div>
+
+@if (Data.MatchType != TextMatch.None)
+{
+    <div class="field">
+        <label class="label">Message Match @(Data.MatchType == TextMatch.Pattern ? "Regex Pattern" : "Text")</label>
+        <div class="control">
+            <input class="input" type="text" placeholder="i.e @(Data.MatchType == TextMatch.Pattern ? "regex pattern to match" : "text to matching")">
+        </div>
+    </div>
+    
+    @if (Data.MatchType == TextMatch.Pattern)
+    {
+        <div class="field">
+            <label class="label">Test Pattern Match</label>
+            <div class="control">
+                <input type="text" class="input @(DoesRegexMatch ? "is-success" : "is-danger")" 
+                       placeholder="i.e some text you want to check your pattern against"
+                       data-tooltip="@(DoesRegexMatch ? "Pattern matches text" : "No matches found")"
+                       value="@RegexTestText">
+            </div>
+            <button class="button is-info" @onclick="CheckRegex">Test Regex</button>
+            <p class="help">This lets you test your regex pattern locally, it isn't saved anywhere, its just to help you test 😁</p>
+        </div>
+    }
+}
+
+<div class="field">
+    <label class="label">Minimum Required User Type</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.MinimumUserType">
+                <EnumSelectOptions EnumType="typeof(UserType)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    <p class="help">
+        This allows you to restrict triggering to types of users equal to or above the level, i.e <strong>Viewer</strong> will match anyone but <strong>Moderator</strong> would match moderators, twitch staff/mods/admins and the broadcaster.
+    </p>
+</div>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.IsSubscriber">
+            Require Sender To Be Subscriber?
+        </label>
+    </div>
+    <p class="help">This will only trigger if the sender is a subscriber</p>
+</div>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.HasBits">
+            Require Bits?
+        </label>
+    </div>
+    <p class="help">This will only trigger if the message contains bits</p>
+</div>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.HasChannelReward">
+            Require Channel Rewards?
+        </label>
+    </div>
+    <p class="help">This will only trigger if the message contains channel rewards</p>
+</div>
+
+@code {
+    public override string Title => GenerateTitle();
+
+    public string RegexTestText { get; set; } = string.Empty;
+    public bool DoesRegexMatch { get; set; } = false;
+    
+    public string GenerateTitle()
+    {
+        var hasTextMatch = Data.MatchType != TextMatch.None;
+        var textRequirements =  hasTextMatch ? "With Text Match " : "";
+        var joiningWord = hasTextMatch ? "And " : "With ";
+        var userRequirements =  Data.MinimumUserType != TwitchLib.Api.Core.Enums.UserType.Viewer ? $"{joiningWord} At Least {Data.MinimumUserType}" : "";
+        return $"Trigger On Twitch Message Received {textRequirements} {userRequirements}";
+    }
+
+    public void CheckRegex()
+    {
+        DoesRegexMatch = Regex.IsMatch(Data.MatchText, RegexTestText);
+        StateHasChanged();
+    }
+}

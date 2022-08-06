@@ -1,4 +1,4 @@
-﻿namespace Strem.Twitch.Events;
+﻿namespace Strem.Twitch.Events.OAuth;
 
 public class TwitchOAuthSuccessEvent
 {}

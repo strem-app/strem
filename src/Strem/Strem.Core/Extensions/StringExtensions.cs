@@ -13,6 +13,7 @@ public static class StringExtensions
             TextMatch.Contains => value.Contains(matchText),
             TextMatch.StartsWith => value.StartsWith(matchText),
             TextMatch.EndsWith => value.EndsWith(matchText),
+            TextMatch.ExactMatch => value == matchText,
             _ => Regex.IsMatch(value, matchText)
         };
     }

@@ -1,5 +1,4 @@
 ﻿using System.Reactive.Linq;
-using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows;
@@ -9,7 +8,7 @@ using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
-using Strem.Twitch.Flows.Flows.Triggers.Data;
+using Strem.Twitch.Flows.Triggers.Data;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
@@ -17,7 +16,7 @@ using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models;
 using UserType = TwitchLib.Api.Core.Enums.UserType;
 
-namespace Strem.Twitch.Flows.Flows.Triggers;
+namespace Strem.Twitch.Flows.Triggers;
 
 public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTriggerData>
 {
