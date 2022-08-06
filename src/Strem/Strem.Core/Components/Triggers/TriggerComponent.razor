@@ -3,6 +3,11 @@
 
 <Accordion Title="@Title" StyleType="@(IsRunning ? "is-success is-running" : "is-success")">
     <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
+    @if (Trigger.VariableOutputs.Length > 0)
+    {
+        <label class="label">Output Variables</label>
+        <VariableDescriptorList VariableDescriptors="Trigger.VariableOutputs" />
+    }
     <div class="field is-grouped is-grouped-right">
         <div class="control">
             <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Trigger</button>
@@ -19,6 +24,9 @@
     
     [Parameter]
     public IFlowTriggerData Data { get; set; }
+    
+    [Parameter]
+    public IFlowTrigger Trigger { get; set; }
     
     [Parameter]
     public bool IsRunning { get; set; }

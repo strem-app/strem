@@ -36,11 +36,11 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     public override string Name => "On Twitch Chat Message";
     public override string Description => "Triggers when a twitch chat message is received";
 
-    public override VariableOutput[] VariableOutputs { get; } = new[]
+    public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {
-        ChatMessageVariable.ToOutput(), BitsSentVariable.ToOutput(), BitsValueVariable.ToOutput(),
-        RewardIdVariable.ToOutput(), IsNoisyVariable.ToOutput(), SubscriptionLengthVariable.ToOutput(),
-        IsHighlightedVariable.ToOutput(), UserTypeVariable.ToOutput()
+        ChatMessageVariable.ToDescriptor(), BitsSentVariable.ToDescriptor(), BitsValueVariable.ToDescriptor(),
+        RewardIdVariable.ToDescriptor(), IsNoisyVariable.ToDescriptor(), SubscriptionLengthVariable.ToDescriptor(),
+        IsHighlightedVariable.ToDescriptor(), UserTypeVariable.ToDescriptor()
     };
 
     public IObservableTwitchClient TwitchClient { get; set; }

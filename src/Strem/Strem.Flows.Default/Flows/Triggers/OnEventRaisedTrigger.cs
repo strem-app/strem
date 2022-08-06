@@ -21,7 +21,7 @@ public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
 
     public override string Name => "On Event Raised";
     public override string Description => "Triggers when the matching event is raised";
-    public override VariableOutput[] VariableOutputs { get; } = new[] { EventDataVariable.ToOutput() };
+    public override VariableDescriptor[] VariableOutputs { get; } = new[] { EventDataVariable.ToDescriptor() };
 
     public OnEventRaisedTrigger(ILogger<FlowTrigger<OnEventRaisedTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {

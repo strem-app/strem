@@ -1,0 +1,20 @@
+﻿@using Strem.Core.Flows
+<div class="field is-grouped is-grouped-multiline">
+    @foreach (var descriptor in VariableDescriptors)
+    {
+        <div class="control">
+            <div class="tags has-addons">
+                <span class="tag @(descriptor.IsMandatory ? "is-success" : "is-warning")">@descriptor.VariableEntry.Name</span>
+                @if (!string.IsNullOrEmpty(descriptor.VariableEntry.Context))
+                {
+                    <span class="tag is-info">@descriptor.VariableEntry.Context</span>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public VariableDescriptor[] VariableDescriptors { get; set; }
+}

@@ -23,7 +23,7 @@
     {
       <li class="block">
         <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)"
-                          OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers"/>
+                          OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"/>
       </li>
     }
   </ul>
@@ -35,7 +35,7 @@
     {
       <li class="block">
         <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)"
-                       OnRequestedDeletion="RemoveTaskData"/>
+                       OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
       </li>
     }
   </ul>
@@ -50,6 +50,8 @@
   
   public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
   public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
+  public IFlowTask GetTaskFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).Task;
+  public IFlowTrigger GetTriggerFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).Trigger;
   
   public Dictionary<string, object> GetProps(IFlowTriggerData data) => new() {
     {"Data", data },

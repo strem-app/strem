@@ -2,12 +2,12 @@
 
 namespace Strem.Core.Flows;
 
-public struct VariableOutput
+public struct VariableDescriptor
 {
     public VariableEntry VariableEntry;
     public bool IsMandatory;
 
-    public VariableOutput(VariableEntry variableEntry, bool isMandatory)
+    public VariableDescriptor(VariableEntry variableEntry, bool isMandatory)
     {
         VariableEntry = variableEntry;
         IsMandatory = isMandatory;
