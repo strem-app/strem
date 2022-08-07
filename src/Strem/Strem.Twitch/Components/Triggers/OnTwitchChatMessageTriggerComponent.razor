@@ -104,7 +104,7 @@
         var hasTextMatch = Data.MatchType != TextMatch.None;
         var textRequirements =  hasTextMatch ? "With Text Match " : "";
         var joiningWord = hasTextMatch ? "And " : "With ";
-        var userRequirements =  Data.MinimumUserType != TwitchLib.Api.Core.Enums.UserType.Viewer ? $"{joiningWord} At Least {Data.MinimumUserType}" : "";
+        var userRequirements =  Data.MinimumUserType != TwitchLib.Api.Core.Enums.UserType.Viewer ? $"{joiningWord} At Least <strong>{Data.MinimumUserType}</strong>" : "";
         return $"Trigger On Twitch Message Received {textRequirements} {userRequirements}";
     }
 

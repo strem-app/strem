@@ -31,6 +31,8 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     public static VariableEntry SubscriptionLengthVariable = new("chat.message.subscription-length", TwitchVars.TwitchContext);
     public static VariableEntry IsHighlightedVariable = new("chat.message.is-highlighted", TwitchVars.TwitchContext);
     public static VariableEntry UserTypeVariable = new("chat.user-type", TwitchVars.TwitchContext);
+    public static VariableEntry UsernameVariable = new("chat.username", TwitchVars.TwitchContext);
+    public static VariableEntry UserIdVariable = new("chat.user-id", TwitchVars.TwitchContext);
     
     public override string Name => "On Twitch Chat Message";
     public override string Description => "Triggers when a twitch chat message is received";
@@ -39,7 +41,8 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     {
         ChatMessageVariable.ToDescriptor(), BitsSentVariable.ToDescriptor(), BitsValueVariable.ToDescriptor(),
         RewardIdVariable.ToDescriptor(), IsNoisyVariable.ToDescriptor(), SubscriptionLengthVariable.ToDescriptor(),
-        IsHighlightedVariable.ToDescriptor(), UserTypeVariable.ToDescriptor()
+        IsHighlightedVariable.ToDescriptor(), UserTypeVariable.ToDescriptor(), UsernameVariable.ToDescriptor(),
+        UserIdVariable.ToDescriptor()
     };
 
     public IObservableTwitchClient TwitchClient { get; set; }
@@ -62,6 +65,8 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         flowVars.Set(SubscriptionLengthVariable, chatMessage.SubscribedMonthCount.ToString());
         flowVars.Set(IsHighlightedVariable, chatMessage.IsHighlighted.ToString());
         flowVars.Set(UserTypeVariable, chatMessage.UserType.ToString());
+        flowVars.Set(UsernameVariable, chatMessage.Username);
+        flowVars.Set(UserIdVariable, chatMessage.UserId);
         return flowVars;
     }
 

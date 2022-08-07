@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows;
 using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Twitch.Events;
@@ -11,6 +12,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.OAuth;
 using Strem.Twitch.Variables;
 using TwitchLib.Api.Interfaces;
+using TwitchLib.Client.Interfaces;
 
 namespace Strem.Twitch.Plugin;
 
@@ -20,16 +22,18 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     
     public ITwitchOAuthClient TwitchOAuthClient { get; }
     public ITwitchAPI TwitchApi { get; }
+    public ITwitchClient TwitchClient { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
     public ILogger<TwitchPluginStartup> Logger { get; }
 
-    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, IEventBus eventBus, IAppState appState, ITwitchAPI twitchApi, ILogger<TwitchPluginStartup> logger)
+    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, ITwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger)
     {
         TwitchOAuthClient = twitchOAuthClient;
+        TwitchApi = twitchApi;
+        TwitchClient = twitchClient;
         EventBus = eventBus;
         AppState = appState;
-        TwitchApi = twitchApi;
         Logger = logger;
     }
 
@@ -46,6 +50,18 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         EventBus.Receive<TwitchOAuthSuccessEvent>()
             .Subscribe(x => VerifyToken())
             .AddTo(_subs);
+        
+        if (AppState.HasTwitchOAuth())
+        { AttemptToConnectToChat(); }
+    }
+
+    public void AttemptToConnectToChat()
+    {
+        var result = TwitchClient.ConnectOrRefresh(AppState);
+        if(result.success)
+        { Logger.Information($"Connected to twitch chat"); }
+        else
+        { Logger.LogError($"Unable to connect to twitch chat/pubsub due to error: {result.message}"); }
     }
 
     public async Task VerifyToken()

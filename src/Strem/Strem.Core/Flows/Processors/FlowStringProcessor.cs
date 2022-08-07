@@ -8,7 +8,7 @@ namespace Strem.Core.Flows.Processors;
 public class FlowStringProcessor : IFlowStringProcessor
 {
     public IAppState AppState { get; set; }
-    public Regex ReplacePattern = new(@"(V\(([\w\s,\-_]*)\))");
+    public Regex ReplacePattern = new(@"(V\(([\w\s\.,\-_\:\|]*)\))");
 
     public FlowStringProcessor(IAppState appState)
     {

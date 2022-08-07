@@ -10,6 +10,7 @@ public class Flow
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Category { get; set; }
+    public bool Enabled { get; set; }
     
     public List<IFlowTriggerData> TriggerData { get; set; } = new();
     public List<IFlowTaskData> TaskData { get; set; } = new();

@@ -89,6 +89,8 @@ public class FlowExecutionEngine : IFlowExecutionEngine
     public async Task ExecuteFlow(Flow flow, IVariables flowVariables = null)
     {
         if(flow.TaskData.Count == 0) { return; }
+        if(!flow.Enabled) { return; }
+        
         // TODO: Maybe need to handle multiple calls here, should it run in parallel or queue or forget
         //if(FlowExecutions.ContainsKey(flow.Id)) { return; }
         
