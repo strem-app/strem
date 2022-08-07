@@ -11,7 +11,7 @@
 
 @implements IDisposable
 
-<aside class="menu">
+<aside class="menu box">
   <p class="menu-label">
     Triggers - General
   </p>
@@ -20,7 +20,7 @@
     {
       if (!DoesFlowContainTrigger(trigger))
       {
-        <li><a class="has-tooltip-left has-tooltip-multiline" data-tooltip="@trigger.Trigger.Description" @onclick="() => OnTriggerSelected.InvokeAsync(trigger)">@trigger.Trigger.Name</a></li>
+        <li><a class="is-trigger has-tooltip-left has-tooltip-multiline @(trigger.Trigger.CanExecute() ? "enabled" : "disabled")" data-tooltip="@trigger.Trigger.Description" @onclick="() => OnTriggerSelected.InvokeAsync(trigger)">@trigger.Trigger.Name</a></li>
       }
     }
   </ul>
@@ -30,7 +30,7 @@
   <ul class="menu-list">
     @foreach (var task in TaskRegistry.GetAll())
     {
-      <li><a class="has-tooltip-left has-tooltip-multiline" data-tooltip="@task.Task.Description"  @onclick="() => OnTaskSelected.InvokeAsync(task)">@task.Task.Name</a></li>
+      <li><a class="is-task has-tooltip-left has-tooltip-multiline @(task.Task.CanExecute() ? "enabled" : "disabled")" data-tooltip="@task.Task.Description"  @onclick="() => OnTaskSelected.InvokeAsync(task)">@task.Task.Name</a></li>
     }
   </ul>
 </aside>

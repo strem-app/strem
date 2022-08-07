@@ -7,17 +7,25 @@
 @inject IFlowStore FlowStore;
 @inject IEventBus EventBus;
 
-<aside class="menu">
+<aside class="menu box">
+  <div class="field">
+    <div class="control">
+       <button class="button is-success is-leveled" @onclick="CreateNewFlow">
+          <span class="icon is-small">
+            <i class="fas fa-microchip"></i>
+          </span>
+          <span>Add Flow</span>
+        </button>
+    </div>
+  </div>
   <p class="menu-label">
     <span>User Flows</span>
-    <a class="tag is-primary m-sm" @onclick="CreateNewFlow">+ Add</a>
   </p>
   <ul class="menu-list">
     @foreach (var flow in FlowStore.Flows)
     {
       <li>
-        <a class="@(SelectedFlowId == flow.Id ? "is-active" : "")" 
-           @onclick="() => SelectFlow(flow)">@flow.Name</a>
+        <a class="@(SelectedFlowId == flow.Id ? "is-active" : "")" @onclick="() => SelectFlow(flow)">@flow.Name</a>
       </li>
     }
   </ul>

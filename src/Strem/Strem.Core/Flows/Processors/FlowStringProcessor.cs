@@ -46,6 +46,7 @@ public class FlowStringProcessor : IFlowStringProcessor
         while (iterations < 5)
         {
             output = ReplacePattern.Replace(lastOutput, processor);
+            
             if (output == lastOutput)
             { break; }
 

@@ -1,0 +1,120 @@
+﻿@is-info: #3e8ed0;
+@is-success: #48c78e;
+@is-warning: #ffe08a;
+@is-danger: #f14668;
+
+@s-1: 0.25rem;
+@s-2: 0.5rem;
+@s-3: 0.75rem;
+@s-4: 1rem;
+
+@font-face {
+    font-family: "Quicksand";
+    src: url("/webfonts/quicksand/Quicksand-Light.ttf") format('truetype');
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Quicksand";
+    src: url("/webfonts/quicksand/Quicksand-Regular.ttf") format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Quicksand";
+    src: url("/webfonts/quicksand/Quicksand-SemiBold.ttf") format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Quicksand";
+    src: url("/webfonts/quicksand/Quicksand-Bold.ttf") format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+body
+{
+    font-family: "Quicksand";
+    font-weight: 400;
+    font-style: normal;
+}
+
+.accordion
+{
+    &.is-collapsed > div
+    {
+        display: none;
+    }
+
+    &.is-expanded {
+        & > a
+        {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        & > div
+        {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    } 
+    
+    & > a > span.tag
+    {
+        background-color: rgba(255,255,255,0.5);
+    }
+}
+
+.is-running {
+    box-shadow: 0 0 0 0 rgba(51, 217, 178, 1);
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(51, 217, 178, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(51, 217, 178, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(51, 217, 178, 0); }
+}
+
+.is-leveled
+{
+    width: 100%;
+}
+
+.menu
+{
+    li {
+        margin: @s-2;
+    }
+    
+    a.is-active
+    {
+        background-color: @is-info;
+        color: #fff !important;
+    }
+    
+    a.is-trigger
+    {
+        color: #fff !important;
+        background-color: @is-success;
+        
+        &.enabled
+        {
+            background-color: fade(@is-success, 75%);
+        }
+    }
+
+    a.is-task
+    {
+        color: #fff !important;
+        background-color: @is-info;
+
+        &.enabled
+        {
+            background-color: fade(@is-info, 75%);
+        }
+    }
+}
