@@ -20,7 +20,15 @@
     {
       if (!DoesFlowContainTrigger(trigger))
       {
-        <li><a class="is-trigger has-tooltip-left has-tooltip-multiline @(trigger.Trigger.CanExecute() ? "enabled" : "disabled")" data-tooltip="@trigger.Trigger.Description" @onclick="() => OnTriggerSelected.InvokeAsync(trigger)">@trigger.Trigger.Name</a></li>
+        <li>
+          <a class="is-trigger has-tooltip-left has-tooltip-multiline @(trigger.Trigger.CanExecute() ? "enabled" : "disabled")"
+             data-tooltip="@trigger.Trigger.Description" @onclick="() => OnTriggerSelected.InvokeAsync(trigger)">
+            <span class="icon is-small">
+              <i class="fa fa-circle-plus"></i>
+            </span>
+            <span class="menu-text">@trigger.Trigger.Name</span>
+          </a>
+        </li>
       }
     }
   </ul>
@@ -30,7 +38,13 @@
   <ul class="menu-list">
     @foreach (var task in TaskRegistry.GetAll())
     {
-      <li><a class="is-task has-tooltip-left has-tooltip-multiline @(task.Task.CanExecute() ? "enabled" : "disabled")" data-tooltip="@task.Task.Description"  @onclick="() => OnTaskSelected.InvokeAsync(task)">@task.Task.Name</a></li>
+      <li><a class="is-task has-tooltip-left has-tooltip-multiline @(task.Task.CanExecute() ? "enabled" : "disabled")" data-tooltip="@task.Task.Description"
+             @onclick="() => OnTaskSelected.InvokeAsync(task)">
+        <span class="icon is-small">
+          <i class="fa fa-circle-plus"></i>
+        </span>
+        <span class="ml-2 menu-text">@task.Task.Name</span>
+      </a></li>
     }
   </ul>
 </aside>

@@ -25,7 +25,8 @@
     @foreach (var flow in FlowStore.Flows)
     {
       <li>
-        <a class="@(SelectedFlowId == flow.Id ? "is-active" : "")" @onclick="() => SelectFlow(flow)">@flow.Name</a>
+        <a class="is-flow @(flow.Enabled ? "enabled" : "disabled") @(SelectedFlowId == flow.Id ? "is-active" : "")" 
+           @onclick="() => SelectFlow(flow)">@flow.Name</a>
       </li>
     }
   </ul>

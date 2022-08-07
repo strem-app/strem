@@ -2,6 +2,7 @@
 @is-success: #48c78e;
 @is-warning: #ffe08a;
 @is-danger: #f14668;
+@is-primary: #00d1b2;
 
 @s-1: 0.25rem;
 @s-2: 0.5rem;
@@ -90,31 +91,35 @@ body
         margin: @s-2;
     }
     
-    a.is-active
+    a
     {
-        background-color: @is-info;
         color: #fff !important;
+
+        &.disabled {
+            border-left: @s-2 solid;
+            border-color: @is-danger;
+        }
+
+        &.is-active
+        {
+            background-color: @is-primary !important;
+        }
+
+        &.is-flow
+        {
+            background-color: @is-info;
+        }
+        
+        &.is-trigger
+        {
+            background-color: @is-success;
+        }
+
+        &.is-task
+        {
+            background-color: @is-info;
+        }
     }
     
-    a.is-trigger
-    {
-        color: #fff !important;
-        background-color: @is-success;
-        
-        &.enabled
-        {
-            background-color: fade(@is-success, 75%);
-        }
-    }
 
-    a.is-task
-    {
-        color: #fff !important;
-        background-color: @is-info;
-
-        &.enabled
-        {
-            background-color: fade(@is-info, 75%);
-        }
-    }
 }

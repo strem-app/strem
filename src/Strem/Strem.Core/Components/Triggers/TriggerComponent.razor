@@ -5,8 +5,9 @@
     <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
     @if (Trigger.VariableOutputs.Length > 0)
     {
-        <label class="label">Output Variables</label>
-        <VariableDescriptorList VariableDescriptors="Trigger.VariableOutputs" />
+        <Accordion Title="Output Variables" StyleType="is-info">
+            <VariableDescriptorList VariableDescriptors="Trigger.VariableOutputs" />
+        </Accordion>
     }
     <div class="field is-grouped is-grouped-right">
         <div class="control">

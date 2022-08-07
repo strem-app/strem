@@ -4,8 +4,9 @@
     <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
     @if (Task.VariableOutputs.Length > 0)
     {
-        <label class="label">Output Variables</label>
-        <VariableDescriptorList VariableDescriptors="Task.VariableOutputs" />
+        <Accordion Title="Output Variables" StyleType="is-info">
+            <VariableDescriptorList VariableDescriptors="Task.VariableOutputs" />
+        </Accordion>
     }
     <div class="field is-grouped is-grouped-right">
         <div class="control">
