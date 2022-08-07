@@ -8,6 +8,21 @@
 @inherits CustomTriggerComponent<OnTwitchChatMessageTriggerData>
 
 <div class="field">
+    <label class="label">Minimum Required User Type</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.MinimumUserType">
+                <EnumSelectOptions EnumType="typeof(UserType)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    <p class="help">
+        This allows you to restrict triggering to types of users equal to or above the level, i.e <strong>Viewer</strong> will match anyone but <strong>Moderator</strong> would match moderators, twitch staff/mods/admins and the broadcaster.
+    </p>
+</div>
+
+
+<div class="field">
     <label class="label">Message Content Requirements</label>
     <div class="control">
         <div class="select">
@@ -24,39 +39,29 @@
     <div class="field">
         <label class="label">Message Match @(Data.MatchType == TextMatch.Pattern ? "Regex Pattern" : "Text")</label>
         <div class="control">
-            <input class="input" type="text" placeholder="i.e @(Data.MatchType == TextMatch.Pattern ? "regex pattern to match" : "text to matching")">
+            <input class="input" type="text" @bind="Data.MatchText"
+                   placeholder="i.e @(Data.MatchType == TextMatch.Pattern ? "regex pattern to match" : "text to matching")">
         </div>
     </div>
     
     @if (Data.MatchType == TextMatch.Pattern)
     {
         <div class="field">
-            <label class="label">Test Pattern Match</label>
-            <div class="control">
+            <label class="label">Regex Pattern Tester</label>
+            <div class="control @(DoesRegexMatch ? "has-tooltip-success" : "has-tooltip-danger")" data-tooltip="@(DoesRegexMatch ? "Pattern matches text" : "No matches found")">
                 <input type="text" class="input @(DoesRegexMatch ? "is-success" : "is-danger")" 
                        placeholder="i.e some text you want to check your pattern against"
-                       data-tooltip="@(DoesRegexMatch ? "Pattern matches text" : "No matches found")"
-                       value="@RegexTestText">
+                       @bind="RegexTestText">
             </div>
-            <button class="button is-info" @onclick="CheckRegex">Test Regex</button>
             <p class="help">This lets you test your regex pattern locally, it isn't saved anywhere, its just to help you test 😁</p>
+        </div>
+        <div class="field">
+            <div class="control">
+                <button class="button is-info" @onclick="CheckRegex">Test Regex</button>
+            </div>
         </div>
     }
 }
-
-<div class="field">
-    <label class="label">Minimum Required User Type</label>
-    <div class="control">
-        <div class="select">
-            <select @bind="Data.MinimumUserType">
-                <EnumSelectOptions EnumType="typeof(UserType)"></EnumSelectOptions>
-            </select>
-        </div>
-    </div>
-    <p class="help">
-        This allows you to restrict triggering to types of users equal to or above the level, i.e <strong>Viewer</strong> will match anyone but <strong>Moderator</strong> would match moderators, twitch staff/mods/admins and the broadcaster.
-    </p>
-</div>
 
 <div class="field">
     <div class="control">
@@ -105,7 +110,7 @@
 
     public void CheckRegex()
     {
-        DoesRegexMatch = Regex.IsMatch(Data.MatchText, RegexTestText);
+        DoesRegexMatch = Regex.IsMatch(RegexTestText, Data.MatchText);
         StateHasChanged();
     }
 }
