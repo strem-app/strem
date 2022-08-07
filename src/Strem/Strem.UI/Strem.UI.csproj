@@ -19,4 +19,8 @@
       <ProjectReference Include="..\Strem.Flows.Default\Strem.Flows.Default.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Variables" />
+    </ItemGroup>
+
 </Project>

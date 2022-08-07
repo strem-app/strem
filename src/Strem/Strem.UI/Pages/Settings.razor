@@ -1,10 +1,35 @@
 ﻿@page "/settings"
 
-<div class="container">
+@using Strem.Core.State
+@using Microsoft.AspNetCore.Components
+@using Strem.Core.Extensions
+@using Strem.Core.Variables
+
+@inject IAppState AppState;
+
+<div class="container is-fluid">
   <p class="title">Settings</p>
-  
+  <div class="box">
+    <label class="label is-size-4">UI Settings</label>
+    <div class="field">
+        <div class="control">
+            <label class="checkbox">
+                <input type="checkbox" @bind="ShowHelpers">
+                Show Helper Text On UI?
+            </label>
+        </div>
+        <HelperInfo>This is an example of a helper, if you turn this off you wont see them throughout the system</HelperInfo>
+    </div>
+  </div>
 </div>
 
 @code {
-   
+
+    public bool ShowHelpers
+    {
+        get => AppState.AppVariables.Get<bool>(UIVariables.ShowHelpersVariable);
+        set =>  AppState.AppVariables.Set(UIVariables.ShowHelpersVariable, value);
+    }
+
+
 }

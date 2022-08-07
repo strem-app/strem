@@ -16,9 +16,9 @@
             </select>
         </div>
     </div>
-    <p class="help">
+    <HelperInfo>
         This allows you to restrict triggering to types of users equal to or above the level, i.e <strong>Viewer</strong> will match anyone but <strong>Moderator</strong> would match moderators, twitch staff/mods/admins and the broadcaster.
-    </p>
+    </HelperInfo>
 </div>
 
 
@@ -31,7 +31,7 @@
             </select>
         </div>
     </div>
-    <p class="help">This will only trigger if the text matches your requirements</p>
+    <HelperInfo>This will only trigger if the text matches your requirements</HelperInfo>
 </div>
 
 @if (Data.MatchType != TextMatch.None)
@@ -53,7 +53,7 @@
                        placeholder="i.e some text you want to check your pattern against"
                        @bind="RegexTestText">
             </div>
-            <p class="help">This lets you test your regex pattern locally, it isn't saved anywhere, its just to help you test 😁</p>
+            <HelperInfo>This lets you test your regex pattern locally, it isn't saved anywhere, its just to help you test 😁</HelperInfo>
         </div>
         <div class="field">
             <div class="control">
@@ -70,7 +70,7 @@
             Require Sender To Be Subscriber?
         </label>
     </div>
-    <p class="help">This will only trigger if the sender is a subscriber</p>
+    <HelperInfo>This will only trigger if the sender is a subscriber</HelperInfo>
 </div>
 
 <div class="field">
@@ -80,7 +80,7 @@
             Require Bits?
         </label>
     </div>
-    <p class="help">This will only trigger if the message contains bits</p>
+    <HelperInfo>This will only trigger if the message contains bits</HelperInfo>
 </div>
 
 <div class="field">
@@ -90,7 +90,7 @@
             Require Channel Rewards?
         </label>
     </div>
-    <p class="help">This will only trigger if the message contains channel rewards</p>
+    <HelperInfo>This will only trigger if the message contains channel rewards</HelperInfo>
 </div>
 
 @code {

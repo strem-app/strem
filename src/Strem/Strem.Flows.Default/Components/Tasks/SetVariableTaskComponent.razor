@@ -12,10 +12,9 @@
 <div class="field">
     <label class="label">Optional Context</label>
     <div class="control">
-        <input class="input has-tooltip-multiline" type="text" 
-               data-tooltip="The context is optional and allows you to use the same variable name but tie it to some other context" 
-               placeholder="i.e V(channel-game, twitch)" @bind="Data.Context">
+        <input class="input" type="text" placeholder="i.e V(channel-game, twitch)" @bind="Data.Context">
     </div>
+    <HelperInfo>The context is optional and allows you to use the same variable name but tie it to some other context</HelperInfo>
 </div>
 <div class="field">
     <label class="label">Variable Scope</label>

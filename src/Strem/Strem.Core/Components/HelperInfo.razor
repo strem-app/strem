@@ -1,0 +1,40 @@
+﻿@using Strem.Core.State
+@using Strem.Core.Extensions
+@using Strem.Core.Variables
+
+@inject IAppState AppState
+
+@if (ShowHelper)
+{
+    <p class="help">
+        <span class="icon has-text-info">
+            <i class="fas fa-info-circle"></i>
+        </span>
+        <span class="has-text-info">
+            @ChildContent
+        </span>
+    </p>
+}
+
+@code {
+
+    [Parameter]
+    public bool ForceShow { get; set; } = false;
+    
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    
+    public bool ShowHelper { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ForceShow)
+        {
+            ShowHelper = true;
+            return;
+        }
+
+        ShowHelper = AppState.AppVariables.Get<bool>(UIVariables.ShowHelpersVariable);
+    }
+
+}
