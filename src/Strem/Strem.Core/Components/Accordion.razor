@@ -1,8 +1,8 @@
 ﻿<div class="block accordion @(IsExpanded ? "is-expanded": "is-collapsed")">
     <a class="button is-flex @(StyleType) has-text-left" @onclick="() => IsExpanded = !IsExpanded">
         <span class="has-text-weight-semibold is-leveled">@((MarkupString)Title)</span>
-        <span class="tag is-rounded is-pulled-right">
-            <i class="fas @(IsExpanded ? "fa-caret-up" : "fa-caret-down")"></i>
+        <span class="icon is-small is-pulled-right">
+          <i class="fa @(IsExpanded ? "fa-circle-chevron-up" : "fa-circle-chevron-down")"></i>
         </span>
     </a>
     <div class="box">
