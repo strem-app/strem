@@ -1,0 +1,17 @@
+﻿@typeparam T
+
+@foreach (var element in Data)
+{
+    <option value="@GetValue(element)">@(GetName(element))</option>
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<T> Data { get; set; }
+
+    [Parameter]
+    public Func<T, string> GetValue { get; set; } = x => x.ToString();
+    
+    [Parameter]
+    public Func<T, string> GetName { get; set; } = x => x.ToString();
+}

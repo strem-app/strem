@@ -1,0 +1,13 @@
+﻿@typeparam T
+
+@foreach (var pair in KeyPairs)
+{
+    <option value="@pair.Key.ToString()">@(pair.Value)</option>
+}
+
+@code {
+
+    [Parameter]
+    public IEnumerable<KeyValuePair<T, string>> KeyPairs { get; set; } = Array.Empty<KeyValuePair<T, string>>();
+
+}

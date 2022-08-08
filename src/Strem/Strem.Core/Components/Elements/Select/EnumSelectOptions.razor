@@ -1,0 +1,12 @@
+﻿@foreach (var enumValue in Enum.GetValues(EnumType))
+{
+    <option value="@enumValue">@(TransformName(enumValue))</option>
+}
+
+@code {
+    [Parameter]
+    public Type EnumType { get; set; }
+
+    [Parameter]
+    public Func<object, string> TransformName { get; set; } = x => x.ToString();
+}

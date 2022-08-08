@@ -23,6 +23,7 @@ using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.Flows;
 using Strem.Infrastructure.Services.Persistence.User;
+using WindowsInput;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 
 namespace Strem.Infrastructure.Modules;
@@ -81,6 +82,9 @@ public class InfrastructureModule : IDependencyModule
         services.AddSingleton<ITaskRegistry, TaskRegistry>();
         services.AddSingleton<ITriggerRegistry, TriggerRegistry>();
         services.AddSingleton<IFlowExecutionEngine, FlowExecutionEngine>();
+        
+        // Input
+        services.AddSingleton<IInputSimulator, InputSimulator>();
         
         // Plugin (this isnt technically a plugin I know)
         services.AddSingleton<IPluginStartup, InfrastructurePluginStartup>();

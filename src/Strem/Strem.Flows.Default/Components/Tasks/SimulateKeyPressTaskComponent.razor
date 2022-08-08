@@ -1,0 +1,66 @@
+﻿@using Strem.Flows.Default.Flows.Tasks.Data
+@using WindowsInput.Native
+
+@inherits CustomTaskComponent<SimulateKeyPressTaskData>
+
+<div class="columns">
+    <div class="column">
+        <h5 class="title is-5">Modifiers</h5>
+        <button class="button is-info" @onclick="() => Data.KeyModifiers.Add(VirtualKeyCode.SHIFT)">Add Modifier Key</button>
+        @for (var i = 0; i < Data.KeyModifiers.Count; i++)
+        {
+            <div class="field">
+                <label class="label">Modifier Keys</label>
+                <div class="control">
+                    <div class="select">
+                        <select @bind="@Data.KeyModifiers[i]">
+                            <GenericSelectOptions Data="Modifiers" GetName="MakeKeyCodeNice"></GenericSelectOptions>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="column">
+        <h5 class="title is-5">Keys</h5>
+        <button class="button is-info" @onclick="() => Data.KeyModifiers.Add(VirtualKeyCode.VK_A)">Add Key</button>
+        @for (var i = 0; i < Data.KeysToPress.Count; i++)
+        {
+            <div class="field">
+                <label class="label">Period Type</label>
+                <div class="control">
+                    <div class="select">
+                        <select @bind="@Data.KeysToPress[i]">
+                            <GenericSelectOptions Data="NormalKeys" GetName="MakeKeyCodeNice"></GenericSelectOptions>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    public static readonly VirtualKeyCode[] Modifiers = new[]{
+        VirtualKeyCode.SHIFT,
+        VirtualKeyCode.LSHIFT,
+        VirtualKeyCode.RSHIFT,
+        VirtualKeyCode.CONTROL,
+        VirtualKeyCode.LCONTROL,
+        VirtualKeyCode.RCONTROL,
+        VirtualKeyCode.LWIN,
+        VirtualKeyCode.RWIN,
+        VirtualKeyCode.MENU,
+        VirtualKeyCode.LMENU,
+        VirtualKeyCode.RMENU
+    };
+
+    public static readonly VirtualKeyCode[] NormalKeys = Enum.GetValues<VirtualKeyCode>()
+        .Where(x => !Modifiers.Contains(x))
+        .ToArray();
+
+    public string MakeKeyCodeNice(VirtualKeyCode keycode)
+    { return keycode.ToString().Replace("VK_", "").Replace("MENU", "ALT"); }
+    
+    public override string Title => $"Simulate Pressing <strong>{string.Join(",", Data.KeyModifiers)}</strong>|<strong>{string.Join(",", Data.KeysToPress)}</strong>";
+}
