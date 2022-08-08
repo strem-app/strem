@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="InputSimulatorCore" Version="1.0.5" />
+      <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
       <PackageReference Include="Persistity.Flow" Version="2.0.41" />
       <PackageReference Include="Persistity.Serializers.Json" Version="2.0.41" />
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />

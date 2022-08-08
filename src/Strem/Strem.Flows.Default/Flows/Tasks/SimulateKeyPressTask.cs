@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using InputSimulatorStandard;
+using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Flows.Tasks.Data;
-using WindowsInput;
 
 namespace Strem.Flows.Default.Flows.Tasks;
 
@@ -34,5 +34,6 @@ public class SimulateKeyPressTask : FlowTask<SimulateKeyPressTaskData>
         { InputSimulator.Keyboard.KeyPress(data.KeysToPress.ToArray()); }
         else
         { InputSimulator.Keyboard.ModifiedKeyStroke(data.KeyModifiers, data.KeysToPress); }
+        
     }
 }

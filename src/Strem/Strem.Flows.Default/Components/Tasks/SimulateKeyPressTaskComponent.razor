@@ -1,39 +1,57 @@
 ﻿@using Strem.Flows.Default.Flows.Tasks.Data
-@using WindowsInput.Native
+@using InputSimulatorStandard.Native
 
 @inherits CustomTaskComponent<SimulateKeyPressTaskData>
 
 <div class="columns">
     <div class="column">
-        <h5 class="title is-5">Modifiers</h5>
-        <button class="button is-info" @onclick="() => Data.KeyModifiers.Add(VirtualKeyCode.SHIFT)">Add Modifier Key</button>
+        <label class="label is-5">Modifiers</label>
+        <div class="block">
+            <button class="button is-info" @onclick="() => Data.KeyModifiers.Add(VirtualKeyCode.SHIFT)">Add Modifier Key</button>
+        </div>
         @for (var i = 0; i < Data.KeyModifiers.Count; i++)
         {
-            <div class="field">
-                <label class="label">Modifier Keys</label>
+            var index = i;
+            <div class="field has-addons">
                 <div class="control">
                     <div class="select">
-                        <select @bind="@Data.KeyModifiers[i]">
+                        <select @bind="@Data.KeyModifiers[index]">
                             <GenericSelectOptions Data="Modifiers" GetName="MakeKeyCodeNice"></GenericSelectOptions>
                         </select>
                     </div>
+                </div>
+                <div class="control">
+                    <button class="button is-danger" @onclick="() => InvokeAsync(() => Data.KeyModifiers.RemoveAt(index))">
+                        <span class="icon is-small">
+                          <i class="fas fa-times"></i>
+                        </span>
+                      </button>
                 </div>
             </div>
         }
     </div>
     <div class="column">
-        <h5 class="title is-5">Keys</h5>
-        <button class="button is-info" @onclick="() => Data.KeyModifiers.Add(VirtualKeyCode.VK_A)">Add Key</button>
+        <label class="label is-5">Keys</label>
+        <div class="block">
+            <button class="button is-info" @onclick="() => Data.KeysToPress.Add(VirtualKeyCode.VK_A)">Add Key</button>
+        </div>
         @for (var i = 0; i < Data.KeysToPress.Count; i++)
         {
-            <div class="field">
-                <label class="label">Period Type</label>
+            var index = i;
+            <div class="field has-addons">
                 <div class="control">
                     <div class="select">
-                        <select @bind="@Data.KeysToPress[i]">
+                        <select @bind="@Data.KeysToPress[index]">
                             <GenericSelectOptions Data="NormalKeys" GetName="MakeKeyCodeNice"></GenericSelectOptions>
                         </select>
                     </div>
+                </div>
+                <div class="control">
+                    <button class="button is-danger" @onclick="() => InvokeAsync(() => Data.KeysToPress.RemoveAt(index))">
+                        <span class="icon is-small">
+                          <i class="fas fa-times"></i>
+                        </span>
+                      </button>
                 </div>
             </div>
         }
@@ -62,5 +80,14 @@
     public string MakeKeyCodeNice(VirtualKeyCode keycode)
     { return keycode.ToString().Replace("VK_", "").Replace("MENU", "ALT"); }
     
-    public override string Title => $"Simulate Pressing <strong>{string.Join(",", Data.KeyModifiers)}</strong>|<strong>{string.Join(",", Data.KeysToPress)}</strong>";
+    public override string Title => GenerateTitle();
+
+    public string GenerateTitle()
+    {
+        var modifierKeys = string.Join(", ", Data.KeyModifiers.Select(MakeKeyCodeNice));
+        var normalKeys = string.Join(", ", Data.KeysToPress.Select(MakeKeyCodeNice));
+        var starter = modifierKeys.Length > 0 ? "Holding " : "Pressing ";
+        var follower = modifierKeys.Length > 0 ? " Then " : "";
+        return $"Simulate {starter} <strong>{modifierKeys}</strong>{follower}<strong>{normalKeys}</strong>";
+    }
 }

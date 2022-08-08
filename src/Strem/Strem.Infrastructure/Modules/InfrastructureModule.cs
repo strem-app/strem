@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using InputSimulatorStandard;
+using Newtonsoft.Json;
 using Persistity.Core.Serialization;
 using Persistity.Encryption;
 using Persistity.Flow.Builders;
@@ -23,7 +24,6 @@ using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.Flows;
 using Strem.Infrastructure.Services.Persistence.User;
-using WindowsInput;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 
 namespace Strem.Infrastructure.Modules;
