@@ -1,0 +1,56 @@
+﻿@using System.Text.RegularExpressions
+
+<div class="field">
+    <label class="label">Regex Pattern Tester</label>
+    <div class="control @(DoesRegexMatch ? "has-tooltip-success" : "has-tooltip-danger")" data-tooltip="@(DoesRegexMatch ? "Pattern matches text" : "No matches found")">
+        <input type="text" class="input @(DoesRegexMatch ? "is-success" : "is-danger")" 
+               placeholder="i.e some text you want to check your pattern against"
+               @bind="RegexTestText">
+    </div>
+    <HelperInfo>This lets you test your regex pattern locally, it isn't saved anywhere, its just to help you test out 😁</HelperInfo>
+</div>
+
+@if(ShowCaptures)
+{
+    <div class="field">
+        <label class="label">Captured Text</label>
+        <div class="control">
+            <input type="text" class="input @(string.IsNullOrEmpty(CapturedText) ? "is-danger" : "is-success")" 
+                   placeholder="No Matches Found"
+                   value="@CapturedText" disabled>
+        </div>
+        <HelperInfo>This shows the example regex capture from the source text with the pattern provided</HelperInfo>
+    </div>
+}
+
+<div class="field">
+    <div class="control">
+        <button class="button is-info" @onclick="CheckRegex">Test Regex</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string RegexPattern { get; set; }
+    
+    [Parameter]
+    public bool ShowCaptures { get; set; }
+    
+    public string RegexTestText { get; set; } = string.Empty;
+    public bool DoesRegexMatch { get; set; } = false;
+    public string CapturedText { get; set; }
+    
+    public void CheckRegex()
+    {
+        var match = Regex.Match(RegexTestText, RegexPattern);
+        if(match.Success) { DoesRegexMatch = true; }
+
+        if (ShowCaptures)
+        {
+            try { CapturedText = match.Groups?[1].Value; }
+            catch { CapturedText = string.Empty; }            
+        }
+
+        StateHasChanged();
+    }
+}

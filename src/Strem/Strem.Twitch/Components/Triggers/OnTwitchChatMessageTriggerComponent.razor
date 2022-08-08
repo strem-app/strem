@@ -46,20 +46,9 @@
     
     @if (Data.MatchType == TextMatch.Pattern)
     {
-        <div class="field">
-            <label class="label">Regex Pattern Tester</label>
-            <div class="control @(DoesRegexMatch ? "has-tooltip-success" : "has-tooltip-danger")" data-tooltip="@(DoesRegexMatch ? "Pattern matches text" : "No matches found")">
-                <input type="text" class="input @(DoesRegexMatch ? "is-success" : "is-danger")" 
-                       placeholder="i.e some text you want to check your pattern against"
-                       @bind="RegexTestText">
-            </div>
-            <HelperInfo>This lets you test your regex pattern locally, it isn't saved anywhere, its just to help you test 😁</HelperInfo>
-        </div>
-        <div class="field">
-            <div class="control">
-                <button class="button is-info" @onclick="CheckRegex">Test Regex</button>
-            </div>
-        </div>
+        <Accordion Title="Regex Pattern Tester">
+            <RegexTester RegexPattern="@Data.MatchText"></RegexTester>
+        </Accordion>
     }
 }
 
@@ -95,9 +84,6 @@
 
 @code {
     public override string Title => GenerateTitle();
-
-    public string RegexTestText { get; set; } = string.Empty;
-    public bool DoesRegexMatch { get; set; } = false;
     
     public string GenerateTitle()
     {
@@ -106,11 +92,5 @@
         var joiningWord = hasTextMatch ? "And " : "With ";
         var userRequirements =  Data.MinimumUserType != TwitchLib.Api.Core.Enums.UserType.Viewer ? $"{joiningWord} At Least <strong>{Data.MinimumUserType}</strong>" : "";
         return $"Trigger On Twitch Message Received {textRequirements} {userRequirements}";
-    }
-
-    public void CheckRegex()
-    {
-        DoesRegexMatch = Regex.IsMatch(RegexTestText, Data.MatchText);
-        StateHasChanged();
     }
 }

@@ -24,6 +24,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     public override string Version => OnTwitchChatMessageTriggerData.TriggerVersion;
 
     public static VariableEntry ChatMessageVariable = new("chat.message", TwitchVars.TwitchContext);
+    public static VariableEntry RawChatMessageVariable = new("chat.raw-message", TwitchVars.TwitchContext);
     public static VariableEntry BitsSentVariable = new("chat.message.bits-sent", TwitchVars.TwitchContext);
     public static VariableEntry BitsValueVariable = new("chat.message.bits-value", TwitchVars.TwitchContext);
     public static VariableEntry RewardIdVariable = new("chat.message.reward-id", TwitchVars.TwitchContext);
@@ -58,6 +59,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     {
         var flowVars = new Core.Variables.Variables();
         flowVars.Set(ChatMessageVariable, chatMessage.Message);
+        flowVars.Set(RawChatMessageVariable, chatMessage.RawIrcMessage);
         flowVars.Set(BitsSentVariable, chatMessage.Bits.ToString());
         flowVars.Set(BitsValueVariable, chatMessage.BitsInDollars.ToString());
         flowVars.Set(RewardIdVariable, chatMessage.CustomRewardId);

@@ -19,21 +19,21 @@
 <div class="field">
     <label class="label">Variable Scope</label>
     <div class="control">
-        <div class="select has-tooltip-multiline" data-tooltip="Persisted are available even after app closes, Application is available until app closes, Flow is only for the rest of this flow">
+        <div class="select">
             <select @bind="Data.Scope">
                 <EnumSelectOptions EnumType="typeof(VariableScope)"></EnumSelectOptions>
             </select>
         </div>
     </div>
+    <HelperInfo>Persisted vars are saved and available even after app closes, Application vars are available until app closes, Flow vars are only available for the rest of the flow</HelperInfo>
 </div>
 
 <div class="field">
     <label class="label">Variable Value</label>
     <div class="control">
-        <input class="input has-tooltip-multiline" type="text" 
-               data-tooltip="The value can be anything, a bit of text, a number and accepts var inputs" 
-               placeholder="i.e 1" @bind="Data.Value">
+        <input class="input has-tooltip-multiline" type="text" placeholder="i.e 1" @bind="Data.Value">
     </div>
+    <HelperInfo>The value can be anything, a bit of text, a number and accepts dynamic var inputs i.e V(some-var, some-context)"</HelperInfo>
 </div>
 
 @code {
