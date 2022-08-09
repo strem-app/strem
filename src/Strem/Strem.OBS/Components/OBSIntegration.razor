@@ -1,6 +1,7 @@
 ﻿@using System.Reactive.Disposables
 @using OBSWebsocketDotNet
 @using Persistity.Encryption
+@using Persistity.Extensions
 @using Strem.Core.Events.Bus
 @using Strem.Core.Extensions
 @using Strem.Core.State
@@ -100,7 +101,7 @@
 
     public async Task ConnectToOBS()
     {
-        if(IsConnecting){return;}
+        if(IsConnecting){ return; }
         
         IsConnecting = true;
         InvokeAsync(StateHasChanged);

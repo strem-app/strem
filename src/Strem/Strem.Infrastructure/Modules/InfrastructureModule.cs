@@ -60,7 +60,7 @@ public class InfrastructureModule : IDependencyModule
         services.AddSingleton(SetupLogger());
         
         // Persistence Base
-        services.AddSingleton<IEncryptor>(new CustomEncryptor("super-secret"));
+        services.AddSingleton<IEncryptor>(new AesEncryptor("super-secret"));
         services.AddSingleton<ISerializer, JsonSerializer>();
         services.AddSingleton<IDeserializer, JsonDeserializer>();
         services.AddSingleton<PipelineBuilder>();
