@@ -14,6 +14,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.7" />
         <PackageReference Include="obs-websocket-dotnet" Version="4.9.1" />
+        <PackageReference Include="Persistity" Version="2.0.41" />
     </ItemGroup>
 
     <ItemGroup>
@@ -23,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
+      <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
       <ProjectReference Include="..\Strem.OBS.Client\obs-websocket-dotnet.csproj" />
     </ItemGroup>
 

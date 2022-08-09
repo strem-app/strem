@@ -1,13 +1,18 @@
 ﻿@using System.Reactive.Disposables
 @using OBSWebsocketDotNet
+@using Persistity.Encryption
 @using Strem.Core.Events.Bus
 @using Strem.Core.Extensions
 @using Strem.Core.State
+@using Strem.Infrastructure.Extensions
+@using Strem.OBS.Extensions
 @using Strem.OBS.Services.Client
+@using Strem.OBS.Variables
 
 @inject IObservableOBSClient ObsClient
 @inject IAppState AppState
 @inject IEventBus EventBus
+@inject IEncryptor Encryptor
 
 @implements IDisposable
 
@@ -21,27 +26,34 @@
         </a>
     </p>
     <div class="message-body">
-        <div class="field">
-            <label class="label">OBS Host</label>
+        <label class="label">OBS Host/IP & Port</label>
+        <div class="field has-addons">
             <div class="control">
-                <input class="input" type="text" placeholder="i.e localhost:7777" @bind="ServerUrl"/>
+                <input class="input" type="text" placeholder="i.e localhost or 127.0.0.1" @bind="Host"/>
+            </div>
+            <div class="control">
+                <label class="label m-2">:</label>
+            </div>
+            <div class="control">
+                <input class="input" type="text" placeholder="i.e 4444" @bind="Port"/>
             </div>
         </div>
-        <label class="label">OBS Server Password</label>
         <div class="field">
+            <label class="label">OBS Server Password</label>
             <div class="control">
-                <input class="input" type="password" @bind="Password" />
+                <input class="input" type="password" @bind="Password"/>
             </div>
+            <HelperInfo>You can leave the password empty if there is no password set on the server</HelperInfo>
         </div>
         <div class="field">
             <div class="control">
-                @if(IsConnected)
+                @if (IsConnected)
                 {
-                    <button class="button is-danger" @onclick="DisconnectFromOBS">Disconnect From OBS</button>
+                    <button class="button is-danger" @onclick="DisconnectFromOBS" disabled="@IsConnecting">Disconnect From OBS</button>
                 }
                 else
                 {
-                    <button class="button is-success" @onclick="ConnectToOBS">Connect To OBS</button>
+                    <button class="button is-success" @onclick="ConnectToOBS" disabled="@IsConnecting">Connect To OBS</button>
                 }
             </div>
             @if (!string.IsNullOrEmpty(ConnectionError))
@@ -55,12 +67,6 @@
                     </span>
                 </p>
             }
-            @if (!string.IsNullOrEmpty(DataChanged))
-            {
-                <p class="help is-success">
-                    @DataChanged
-                </p>
-            }
         </div>
     </div>
 </article>
@@ -69,56 +75,65 @@
     
     private CompositeDisposable _subs = new();
     
-    public string ServerUrl { get; set; }
+    public string Host { get; set; }
+    public string Port { get; set; }
     public string Password { get; set; }
     public string ConnectionError { get; set; }
-    public string DataChanged { get; set; }
 
     public bool IsConnected => ObsClient.IsConnected;
+    public bool IsConnecting { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
-        ObsClient.OnSceneItemVisibilityChanged
-            .Subscribe(x =>
+        if (AppState.AppVariables.Has(OBSVars.Host))
+        {
+            Host = AppState.AppVariables.Get(OBSVars.Host);
+            Port = AppState.AppVariables.Get(OBSVars.Port);
+
+            if (AppState.AppVariables.Has(OBSVars.Password))
             {
-                DataChanged = $"{x.SceneName}:{x.ItemName}|{x.ItemId} is {x.IsVisible}";
-                InvokeAsync(StateHasChanged);
-            })
-            .AddTo(_subs);
+                var password = AppState.AppVariables.Get(OBSVars.Password);
+                Password = Encryptor.Decrypt(password);
+            }
+        }
     }
 
     public async Task ConnectToOBS()
     {
-        ConnectionError = string.Empty;
-        var websocketAddress = $"ws://{ServerUrl}/api/websocket";
-        try
+        if(IsConnecting){return;}
+        
+        IsConnecting = true;
+        InvokeAsync(StateHasChanged);
+        
+        var result = await ObsClient.AttemptConnect(Host, Port, Password);
+        ConnectionError = result.message;
+
+        if (result.success)
         {
-            var success = await ObsClient.Connect(websocketAddress, Password);
-            if(!success) { ConnectionError = "Unknown Error Connecting To OBS"; }
-        }
-        catch (AuthFailureException ex)
-        {
-            ConnectionError = $"Authentication Failed: {ex.Message}";
-        }
-        catch (ErrorResponseException ex)
-        {
-            ConnectionError = $"Connect Failed : {ex.Message}";
-        }
-        catch (Exception ex)
-        {
-            ConnectionError = $"Connect Failed : {ex.Message}";
+            AppState.AppVariables.Delete(OBSVars.Password);
+            AppState.AppVariables.Set(OBSVars.Host, Host);
+            AppState.AppVariables.Set(OBSVars.Port, Port);
+            if (!string.IsNullOrEmpty(Password))
+            {
+                var encryptedPassword = Encryptor.Encrypt(Password);
+                AppState.AppVariables.Set(OBSVars.Password, encryptedPassword);
+            }
         }
         
+        IsConnecting = false;
         InvokeAsync(StateHasChanged);
     }
 
     public void DisconnectFromOBS()
     {
+        AppState.AppVariables.Delete(OBSVars.Password);
+        AppState.AppVariables.Delete(OBSVars.Host);
+        AppState.AppVariables.Delete(OBSVars.Port);
+        
         if (!ObsClient.IsConnected){return;}
         ObsClient.Disconnect();
     }
     
-
     public void Dispose()
     {
         _subs?.Dispose();  
