@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<AssemblyName>obs-websocket-dotnet</AssemblyName>
+		<RootNamespace>OBSWebsocketDotNet</RootNamespace>
+		<Copyright>Copyright © Stéphane Lepin 2020</Copyright>
+		<LangVersion>8</LangVersion>
+    <Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="WebSocket4Net" Version="0.15.2" />
+	</ItemGroup>
+
+</Project>

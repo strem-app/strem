@@ -11,6 +11,7 @@ using Strem.Flows.Default.Modules;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Modules;
 using Strem.Infrastructure.Services.Api;
+using Strem.OBS.Modules;
 using Strem.Twitch.Controllers;
 using Strem.Twitch.Modules;
 using Strem.UI;
@@ -22,7 +23,7 @@ public class Program
     public static PhotinoBlazorApp CreateApp(string[] args)
     {
         var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
-        appBuilder.Services.AddModules(new InfrastructureModule(), new TwitchModule(), new DefaultFlowsModule());
+        appBuilder.Services.AddModules(new InfrastructureModule(), new TwitchModule(), new OBSModule(), new DefaultFlowsModule());
         appBuilder.RootComponents.Add<App>("#app");
         return appBuilder.Build();
     }

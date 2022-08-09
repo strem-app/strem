@@ -1,0 +1,126 @@
+﻿@using System.Reactive.Disposables
+@using OBSWebsocketDotNet
+@using Strem.Core.Events.Bus
+@using Strem.Core.Extensions
+@using Strem.Core.State
+@using Strem.OBS.Services.Client
+
+@inject IObservableOBSClient ObsClient
+@inject IAppState AppState
+@inject IEventBus EventBus
+
+@implements IDisposable
+
+<article class="message is-info">
+    <p class="message-header">
+        OBS
+        <a>
+            <span class="icon is-small">
+                <i class="fab fa-clapperboard"></i>
+            </span>
+        </a>
+    </p>
+    <div class="message-body">
+        <div class="field">
+            <label class="label">OBS Host</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="i.e localhost:7777" @bind="ServerUrl"/>
+            </div>
+        </div>
+        <label class="label">OBS Server Password</label>
+        <div class="field">
+            <div class="control">
+                <input class="input" type="password" @bind="Password" />
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                @if(IsConnected)
+                {
+                    <button class="button is-danger" @onclick="DisconnectFromOBS">Disconnect From OBS</button>
+                }
+                else
+                {
+                    <button class="button is-success" @onclick="ConnectToOBS">Connect To OBS</button>
+                }
+            </div>
+            @if (!string.IsNullOrEmpty(ConnectionError))
+            {
+                <p class="help">
+                    <span class="icon has-text-danger">
+                        <i class="fas fa-circle-exclamation"></i>
+                    </span>
+                    <span class="has-text-danger">
+                        @ConnectionError
+                    </span>
+                </p>
+            }
+            @if (!string.IsNullOrEmpty(DataChanged))
+            {
+                <p class="help is-success">
+                    @DataChanged
+                </p>
+            }
+        </div>
+    </div>
+</article>
+
+@code {
+    
+    private CompositeDisposable _subs = new();
+    
+    public string ServerUrl { get; set; }
+    public string Password { get; set; }
+    public string ConnectionError { get; set; }
+    public string DataChanged { get; set; }
+
+    public bool IsConnected => ObsClient.IsConnected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ObsClient.OnSceneItemVisibilityChanged
+            .Subscribe(x =>
+            {
+                DataChanged = $"{x.SceneName}:{x.ItemName}|{x.ItemId} is {x.IsVisible}";
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+    }
+
+    public async Task ConnectToOBS()
+    {
+        ConnectionError = string.Empty;
+        var websocketAddress = $"ws://{ServerUrl}/api/websocket";
+        try
+        {
+            var success = await ObsClient.Connect(websocketAddress, Password);
+            if(!success) { ConnectionError = "Unknown Error Connecting To OBS"; }
+        }
+        catch (AuthFailureException ex)
+        {
+            ConnectionError = $"Authentication Failed: {ex.Message}";
+        }
+        catch (ErrorResponseException ex)
+        {
+            ConnectionError = $"Connect Failed : {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            ConnectionError = $"Connect Failed : {ex.Message}";
+        }
+        
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void DisconnectFromOBS()
+    {
+        if (!ObsClient.IsConnected){return;}
+        ObsClient.Disconnect();
+    }
+    
+
+    public void Dispose()
+    {
+        _subs?.Dispose();  
+    } 
+}
