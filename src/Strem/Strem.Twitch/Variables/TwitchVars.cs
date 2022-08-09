@@ -1,4 +1,6 @@
-﻿namespace Strem.Twitch.Variables;
+﻿using Strem.Core.Variables;
+
+namespace Strem.Twitch.Variables;
 
 public class TwitchVars
 {
@@ -7,16 +9,17 @@ public class TwitchVars
     public static readonly string TwitchContext = "twitch";
  
     // OAuth (app)
-    public static readonly string TokenExpiry = "token-expiry";
-    public static readonly string OAuthScopes = "oauth-scopes";
+    public static readonly VariableEntry OAuthToken = new(CommonVariables.OAuthToken, TwitchContext);
+    public static readonly VariableEntry TokenExpiry = new("token-expiry", TwitchContext);
+    public static readonly VariableEntry OAuthScopes = new("oauth-scopes", TwitchContext);
     
     // User (app)
-    public static readonly string Username = "username";
-    public static readonly string UserId = "user-id";
+    public static readonly VariableEntry Username = new("username", TwitchContext);
+    public static readonly VariableEntry UserId = new("user-id", TwitchContext);
 
     // Channel (transient)
-    public static readonly string ChannelTitle = "channel-title";
-    public static readonly string ChannelGame = "channel-game";
-    public static readonly string StreamViewers = "stream-viewers";
-    public static readonly string StreamThumbnailUrl = "stream-thumbnail-url";
+    public static readonly VariableEntry ChannelTitle = new("channel-title", TwitchContext);
+    public static readonly VariableEntry ChannelGame = new("channel-game", TwitchContext);
+    public static readonly VariableEntry StreamViewers = new("stream-viewers", TwitchContext);
+    public static readonly VariableEntry StreamThumbnailUrl = new("stream-thumbnail-url", TwitchContext);
 }

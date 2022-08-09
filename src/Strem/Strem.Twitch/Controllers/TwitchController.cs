@@ -59,7 +59,7 @@ public class TwitchController : Controller
             return BadRequest($"Twitch couldn't complete OAuth: {errorEvent.Message}");
         }
 
-        AppState.SetTwitchVar(CommonVariables.OAuthToken, payload.AccessToken);
+        AppState.AppVariables.Set(TwitchVars.OAuthToken, payload.AccessToken);
         this.PublishAsyncEvent(new TwitchOAuthSuccessEvent());
         return Ok("Punch It Chewie!");
     }

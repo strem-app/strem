@@ -79,24 +79,24 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         if (!AppState.HasTwitchOAuth()) { return; }
         
         TwitchApi.Settings.SetCredentials(AppState);
-        var userId = AppState.GetTwitchVar(TwitchVars.UserId);
+        var userId = AppState.AppVariables.Get(TwitchVars.UserId);
         var accessToken = AppState.GetTwitchOAuthToken();
         
         var channelInformation = await TwitchApi.Helix.Channels.GetChannelInformationAsync(userId, accessToken);
         if (channelInformation != null && channelInformation.Data.Length > 0)
         {
             var channelData = channelInformation.Data[0];
-            AppState.TransientVariables.Set(TwitchVars.Username, TwitchVars.TwitchContext, channelData.BroadcasterName);
-            AppState.TransientVariables.Set(TwitchVars.ChannelTitle, TwitchVars.TwitchContext, channelData.Title);
-            AppState.TransientVariables.Set(TwitchVars.ChannelGame, TwitchVars.TwitchContext, channelData.GameName);
+            AppState.TransientVariables.Set(TwitchVars.Username, channelData.BroadcasterName);
+            AppState.TransientVariables.Set(TwitchVars.ChannelTitle, channelData.Title);
+            AppState.TransientVariables.Set(TwitchVars.ChannelGame, channelData.GameName);
         }
 
         var streamInformation = await TwitchApi.Helix.Streams.GetStreamsAsync(userIds: new List<string> { userId });
         if (streamInformation != null && streamInformation.Streams.Length > 0)
         {
             var streamData = streamInformation.Streams[0];
-            AppState.TransientVariables.Set(TwitchVars.StreamViewers, TwitchVars.TwitchContext, streamData.ViewerCount.ToString());
-            AppState.TransientVariables.Set(TwitchVars.StreamThumbnailUrl, TwitchVars.TwitchContext, streamData.ThumbnailUrl);
+            AppState.TransientVariables.Set(TwitchVars.StreamViewers, streamData.ViewerCount.ToString());
+            AppState.TransientVariables.Set(TwitchVars.StreamThumbnailUrl, streamData.ThumbnailUrl);
         }
     }
 

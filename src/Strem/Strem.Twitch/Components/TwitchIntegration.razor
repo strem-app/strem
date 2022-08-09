@@ -67,7 +67,7 @@
     protected override async Task OnInitializedAsync()
     {
         IsTwitchAccountLinked = AppState.HasTwitchOAuth();
-        Username = AppState.GetTwitchVar(TwitchVars.Username);
+        Username = AppState.AppVariables.Get(TwitchVars.Username);
 
         if (IsTwitchAccountLinked)
         {
@@ -76,10 +76,10 @@
         }
 
         AppState.AppVariables.OnVariableChanged
-            .Where(x => x.Name == TwitchVars.Username && x.Context == TwitchVars.TwitchContext)
+            .Where(x => x == TwitchVars.Username)
             .Subscribe(x =>
             {
-                Username = AppState.GetTwitchVar(TwitchVars.Username);
+                Username = AppState.AppVariables.Get(TwitchVars.Username);
                 InvokeAsync(StateHasChanged);
             })
             .AddTo(_subs);

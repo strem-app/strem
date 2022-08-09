@@ -64,23 +64,23 @@ public class TwitchOAuthClient : ITwitchOAuthClient
 
     public void UpdateTokenState(TwitchOAuthValidationPayload payload)
     {
-        AppState.SetTwitchVar(TwitchVars.Username, payload.Login);
-        AppState.SetTwitchVar(TwitchVars.UserId, payload.UserId);
+        AppState.AppVariables.Set(TwitchVars.Username, payload.Login);
+        AppState.AppVariables.Set(TwitchVars.UserId, payload.UserId);
 
         var actualExpiry = DateTime.Now.AddSeconds(payload.ExpiresIn);
-        AppState.SetTwitchVar(TwitchVars.TokenExpiry, actualExpiry.ToString("u"));
+        AppState.AppVariables.Set(TwitchVars.TokenExpiry, actualExpiry.ToString("u"));
 
         var scopes = string.Join(",", payload.Scopes);
-        AppState.SetTwitchVar(TwitchVars.OAuthScopes, scopes);
+        AppState.AppVariables.Set(TwitchVars.OAuthScopes, scopes);
     }
 
     public void ClearTokenState()
     {
-        AppState.DeleteTwitchVar(TwitchVars.Username);
-        AppState.DeleteTwitchVar(TwitchVars.UserId);
-        AppState.DeleteTwitchVar(TwitchVars.TokenExpiry);
-        AppState.DeleteTwitchVar(TwitchVars.OAuthScopes);
-        AppState.DeleteTwitchVar(CommonVariables.OAuthToken);
+        AppState.AppVariables.Delete(TwitchVars.Username);
+        AppState.AppVariables.Delete(TwitchVars.UserId);
+        AppState.AppVariables.Delete(TwitchVars.TokenExpiry);
+        AppState.AppVariables.Delete(TwitchVars.OAuthScopes);
+        AppState.AppVariables.Delete(TwitchVars.OAuthToken);
     }
     
     public async Task<bool> ValidateToken()
