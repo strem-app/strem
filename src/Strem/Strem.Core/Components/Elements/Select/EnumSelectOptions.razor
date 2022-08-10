@@ -1,4 +1,5 @@
-﻿@foreach (var enumValue in Enum.GetValues(EnumType))
+﻿
+@foreach (var enumValue in Enum.GetValues(EnumType))
 {
     <option value="@enumValue">@(TransformName(enumValue))</option>
 }

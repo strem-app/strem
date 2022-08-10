@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Strem.Core.Components;
 using Strem.Core.Components.Tasks;
 using Strem.Core.Components.Triggers;
 using Strem.Core.DI;
