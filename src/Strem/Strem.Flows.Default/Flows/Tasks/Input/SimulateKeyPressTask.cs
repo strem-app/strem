@@ -14,6 +14,7 @@ public class SimulateKeyPressTask : FlowTask<SimulateKeyPressTaskData>
     public override string Version => SimulateKeyPressTaskData.TaskVersion;
     
     public override string Name => "Simulates Key Presses";
+    public override string Category => "Input";
     public override string Description => "Simulates key presses on the system";
 
     public IInputSimulator InputSimulator { get; }

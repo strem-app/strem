@@ -16,6 +16,7 @@ public class RegexToVariableTask : FlowTask<RegexToVariableTaskData>
     public override string Version => RegexToVariableTaskData.TaskVersion;
     
     public override string Name => "Regex To Variable";
+    public override string Category => "Variables";
     public override string Description => "Uses regex to extract a portion of the source to a new variable";
 
     public RegexToVariableTask(ILogger<FlowTask<RegexToVariableTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)

@@ -16,6 +16,7 @@ public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
     public override string Version => ExecuteFlowTaskData.TaskVersion;
     
     public override string Name => "Execute Flow";
+    public override string Category => "Utility";
     public override string Description => "Executes an existing flow";
 
     public IFlowExecutionEngine FlowExecutionEngine { get; }

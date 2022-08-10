@@ -11,6 +11,7 @@ public abstract class FlowTrigger<T> : IFlowTrigger
     public abstract string Version { get; }
     public abstract string Code { get; }
     public abstract string Name { get; }
+    public abstract string Category { get; }
     public abstract string Description { get; }
 
     public virtual VariableDescriptor[] VariableOutputs { get; } = Array.Empty<VariableDescriptor>();

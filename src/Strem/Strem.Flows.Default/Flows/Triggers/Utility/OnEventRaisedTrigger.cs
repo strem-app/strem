@@ -19,6 +19,7 @@ public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
     public static VariableEntry EventDataVariable = new("event-data");
 
     public override string Name => "On Event Raised";
+    public override string Category => "Utility";
     public override string Description => "Triggers when the matching event is raised";
     public override VariableDescriptor[] VariableOutputs { get; } = new[] { EventDataVariable.ToDescriptor() };
 

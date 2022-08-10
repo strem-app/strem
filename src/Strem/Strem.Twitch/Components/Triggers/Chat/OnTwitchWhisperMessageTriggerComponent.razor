@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Components.Triggers;
+@using Strem.Core.Types
+@using TwitchLib.Client.Enums
+@using System.Text.RegularExpressions
+
+@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Chat.OnTwitchWhisperMessageTriggerData>
+
+<div class="field">
+    <label class="label">Message Content Requirements</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.MatchType">
+                <EnumSelectOptions EnumType="typeof(TextMatch)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    <HelperInfo>This will only trigger if the text matches your requirements</HelperInfo>
+</div>
+
+@if (Data.MatchType != TextMatch.None)
+{
+    <div class="field">
+        <label class="label">Message Match @(Data.MatchType == TextMatch.Pattern ? "Regex Pattern" : "Text")</label>
+        <div class="control">
+            <input class="input" type="text" @bind="Data.MatchText"
+                   placeholder="i.e @(Data.MatchType == TextMatch.Pattern ? "regex pattern to match" : "text to matching")">
+        </div>
+    </div>
+    
+    @if (Data.MatchType == TextMatch.Pattern)
+    {
+        <Accordion Title="Regex Pattern Tester">
+            <RegexTester RegexPattern="@Data.MatchText"></RegexTester>
+        </Accordion>
+    }
+}
+
+@code {
+    public override string Title => GenerateTitle();
+    
+    public string GenerateTitle()
+    {
+        var hasTextMatch = Data.MatchType != TextMatch.None;
+        var textRequirements =  hasTextMatch ? "With Text Match" : "";
+        return $"Trigger On Twitch Whisper Received {textRequirements}";
+    }
+}

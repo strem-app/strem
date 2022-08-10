@@ -35,6 +35,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     public static VariableEntry UserIdVariable = new("chat.user-id", TwitchVars.TwitchContext);
     
     public override string Name => "On Twitch Chat Message";
+    public override string Category => "Twitch";
     public override string Description => "Triggers when a twitch chat message is received";
 
     public override VariableDescriptor[] VariableOutputs { get; } = new[]

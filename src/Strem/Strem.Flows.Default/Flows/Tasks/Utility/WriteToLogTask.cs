@@ -14,6 +14,7 @@ public class WriteToLogTask : FlowTask<WriteToLogTaskData>
     public override string Version => WriteToLogTaskData.TaskVersion;
     
     public override string Name => "Write To Log";
+    public override string Category => "Utility";
     public override string Description => "Writes the text out to the log file, useful for debugging";
 
     public WriteToLogTask(ILogger<FlowTask<WriteToLogTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)

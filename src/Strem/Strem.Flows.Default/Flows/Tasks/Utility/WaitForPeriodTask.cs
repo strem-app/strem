@@ -14,6 +14,7 @@ public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
     public override string Version => WaitForPeriodTaskData.TaskVersion;
     
     public override string Name => "Wait For Period";
+    public override string Category => "Utility";
     public override string Description => "Sets a variable for use later within the process";
 
     public WaitForPeriodTask(ILogger<FlowTask<WaitForPeriodTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)

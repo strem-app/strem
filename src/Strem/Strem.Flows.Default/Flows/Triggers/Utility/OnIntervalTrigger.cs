@@ -15,6 +15,7 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
     public override string Version => OnIntervalTriggerData.TriggerVersion;
 
     public override string Name => "On Interval";
+    public override string Category => "Utility";
     public override string Description => "Triggers the flow every time the interval is met";
 
     public OnIntervalTrigger(ILogger<FlowTrigger<OnIntervalTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)

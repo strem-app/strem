@@ -15,6 +15,7 @@ public class SetVariableTask : FlowTask<SetVariableTaskData>
     public override string Version => SetVariableTaskData.TaskVersion;
     
     public override string Name => "Set A Variable";
+    public override string Category => "Variables";
     public override string Description => "Sets a variable for use later within the process";
 
     public SetVariableTask(ILogger<FlowTask<SetVariableTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)

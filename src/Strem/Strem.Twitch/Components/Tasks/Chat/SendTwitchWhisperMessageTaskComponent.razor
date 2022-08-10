@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits CustomTaskComponent<Strem.Twitch.Flows.Tasks.Chat.SendTwitchWhisperMessageTaskData>
+
+<div class="field">
+    <label class="label">Message</label>
+    <div class="control">
+        <input class="input" type="text" @bind="Data.Message" placeholder="i.e Hello there dear viewers im live!">
+    </div>
+    <HelperInfo>
+        You can use dynamic vars within the message such as V(variable, optional.context) to replace data within the message
+    </HelperInfo>
+</div>
+<div class="field">
+    <label class="label">User To Send To</label>
+    <div class="control">
+        <input class="input" type="text" @bind="Data.Username" placeholder="i.e MyBestFriendOnTwitch">
+    </div>
+    <HelperInfo>Remember that this may annoy other users, so make sure you use this responsibly</HelperInfo>
+</div>
+
+
+@code {
+    public override string Title => $"Send Twitch Whisper To {Data.Username}";
+}
