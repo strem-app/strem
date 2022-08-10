@@ -1,7 +1,7 @@
 ﻿using Strem.Core.Flows.Triggers;
 using Strem.Core.Types;
 
-namespace Strem.Flows.Default.Flows.Triggers.Data;
+namespace Strem.Flows.Default.Flows.Triggers.Utility;
 
 public class OnIntervalTriggerData : IFlowTriggerData
 {

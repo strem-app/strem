@@ -1,11 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Strem.Core.Components.Triggers;
 @using Strem.Core.Types
-@using Strem.Twitch.Flows.Triggers.Data;
 @using TwitchLib.Client.Enums
 @using System.Text.RegularExpressions
 
-@inherits CustomTriggerComponent<OnTwitchChatMessageTriggerData>
+@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Chat.OnTwitchChatMessageTriggerData>
 
 <div class="field">
     <label class="label">Minimum Required User Type</label>

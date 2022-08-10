@@ -1,7 +1,7 @@
 ﻿using InputSimulatorStandard.Native;
 using Strem.Core.Flows.Tasks;
 
-namespace Strem.Flows.Default.Flows.Tasks.Data;
+namespace Strem.Flows.Default.Flows.Tasks.Input;
 
 public class SimulateKeyPressTaskData : IFlowTaskData
 {

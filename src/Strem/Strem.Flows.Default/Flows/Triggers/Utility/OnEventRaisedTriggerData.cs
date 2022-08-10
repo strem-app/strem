@@ -1,6 +1,6 @@
 ﻿using Strem.Core.Flows.Triggers;
 
-namespace Strem.Flows.Default.Flows.Triggers.Data;
+namespace Strem.Flows.Default.Flows.Triggers.Utility;
 
 public class OnEventRaisedTriggerData : IFlowTriggerData
 {

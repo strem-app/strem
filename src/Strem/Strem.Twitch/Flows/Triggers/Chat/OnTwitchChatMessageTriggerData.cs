@@ -2,7 +2,7 @@
 using Strem.Core.Types;
 using TwitchLib.Api.Core.Enums;
 
-namespace Strem.Twitch.Flows.Triggers.Data;
+namespace Strem.Twitch.Flows.Triggers.Chat;
 
 public class OnTwitchChatMessageTriggerData : IFlowTriggerData
 {

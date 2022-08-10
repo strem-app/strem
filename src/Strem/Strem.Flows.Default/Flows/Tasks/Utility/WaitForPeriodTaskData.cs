@@ -1,8 +1,7 @@
 ﻿using Strem.Core.Flows.Tasks;
 using Strem.Core.Types;
-using Strem.Core.Utils;
 
-namespace Strem.Flows.Default.Flows.Tasks.Data;
+namespace Strem.Flows.Default.Flows.Tasks.Utility;
 
 public class WaitForPeriodTaskData : IFlowTaskData
 {

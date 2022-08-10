@@ -6,9 +6,8 @@ using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Variables;
-using Strem.Flows.Default.Flows.Tasks.Data;
 
-namespace Strem.Flows.Default.Flows.Tasks;
+namespace Strem.Flows.Default.Flows.Tasks.Variables;
 
 public class SetVariableTask : FlowTask<SetVariableTaskData>
 {

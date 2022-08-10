@@ -8,9 +8,8 @@ using Strem.Core.Flows.Triggers;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Events;
-using Strem.Flows.Default.Flows.Triggers.Data;
 
-namespace Strem.Flows.Default.Flows.Triggers;
+namespace Strem.Flows.Default.Flows.Triggers.Utility;
 
 public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
 {

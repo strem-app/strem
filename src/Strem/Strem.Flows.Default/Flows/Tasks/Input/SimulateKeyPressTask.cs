@@ -5,9 +5,8 @@ using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
-using Strem.Flows.Default.Flows.Tasks.Data;
 
-namespace Strem.Flows.Default.Flows.Tasks;
+namespace Strem.Flows.Default.Flows.Tasks.Input;
 
 public class SimulateKeyPressTask : FlowTask<SimulateKeyPressTaskData>
 {

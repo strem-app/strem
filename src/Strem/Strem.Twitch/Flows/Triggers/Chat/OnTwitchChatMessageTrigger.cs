@@ -8,7 +8,6 @@ using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
-using Strem.Twitch.Flows.Triggers.Data;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
@@ -16,7 +15,7 @@ using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models;
 using UserType = TwitchLib.Api.Core.Enums.UserType;
 
-namespace Strem.Twitch.Flows.Triggers;
+namespace Strem.Twitch.Flows.Triggers.Chat;
 
 public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTriggerData>
 {
@@ -55,39 +54,39 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
 
     public override bool CanExecute() => AppState.HasTwitchScope(ChatScopes.ReadChat);
 
-    public IVariables PopulateVariables(ChatMessage chatMessage)
+    public IVariables PopulateVariables(ChatMessage message)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(ChatMessageVariable, chatMessage.Message);
-        flowVars.Set(RawChatMessageVariable, chatMessage.RawIrcMessage);
-        flowVars.Set(BitsSentVariable, chatMessage.Bits.ToString());
-        flowVars.Set(BitsValueVariable, chatMessage.BitsInDollars.ToString());
-        flowVars.Set(RewardIdVariable, chatMessage.CustomRewardId);
-        flowVars.Set(IsNoisyVariable, (chatMessage.Noisy == Noisy.True).ToString());
-        flowVars.Set(SubscriptionLengthVariable, chatMessage.SubscribedMonthCount.ToString());
-        flowVars.Set(IsHighlightedVariable, chatMessage.IsHighlighted.ToString());
-        flowVars.Set(UserTypeVariable, chatMessage.UserType.ToString());
-        flowVars.Set(UsernameVariable, chatMessage.Username);
-        flowVars.Set(UserIdVariable, chatMessage.UserId);
+        flowVars.Set(ChatMessageVariable, message.Message);
+        flowVars.Set(RawChatMessageVariable, message.RawIrcMessage);
+        flowVars.Set(BitsSentVariable, message.Bits.ToString());
+        flowVars.Set(BitsValueVariable, message.BitsInDollars.ToString());
+        flowVars.Set(RewardIdVariable, message.CustomRewardId);
+        flowVars.Set(IsNoisyVariable, (message.Noisy == Noisy.True).ToString());
+        flowVars.Set(SubscriptionLengthVariable, message.SubscribedMonthCount.ToString());
+        flowVars.Set(IsHighlightedVariable, message.IsHighlighted.ToString());
+        flowVars.Set(UserTypeVariable, message.UserType.ToString());
+        flowVars.Set(UsernameVariable, message.Username);
+        flowVars.Set(UserIdVariable, message.UserId);
         return flowVars;
     }
 
-    public bool DoesMessageMeetCriteria(OnTwitchChatMessageTriggerData data, ChatMessage chatMessage)
+    public bool DoesMessageMeetCriteria(OnTwitchChatMessageTriggerData data, ChatMessage message)
     {
-        if (data.MinimumUserType == UserType.Broadcaster && !chatMessage.IsBroadcaster) { return false; }
+        if (data.MinimumUserType == UserType.Broadcaster && !message.IsBroadcaster) { return false; }
         
         var isSomeFormOfAdminRole = data.MinimumUserType is UserType.Staff or UserType.GlobalModerator or UserType.Admin;
-        if (isSomeFormOfAdminRole && !chatMessage.IsStaff) { return false; }
-        if (data.MinimumUserType == UserType.Moderator && !chatMessage.IsModerator) { return false; }
-        if (data.MinimumUserType == UserType.VIP && !chatMessage.IsVip) { return false; }
+        if (isSomeFormOfAdminRole && !message.IsStaff) { return false; }
+        if (data.MinimumUserType == UserType.Moderator && !message.IsModerator) { return false; }
+        if (data.MinimumUserType == UserType.VIP && !message.IsVip) { return false; }
         
-        if(data.IsSubscriber && !chatMessage.IsSubscriber) { return false; }
-        if(data.HasBits && chatMessage.Bits <= 0) { return false; }
-        if(data.HasChannelReward && string.IsNullOrEmpty(chatMessage.CustomRewardId)) { return false; }
+        if(data.IsSubscriber && !message.IsSubscriber) { return false; }
+        if(data.HasBits && message.Bits <= 0) { return false; }
+        if(data.HasChannelReward && string.IsNullOrEmpty(message.CustomRewardId)) { return false; }
 
         if (data.MatchType != TextMatch.None)
         {
-            if (!chatMessage.Message.MatchesText(data.MatchType, data.MatchText))
+            if (!message.Message.MatchesText(data.MatchType, data.MatchText))
             { return false; }
         }
 

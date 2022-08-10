@@ -28,4 +28,9 @@
       <ProjectReference Include="..\Strem.OBS.Client\obs-websocket-dotnet.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Flows\Tasks" />
+      <Folder Include="Flows\Triggers" />
+    </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 ﻿using Strem.Core.Flows.Tasks;
 
-namespace Strem.Flows.Default.Flows.Tasks.Data;
+namespace Strem.Flows.Default.Flows.Tasks.Utility;
 
 public class ExecuteFlowTaskData : IFlowTaskData
 {
