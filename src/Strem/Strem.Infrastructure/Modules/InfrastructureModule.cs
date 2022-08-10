@@ -1,4 +1,5 @@
-﻿using InputSimulatorStandard;
+﻿using System.Text;
+using InputSimulatorStandard;
 using Newtonsoft.Json;
 using Persistity.Core.Serialization;
 using Persistity.Encryption;
@@ -59,8 +60,12 @@ public class InfrastructureModule : IDependencyModule
         services.AddSingleton<IApiWebHost, ApiWebHost>();
         services.AddSingleton(SetupLogger());
         
+        // Encryption
+        var key = Encoding.UTF8.GetBytes("UxRBN8hfjzTG86d6SkSSNzyUhERGu5Zj");
+        var iv = Encoding.UTF8.GetBytes("7cA8jkRMJGZ8iMeJ");
+        services.AddSingleton<IEncryptor>(new CustomEncryptor(key, iv));
+        
         // Persistence Base
-        services.AddSingleton<IEncryptor>(new AesEncryptor("super-secret"));
         services.AddSingleton<ISerializer, JsonSerializer>();
         services.AddSingleton<IDeserializer, JsonDeserializer>();
         services.AddSingleton<PipelineBuilder>();

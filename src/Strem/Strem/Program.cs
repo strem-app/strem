@@ -1,5 +1,7 @@
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Persistity.Encryption;
 using Photino.Blazor;
 using Strem.Core.DI;
 using Strem.Core.Events.Bus;
@@ -56,6 +58,7 @@ public class Program
         var app = CreateApp(args);
         var logger = app.Services.GetService<ILogger<Program>>();
         var eventBus = app.Services.GetService<IEventBus>();
+        
         logger.Information("Starting Up Strem");
         
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>

@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
+      <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
