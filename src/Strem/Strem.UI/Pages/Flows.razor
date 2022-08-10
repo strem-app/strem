@@ -14,7 +14,7 @@
 <div class="container is-fluid">
   <div class="columns is-variable is-6">
     <div class="column is-one-quarter">
-      <FlowStoreMenu OnFlowSelected="x => CurrentFlow = x"></FlowStoreMenu>
+      <UserFlows OnFlowSelected="x => CurrentFlow = x"></UserFlows>
       <div class="block">
           <button class="button is-info is-leveled" @onclick="SaveFlows">Force Flow Save</button>
       </div>

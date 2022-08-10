@@ -11,43 +11,65 @@
 
 @implements IDisposable
 
-<aside class="menu box">
-  <p class="menu-label">
-    Triggers - General
-  </p>
-  <ul class="menu-list">
-    @foreach (var trigger in TriggerRegistry.GetAll())
+<Accordion Title="Task & Trigger Filter" StyleType="is-primary">
+  <div class="field">
+    <label class="label">Filter Tasks & Triggers By Name</label>
+    <div class="control">
+      <input class="input" type="text" placeholder="Put in the partial name of a trigger/task" @bind="SearchCriteria"/>
+    </div>
+  </div>
+</Accordion>
+
+<Accordion Title="Available Triggers" StyleType="is-success" IsExpanded="true">
+  <aside class="menu trigger-menu">
+    @foreach (var triggerGroup in GetFilteredTriggers())
     {
-      if (!DoesFlowContainTrigger(trigger))
+      <p class="menu-label category-(@triggerGroup.Key.Replace(" ", ""))">
+        @triggerGroup.Key
+      </p>
+      <ul class="menu-list">
+        @foreach (var trigger in triggerGroup)
+        {
+          @if (DoesFlowContainTrigger(trigger)){continue;}
+          <li>
+            <a class="is-trigger has-tooltip-left has-tooltip-multiline @(trigger.Trigger.CanExecute() ? "enabled" : "disabled")"
+               data-tooltip="@trigger.Trigger.Description" @onclick="@(() => OnTriggerSelected.InvokeAsync(trigger))">
+              <span class="icon is-small">
+                <i class="fa fa-circle-plus"></i>
+              </span>
+              <span class="ml-2 menu-text">@trigger.Trigger.Name</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </aside>
+</Accordion>
+
+<Accordion Title="Available Tasks" StyleType="is-info" IsExpanded="true">
+<aside class="menu task-menu">
+  @foreach (var taskGroup in GetFilteredTasks())
+  {
+    <p class="menu-label category-(@taskGroup.Key.Replace(" ", ""))">
+      @taskGroup.Key
+    </p>
+    <ul class="menu-list">
+      @foreach (var task in taskGroup)
       {
         <li>
-          <a class="is-trigger has-tooltip-left has-tooltip-multiline @(trigger.Trigger.CanExecute() ? "enabled" : "disabled")"
-             data-tooltip="@trigger.Trigger.Description" @onclick="() => OnTriggerSelected.InvokeAsync(trigger)">
+          <a class="is-task has-tooltip-left has-tooltip-multiline @(task.Task.CanExecute() ? "enabled" : "disabled")" data-tooltip="@task.Task.Description"
+             @onclick="() => OnTaskSelected.InvokeAsync(task)">
             <span class="icon is-small">
               <i class="fa fa-circle-plus"></i>
             </span>
-            <span class="ml-2 menu-text">@trigger.Trigger.Name</span>
+            <span class="ml-2 menu-text">@task.Task.Name</span>
           </a>
         </li>
       }
-    }
-  </ul>
-  <p class="menu-label">
-    Tasks - General
-  </p>
-  <ul class="menu-list">
-    @foreach (var task in TaskRegistry.GetAll())
-    {
-      <li><a class="is-task has-tooltip-left has-tooltip-multiline @(task.Task.CanExecute() ? "enabled" : "disabled")" data-tooltip="@task.Task.Description"
-             @onclick="() => OnTaskSelected.InvokeAsync(task)">
-        <span class="icon is-small">
-          <i class="fa fa-circle-plus"></i>
-        </span>
-        <span class="ml-2 menu-text">@task.Task.Name</span>
-      </a></li>
-    }
-  </ul>
+    </ul>
+  }
 </aside>
+</Accordion>
 
 @code {
   [Parameter]
@@ -58,6 +80,8 @@
   
   [Parameter] 
   public EventCallback<TriggerDescriptor> OnTriggerSelected { get; set; }
+  
+  public string SearchCriteria { get; set; }
 
   private CompositeDisposable _subs = new ();
   
@@ -71,9 +95,28 @@
   public bool DoesFlowContainTrigger(TriggerDescriptor triggerDescriptor)
   { return Flow.TriggerData.Any(x => x.Code == triggerDescriptor.Trigger.Code); }
 
+  public IEnumerable<IGrouping<string, TriggerDescriptor>> GetFilteredTriggers()
+  {
+    if (string.IsNullOrEmpty(SearchCriteria))
+    { return TriggerRegistry.GetAll().GroupBy(x => x.Trigger.Category); }
+    
+    return TriggerRegistry.GetAll()
+      .Where(x => x.Trigger.Name.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase))
+      .GroupBy(x => x.Trigger.Category);
+  }
+
+  public IEnumerable<IGrouping<string, TaskDescriptor>> GetFilteredTasks()
+  {
+    if (string.IsNullOrEmpty(SearchCriteria))
+    { return TaskRegistry.GetAll().GroupBy(x => x.Task.Category); }
+    
+    return TaskRegistry.GetAll()
+      .Where(x => x.Task.Name.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase))
+      .GroupBy(x => x.Task.Category);
+  }
+  
   public void Dispose()
   {
     _subs?.Dispose();
   }
-
 }

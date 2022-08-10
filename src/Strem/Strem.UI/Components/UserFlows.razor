@@ -1,0 +1,95 @@
+﻿@using Strem.Core.Flows
+@using Strem.Core.Extensions
+@using Strem.Core.Events.Bus
+@using Strem.Core.Events
+@using Strem.Core.Events.Flows
+
+@inject IFlowStore FlowStore;
+@inject IEventBus EventBus;
+
+<Accordion Title="Flow Filter" StyleType="is-primary">
+  <div class="field">
+    <label class="label">Filter Flows By Name</label>
+    <div class="control">
+      <input class="input" type="text" placeholder="Put in the partial name of a flow" @bind="SearchCriteria"/>
+    </div>
+  </div>
+</Accordion>
+<div class="box">
+  <div class="field">
+    <div class="control">
+      <button class="button is-success is-leveled" @onclick="CreateNewFlow">
+        <span class="icon is-small">
+          <i class="fas fa-microchip"></i>
+        </span>
+        <span>Add Flow</span>
+      </button>
+    </div>
+  </div>
+  <aside class="menu flow-menu">
+    @foreach (var flowGroup in GetFilteredFlows())
+    {
+      <p class="menu-label category-@(string.IsNullOrEmpty(flowGroup.Key) ? "none" : $"{flowGroup.Key}"))">
+        <span>@(string.IsNullOrEmpty(flowGroup.Key) ? "None" : $"{flowGroup.Key}")</span>
+      </p>
+      <ul class="menu-list">
+        @foreach (var flow in flowGroup)
+        {
+          <li>
+            <a class="is-flow @(flow.Enabled ? "enabled" : "disabled") @(SelectedFlowId == flow.Id ? "is-active" : "")"
+               @onclick="() => SelectFlow(flow)">@flow.Name</a>
+          </li>
+        }
+      </ul>
+    }
+  </aside>
+</div>
+
+
+<Modal IsVisible="ShowModal">
+  <FlowCreator OnFlowCreated="OnFlowCreated" OnFlowCancelled="OnFlowCancelled"></FlowCreator>
+</Modal>
+
+@code {
+  [Parameter] 
+  public EventCallback<Flow> OnFlowSelected { get; set; }
+
+  public bool ShowModal { get; set; } = false;
+  public Guid SelectedFlowId { get; set; }
+  public string SearchCriteria { get; set; }
+
+  public IEnumerable<IGrouping<string, Flow>> GetFilteredFlows()
+  {
+    if (string.IsNullOrEmpty(SearchCriteria))
+    { return FlowStore.Flows.GroupBy(x => x.Category); }
+    
+    return FlowStore.Flows
+      .Where(x => x.Name.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase))
+      .GroupBy(x => x.Category);
+  }
+  
+  public void OnFlowCreated(Flow newFlow)
+  {
+    FlowStore.Add(newFlow);
+    SelectFlow(newFlow);
+    ShowModal = false;
+    
+    EventBus.PublishAsync(new FlowAddedEvent(newFlow.Id));
+  }
+
+  public void OnFlowCancelled()
+  {
+    ShowModal = false;
+  }
+
+  public void SelectFlow(Flow selectedFlow)
+  {
+    SelectedFlowId = selectedFlow.Id;
+    OnFlowSelected.InvokeAsync(selectedFlow);
+  }
+
+  public void CreateNewFlow()
+  {
+    ShowModal = true;
+  }
+}
