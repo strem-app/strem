@@ -6,7 +6,7 @@
 @using Strem.OBS.Services.Client
 @using Strem.OBS.Types
 
-@inherits CustomTaskComponent<SetSourceVisibilityTaskData>
+@inherits CustomTaskComponent<SetSourceMuteStateTaskData>
 
 @inject IAppState AppState;
 @inject IObservableOBSClient ObsClient;
@@ -18,11 +18,11 @@
     </div>
 </div>
 <div class="field">
-    <label class="label">Visibility</label>
+    <label class="label">Mute State</label>
     <div class="control">
         <div class="select">
             <select @bind="Data.Status">
-                <EnumSelectOptions EnumType="typeof(VisibilityStatus)"></EnumSelectOptions>
+                <EnumSelectOptions EnumType="typeof(MuteStatus)"></EnumSelectOptions>
             </select>
         </div>
     </div>
@@ -31,17 +31,17 @@
 
 @code {
     public override string Title => GetTitle();
-
-    public string[] CurrentSceneItems { get; set; }
-
+    
     public string GetTitle()
     {
-        var starter = Data.Status == VisibilityStatus.Toggle ? 
-            $"Toggle Visibility For {Data.SourceName}" : 
-            $"Set {Data.SourceName} To {Enum.GetName(Data.Status)}";
+        var starter = Data.Status == MuteStatus.Toggle ? 
+            $"Toggle Mute Status For {Data.SourceName}" : 
+            $"Set {Data.SourceName} To {Enum.GetName(Data.Status)}ed";
         return $"<strong>{starter}</strong> In OBS";
     }
     
+    public string[] CurrentSceneItems { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         if (AppState.HasOBSHost())
