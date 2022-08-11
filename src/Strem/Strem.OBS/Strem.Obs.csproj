@@ -29,7 +29,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Flows\Tasks" />
       <Folder Include="Flows\Triggers" />
     </ItemGroup>
 

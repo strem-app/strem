@@ -997,7 +997,7 @@ namespace OBSWebsocketDotNet
         {
             var requestFields = JObject.FromObject(props);
 
-            if (requestFields["item"] == null)
+            if (string.IsNullOrEmpty(requestFields["item"]?.ToString()))
             {
                 requestFields["item"] = props.ItemName;
             }

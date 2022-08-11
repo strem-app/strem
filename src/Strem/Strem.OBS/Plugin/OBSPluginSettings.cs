@@ -2,6 +2,6 @@
 
 public class OBSPluginSettings
 {
-    public static readonly int RevalidatePeriodInMins = 60;
+    public static readonly int RefreshScenePeriodInSeconds = 60;
 
 }

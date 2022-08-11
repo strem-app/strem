@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Components
+
+<div class="dropdown @(ShowDropdown ? "is-active" : "")">
+    <div class="dropdown-trigger">
+        <input class="input" aria-haspopup="true" aria-controls="dropdown-menu" value="@Value"
+               @onfocus="() => ShowDropdown = true" @onblur="HideDropDown"
+               @oninput="x => RefreshOptions(x.Value.ToString())"/>
+    </div>
+    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+        <div class="dropdown-content">
+            @foreach (var entry in CurrentMatches)
+            {
+                var entryText = entry;
+                <a class="dropdown-item has-text-black" @onclick="() => SetSelection(entryText)">
+                    @entry
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Value { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public IReadOnlyCollection<string> Data { get; set; }
+    
+    public IEnumerable<string> CurrentMatches { get; set; }
+    
+    public bool ShowDropdown { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentMatches = Data;
+    }
+
+    private void RefreshOptions(string currentInput)
+    {
+        CurrentMatches = Data.Where(x => x.Contains(currentInput, StringComparison.OrdinalIgnoreCase));
+        ValueChanged.InvokeAsync(currentInput);
+    }
+
+    private void SetSelection(string entry)
+    {
+        Value = entry;
+        ValueChanged.InvokeAsync(entry);
+    }
+
+    private async Task HideDropDown()
+    {
+        await Task.Delay(100);
+        ShowDropdown = false;
+    }
+
+}

@@ -1,0 +1,26 @@
+﻿@page "/Test"
+
+<div class="container is-fluid">
+    <div class="box">
+        <div class="field">
+            <label class="label">Auto Complete</label>
+            <div class="control">
+                <AutoComplete @bind-Value="@Entry" Data="Data"></AutoComplete>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+            <div class="field">
+                <label class="label">Entry Is</label>
+                <div class="control">
+                    <input class="input" value="@Entry" disabled/>
+                </div>
+            </div>
+        </div>
+</div>
+@code {
+    
+    public string Entry { get; set; } = "Woop";
+
+    public string[] Data = new[] { "boom", "Woop", "pow" };
+}

@@ -1,5 +1,7 @@
 ﻿using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
+using OBSWebsocketDotNet.Types;
 using Persistity.Encryption;
 using Persistity.Extensions;
 using Strem.Core.Events.Bus;
@@ -33,8 +35,24 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
 
     public async Task StartPlugin()
     {
+        OBSClient.OnUnhandledEvent
+            .Subscribe(x => Logger.Error($"Unhandled Event in OBS: {x}"))
+            .AddTo(_subs);
+        
+        OBSClient.OnOBSError
+            .Subscribe(x => Logger.Error($"Unhandled Error in OBS: {x}"))
+            .AddTo(_subs);
+        
         if (AppState.HasOBSHost())
         { await ConnectToOBS(); }
+        
+        Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(OBSPluginSettings.RefreshScenePeriodInSeconds))
+            .Subscribe(x => OBSClient.PopulateActiveSceneTransientData(AppState))
+            .AddTo(_subs);
+
+        OBSClient.OnSceneChanged
+            .Subscribe(x => AppState.UpdateActiveSceneTransientData(x.NewSceneName, x.SceneItems))
+            .AddTo(_subs);
     }
 
     public async Task ConnectToOBS()

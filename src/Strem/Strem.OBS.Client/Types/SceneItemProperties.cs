@@ -57,6 +57,12 @@ namespace OBSWebsocketDotNet.Types
         /// </summary>
         [JsonProperty(PropertyName = "name")]
         public string? ItemName { set; get; }
+        
+        /// <summary>
+        /// Scene item name, <i>populated from GetSceneItemProperites only</i>
+        /// </summary>
+        [JsonProperty(PropertyName = "itemId")]
+        public string? ItemId { set; get; }
 
         /// <summary>
         /// Scene item name, <i>populated from GetSceneItemProperites only</i>
@@ -89,6 +95,12 @@ namespace OBSWebsocketDotNet.Types
         [JsonRequired]
         [JsonProperty(PropertyName = "visible")]
         public bool Visible { set; get; }
+        
+        /// <summary>
+        /// If the scene item is visible
+        /// </summary>
+        [JsonProperty(PropertyName = "muted")]
+        public bool Muted { set; get; }
 
         /// <summary>
         /// Base height (without scaling) of the source

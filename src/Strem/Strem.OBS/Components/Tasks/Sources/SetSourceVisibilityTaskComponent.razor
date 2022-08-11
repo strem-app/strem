@@ -1,0 +1,49 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Components.Tasks
+@using Strem.Core.State
+@using Strem.OBS.Extensions
+@using Strem.OBS.Flows.Tasks
+@using Strem.OBS.Services.Client
+@using Strem.OBS.Types
+
+@inherits CustomTaskComponent<SetSourceVisibilityTaskData>
+
+@inject IAppState AppState;
+@inject IObservableOBSClient ObsClient;
+
+<div class="field">
+    <label class="label">Source Name</label>
+    <div class="control">
+        <AutoComplete @bind-Value="@Data.SourceName" Data="CurrentSceneItems"></AutoComplete>
+    </div>
+</div>
+<div class="field">
+    <label class="label">Visibility</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.Visibility">
+                <EnumSelectOptions EnumType="typeof(VisibilityStatus)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public override string Title => $"Set OBS Source Visibility";
+    
+    public string[] CurrentSceneItems { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AppState.HasOBSHost())
+        {
+            if (!AppState.HasCurrentSceneItems())
+            { await ObsClient.PopulateActiveSceneTransientData(AppState); }
+            CurrentSceneItems = AppState.GetCurrentSceneItems();
+        }
+        else
+        { CurrentSceneItems = Array.Empty<string>(); }
+    }
+
+}
