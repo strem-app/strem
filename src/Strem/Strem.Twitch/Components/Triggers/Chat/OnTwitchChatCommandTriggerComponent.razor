@@ -1,0 +1,79 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Types
+@using TwitchLib.Client.Enums
+
+@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Chat.OnTwitchChatCommandTriggerData>
+
+<div class="field">
+    <label class="label">Minimum Required User Type</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.MinimumUserType">
+                <EnumSelectOptions EnumType="typeof(UserType)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    <HelperInfo>
+        This allows you to restrict triggering to types of users equal to or above the level, i.e <strong>Viewer</strong> will match anyone but <strong>Moderator</strong> would match moderators, twitch staff/mods/admins and the broadcaster.
+    </HelperInfo>
+</div>
+
+<div class="field">
+    <label class="label">Command Name</label>
+    <div class="control has-icons-left has-icons-right">
+        <input class="input" type="text" placeholder="i.e clip or play-meme" @bind="Data.CommandName">
+        <span class="icon is-small is-left">
+            <i class="fas fa-exclamation"></i>
+        </span>
+    </div>
+    <HelperInfo>A command starts with an exclamation mark (we take care of that for you) and can also contain args on calling <i>i.e !play-meme wasted</i></HelperInfo>
+</div>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.RequiresArg">
+            Command Requires And Argument Too?
+        </label>
+    </div>
+    <HelperInfo>This will only trigger if the command also contains an argument <i>i.e !clip</i> would fail but <i>!clip super funny clip name</i> would pass</HelperInfo>
+</div>
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.IsSubscriber">
+            Require Sender To Be Subscriber?
+        </label>
+    </div>
+    <HelperInfo>This will only trigger if the sender is a subscriber</HelperInfo>
+</div>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.IsVip">
+            Require Sender To Be A VIP?
+        </label>
+    </div>
+    <HelperInfo>This will only trigger if the sender is a vip</HelperInfo>
+</div>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.HasBits">
+            Require Bits?
+        </label>
+    </div>
+    <HelperInfo>This will only trigger if the message contains bits</HelperInfo>
+</div>
+
+@code {
+    public override string Title => GenerateTitle();
+    
+    public string GenerateTitle()
+    {
+        var userRequirements =  Data.MinimumUserType != UserType.Viewer ? $"For At Least <strong>{Data.MinimumUserType}</strong>" : "";
+        return $"Trigger On Twitch Command {Data.CommandName} {userRequirements}";
+    }
+}

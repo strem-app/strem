@@ -26,7 +26,7 @@ public class OnTwitchWhisperMessageTrigger : FlowTrigger<OnTwitchWhisperMessageT
     public static VariableEntry UsernameVariable = new("chat.username", TwitchVars.TwitchContext);
     public static VariableEntry UserIdVariable = new("chat.user-id", TwitchVars.TwitchContext);
     
-    public override string Name => "On Twitch Chat Message";
+    public override string Name => "On Twitch Whisper Message";
     public override string Category => "Twitch";
     public override string Description => "Triggers when a twitch chat message is received";
 

@@ -85,6 +85,7 @@ public class InfrastructureModule : IDependencyModule
         
         // Flows
         services.AddSingleton<IFlowStringProcessor, FlowStringProcessor>();
+        services.AddSingleton<ICommandStringProcessor, CommandStringProcessor>();
         services.AddSingleton<ITaskRegistry, TaskRegistry>();
         services.AddSingleton<ITriggerRegistry, TriggerRegistry>();
         services.AddSingleton<IFlowExecutionEngine, FlowExecutionEngine>();

@@ -13,7 +13,6 @@ using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
-using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Builders;
 
 namespace Strem.UnitTests.Twitch.Triggers;
