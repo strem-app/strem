@@ -34,6 +34,7 @@
       <Folder Include="Default\Triggers" />
       <Folder Include="Infrastructure\State" />
       <Folder Include="OBS" />
+      <Folder Include="Twitch\Helpers" />
     </ItemGroup>
 
 </Project>

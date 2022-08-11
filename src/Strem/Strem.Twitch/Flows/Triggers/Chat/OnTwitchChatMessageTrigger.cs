@@ -13,7 +13,6 @@ using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Models;
-using UserType = TwitchLib.Api.Core.Enums.UserType;
 
 namespace Strem.Twitch.Flows.Triggers.Chat;
 
@@ -53,7 +52,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchScope(ChatScopes.ReadChat);
+    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ReadChat);
 
     public IVariables PopulateVariables(ChatMessage message)
     {
@@ -72,24 +71,20 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         return flowVars;
     }
 
+    public bool IsUserAboveMinimumRequired(UserType userTypeRequired, UserType messageUserType)
+    { return messageUserType >= userTypeRequired; }
+
+    public bool DoesMessageTextMeetRequirements(TextMatch matchType, string matchText, string message)
+    { return matchType == TextMatch.None || message.MatchesText(matchType, matchText); }
+
     public bool DoesMessageMeetCriteria(OnTwitchChatMessageTriggerData data, ChatMessage message)
     {
-        if (data.MinimumUserType == UserType.Broadcaster && !message.IsBroadcaster) { return false; }
-        
-        var isSomeFormOfAdminRole = data.MinimumUserType is UserType.Staff or UserType.GlobalModerator or UserType.Admin;
-        if (isSomeFormOfAdminRole && !message.IsStaff) { return false; }
-        if (data.MinimumUserType == UserType.Moderator && !message.IsModerator) { return false; }
-        if (data.MinimumUserType == UserType.VIP && !message.IsVip) { return false; }
-        
+        if(!IsUserAboveMinimumRequired(data.MinimumUserType, message.UserType)) { return false; }
+        if(data.IsVip && !message.IsVip) { return false; }
         if(data.IsSubscriber && !message.IsSubscriber) { return false; }
         if(data.HasBits && message.Bits <= 0) { return false; }
         if(data.HasChannelReward && string.IsNullOrEmpty(message.CustomRewardId)) { return false; }
-
-        if (data.MatchType != TextMatch.None)
-        {
-            if (!message.Message.MatchesText(data.MatchType, data.MatchText))
-            { return false; }
-        }
+        if (!DoesMessageTextMeetRequirements(data.MatchType, data.MatchText, message.Message)) { return false; }
 
         return true;
     }

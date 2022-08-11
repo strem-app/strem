@@ -5,10 +5,9 @@ using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
-using Strem.Flows.Default.Flows.Tasks.Utility;
 using Strem.Twitch.Flows.Tasks.Chat;
+using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using Strem.UnitTests.Extensions;
 using TwitchLib.Client.Interfaces;
 
 namespace Strem.UnitTests.Twitch.Tasks;
@@ -30,7 +29,7 @@ public class SendTwitchChatMessageTaskTests
     }
     
     [Fact]
-    public void should_allow_execute_when_oauth_token_is_available()
+    public void should_not_execute_when_oauth_token_is_available_but_is_missing_scope()
     {
         var mockLogger = new Mock<ILogger<FlowTask<SendTwitchChatMessageTaskData>>>();
         var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
@@ -39,6 +38,23 @@ public class SendTwitchChatMessageTaskTests
         var mockTwitchClient = new Mock<ITwitchClient>();
         
         dummyAppState.AppVariables.Set(TwitchVars.OAuthToken, "valid");
+        
+        var task = new SendTwitchChatMessageTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
+        var canExecute = task.CanExecute();
+        Assert.False(canExecute);
+    }
+    
+    [Fact]
+    public void should_allow_execute_when_oauth_token_is_available_and_has_scope()
+    {
+        var mockLogger = new Mock<ILogger<FlowTask<SendTwitchChatMessageTaskData>>>();
+        var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
+        var mockEventBus = new Mock<IEventBus>();
+        var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
+        var mockTwitchClient = new Mock<ITwitchClient>();
+        
+        dummyAppState.AppVariables.Set(TwitchVars.OAuthToken, "valid");
+        dummyAppState.AppVariables.Set(TwitchVars.OAuthScopes, ChatScopes.SendChat);
         var task = new SendTwitchChatMessageTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
         var canExecute = task.CanExecute();
         Assert.True(canExecute);

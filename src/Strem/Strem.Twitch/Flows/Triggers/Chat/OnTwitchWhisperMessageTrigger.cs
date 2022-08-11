@@ -43,7 +43,7 @@ public class OnTwitchWhisperMessageTrigger : FlowTrigger<OnTwitchWhisperMessageT
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchScope(ChatScopes.ReadChat);
+    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ReadWhispers);
 
     public IVariables PopulateVariables(WhisperMessage message)
     {

@@ -1,8 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Strem.Core.Components.Triggers;
 @using Strem.Core.Types
 @using TwitchLib.Client.Enums
-@using System.Text.RegularExpressions
 
 @inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Chat.OnTwitchChatMessageTriggerData>
 
@@ -64,6 +62,16 @@
 <div class="field">
     <div class="control">
         <label class="checkbox">
+            <input type="checkbox" @bind="Data.IsVip">
+            Require Sender To Be A VIP?
+        </label>
+    </div>
+    <HelperInfo>This will only trigger if the sender is a vip</HelperInfo>
+</div>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
             <input type="checkbox" @bind="Data.HasBits">
             Require Bits?
         </label>
@@ -89,7 +97,7 @@
         var hasTextMatch = Data.MatchType != TextMatch.None;
         var textRequirements =  hasTextMatch ? "With Text Match " : "";
         var joiningWord = hasTextMatch ? "And " : "With ";
-        var userRequirements =  Data.MinimumUserType != TwitchLib.Api.Core.Enums.UserType.Viewer ? $"{joiningWord} At Least <strong>{Data.MinimumUserType}</strong>" : "";
+        var userRequirements =  Data.MinimumUserType != UserType.Viewer ? $"{joiningWord} At Least <strong>{Data.MinimumUserType}</strong>" : "";
         return $"Trigger On Twitch Message Received {textRequirements} {userRequirements}";
     }
 }

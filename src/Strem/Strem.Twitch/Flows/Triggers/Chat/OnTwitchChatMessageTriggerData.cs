@@ -1,6 +1,6 @@
 ﻿using Strem.Core.Flows.Triggers;
 using Strem.Core.Types;
-using TwitchLib.Api.Core.Enums;
+using TwitchLib.Client.Enums;
 
 namespace Strem.Twitch.Flows.Triggers.Chat;
 
@@ -18,6 +18,7 @@ public class OnTwitchChatMessageTriggerData : IFlowTriggerData
 
     public UserType MinimumUserType { get; set; }
     public bool IsSubscriber { get; set; }
+    public bool IsVip { get; set; }
     public bool HasBits { get; set; }
     public bool HasChannelReward { get; set; }
 }

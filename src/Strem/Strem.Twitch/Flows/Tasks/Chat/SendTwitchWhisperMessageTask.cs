@@ -4,6 +4,7 @@ using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
+using Strem.Twitch.Types;
 using TwitchLib.Client.Interfaces;
 
 namespace Strem.Twitch.Flows.Tasks.Chat;
@@ -24,7 +25,7 @@ public class SendTwitchWhisperMessageTask : FlowTask<SendTwitchWhisperMessageTas
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth();
+    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.SendWhisper);
 
     public override async Task Execute(SendTwitchWhisperMessageTaskData data, IVariables flowVars)
     {
