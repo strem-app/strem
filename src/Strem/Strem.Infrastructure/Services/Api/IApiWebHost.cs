@@ -2,6 +2,6 @@
 
 public interface IApiWebHost
 {
-    void StartHost(ApiHostConfiguration configuration = null);
+    void StartHost();
     void StopHost();
 }

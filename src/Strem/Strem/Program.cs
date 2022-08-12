@@ -1,23 +1,15 @@
-using System.Text;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Persistity.Encryption;
 using Photino.Blazor;
 using Strem.Core.DI;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows.Executors;
-using Strem.Core.Flows.Registries;
-using Strem.Core.Flows.Registries.Integrations;
-using Strem.Core.Flows.Registries.Tasks;
-using Strem.Core.Flows.Registries.Triggers;
-using Strem.Core.Plugins;
 using Strem.Flows.Default.Modules;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Modules;
 using Strem.Infrastructure.Services.Api;
 using Strem.OBS.Modules;
-using Strem.Twitch.Controllers;
 using Strem.Twitch.Modules;
 using Strem.UI;
 
@@ -25,10 +17,30 @@ namespace Strem;
 
 public class Program
 {
+    public static void LoadAllPluginModules()
+    {
+        Assembly _;
+        _ = typeof(InfrastructureModule).Assembly;
+        _ = typeof(DefaultFlowsModule).Assembly;
+        _ = typeof(TwitchModule).Assembly;
+        _ = typeof(OBSModule).Assembly;
+    }
+    
+    public static Type[] GetAllDependencyModules()
+    {
+        LoadAllPluginModules();
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        
+        return assemblies
+            .SelectMany(x => x.GetTypes().WhereClassesImplement(typeof(IDependencyModule)))
+            .ToArray();
+    }
+    
     public static PhotinoBlazorApp CreateApp(string[] args)
     {
         var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
-        appBuilder.Services.AddModules(new InfrastructureModule(), new TwitchModule(), new OBSModule(), new DefaultFlowsModule());
+        var dependencyModules = GetAllDependencyModules();
+        appBuilder.Services.AddModules(dependencyModules);
         appBuilder.RootComponents.Add<App>("#app");
         return appBuilder.Build();
     }
@@ -56,13 +68,10 @@ public class Program
         WebHostHackExtensions.EventBus = eventBus;
         WebHostHackExtensions.ServiceLocator = app.Services;
         
-        var apiHostConfiguration = new ApiHostConfiguration(
-            new[] { typeof(TwitchController).Assembly },
-            new IDependencyModule[] { new InfrastructureModule(), new TwitchModule() });
-        
+       
         var webHost = app.Services.GetService<IApiWebHost>();
         logger.Information("Starting Internal Host");
-        webHost.StartHost(apiHostConfiguration);
+        webHost.StartHost();
         logger.Information($"Started Internal Host: http://localhost:{ApiHostConfiguration.ApiHostPort}");
         
         app.MainWindow

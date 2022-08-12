@@ -3,12 +3,13 @@ using Strem.Core.DI;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Registries.Integrations;
 using Strem.Core.Plugins;
+using Strem.Infrastructure.Services.Api;
 using Strem.OBS.Plugin;
 using Strem.OBS.Services.Client;
 
 namespace Strem.OBS.Modules;
 
-public class OBSModule : IDependencyModule
+public class OBSModule : IDependencyModule, IRequiresApiHostingModule
 {
     public void Setup(IServiceCollection services)
     {

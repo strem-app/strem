@@ -1,4 +1,5 @@
-﻿using Strem.Core.Extensions;
+﻿using System.Reflection;
+using Strem.Core.Extensions;
 using Strem.Infrastructure.ActionFilters;
 
 namespace Strem.Infrastructure.Services.Api;
@@ -7,7 +8,16 @@ public class ApiWebHost : IApiWebHost
 {
     public WebApplication Host { get; protected set; }
 
-    public WebApplication CreateApplication(ApiHostConfiguration configuration = null)
+    public (Assembly assembly, IRequiresApiHostingModule module)[] GetAllApiHostingPlugins()
+    {
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        
+        return assemblies.SelectMany(x => x.GetTypes().WhereClassesImplement(typeof(IRequiresApiHostingModule)))
+            .Select(x => (x.Assembly, (IRequiresApiHostingModule)Activator.CreateInstance(x)))
+            .ToArray();
+    }
+
+    public WebApplication CreateApplication()
     {
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddRouting();
@@ -17,20 +27,16 @@ public class ApiWebHost : IApiWebHost
             x.Filters.Add<LogActionFilter>();
         });
 
-        if (configuration?.Modules != null)
-        {
-            foreach (var module in configuration.Modules)
-            { builder.Services.AddModule(module); }
-        }
+        var pluginModules = GetAllApiHostingPlugins();
+        foreach (var pluginModule in pluginModules)
+        { builder.Services.AddModule(pluginModule.module); }
+        
         
         var mvcBuilder = builder.Services.AddMvcCore();
         mvcBuilder.AddApplicationPart(GetType().Assembly);
         
-        if(configuration?.ControllerAssemblies != null)
-        {
-            foreach (var assembly in configuration.ControllerAssemblies)
-            { mvcBuilder.AddApplicationPart(assembly); }
-        }
+        foreach (var pluginModule in pluginModules)
+        { mvcBuilder.AddApplicationPart(pluginModule.assembly); }
 
         if(!builder.Environment.IsDevelopment())
         { builder.Logging.ClearProviders(); }
@@ -38,9 +44,9 @@ public class ApiWebHost : IApiWebHost
         return builder.Build();
     }
     
-    public void StartHost(ApiHostConfiguration configuration = null)
+    public void StartHost()
     {
-        var app = CreateApplication(configuration);
+        var app = CreateApplication();
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();

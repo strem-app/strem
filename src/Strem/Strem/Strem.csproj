@@ -21,9 +21,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
-      <ProjectReference Include="..\Strem.Twitch\Strem.Twitch.csproj" />
-      <ProjectReference Include="..\Strem.UI\Strem.UI.csproj" />
+        <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
+        <ProjectReference Include="..\Strem.UI\Strem.UI.csproj" />
+        <ProjectReference Include="..\Strem.Flows.Default\Strem.Flows.Default.csproj" />
+        <ProjectReference Include="..\Strem.Twitch\Strem.Twitch.csproj" />
+        <ProjectReference Include="..\Strem.OBS\Strem.OBS.csproj" />
     </ItemGroup>
 
 </Project>

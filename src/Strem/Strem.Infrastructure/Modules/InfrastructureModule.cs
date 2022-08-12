@@ -33,7 +33,7 @@ using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 
 namespace Strem.Infrastructure.Modules;
 
-public class InfrastructureModule : IDependencyModule
+public class InfrastructureModule : IRequiresApiHostingModule
 {
     public void Setup(IServiceCollection services)
     {

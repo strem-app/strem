@@ -21,6 +21,16 @@ public static class IServiceCollectionExtensions
         foreach(var dependencyModule in dependencyModules)
         { dependencyModule.Setup(services); }
         return services;
+    }    
+    
+    public static IServiceCollection AddModules(this IServiceCollection services, params Type[] dependencyModuleTypes)
+    {
+        foreach (var dependencyModuleType in dependencyModuleTypes)
+        {
+            var dependencyModule = (IDependencyModule)Activator.CreateInstance(dependencyModuleType);
+            dependencyModule.Setup(services);
+        }
+        return services;
     }
         
     public static IServiceCollection AddModule<T>(this IServiceCollection services) where T : IDependencyModule, new()
