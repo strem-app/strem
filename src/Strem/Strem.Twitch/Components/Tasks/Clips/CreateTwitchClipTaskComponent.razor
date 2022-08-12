@@ -1,0 +1,23 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits CustomTaskComponent<Strem.Twitch.Flows.Tasks.Chat.CreateTwitchClipTaskData>
+
+<div class="field">
+    <label class="label">Channel To Clip From</label>
+    <div class="control">
+        <input class="input" type="text" @bind="Data.Channel" placeholder="i.e Leave blank for your own channel">
+    </div>
+    <HelperInfo>
+        You can leave it blank for your own stream, or put another channel name in for another channel
+    </HelperInfo>
+</div>
+
+@code {
+    public override string Title => GetTitle();
+
+    public string GetTitle()
+    {
+        var channel = string.IsNullOrEmpty(Data.Channel) ? "" : $"On {Data.Channel}";
+        return $"Create A Twitch Clip {channel}";
+    }
+}

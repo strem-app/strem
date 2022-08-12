@@ -24,7 +24,7 @@ public class SetVariableTask : FlowTask<SetVariableTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task Execute(SetVariableTaskData data, IVariables flowVars)
+    public override async Task<bool> Execute(SetVariableTaskData data, IVariables flowVars)
     {
         var processedName = FlowStringProcessor.Process(data.Name, flowVars);
         var processedContext = FlowStringProcessor.Process(data.Context, flowVars);
@@ -36,5 +36,7 @@ public class SetVariableTask : FlowTask<SetVariableTaskData>
             case VariableScope.Flow: flowVars.Set(processedName, processedContext, processedValue); break;
             default: AppState.UserVariables.Set(processedName, processedContext, processedValue); break;
         }
+
+        return true;
     }
 }

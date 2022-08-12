@@ -25,7 +25,7 @@ public class RegexToVariableTask : FlowTask<RegexToVariableTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task Execute(RegexToVariableTaskData data, IVariables flowVars)
+    public override async Task<bool> Execute(RegexToVariableTaskData data, IVariables flowVars)
     {
         var processedSource = FlowStringProcessor.Process(data.Source, flowVars);
         var processedName = FlowStringProcessor.Process(data.Name, flowVars);
@@ -49,5 +49,7 @@ public class RegexToVariableTask : FlowTask<RegexToVariableTaskData>
             case VariableScope.Flow: flowVars.Set(processedName, processedContext, matchedText); break;
             default: AppState.UserVariables.Set(processedName, processedContext, matchedText); break;
         }
+        
+        return true;
     }
 }

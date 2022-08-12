@@ -39,5 +39,5 @@ public abstract class FlowTask<T> : IFlowTask
         throw new ArgumentException($"Task type is {data.GetType()} not {typeof(T)}");
     }
 
-    public abstract Task Execute(T data, IVariables flowVars);
+    public abstract Task<bool> Execute(T data, IVariables flowVars);
 }

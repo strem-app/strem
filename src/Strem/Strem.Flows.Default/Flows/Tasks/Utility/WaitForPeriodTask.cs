@@ -23,15 +23,16 @@ public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task Execute(WaitForPeriodTaskData data, IVariables flowVars)
+    public override async Task<bool> Execute(WaitForPeriodTaskData data, IVariables flowVars)
     {
         if (!FlowStringProcessor.TryProcessInt(data.WaitAmount, flowVars, out var intValue))
         {
             Logger.LogWarning($"Unable to process {data.WaitAmount} into a number, verify it is a number or variables exist");
-            return;
+            return false;
         }
         
         var timespan = data.WaitUnits.ToTimeSpan(intValue);
         await Task.Delay(timespan);
+        return true;
     }
 }

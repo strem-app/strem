@@ -23,8 +23,9 @@ public class RaiseEventTask : FlowTask<RaiseEventTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task Execute(RaiseEventTaskData data, IVariables flowVars)
+    public override async Task<bool> Execute(RaiseEventTaskData data, IVariables flowVars)
     {
         EventBus.PublishAsync(new UserDataEvent(data.EventName, data.Data));
+        return true;
     }
 }

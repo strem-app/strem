@@ -27,10 +27,11 @@ public class SendTwitchChatMessageTask : FlowTask<SendTwitchChatMessageTaskData>
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.SendChat);
 
-    public override async Task Execute(SendTwitchChatMessageTaskData data, IVariables flowVars)
+    public override async Task<bool> Execute(SendTwitchChatMessageTaskData data, IVariables flowVars)
     {
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var processedMessage = FlowStringProcessor.Process(data.Message, flowVars);
         TwitchClient.SendMessage(channel, processedMessage);
+        return true;
     }
 }

@@ -29,7 +29,7 @@ public class SetSourceMuteStateTask : FlowTask<SetSourceMuteStateTaskData>
 
     public override bool CanExecute() => AppState.HasOBSHost();
 
-    public override async Task Execute(SetSourceMuteStateTaskData data, IVariables flowVars)
+    public override async Task<bool> Execute(SetSourceMuteStateTaskData data, IVariables flowVars)
     {
         var muted = false;   
         if (data.Status == MuteStatus.Unmute) { muted = false; }
@@ -41,5 +41,6 @@ public class SetSourceMuteStateTask : FlowTask<SetSourceMuteStateTaskData>
         }
 
         await ObsClient.SetMute(data.SourceName, muted);
+        return true;
     }
 }

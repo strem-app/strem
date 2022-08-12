@@ -29,11 +29,11 @@ public class SetSourceVisibilityTask : FlowTask<SetSourceVisibilityTaskData>
 
     public override bool CanExecute() => AppState.HasOBSHost();
 
-    public override async Task Execute(SetSourceVisibilityTaskData data, IVariables flowVars)
+    public override async Task<bool> Execute(SetSourceVisibilityTaskData data, IVariables flowVars)
     {
         var sceneName = string.IsNullOrEmpty(data.SceneName) ? AppState.GetCurrentSceneName() : data.SceneName;
         var properties = await ObsClient.GetSceneItemProperties(data.SourceName, sceneName);
-        if (properties == null) { return; }
+        if (properties == null) { return false; }
         
         if (data.Status == VisibilityStatus.Visible) { properties.Visible = true; }
         else if(data.Status == VisibilityStatus.Invisible) { properties.Visible = false; }
@@ -41,5 +41,6 @@ public class SetSourceVisibilityTask : FlowTask<SetSourceVisibilityTaskData>
         { properties.Visible = !properties.Visible; }
         
         await ObsClient.SetSceneItemProperties(properties, sceneName);
+        return true;
     }
 }
