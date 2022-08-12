@@ -9,6 +9,7 @@
 @inherits CustomTaskComponent<SetSourceVisibilityTaskData>
 
 @inject IAppState AppState;
+@inject IAppState Encryptor;
 @inject IObservableOBSClient ObsClient;
 
 <div class="field">
@@ -53,5 +54,4 @@
         else
         { CurrentSceneItems = Array.Empty<string>(); }
     }
-
 }

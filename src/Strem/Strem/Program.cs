@@ -17,6 +17,9 @@ namespace Strem;
 
 public class Program
 {
+    public static List<string> StartupErrors { get; } = new();
+    
+    // TODO: At some point will be replaced by plugins or something
     public static void LoadAllPluginModules()
     {
         Assembly _;
@@ -24,6 +27,23 @@ public class Program
         _ = typeof(DefaultFlowsModule).Assembly;
         _ = typeof(TwitchModule).Assembly;
         _ = typeof(OBSModule).Assembly;
+
+        LoadExternalPlugins();
+    }
+
+    public static void LoadExternalPlugins()
+    {
+        var pluginsDirectory = "Plugins";
+        if (!Directory.Exists(pluginsDirectory)) { return; }
+        
+        var pluginFiles = Directory.GetFileSystemEntries(pluginsDirectory, "*.dll");
+        if(pluginFiles.Length == 0) { return; }
+
+        foreach (var pluginFile in pluginFiles)
+        {
+            try { Assembly.LoadFile(pluginFile); }
+            catch(Exception ex) { StartupErrors.Add($"Failed to load Plugin {pluginFile}: {ex.Message}"); }
+        }
     }
     
     public static Type[] GetAllDependencyModules()
@@ -54,6 +74,8 @@ public class Program
         var eventBus = app.Services.GetService<IEventBus>();
         
         logger.Information("Starting Up Strem");
+        foreach (var error in StartupErrors)
+        { logger.Error(error); }
         
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {

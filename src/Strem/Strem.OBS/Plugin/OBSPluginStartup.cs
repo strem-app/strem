@@ -47,7 +47,7 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
         { await ConnectToOBS(); }
         
         Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(OBSPluginSettings.RefreshScenePeriodInSeconds))
-            .Subscribe(x => OBSClient.PopulateActiveSceneTransientData(AppState))
+            .Subscribe(x => RefreshOBSData())
             .AddTo(_subs);
 
         OBSClient.OnSceneChanged
@@ -57,21 +57,20 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
 
     public async Task ConnectToOBS()
     {
-        var host = AppState.AppVariables.Get(OBSVars.Host);
-        var port = AppState.AppVariables.Get(OBSVars.Port);
-        var password = string.Empty;
-
-        if (AppState.AppVariables.Has(OBSVars.Password))
-        {
-            var encryptedPassword = AppState.AppVariables.Get(OBSVars.Password);
-            password = Encryptor.Decrypt(encryptedPassword);
-        }
-
-        var result = await OBSClient.AttemptConnect(host, port, password);
+        var result = await OBSClient.AttemptConnect(AppState, Encryptor);
         if (!result.success)
         { Logger.Error($"Couldnt connect to OBS: {result.message}"); }
         else
-        { Logger.Information($"Connected to OBS Server at {host}"); }
+        { Logger.Information(result.message); }
+    }
+
+    public async Task RefreshOBSData()
+    {
+        if (AppState.HasOBSHost() && !OBSClient.IsConnected)
+        { await ConnectToOBS();  }
+
+        if (!OBSClient.IsConnected) { return; }
+        await OBSClient.PopulateActiveSceneTransientData(AppState);
     }
 
     public void Dispose()

@@ -1,5 +1,7 @@
 ﻿using OBSWebsocketDotNet;
 using OBSWebsocketDotNet.Types;
+using Persistity.Encryption;
+using Persistity.Extensions;
 using Strem.Core.State;
 using Strem.OBS.Services.Client;
 using Strem.OBS.Variables;
@@ -16,22 +18,33 @@ public static class IObservableOBSClientExtensions
         try
         {
             success = await obsClient.Connect(websocketAddress, password);
-            if(!success) { message = "Unknown Error Connecting To OBS"; }
+            message = !success 
+                ? "Unknown Error Connecting To OBS" 
+                : $"Connected to OBS server @ {host}:{port}";
         }
         catch (AuthFailureException ex)
-        {
-            message = $"Authentication Failed: {ex.Message}";
-        }
+        { message = $"Authentication Failed: {ex.Message}"; }
         catch (ErrorResponseException ex)
-        {
-            message = $"Connect Failed : {ex.Message}";
-        }
+        { message = $"Connect Failed : {ex.Message}"; }
         catch (Exception ex)
-        {
-            message = $"Connect Failed : {ex.Message}";
-        }
+        { message = $"Connect Failed : {ex.Message}"; }
 
         return (success, message);
+    }
+    
+    public static async Task<(bool success, string message)> AttemptConnect(this IObservableOBSClient client, IAppState appState, IEncryptor encryptor)
+    {
+        var host = appState.AppVariables.Get(OBSVars.Host);
+        var port = appState.AppVariables.Get(OBSVars.Port);
+        var password = string.Empty;
+
+        if (appState.AppVariables.Has(OBSVars.Password))
+        {
+            var encryptedPassword = appState.AppVariables.Get(OBSVars.Password);
+            password = encryptor.Decrypt(encryptedPassword);
+        }
+
+        return await client.AttemptConnect(host, port, password);
     }
     
     public static async Task PopulateActiveSceneTransientData(this IObservableOBSClient client, IAppState appState)
