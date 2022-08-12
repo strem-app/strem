@@ -1,6 +1,6 @@
 ﻿using Strem.Core.Flows.Triggers;
 
-namespace Strem.Core.Flows.Registries;
+namespace Strem.Core.Flows.Registries.Triggers;
 
 public class TriggerDescriptor
 {

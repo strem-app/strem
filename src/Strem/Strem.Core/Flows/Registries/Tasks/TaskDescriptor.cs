@@ -1,6 +1,6 @@
 ﻿using Strem.Core.Flows.Tasks;
 
-namespace Strem.Core.Flows.Registries;
+namespace Strem.Core.Flows.Registries.Tasks;
 
 public class TaskDescriptor
 {

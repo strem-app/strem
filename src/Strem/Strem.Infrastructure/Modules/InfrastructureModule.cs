@@ -13,6 +13,9 @@ using Strem.Core.Flows;
 using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Registries;
+using Strem.Core.Flows.Registries.Integrations;
+using Strem.Core.Flows.Registries.Tasks;
+using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Core.Threading;
@@ -88,6 +91,7 @@ public class InfrastructureModule : IDependencyModule
         services.AddSingleton<ICommandStringProcessor, CommandStringProcessor>();
         services.AddSingleton<ITaskRegistry, TaskRegistry>();
         services.AddSingleton<ITriggerRegistry, TriggerRegistry>();
+        services.AddSingleton<IIntegrationRegistry, IntegrationRegistry>();
         services.AddSingleton<IFlowExecutionEngine, FlowExecutionEngine>();
         
         // Input

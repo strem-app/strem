@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Flows.Registries;
+﻿namespace Strem.Core.Flows.Registries.Triggers;
 
 public class TriggerRegistry : ITriggerRegistry
 {

@@ -3,6 +3,7 @@
 @is-warning: #ffe08a;
 @is-danger: #f14668;
 @is-primary: #00d1b2;
+@is-dark-grey: #4a4a4a;
 
 @s-1: 0.25rem;
 @s-2: 0.5rem;
@@ -69,6 +70,21 @@ body
     }
 }
 
+.accordion
+{
+    &>a.twitch-integration {
+        background-color: #6441a5;
+        color: #fff;
+        border-color: transparent;
+    }
+
+    &>a.obs-integration {
+        background-color: @is-dark-grey;
+        color: #fff;
+        border-color: transparent;
+    }
+}
+
 .is-running {
     box-shadow: 0 0 0 0 rgba(51, 217, 178, 1);
     animation: pulse-green 2s infinite;
@@ -87,9 +103,7 @@ body
 
 .menu
 {
-    li {
-        margin: @s-2;
-    }
+    li { margin: @s-2; }
     
     a
     {

@@ -1,5 +1,6 @@
 ﻿using Strem.Core.DI;
 using Strem.Core.Extensions;
+using Strem.Core.Flows.Registries.Integrations;
 using Strem.Core.Plugins;
 using Strem.Twitch.Plugin;
 using Strem.Twitch.Services.Client;
@@ -29,9 +30,13 @@ public class TwitchModule : IDependencyModule
         // OAuth
         services.AddSingleton<ITwitchOAuthClient, TwitchOAuthClient>();
         
+        // Components
         var thisAssembly = GetType().Assembly;
         services.RegisterAllTasksAndComponentsIn(thisAssembly);
         services.RegisterAllTriggersAndComponentsIn(thisAssembly);
+        
+        // Integration Components
+        services.AddSingleton<IIntegrationDescriptor, TwitchIntegrationDescriptor>();
     }
 
     public ITwitchClient CreateTwitchClient(IServiceProvider services)

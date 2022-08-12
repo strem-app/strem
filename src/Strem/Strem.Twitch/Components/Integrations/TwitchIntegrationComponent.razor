@@ -19,40 +19,30 @@
 
 @implements IDisposable
 
-<article class="message is-info">
-    <p class="message-header">
-        Twitch
-        <a>
-            <span class="icon is-small">
-                <i class="fab fa-twitch"></i>
-            </span>
-        </a>
-    </p>
-    <div class="message-body">
-        <label class="label">Connection Details</label>
-        <div class="field is-grouped">
-            <div class="control is-expanded">
-                <input class="input" type="text" placeholder="Account Not Linked" value="@Username" disabled/>
-            </div>
-            <div class="control">
-                @if (IsTwitchAccountLinked && !HavePermissionsChanged)
-                {
-                    <a class="button is-danger" @onclick="DisconnectFromTwitch">Disconnect From Twitch</a>
-                }
-                else if (IsTwitchAccountLinked && HavePermissionsChanged)
-                {
-                    <a class="button is-warning" @onclick="ConnectToTwitch">Request New Permissions</a>
-                }
-                else
-                {
-                    <a class="button is-success" @onclick="ConnectToTwitch">Connect To Twitch</a>
-                }
-            </div>
-        </div>
-        <label class="label">Requested Privilages</label>
-        <TwitchScopes ExistingScopes="CurrentScopes" OnScopesChanged="RequestNewScopeAccess"></TwitchScopes>
+
+<label class="label">Connection Details</label>
+<div class="field is-grouped">
+    <div class="control is-expanded">
+        <input class="input" type="text" placeholder="Account Not Linked" value="@Username" disabled/>
     </div>
-</article>
+    <div class="control">
+        @if (IsTwitchAccountLinked && !HavePermissionsChanged)
+        {
+            <a class="button is-danger" @onclick="DisconnectFromTwitch">Disconnect From Twitch</a>
+        }
+        else if (IsTwitchAccountLinked && HavePermissionsChanged)
+        {
+            <a class="button is-warning" @onclick="ConnectToTwitch">Request New Permissions</a>
+        }
+        else
+        {
+            <a class="button is-success" @onclick="ConnectToTwitch">Connect To Twitch</a>
+        }
+    </div>
+</div>
+<label class="label">Requested Privilages</label>
+<TwitchScopes ExistingScopes="CurrentScopes" OnScopesChanged="RequestNewScopeAccess"></TwitchScopes>
+
 
 @code {
     

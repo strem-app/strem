@@ -1,0 +1,16 @@
+﻿@using Strem.Core.Flows.Registries.Integrations
+<Accordion Title="@Descriptor.Title" StyleType="@Descriptor.Code">
+    <DynamicComponent Type="Descriptor.ComponentType" />
+    @if (Descriptor.VariableOutputs.Length > 0)
+    {
+        <Accordion Title="Output Variables" StyleType="is-info">
+            <VariableDescriptorList VariableDescriptors="Descriptor.VariableOutputs" />
+        </Accordion>
+    }
+</Accordion>
+
+@code {
+
+    [Parameter]
+    public IIntegrationDescriptor Descriptor { get; set; }
+}

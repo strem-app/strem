@@ -1,13 +1,15 @@
 ﻿@page "/integrations"
 
+@using Strem.Core.Flows.Registries.Integrations
+
+@inject IIntegrationRegistry IntegrationRegistry;
+
 <div class="container">
     <h3 class="title is-3">Integrations</h3>
-    <div class="block">
-        <TwitchIntegration />
-    </div>
-    <div class="block">
-        <OBSIntegration />
-    </div>
+    @foreach (var integrationDescriptor in IntegrationRegistry.GetAll())
+    {
+      <IntegrationComponent Descriptor="integrationDescriptor"></IntegrationComponent>
+    }
 </div>
 
 @code {

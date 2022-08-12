@@ -8,6 +8,9 @@ using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Registries;
+using Strem.Core.Flows.Registries.Integrations;
+using Strem.Core.Flows.Registries.Tasks;
+using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Plugins;
 using Strem.Flows.Default.Modules;
 using Strem.Infrastructure.Extensions;
@@ -30,32 +33,11 @@ public class Program
         return appBuilder.Build();
     }
 
-    public static async Task StartAllPlugins(IServiceProvider services)
-    {
-        var startupServices = services.GetServices<IPluginStartup>();
-        foreach (var startupService in startupServices)
-        { await startupService.StartPlugin(); }
-    }
-
-    public static async Task StartExecutionEngine(IServiceProvider services)
-    {
-        var executionEngine = services.GetService<IFlowExecutionEngine>();
-
-        var taskRegistry = services.GetService<ITaskRegistry>();
-        var taskDescriptors = services.GetServices<TaskDescriptor>();
-        taskRegistry.AddMany(taskDescriptors);
-        
-        var triggerRegistry = services.GetService<ITriggerRegistry>();
-        var triggerDescriptors = services.GetServices<TriggerDescriptor>();
-        triggerRegistry.AddMany(triggerDescriptors);
-        
-        executionEngine.StartEngine();
-    }
-    
     [STAThread]
     public static void Main(string[] args)
     {
         var app = CreateApp(args);
+        var pluginBootstrapper = new PluginBootstrapper(app.Services);
         var logger = app.Services.GetService<ILogger<Program>>();
         var eventBus = app.Services.GetService<IEventBus>();
         
@@ -68,7 +50,7 @@ public class Program
         };
 
         logger.Information("Starting Plugins");
-        Task.Run(async () => await StartAllPlugins(app.Services)).Wait();
+        Task.Run(async () => await pluginBootstrapper.StartAllPlugins(app.Services)).Wait();
         
         //TODO: Solve this hack with webhost service collection separation
         WebHostHackExtensions.EventBus = eventBus;
@@ -91,7 +73,7 @@ public class Program
             .Load("./wwwroot/index.html");
         
         logger.Information("Starting Flow Execution Engine");
-        Task.Run(async () => await StartExecutionEngine(app.Services)).Wait();
+        Task.Run(async () => await pluginBootstrapper.StartExecutionEngine(app.Services)).Wait();
         logger.Information("Started Flow Execution Engine");
         
         logger.Information("Strem Initialized");
