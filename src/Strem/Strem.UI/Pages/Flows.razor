@@ -1,10 +1,8 @@
 ﻿@page "/"
 
 @using Strem.Core.Flows
-@using Strem.Core.Flows.Registries
 @using Strem.Infrastructure.Services.Persistence.Flows
 @using Strem.Core.Events.Bus
-@using Strem.Core.Events
 @using Strem.Core.Events.Flows
 @using Strem.Core.Flows.Registries.Tasks
 @using Strem.Core.Flows.Registries.Triggers
@@ -16,7 +14,7 @@
 <div class="container is-fluid">
   <div class="columns is-variable is-6">
     <div class="column is-one-quarter">
-      <UserFlows OnFlowSelected="x => CurrentFlow = x"></UserFlows>
+      <UserFlows OnFlowSelected="SelectFlow"></UserFlows>
       <div class="block">
           <button class="button is-info is-leveled" @onclick="SaveFlows">Force Flow Save</button>
       </div>
@@ -61,4 +59,11 @@
   {
     SaveFlowStore.Execute(FlowStore);
   }
+
+  private void SelectFlow(Flow newFlow)
+  {
+    CurrentFlow = newFlow;
+    InvokeAsync(StateHasChanged);
+  }
+
 }

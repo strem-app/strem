@@ -1,16 +1,16 @@
 ﻿@using Strem.Core.Flows
 
-<h3 class="title is-3">Create Flow</h3>
+<h3 class="title is-3 has-text-black">Create Flow</h3>
 <div class="field">
     <label class="label">Name</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e Play A Meme" @bind-value="NewFlowName">
+        <input class="input" type="text" placeholder="i.e Play A Meme" @bind-value="NewFlowName"/>
     </div>
 </div>
 <div class="field">
     <label class="label">Category</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e Memes" @bind-value="NewFlowCategory">
+        <input class="input" type="text" placeholder="i.e Memes" @bind-value="NewFlowCategory" />
     </div>
 </div>
 <div class="field is-grouped">
@@ -26,7 +26,7 @@
     [Parameter] 
     public EventCallback<Flow> OnFlowCreated { get; set; }
     [Parameter] 
-    public EventCallback OnFlowCancelled { get; set; }
+    public EventCallback OnCancelled { get; set; }
     
     public string NewFlowName { get; set; }
     public string NewFlowCategory { get; set; }
@@ -43,6 +43,6 @@
     {
         NewFlowName = string.Empty;
         NewFlowCategory = string.Empty;
-        OnFlowCancelled.InvokeAsync();
+        OnCancelled.InvokeAsync();
     }
 }

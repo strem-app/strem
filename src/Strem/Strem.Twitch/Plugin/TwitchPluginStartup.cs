@@ -1,15 +1,13 @@
 ﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows;
 using Strem.Core.Plugins;
 using Strem.Core.State;
-using Strem.Twitch.Events;
 using Strem.Twitch.Events.OAuth;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.OAuth;
+using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
 using TwitchLib.Api.Interfaces;
 using TwitchLib.Client.Interfaces;
@@ -43,6 +41,10 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
             .Subscribe(x => VerifyToken())
             .AddTo(_subs);
         
+        Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.ReconnectToChatTimeout))
+            .Subscribe(x => AttemptToConnectToChat())
+            .AddTo(_subs);
+        
         Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.RefreshChannelPeriodInMins))
             .Subscribe(x => RefreshChannelDetails())
             .AddTo(_subs);
@@ -50,13 +52,14 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         EventBus.Receive<TwitchOAuthSuccessEvent>()
             .Subscribe(x => VerifyToken())
             .AddTo(_subs);
-        
-        if (AppState.HasTwitchOAuth())
-        { AttemptToConnectToChat(); }
     }
 
     public void AttemptToConnectToChat()
     {
+        if(!AppState.HasTwitchOAuth()) { return; }
+        if(TwitchClient.IsConnected) { return; }
+        if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
+        
         var result = TwitchClient.ConnectOrRefresh(AppState);
         if(result.success)
         { Logger.Information($"Connected to twitch chat"); }
@@ -67,7 +70,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public async Task VerifyToken()
     {
         Logger.Information("Revalidating Twitch Access Token");
-        
+
         if (AppState.HasTwitchOAuth())
         { await TwitchOAuthClient.ValidateToken(); }
     }

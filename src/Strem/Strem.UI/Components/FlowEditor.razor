@@ -10,6 +10,7 @@
 @using Strem.Core.Flows.Registries.Triggers
 
 @inject IEventBus EventBus;
+@inject IFlowStore FlowStore;
 @inject ITaskRegistry TaskRegistry;
 @inject ITriggerRegistry TriggerRegistry;
 
@@ -19,6 +20,14 @@
 @if (!Flow.Enabled)
 {
   <p class="subtitle has-text-danger has-text-weight-bold">- This flow is currently disabled</p>
+  <div class="box">
+    <button class="button is-danger is-leveled" @onclick="() => ShowDeleteModal = true">
+      <span class="icon is-">
+        <i class="fas fa-code-commit"></i>
+      </span>
+      <span>Delete Flow</span>
+    </button>
+  </div>
 }
 <div class="box">
   <div class="field">
@@ -29,22 +38,22 @@
              @bind="Flow.Name">
     </div>
   </div>
-    <div class="field">
-      <label class="label">Flow Category</label>
-      <div class="control">
-        <input type="text" class="input" 
-               placeholder="i.e Name of the category for the flow"
-               @bind="Flow.Category">
-      </div>
-      <HelperInfo>Flow categories help you group flows with similar functionality or context for easier viewing</HelperInfo>
+  <div class="field">
+    <label class="label">Flow Category</label>
+    <div class="control">
+      <input type="text" class="input" 
+             placeholder="i.e Name of the category for the flow"
+             @bind="Flow.Category">
     </div>
+    <HelperInfo>Flow categories help you group flows with similar functionality or context for easier viewing</HelperInfo>
+  </div>
   <div class="field">
     <div class="control">
       <button @onclick="() => Flow.Enabled = !Flow.Enabled" class="button is-leveled @(Flow.Enabled ? "is-danger" : "is-success")">
         @(Flow.Enabled ? "Disable Flow" : "Enable Flow")
       </button>
     </div>
-    <HelperInfo>When a flow is disabled it will not be invoked from any triggers or tasks</HelperInfo>
+    <HelperInfo>When a flow is disabled it will not be invoked from any triggers or tasks, it can also be deleted</HelperInfo>
   </div>
 </div>
 
@@ -75,12 +84,17 @@
   </ul>
 </aside>
 
+<Modal IsVisible="ShowDeleteModal">
+  <FlowDeletion Flow="Flow" OnFlowDeleted="OnFlowDeleted" OnCancelled="OnFlowCancelled"></FlowDeletion>
+</Modal>
+
 @code {
   [Parameter]
   public Flow Flow { get; set; }
   
   public Guid ActiveTaskId { get; set; }
   public Guid ActiveTriggerId { get; set; }
+  public bool ShowDeleteModal { get; set; }
   
   public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
   public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
@@ -132,6 +146,18 @@
       .AddTo(_subs);
     */
     return base.OnInitializedAsync();
+  }
+  
+  public void OnFlowDeleted()
+  {
+    FlowStore.Remove(Flow);
+    EventBus.PublishAsync(new FlowRemovedEvent(Flow.Id));
+    ShowDeleteModal = false;
+  }
+
+  public void OnFlowCancelled()
+  {
+    ShowDeleteModal = false;
   }
 
   public void RemoveTaskData(IFlowTaskData data)

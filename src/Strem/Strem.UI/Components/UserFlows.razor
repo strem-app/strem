@@ -3,9 +3,12 @@
 @using Strem.Core.Events.Bus
 @using Strem.Core.Events
 @using Strem.Core.Events.Flows
+@using System.Reactive.Disposables
 
 @inject IFlowStore FlowStore;
 @inject IEventBus EventBus;
+
+@implements IDisposable
 
 <Accordion Title="Flow Filter" StyleType="is-primary">
   <div class="field">
@@ -20,7 +23,7 @@
     <div class="control">
       <button class="button is-success is-leveled" @onclick="CreateNewFlow">
         <span class="icon is-small">
-          <i class="fas fa-microchip"></i>
+          <i class="fas fa-code-commit"></i>
         </span>
         <span>Add Flow</span>
       </button>
@@ -46,17 +49,26 @@
 </div>
 
 
-<Modal IsVisible="ShowModal">
-  <FlowCreator OnFlowCreated="OnFlowCreated" OnFlowCancelled="OnFlowCancelled"></FlowCreator>
+<Modal IsVisible="ShowCreateModal">
+  <FlowCreator OnFlowCreated="OnFlowCreated" OnCancelled="OnFlowCancelled"></FlowCreator>
 </Modal>
 
 @code {
   [Parameter] 
   public EventCallback<Flow> OnFlowSelected { get; set; }
 
-  public bool ShowModal { get; set; } = false;
+  public bool ShowCreateModal { get; set; } = false;
   public Guid SelectedFlowId { get; set; }
   public string SearchCriteria { get; set; }
+
+  private CompositeDisposable _subs = new();
+
+  protected override async Task OnInitializedAsync()
+  {
+    EventBus.Receive<FlowRemovedEvent>()
+      .Subscribe(x => OnFlowHasBeenRemoved())
+      .AddTo(_subs);
+  }
 
   public IEnumerable<IGrouping<string, Flow>> GetFilteredFlows()
   {
@@ -72,14 +84,20 @@
   {
     FlowStore.Add(newFlow);
     SelectFlow(newFlow);
-    ShowModal = false;
-    
+    ShowCreateModal = false;
     EventBus.PublishAsync(new FlowAddedEvent(newFlow.Id));
+  }
+
+  public void OnFlowHasBeenRemoved()
+  {
+    SelectedFlowId = Guid.Empty;
+    OnFlowSelected.InvokeAsync(null);
+    InvokeAsync(StateHasChanged);
   }
 
   public void OnFlowCancelled()
   {
-    ShowModal = false;
+    ShowCreateModal = false;
   }
 
   public void SelectFlow(Flow selectedFlow)
@@ -90,6 +108,12 @@
 
   public void CreateNewFlow()
   {
-    ShowModal = true;
+    ShowCreateModal = true;
   }
+
+  public void Dispose()
+  {
+    _subs?.Dispose();
+  }
+
 }
