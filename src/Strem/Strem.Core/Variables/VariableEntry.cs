@@ -13,6 +13,9 @@ public struct VariableEntry : IEquatable<VariableEntry>
         Context = context;
     }
 
+    public bool IsEmpty => string.IsNullOrEmpty(Name);
+    public bool HasContext => !string.IsNullOrEmpty(Context);
+    
     public bool Equals(VariableEntry other)
     {
         return Name == other.Name && Context == other.Context;
