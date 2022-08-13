@@ -11,7 +11,7 @@ using Strem.Twitch.Variables;
 using TwitchLib.Api.Helix.Models.Clips.CreateClip;
 using TwitchLib.Api.Interfaces;
 
-namespace Strem.Twitch.Flows.Tasks.Chat;
+namespace Strem.Twitch.Flows.Tasks.Clips;
 
 public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
 {

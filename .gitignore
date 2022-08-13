@@ -350,3 +350,5 @@ MigrationBackup/
 .ionide/
 
 src/Strem/.idea/
+
+dist/

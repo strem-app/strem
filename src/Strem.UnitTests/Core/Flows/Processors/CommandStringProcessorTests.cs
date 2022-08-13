@@ -1,6 +1,6 @@
 ﻿using Strem.Core.Flows.Processors;
 
-namespace Strem.UnitTests.Core.Flows;
+namespace Strem.UnitTests.Core.Flows.Processors;
 
 public class CommandStringProcessorTests
 {

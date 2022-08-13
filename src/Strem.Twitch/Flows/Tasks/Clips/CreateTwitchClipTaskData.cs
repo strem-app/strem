@@ -1,6 +1,6 @@
 ﻿using Strem.Core.Flows.Tasks;
 
-namespace Strem.Twitch.Flows.Tasks.Chat;
+namespace Strem.Twitch.Flows.Tasks.Clips;
 
 public class CreateTwitchClipTaskData : IFlowTaskData
 {
