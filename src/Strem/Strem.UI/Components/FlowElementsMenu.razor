@@ -6,6 +6,8 @@
 @using System.Reactive.Disposables
 @using Strem.Core.Flows.Registries.Tasks
 @using Strem.Core.Flows.Registries.Triggers
+@using Strem.Core.Flows.Tasks
+@using Strem.Core.Flows.Triggers
 
 @inject IEventBus EventBus;
 @inject ITaskRegistry TaskRegistry;
@@ -20,6 +22,14 @@
       <input class="input" type="text" placeholder="Put in the partial name of a trigger/task" @bind="SearchCriteria"/>
     </div>
   </div>
+  <div class="field">
+      <div class="control">
+          <label class="checkbox">
+              <input type="checkbox" @bind="ShowDisabled">
+              Show Disabled Elements?
+          </label>
+      </div>
+  </div>
 </Accordion>
 
 <Accordion Title="Available Triggers" StyleType="is-success" IsExpanded="true">
@@ -32,9 +42,8 @@
       <ul class="menu-list">
         @foreach (var trigger in triggerGroup)
         {
-          @if (DoesFlowContainTrigger(trigger)){continue;}
           <li>
-            <a class="is-trigger has-tooltip-left has-tooltip-multiline @(trigger.Trigger.CanExecute() ? "enabled" : "disabled")"
+            <a class="is-trigger has-tooltip-left has-tooltip-multiline @(IsTriggerEnabled(trigger.Trigger) ? "enabled" : "disabled")"
                data-tooltip="@trigger.Trigger.Description" @onclick="@(() => OnTriggerSelected.InvokeAsync(trigger))">
               <span class="icon is-small">
                 <i class="fa fa-circle-plus"></i>
@@ -59,8 +68,8 @@
       @foreach (var task in taskGroup)
       {
         <li>
-          <a class="is-task has-tooltip-left has-tooltip-multiline @(task.Task.CanExecute() ? "enabled" : "disabled")" data-tooltip="@task.Task.Description"
-             @onclick="() => OnTaskSelected.InvokeAsync(task)">
+          <a class="is-task has-tooltip-left has-tooltip-multiline @(IsTaskEnabled(task.Task) ? "enabled" : "disabled")" 
+             data-tooltip="@task.Task.Description" @onclick="() => OnTaskSelected.InvokeAsync(task)">
             <span class="icon is-small">
               <i class="fa fa-circle-plus"></i>
             </span>
@@ -84,6 +93,7 @@
   public EventCallback<TriggerDescriptor> OnTriggerSelected { get; set; }
   
   public string SearchCriteria { get; set; }
+  public bool ShowDisabled { get; set; } = false;
 
   private CompositeDisposable _subs = new ();
   
@@ -94,31 +104,39 @@
         .AddTo(_subs);
   }
 
-  public bool DoesFlowContainTrigger(TriggerDescriptor triggerDescriptor)
-  { return Flow.TriggerData.Any(x => x.Code == triggerDescriptor.Trigger.Code); }
+  public bool DoesFlowContainTrigger(IFlowTrigger trigger)
+  { return Flow.TriggerData.Any(x => x.Code == trigger.Code); }
 
   public IEnumerable<IGrouping<string, TriggerDescriptor>> GetFilteredTriggers()
   {
-    if (string.IsNullOrEmpty(SearchCriteria))
-    { return TriggerRegistry.GetAll().GroupBy(x => x.Trigger.Category); }
-    
     return TriggerRegistry.GetAll()
-      .Where(x => x.Trigger.Name.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase))
+      .Where(x =>
+      {
+        if (!ShowDisabled && !IsTriggerEnabled(x.Trigger)){ return false; }
+        if(string.IsNullOrEmpty(SearchCriteria)) { return true; }
+        return x.Trigger.Name.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase);
+      })
       .GroupBy(x => x.Trigger.Category);
   }
 
   public IEnumerable<IGrouping<string, TaskDescriptor>> GetFilteredTasks()
   {
-    if (string.IsNullOrEmpty(SearchCriteria))
-    { return TaskRegistry.GetAll().GroupBy(x => x.Task.Category); }
-    
     return TaskRegistry.GetAll()
-      .Where(x => x.Task.Name.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase))
+      .Where(x =>
+      {
+        if (!ShowDisabled && !IsTaskEnabled(x.Task)){ return false; }
+        if(string.IsNullOrEmpty(SearchCriteria)) { return true; }
+        return x.Task.Name.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase);
+      })
       .GroupBy(x => x.Task.Category);
   }
+
+  public bool IsTriggerEnabled(IFlowTrigger trigger)
+  { return !DoesFlowContainTrigger(trigger) && trigger.CanExecute(); }
+
+  public bool IsTaskEnabled(IFlowTask task)
+  { return task.CanExecute(); }
   
   public void Dispose()
-  {
-    _subs?.Dispose();
-  }
+  { _subs?.Dispose(); }
 }

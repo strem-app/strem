@@ -137,6 +137,12 @@ body
         {
             background-color: @is-info;
         }
+        
+        &.is-trigger.disabled, &.is-task.disabled
+        {
+            pointer-events: none;
+            opacity: .65;
+        }
     }
 }
 

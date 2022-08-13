@@ -21,9 +21,9 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
     public static VariableEntry ClipUrlVariable = new("clip.url", TwitchVars.TwitchContext);
     public static VariableEntry ClipEditUrlVariable = new("clip.url.edit", TwitchVars.TwitchContext);
     
-    public override string Name => "Send Twitch Chat Message";
+    public override string Name => "Create Twitch Clip";
     public override string Category => "Twitch";
-    public override string Description => "Sends a message to a twitch channel, defaults to yours if not provided";
+    public override string Description => "Creates a clip for a given channel";
 
     public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {

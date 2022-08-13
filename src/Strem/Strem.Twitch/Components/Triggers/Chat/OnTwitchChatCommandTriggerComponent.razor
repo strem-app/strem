@@ -74,6 +74,6 @@
     public string GenerateTitle()
     {
         var userRequirements =  Data.MinimumUserType != UserType.Viewer ? $"For At Least <strong>{Data.MinimumUserType}</strong>" : "";
-        return $"Trigger On Twitch Command {Data.CommandName} {userRequirements}";
+        return $"Trigger On Twitch Command <strong>!{Data.CommandName}</strong> {userRequirements}";
     }
 }
