@@ -1,10 +1,9 @@
 ﻿using Strem.Core.Extensions;
-using Strem.Core.Flows;
 using Strem.Core.Flows.Processors;
 using Strem.Core.State;
 using Strem.Core.Variables;
 
-namespace Strem.UnitTests.Core.Flows;
+namespace Strem.UnitTests.Core.Flows.Processors;
 
 public class FlowStringProcessorTests
 {
