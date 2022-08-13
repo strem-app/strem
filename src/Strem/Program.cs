@@ -90,18 +90,22 @@ public class Program
         WebHostHackExtensions.EventBus = eventBus;
         WebHostHackExtensions.ServiceLocator = app.Services;
         
-       
         var webHost = app.Services.GetService<IApiWebHost>();
         logger.Information("Starting Internal Host");
         webHost.StartHost();
         logger.Information($"Started Internal Host: http://localhost:{ApiHostConfiguration.ApiHostPort}");
         
-        app.MainWindow
+        var appLauncher = app.MainWindow
             .SetTitle("Strem")
-            .SetDevToolsEnabled(true)
             .SetSize(1920, 1080)
             .SetUseOsDefaultSize(false)
-            .Load("./wwwroot/index.html");
+            .SetIconFile("strem.ico");
+#if DEBUG
+        appLauncher = appLauncher.SetDevToolsEnabled(true);
+#else
+        appLauncher = appLauncher.SetContextMenuEnabled(false);
+#endif
+        appLauncher.Load("./wwwroot/index.html");
         
         logger.Information("Starting Flow Execution Engine");
         Task.Run(async () => await pluginBootstrapper.StartExecutionEngine(app.Services)).Wait();

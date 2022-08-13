@@ -35,4 +35,10 @@
         <ProjectReference Include="..\Strem.OBS\Strem.OBS.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="strem.ico">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
