@@ -14,9 +14,6 @@ public class BuildSolutionTask : FrostingTask<BuildContext>
             Configuration = "Release",
         };
 
-        foreach (var file in Glob.Files(Directories.Src, "*.sln"))
-        {
-            context.DotNetBuild(file, buildSettings);
-        }
+        context.DotNetBuild($"{Directories.Src}/Strem.sln", buildSettings);
     }
 }

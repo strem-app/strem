@@ -1,5 +1,6 @@
 ﻿using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNetCore.Test;
+using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using Cake.Coverlet;
 using GlobExpressions;
@@ -62,6 +63,8 @@ public static class BuildContextTestingExtensions
         var testProjects = Glob.Files(Directories.Src, $"**/*{settings.TestTypes}*.csproj");
         foreach (var testProject in testProjects)
         {
+            var actualProjLocation = $"{Directories.Src}/{testProject}";
+            context.Log.Information($"Found Test Project: {actualProjLocation}");
             var logFileName = Path.GetFileNameWithoutExtension(testProject);
             var loggers = settings.LogTypes
                     .Select(x => $"{x};LogFileName={logFileName}.Test.Results.{x}")
@@ -84,10 +87,10 @@ public static class BuildContextTestingExtensions
                     CoverletOutputName = $"{logFileName}.Cover.Results.xml"
                 };
             
-                context.DotNetCoreTest(testProject, testSettings, coverletSettings);
+                context.DotNetCoreTest(actualProjLocation, testSettings, coverletSettings);
             }
             else
-            { context.DotNetTest(testProject, testSettings); }
+            { context.DotNetTest(actualProjLocation, testSettings); }
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using Cake.Frosting;
 using Strem.Build.Tasks;
 
-namespace Strem.Build.Runners;
+namespace Strem.Build.Orchestration;
 
 [TaskName("default")]
 [IsDependentOn(typeof(PackageAppTask))]
-public class DefaultRunner : FrostingTask<BuildContext>
+public class DefaultTask : FrostingTask<BuildContext>
 {
     
 }
