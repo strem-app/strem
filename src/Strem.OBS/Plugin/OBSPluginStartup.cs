@@ -10,7 +10,6 @@ using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.OBS.Extensions;
 using Strem.OBS.Services.Client;
-using Strem.OBS.Variables;
 
 namespace Strem.OBS.Plugin;
 

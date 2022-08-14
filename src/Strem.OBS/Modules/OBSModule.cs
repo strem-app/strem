@@ -9,7 +9,7 @@ using Strem.OBS.Services.Client;
 
 namespace Strem.OBS.Modules;
 
-public class OBSModule : IDependencyModule, IRequiresApiHostingModule
+public class OBSModule : IDependencyModule
 {
     public void Setup(IServiceCollection services)
     {
