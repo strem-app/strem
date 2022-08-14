@@ -1,9 +1,7 @@
 ﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using OBSWebsocketDotNet.Types;
 using Persistity.Encryption;
-using Persistity.Extensions;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;

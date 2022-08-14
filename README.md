@@ -12,6 +12,8 @@ It lets you build complex logic `flows` from `triggers` and `tasks`.
 
 For example you may want to play a meme on OBS every time chat contains "lollerskates", so you would make a twitch chat trigger, and have a task to show an obs source.
 
+> To run OBS you will need to go and install the v4.* [obs-websocket-remote plugin](https://obsproject.com/forum/resources/obs-websocket-remote-control-obs-studio-using-websockets.466/updates#resource-update-3807) which lets other applications communicate with OBS, version 5 of the plugin is not supported yet.
+
 ## How Do I Run It?
 Just go to releases, download the latest zip file and put it in a directory somewhere and run `strem.exe`
 
@@ -27,6 +29,7 @@ To build it locally you will to:
 
 - Make sure you have `.net 6.0`
 - Pull > Nuget Restore > Run
+- Read Stuff In [docs](./docs) folder
 
 > Once loaded if you go into `Logs` you will be able to see where your data source files live and information around whats happening at runtime.
 
