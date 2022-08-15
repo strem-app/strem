@@ -1,0 +1,51 @@
+﻿@using Strem.Core.Flows
+@using Strem.Core.Flows.Registries.Tasks
+@using Strem.Core.Flows.Tasks
+
+@inject ITaskRegistry TaskRegistry;
+
+@foreach (var data in Flow.TaskData)
+{
+  <li class="block">
+    <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)"
+                   OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
+  </li>
+}
+
+@code {
+    [Parameter]
+    public Flow Flow { get; set; }
+    
+    public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
+    public IFlowTask GetTaskFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).Task;
+
+    public Guid ActiveTaskId { get; set; }
+
+    public void RemoveTaskData(IFlowTaskData data)
+    {
+        Flow.TaskData.Remove(data);
+    }
+    
+    protected override Task OnInitializedAsync()
+    {
+    // TODO: Look at better way to indicate stuff is running to people
+    /*
+    EventBus.Receive<FlowTaskStarted>()
+      .Subscribe(x =>
+      {
+        ActiveTaskId = x.TaskId;
+        InvokeAsync(StateHasChanged);
+      })
+      .AddTo(_subs);
+    
+    EventBus.Receive<FlowTaskFinished>()
+      .Subscribe(x =>
+      {
+        ActiveTaskId = Guid.Empty;
+        InvokeAsync(StateHasChanged);
+      })
+      .AddTo(_subs);
+    */
+        return base.OnInitializedAsync();
+    }
+}

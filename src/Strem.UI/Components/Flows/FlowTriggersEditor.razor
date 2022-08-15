@@ -1,0 +1,58 @@
+﻿@using Strem.Core.Flows
+@using Strem.Core.Flows.Registries.Triggers
+@using Strem.Core.Flows.Triggers
+@using Strem.Core.Events.Bus
+@using Strem.Core.Events.Flows
+
+@inject ITriggerRegistry TriggerRegistry;
+@inject IEventBus EventBus;
+
+@foreach (var data in Flow.TriggerData)
+{
+  <li class="block">
+    <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)"
+                      OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"/>
+  </li>
+}
+
+@code {
+    [Parameter]
+    public Flow Flow { get; set; }
+    
+    public Guid ActiveTriggerId { get; set; }
+    
+    public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
+    public IFlowTrigger GetTriggerFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).Trigger;
+    
+    public void RemoveTriggerData(IFlowTriggerData data)
+    {
+        Flow.TriggerData.Remove(data);
+        EventBus.PublishAsync(new FlowTriggersChangedEvent(Flow.Id));
+    }
+
+    public void ResetTriggers(IFlowTriggerData data)
+    { EventBus.PublishAsync(new FlowTriggersChangedEvent(Flow.Id)); }
+    
+    protected override Task OnInitializedAsync()
+    {
+    // TODO: Look at better way to indicate stuff is running to people
+    /*
+    EventBus.Receive<FlowTriggerStarted>()
+      .Subscribe(x =>
+      {
+        ActiveTriggerId = x.TriggerId;
+        InvokeAsync(StateHasChanged);
+      })
+      .AddTo(_subs);
+    
+    EventBus.Receive<FlowTriggerFinished>()
+      .Subscribe(x =>
+      {
+        ActiveTriggerId = Guid.Empty;
+        InvokeAsync(StateHasChanged);
+      })
+      .AddTo(_subs);
+    */
+        return base.OnInitializedAsync();
+    }
+}
