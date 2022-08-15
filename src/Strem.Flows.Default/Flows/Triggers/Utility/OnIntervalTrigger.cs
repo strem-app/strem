@@ -34,7 +34,7 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
             return Observable.Empty<IVariables>();
         }
 
-        var timespan = data.IntervalUnits.ToTimeSpan(intValue);
+        var timespan = data.IntervalUnitsType.ToTimeSpan(intValue);
 
         if (data.StartImmediately)
         { return Observable.Timer(TimeSpan.Zero, timespan).Select(x => variables); }

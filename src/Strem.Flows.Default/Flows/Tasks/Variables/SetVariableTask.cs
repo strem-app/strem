@@ -30,10 +30,10 @@ public class SetVariableTask : FlowTask<SetVariableTaskData>
         var processedContext = FlowStringProcessor.Process(data.Context, flowVars);
         var processedValue = FlowStringProcessor.Process(data.Value, flowVars);
         
-        switch (data.Scope)
+        switch (data.ScopeType)
         {
-            case VariableScope.Application: AppState.TransientVariables.Set(processedName, processedContext, processedValue); break;
-            case VariableScope.Flow: flowVars.Set(processedName, processedContext, processedValue); break;
+            case VariableScopeType.Application: AppState.TransientVariables.Set(processedName, processedContext, processedValue); break;
+            case VariableScopeType.Flow: flowVars.Set(processedName, processedContext, processedValue); break;
             default: AppState.UserVariables.Set(processedName, processedContext, processedValue); break;
         }
 

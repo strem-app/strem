@@ -43,10 +43,10 @@ public class RegexToVariableTask : FlowTask<RegexToVariableTaskData>
             // ignored
         }
 
-        switch (data.Scope)
+        switch (data.ScopeType)
         {
-            case VariableScope.Application: AppState.TransientVariables.Set(processedName, processedContext, matchedText); break;
-            case VariableScope.Flow: flowVars.Set(processedName, processedContext, matchedText); break;
+            case VariableScopeType.Application: AppState.TransientVariables.Set(processedName, processedContext, matchedText); break;
+            case VariableScopeType.Flow: flowVars.Set(processedName, processedContext, matchedText); break;
             default: AppState.UserVariables.Set(processedName, processedContext, matchedText); break;
         }
         

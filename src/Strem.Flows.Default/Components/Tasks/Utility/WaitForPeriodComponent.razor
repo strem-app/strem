@@ -6,8 +6,8 @@
     <label class="label">Period Type</label>
     <div class="control">
         <div class="select">
-            <select @bind="Data.WaitUnits">
-                <EnumSelectOptions EnumType="typeof(TimeUnit)"></EnumSelectOptions>
+            <select @bind="Data.WaitUnitsType">
+                <EnumSelectOptions EnumType="typeof(TimeUnitType)"></EnumSelectOptions>
             </select>
         </div>
     </div>
@@ -20,5 +20,5 @@
 </div>
 
 @code {
-    public override string Title => $"Wait For <strong>{Data.WaitAmount} {Data.WaitUnits}</strong>";
+    public override string Title => $"Wait For <strong>{Data.WaitAmount} {Data.WaitUnitsType}</strong>";
 }

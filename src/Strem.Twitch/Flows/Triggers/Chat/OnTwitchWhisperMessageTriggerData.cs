@@ -12,6 +12,6 @@ public class OnTwitchWhisperMessageTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
     
-    public TextMatch MatchType { get; set; }
+    public TextMatchType MatchTypeType { get; set; }
     public string MatchText { get; set; } = string.Empty;
 }

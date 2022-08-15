@@ -31,7 +31,7 @@ public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
             return false;
         }
         
-        var timespan = data.WaitUnits.ToTimeSpan(intValue);
+        var timespan = data.WaitUnitsType.ToTimeSpan(intValue);
         await Task.Delay(timespan);
         return true;
     }

@@ -15,5 +15,5 @@ public class SetVariableTaskData : IFlowTaskData
     public string Name { get; set; }
     public string Context { get; set; }
     public string Value { get; set; }
-    public VariableScope Scope { get; set; }
+    public VariableScopeType ScopeType { get; set; }
 }

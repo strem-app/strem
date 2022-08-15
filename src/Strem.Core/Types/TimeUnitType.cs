@@ -1,6 +1,6 @@
 ﻿namespace Strem.Core.Types;
 
-public enum TimeUnit
+public enum TimeUnitType
 {
     Seconds,
     Minutes,

@@ -14,5 +14,5 @@ public class OnIntervalTriggerData : IFlowTriggerData
     
     public bool StartImmediately { get; set; }
     public string IntervalValue { get; set; }
-    public TimeUnit IntervalUnits { get; set; }
+    public TimeUnitType IntervalUnitsType { get; set; }
 }

@@ -19,8 +19,8 @@
     <label class="label">Variable Scope</label>
     <div class="control">
         <div class="select">
-            <select @bind="Data.Scope">
-                <EnumSelectOptions EnumType="typeof(VariableScope)"></EnumSelectOptions>
+            <select @bind="Data.ScopeType">
+                <EnumSelectOptions EnumType="typeof(VariableScopeType)"></EnumSelectOptions>
             </select>
         </div>
     </div>
@@ -41,6 +41,6 @@
     public string GenerateTitle()
     {
         var contextSection = string.IsNullOrEmpty(Data.Context) ? "" : $":{Data.Context}";
-        return $"Set Variable <strong>{Data.Name}{contextSection}</strong> In <strong>{Data.Scope}</strong> Scope";
+        return $"Set Variable <strong>{Data.Name}{contextSection}</strong> In <strong>{Data.ScopeType}</strong> Scope";
     }
 }

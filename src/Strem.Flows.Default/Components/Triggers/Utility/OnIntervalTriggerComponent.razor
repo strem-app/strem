@@ -6,8 +6,8 @@
     <label class="label">Interval Type</label>
     <div class="control">
         <div class="select">
-            <select @bind="Data.IntervalUnits">
-                <EnumSelectOptions EnumType="typeof(TimeUnit)"></EnumSelectOptions>
+            <select @bind="Data.IntervalUnitsType">
+                <EnumSelectOptions EnumType="typeof(TimeUnitType)"></EnumSelectOptions>
             </select>
         </div>
     </div>
@@ -28,5 +28,5 @@
 </div>
 
 @code {
-    public override string Title => $"Trigger Every <strong>{Data.IntervalValue} {Data.IntervalUnits}</strong>";
+    public override string Title => $"Trigger Every <strong>{Data.IntervalValue} {Data.IntervalUnitsType}</strong>";
 }
