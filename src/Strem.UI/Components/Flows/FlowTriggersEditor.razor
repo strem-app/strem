@@ -3,13 +3,22 @@
 @using Strem.Core.Flows.Triggers
 @using Strem.Core.Events.Bus
 @using Strem.Core.Events.Flows
+@using Strem.Core.Extensions
 
 @inject ITriggerRegistry TriggerRegistry;
 @inject IEventBus EventBus;
 
 @foreach (var data in Flow.TriggerData)
 {
-  <li class="block">
+  <li draggable="true"
+      class="block @(DragEnter?.Id == data.Id ? "drag-enter-target" : "")"
+      @key=@data.Code
+      id="@data.Id"
+      ondragover="event.preventDefault()"
+      @ondragstart="@(() => OnDragStart(data))"
+      @ondrop="@(() => OnDropOverElement(data))"
+      @ondragenter="@(() => OnDragEnterElement(data))"
+      @ondragend="OnDragEnd">
     <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)"
                       OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"/>
   </li>
@@ -55,4 +64,37 @@
     */
         return base.OnInitializedAsync();
     }
+  
+  private IFlowTriggerData? DraggedItem;
+  private int DraggedItemIndex;
+  private IFlowTriggerData? DragEnter;
+  
+  public void OnDropOverElement(IFlowTriggerData dropTarget)
+  {
+    DragEnter=null;
+    if (DraggedItem == null) return;
+    if (DraggedItem == dropTarget) return;
+        
+    var friendIndex = Flow.TriggerData.IndexOf(dropTarget);
+    Flow.TriggerData.Swap(friendIndex, DraggedItemIndex);
+    DraggedItem=null;
+  }
+
+  public void  OnDragStart(IFlowTriggerData item)
+  {
+    DraggedItem = item;
+    DraggedItemIndex = Flow.TriggerData.IndexOf(item);
+  }
+
+  public void OnDragEnterElement(IFlowTriggerData item)
+  {
+    if (DraggedItem == null) { return; }
+    DragEnter = item;
+  }
+
+  public void  OnDragEnd()
+  {
+    DraggedItem = null;        
+    DragEnter = null;
+  }
 }

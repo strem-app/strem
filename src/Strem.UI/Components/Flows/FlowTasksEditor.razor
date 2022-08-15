@@ -1,12 +1,22 @@
 ﻿@using Strem.Core.Flows
 @using Strem.Core.Flows.Registries.Tasks
 @using Strem.Core.Flows.Tasks
+@using Strem.Core.Extensions
 
 @inject ITaskRegistry TaskRegistry;
 
 @foreach (var data in Flow.TaskData)
 {
-  <li class="block">
+  <li draggable="true"
+      class="block @(DragEnter?.Id == data.Id ? "drag-enter-target" : "")"
+      @key=@data.Code
+      id="@data.Id"
+      ondragover="event.preventDefault()"
+      @ondragstart="@(() => OnDragStart(data))"
+      @ondrop="@(() => OnDropOverElement(data))"
+      @ondragenter="@(() => OnDragEnterElement(data))"
+      @ondragend="OnDragEnd">
+    
     <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)"
                    OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
   </li>
@@ -48,4 +58,37 @@
     */
         return base.OnInitializedAsync();
     }
+  
+  private IFlowTaskData? DraggedItem;
+  private int DraggedItemIndex;
+  private IFlowTaskData? DragEnter;
+    
+  public void OnDropOverElement(IFlowTaskData dropTarget)
+  {
+    DragEnter=null;
+    if (DraggedItem == null) return;
+    if (DraggedItem == dropTarget) return;
+        
+    var friendIndex = Flow.TaskData.IndexOf(dropTarget);
+    Flow.TaskData.Swap(friendIndex, DraggedItemIndex);
+    DraggedItem=null;
+  }
+
+  public void  OnDragStart(IFlowTaskData item)
+  {
+    DraggedItem = item;
+    DraggedItemIndex = Flow.TaskData.IndexOf(item);
+  }
+
+  public void OnDragEnterElement(IFlowTaskData item)
+  {
+    if (DraggedItem == null) { return; }
+    DragEnter = item;
+  }
+
+  public void  OnDragEnd()
+  {
+    DraggedItem = null;        
+    DragEnter = null;
+  }
 }
