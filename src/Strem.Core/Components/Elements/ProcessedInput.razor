@@ -32,13 +32,22 @@
     public void HideInput()
     {
         ShowInput = false;
-        ProcessedContent = Pattern.Replace(Value, VariableMatchEvaluator);
+        ProcessContent();
+    }
+
+    public void ProcessContent()
+    {
+        if(string.IsNullOrEmpty(Value)) 
+        { ProcessedContent = Placeholder; }
+        else
+        { ProcessedContent = Pattern.Replace(Value, VariableMatchEvaluator); }
         StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        if(string.IsNullOrEmpty(Value)) { return; }
+        ProcessContent();
+        
         ProcessedContent = Pattern.Replace(Value, VariableMatchEvaluator);
     }
 
@@ -52,6 +61,6 @@
             1 => $"<div class=\"tags has-addons\"><span class=\"tag is-success\">{sections[0].Trim()}</span></div>",
             2 => $"<div class=\"tags has-addons\"><span class=\"tag is-success\">{sections[0].Trim()}</span><span class=\"tag is-info\">{sections[1].Trim()}</span></div>",
             _ => x.Value
-            };
+        };
     }
 }

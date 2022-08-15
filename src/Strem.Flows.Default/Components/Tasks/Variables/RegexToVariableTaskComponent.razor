@@ -3,17 +3,15 @@
 @inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Variables.RegexToVariableTaskData>
  <div class="field">
     <label class="label">Source Text/Variable To Match Against</label>
-    <div class="control">
-        <input class="input" type="text" @bind="Data.Source"
-               placeholder="i.e V(chat.message, twitch)">
-    </div>
+     <div class="control">
+         <ProcessedInput @bind-Value="Data.Source" Placeholder="i.e V(chat.message, twitch)"></ProcessedInput>
+     </div>
 </div>
 
 <div class="field">
     <label class="label">Regex Pattern</label>
     <div class="control">
-        <input class="input" type="text" @bind="Data.Pattern"
-               placeholder="i.e Thank you (.*) for using your points">
+        <input class="input" type="text" @bind="Data.Pattern" placeholder="i.e Thank you (.*) for using your points">
     </div>
 </div>
     
@@ -30,7 +28,7 @@
 <div class="field">
     <label class="label">Optional Context</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e V(channel-game, twitch)" @bind="Data.Context">
+        <ProcessedInput @bind-Value="Data.Context" Placeholder="i.e V(channel-game, twitch)"></ProcessedInput>
     </div>
     <HelperInfo>The context is optional and allows you to use the same variable name but tie it to some other context</HelperInfo>
 </div>
