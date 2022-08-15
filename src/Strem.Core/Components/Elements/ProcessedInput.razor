@@ -1,0 +1,57 @@
+﻿@using System.Text.RegularExpressions
+<div class="control has-icons-left">
+    @if (ShowInput)
+    {
+        <input class="input" type="text" placeholder="@Placeholder" value="@Value" @onblur="HideInput"
+               @onchange="e => ValueChanged.InvokeAsync(e.Value.ToString())" />
+    }
+    else
+    {
+        <span class="input processed-input" @onclick="() => ShowInput = true">@((MarkupString)ProcessedContent)</span>
+    }
+    <span class="icon is-small is-left">
+        <i class="fas fa-v"></i>
+    </span>
+</div>
+
+@code {
+    [Parameter]
+    public string Value { get; set; }
+    
+    [Parameter]
+    public string Placeholder { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    public static Regex Pattern = new(@"(V\(([\w\s\.,\-_\:\|]*)\))");
+
+    public bool ShowInput { get; set; }
+    public string ProcessedContent { get; set; }
+
+    public void HideInput()
+    {
+        ShowInput = false;
+        ProcessedContent = Pattern.Replace(Value, VariableMatchEvaluator);
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(string.IsNullOrEmpty(Value)) { return; }
+        ProcessedContent = Pattern.Replace(Value, VariableMatchEvaluator);
+    }
+
+    public string VariableMatchEvaluator(Match x)
+    {
+        if (x.Groups.Count < 3) { return x.Value; }
+        var matchingGroup = x.Groups[2].Value;
+        var sections = matchingGroup.Split(",");
+        return sections.Length switch
+        {
+            1 => $"<div class=\"tags has-addons\"><span class=\"tag is-success\">{sections[0].Trim()}</span></div>",
+            2 => $"<div class=\"tags has-addons\"><span class=\"tag is-success\">{sections[0].Trim()}</span><span class=\"tag is-info\">{sections[1].Trim()}</span></div>",
+            _ => x.Value
+            };
+    }
+}

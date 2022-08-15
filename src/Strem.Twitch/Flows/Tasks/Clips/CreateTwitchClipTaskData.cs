@@ -4,7 +4,7 @@ namespace Strem.Twitch.Flows.Tasks.Clips;
 
 public class CreateTwitchClipTaskData : IFlowTaskData
 {
-    public static readonly string TaskCode = "send-twitch-clip";
+    public static readonly string TaskCode = "create-twitch-clip";
     public static readonly string TaskVersion = "1.0.0";
     
     public Guid Id { get; set; } = Guid.NewGuid();

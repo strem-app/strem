@@ -94,7 +94,7 @@ public class Program
         logger.Information("Starting Internal Host");
         webHost.StartHost();
         logger.Information($"Started Internal Host: http://localhost:{ApiHostConfiguration.ApiHostPort}");
-        
+
         var appLauncher = app.MainWindow
             .SetTitle("Strem")
             .SetSize(1920, 1080)

@@ -1,18 +1,31 @@
-﻿@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Utility.WriteToFileTaskData>
+﻿@using Strem.Core.Types
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Utility.WriteToFileTaskData>
 
-<div class="field has-addons">
+<div class="field">
   <label class="label">File Path</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e c:/some-file.txt" @bind="Data.FilePath">
+    </div>
+@*
   <div class="control">
-    <input class="input" type="text" placeholder="i.e Something Happened With Value V(someVar)" @bind="Data.Text">
+   <button class="button is-primary" @onclick="BrowseForFile">Browse</button>
   </div>
-  <div class="control">
-    <button class="button is-primary" @onclick="BrowseForFile">Browse</button>
-  </div>
+*@
+</div>
+<div class="field">
+    <label class="label">Interaction Type</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.InteractionType">
+                <EnumSelectOptions EnumType="typeof(FileInteractionType)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
 </div>
 <div class="field">
   <label class="label">Text To File</label>
   <div class="control">
-    <input class="input" type="text" placeholder="i.e Something Happened With Value V(someVar)" @bind="Data.Text">
+    <input class="input" type="text" placeholder="i.e Clip created at V(clip.editUrl)" @bind="Data.Text">
   </div>
 </div>
 
@@ -21,5 +34,6 @@
 
     public void BrowseForFile()
     {
+      // TODO: Maybe pinvoke User32 or something via IFileBrowser or something
     }
 }
