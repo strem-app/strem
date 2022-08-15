@@ -82,7 +82,7 @@ public static class BuildContextTestingExtensions
             {
                 var coverletSettings = new CoverletSettings {
                     CollectCoverage = settings.IncludeCodeCoverage,
-                    CoverletOutputFormat = CoverletOutputFormat.opencover,
+                    CoverletOutputFormat = CoverletOutputFormat.cobertura,
                     CoverletOutputDirectory = actualOutputDir,
                     CoverletOutputName = $"{logFileName}.Cover.Results.xml"
                 };

@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
-      - name: Run Build SCript
+      - name: Run Build Script
         shell: pwsh
         run: |
           ./build.ps1
