@@ -4,18 +4,13 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: ['6.0']
-
     steps:
       - uses: actions/checkout@v3
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+      - name: Setup .NET Core SDK 6.0
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+          dotnet-version: 6.0
       - name: Run Build Script
         shell: pwsh
         run: |
@@ -30,6 +25,7 @@ jobs:
           filename: "dist/*.xml"
           badge: true
           output: both
+          format: markdown
           indicators: true
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
