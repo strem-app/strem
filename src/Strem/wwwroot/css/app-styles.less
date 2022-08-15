@@ -86,15 +86,22 @@ body
 }
 
 .is-running {
-    box-shadow: 0 0 0 0 rgba(51, 217, 178, 1);
-    animation: pulse-green 2s infinite;
+    box-shadow: 0 0 0 0 @is-success;
+    animation: pulse-success 1s infinite;
 }
 
-@keyframes pulse-green {
-    0% { box-shadow: 0 0 0 0 rgba(51, 217, 178, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(51, 217, 178, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(51, 217, 178, 0); }
+.pulse-effect(@color)
+{
+    0% { box-shadow: 0 0 0 0 fade(@color, 70%); }
+    70% { box-shadow: 0 0 0 10px fade(@color, 0%); }
+    100% { box-shadow: 0 0 0 0 fade(@color, 0%); }
 }
+
+@keyframes pulse-success { .pulse-effect(@is-success) }
+@keyframes pulse-primary { .pulse-effect(@is-primary) }
+@keyframes pulse-warning { .pulse-effect(@is-warning) }
+@keyframes pulse-info { .pulse-effect(@is-info) }
+@keyframes pulse-dark { .pulse-effect(@is-dark-grey) }
 
 .is-leveled
 {
@@ -152,4 +159,11 @@ body
     position: relative;
     left: 5em;
     top: 1.5em;
+}
+
+.tasks .drag-enter-target,
+.triggers .drag-enter-target
+{
+    box-shadow: 0 0 0 0 @is-dark-grey;
+    animation: pulse-dark 1s infinite;
 }

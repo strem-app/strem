@@ -11,8 +11,6 @@
 
 @inject IEventBus EventBus;
 @inject IFlowStore FlowStore;
-@inject ITaskRegistry TaskRegistry;
-@inject ITriggerRegistry TriggerRegistry;
 
 @implements IDisposable
 
@@ -61,26 +59,14 @@
   <p class="menu-label">
     Triggers
   </p>
-  <ul class="menu-list">
-    @foreach (var data in Flow.TriggerData)
-    {
-      <li class="block">
-        <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)"
-                          OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"/>
-      </li>
-    }
+  <ul class="menu-list triggers">
+    <FlowTriggersEditor Flow="Flow"></FlowTriggersEditor>
   </ul>
   <p class="menu-label">
     Tasks
   </p>
-  <ul class="menu-list">
-    @foreach (var data in Flow.TaskData)
-    {
-      <li class="block">
-        <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)"
-                       OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
-      </li>
-    }
+  <ul class="menu-list tasks">
+    <FlowTasksEditor Flow="Flow"></FlowTasksEditor>
   </ul>
 </aside>
 
@@ -92,20 +78,7 @@
   [Parameter]
   public Flow Flow { get; set; }
   
-  public Guid ActiveTaskId { get; set; }
-  public Guid ActiveTriggerId { get; set; }
   public bool ShowDeleteModal { get; set; }
-  
-  public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
-  public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
-  public IFlowTask GetTaskFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).Task;
-  public IFlowTrigger GetTriggerFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).Trigger;
-  
-  public Dictionary<string, object> GetProps(IFlowTriggerData data) => new() {
-    {"Data", data },
-    {"OnRequestedDeletion", EventCallback.Factory.Create(this, () => RemoveTriggerData(data) )},
-    {"OnRequestedReset", EventCallback.Factory.Create(this, () => ResetTriggers(data) )}
-  };
 
   private CompositeDisposable _subs = new();
   
@@ -160,19 +133,7 @@
     ShowDeleteModal = false;
   }
 
-  public void RemoveTaskData(IFlowTaskData data)
-  {
-    Flow.TaskData.Remove(data);
-  }
-
-  public void RemoveTriggerData(IFlowTriggerData data)
-  {
-    Flow.TriggerData.Remove(data);
-    EventBus.PublishAsync(new FlowTriggersChangedEvent(Flow.Id));
-  }
-
-  public void ResetTriggers(IFlowTriggerData data)
-  { EventBus.PublishAsync(new FlowTriggersChangedEvent(Flow.Id)); }
+ 
 
   public void Dispose()
   {
