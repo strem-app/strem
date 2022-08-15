@@ -30,9 +30,5 @@ jobs:
       - name: Publish App Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: app
-          path: |
-            dist/*.xml
-            dist/*.zip
-            dist/*.trx
-            dist/*.html
+          name: App Build
+          path: dist/*.zip
