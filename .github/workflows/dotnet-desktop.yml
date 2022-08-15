@@ -29,8 +29,10 @@ jobs:
         with:
           filename: "dist/*.xml"
           badge: true
-      - name: Download Artifact
-        uses: actions/download-artifact@master
+          output: both
+          indicators: true
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v3
         if: github.tag != ''
         with:
           name: app
