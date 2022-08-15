@@ -27,9 +27,12 @@ jobs:
           output: both
           format: markdown
           indicators: true
-      - name: Publish Artifact
+      - name: Publish App Artifacts
         uses: actions/upload-artifact@v3
-        if: github.tag != ''
         with:
           name: app
-          path: "dist/*.zip"
+          path: |
+            dist/*.xml
+            dist/*.zip
+            dist/*.trx
+            dist/*.html
