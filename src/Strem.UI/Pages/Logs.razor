@@ -12,7 +12,7 @@
 
 <div class="container is-fluid">
     <h3 class="title is-3">Logs & Information</h3>
-    <Accordion Title="Latest Logs" StyleType="is-warning" IsExpanded="true">
+    <Accordion Title="Latest App Logs" StyleType="is-warning" IsExpanded="true">
         <LogViewer LogPath="@LatestLogFile"/>
     </Accordion>
     
@@ -20,6 +20,10 @@
         <VariablesViewer Title="@($"UserData: {LoadUserPipeline.DataFilePath}")" Variables="@AppState.UserVariables" OnRequestSave="SaveUserData"/>
         <VariablesViewer Title="@($"AppData: {LoadAppPipeline.DataFilePath}")" Variables="@AppState.AppVariables" OnRequestSave="SaveAppData"/>
         <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables"/>
+    </Accordion>
+    
+    <Accordion Title="Flow Executions" StyleType="is-warning" IsExpanded="true">
+        <FlowExecutionViewer />
     </Accordion>
 </div>
 

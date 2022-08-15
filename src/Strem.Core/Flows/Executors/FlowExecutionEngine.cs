@@ -7,6 +7,7 @@ using Strem.Core.Extensions;
 using Strem.Core.Flows.Registries;
 using Strem.Core.Flows.Registries.Tasks;
 using Strem.Core.Flows.Registries.Triggers;
+using Strem.Core.State;
 using Strem.Core.Variables;
 
 namespace Strem.Core.Flows.Executors;
@@ -14,6 +15,7 @@ namespace Strem.Core.Flows.Executors;
 public class FlowExecutionEngine : IFlowExecutionEngine
 {
     public IFlowStore FlowStore { get; }
+    public IAppState AppState { get; }
     public IEventBus EventBus { get; }
     public ITaskRegistry TaskRegistry { get; }
     public ITriggerRegistry TriggerRegistry { get; }
@@ -21,14 +23,17 @@ public class FlowExecutionEngine : IFlowExecutionEngine
 
     public CompositeDisposable InternalSubs { get; } = new();
     public Dictionary<Guid, CompositeDisposable> FlowSubscriptions { get; } = new();
+    public List<FlowExecutionLog> Logs { get; } = new();
+    public IReadOnlyCollection<FlowExecutionLog> ExecutionLogs => Logs;
 
-    public FlowExecutionEngine(IFlowStore flowStore, IEventBus eventBus, ITaskRegistry taskRegistry, ITriggerRegistry triggerRegistry, ILogger<FlowExecutionEngine> logger)
+    public FlowExecutionEngine(IFlowStore flowStore, IEventBus eventBus, ITaskRegistry taskRegistry, ITriggerRegistry triggerRegistry, ILogger<FlowExecutionEngine> logger, IAppState appState)
     {
         FlowStore = flowStore;
         EventBus = eventBus;
         TaskRegistry = taskRegistry;
         TriggerRegistry = triggerRegistry;
         Logger = logger;
+        AppState = appState;
     }
 
     public void StartEngine()
@@ -88,6 +93,16 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         FlowSubscriptions.Remove(flowId);
     }
     
+    public IVariables CollateActiveVariables(IVariables flowVariables)
+    {
+        var allVariables = flowVariables.GetAll()
+            .Concat(AppState.TransientVariables.GetAll())
+            .Concat(AppState.UserVariables.GetAll());
+
+        return new Variables.Variables(allVariables.ToDictionary(x => x.Key, x => x.Value));
+    }
+
+
     public async Task ExecuteFlow(Flow flow, IVariables flowVariables = null)
     {
         if(flow.TaskData.Count == 0) { return; }
@@ -98,7 +113,16 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         
         if (flowVariables == null)
         { flowVariables = new Variables.Variables(); }
-        
+
+        var executionLog = new FlowExecutionLog
+        {
+            FlowId = flow.Id,
+            FlowName = flow.Name,
+            StartTime = DateTime.Now,
+            StartVariables = CollateActiveVariables(flowVariables)
+        };
+        Logs.Add(executionLog);
+
         EventBus.PublishAsync(new FlowStartedEvent(flow.Id));
         
         foreach (var taskData in flow.TaskData)
@@ -119,12 +143,19 @@ public class FlowExecutionEngine : IFlowExecutionEngine
                 Logger.Error($"Error Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}] | Error: {ex.Message}");
                 EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
                 EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
+                
+                executionLog.EndTime = DateTime.Now;
+                executionLog.EndVariables = CollateActiveVariables(flowVariables);
+                executionLog.ExecutedSuccessfully = false;
                 return;
             }
             EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
         }
         
         EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
+        executionLog.EndTime = DateTime.Now;
+        executionLog.EndVariables = CollateActiveVariables(flowVariables);
+        executionLog.ExecutedSuccessfully = true;
     }
 
     public void Dispose()

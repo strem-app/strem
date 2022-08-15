@@ -8,4 +8,5 @@ public interface IFlowExecutionEngine : IDisposable
     void SetupFlow(Flow flow);
     void RemoveFlow(Guid flowId);
     Task ExecuteFlow(Flow flow, IVariables flowVariables = null);
+    IReadOnlyCollection<FlowExecutionLog> ExecutionLogs { get; }
 }

@@ -1,0 +1,24 @@
+﻿@using Strem.Core.Flows.Executors
+
+@inject IFlowExecutionEngine FlowExecutionEngine
+
+@if (FlowExecutionEngine.ExecutionLogs.Count == 0)
+{
+    <p class="title is-5 has-text-black">No Logs Available</p>
+}
+else
+{
+    <PagedContent Data="FlowExecutionEngine.ExecutionLogs" Context="executionLog" ElementsPerPage="5">
+            <Accordion Title="@($"{executionLog.FlowName} @ {executionLog.StartTime}")" StyleType="@(executionLog.ExecutedSuccessfully ? "is-success" : "is-danger")">
+                <div class="field">
+                    <label class="label">Took @((int)(executionLog.EndTime - executionLog.StartTime).TotalSeconds)s to execute @(executionLog.ExecutedSuccessfully ? "Successfully" : "Unsuccessfully")</label>
+                </div>
+                <VariablesViewer Title="Variables At Start" Variables="executionLog.StartVariables"/>
+                <VariablesViewer Title="Variables At End" Variables="executionLog.EndVariables"/>
+            </Accordion>
+    </PagedContent>    
+}
+
+@code {
+    
+}

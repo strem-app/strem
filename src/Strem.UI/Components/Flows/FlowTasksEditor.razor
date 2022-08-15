@@ -2,24 +2,31 @@
 @using Strem.Core.Flows.Registries.Tasks
 @using Strem.Core.Flows.Tasks
 @using Strem.Core.Extensions
+@using Strem.Core.Events.Bus
+@using Strem.Core.Events.Flows.Tasks
+@using System.Reactive.Disposables
+@using System.Reactive.Linq
 
 @inject ITaskRegistry TaskRegistry;
+@inject IEventBus EventBus;
+
+@implements IDisposable
 
 @foreach (var data in Flow.TaskData)
 {
-  <li draggable="true"
-      class="block @(DragEnter?.Id == data.Id ? "drag-enter-target" : "")"
-      @key=@data.Code
-      id="@data.Id"
-      ondragover="event.preventDefault()"
-      @ondragstart="@(() => OnDragStart(data))"
-      @ondrop="@(() => OnDropOverElement(data))"
-      @ondragenter="@(() => OnDragEnterElement(data))"
-      @ondragend="OnDragEnd">
+    <li draggable="true"
+        class="block @(DragEnter?.Id == data.Id ? "drag-enter-target" : "")"
+        @key=@data.Code
+        id="@data.Id"
+        ondragover="event.preventDefault()"
+        @ondragstart="@(() => OnDragStart(data))"
+        @ondrop="@(() => OnDropOverElement(data))"
+        @ondragenter="@(() => OnDragEnterElement(data))"
+        @ondragend="OnDragEnd">
     
-    <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)"
-                   OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
-  </li>
+        <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)"
+                       OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
+    </li>
 }
 
 @code {
@@ -30,6 +37,11 @@
     public IFlowTask GetTaskFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).Task;
 
     public Guid ActiveTaskId { get; set; }
+  
+    private IFlowTaskData? DraggedItem;
+    private int DraggedItemIndex;
+    private IFlowTaskData? DragEnter;
+    private CompositeDisposable _subs = new();
 
     public void RemoveTaskData(IFlowTaskData data)
     {
@@ -38,57 +50,60 @@
     
     protected override Task OnInitializedAsync()
     {
-    // TODO: Look at better way to indicate stuff is running to people
-    /*
-    EventBus.Receive<FlowTaskStarted>()
-      .Subscribe(x =>
-      {
-        ActiveTaskId = x.TaskId;
-        InvokeAsync(StateHasChanged);
-      })
-      .AddTo(_subs);
-    
-    EventBus.Receive<FlowTaskFinished>()
-      .Subscribe(x =>
-      {
-        ActiveTaskId = Guid.Empty;
-        InvokeAsync(StateHasChanged);
-      })
-      .AddTo(_subs);
-    */
+        // TODO Find a nice way of handling this, possibly a local queue we add to and process on a separate observable
+        /*
+        EventBus.Receive<FlowTaskStarted>()
+            .Subscribe(x =>
+            {
+                ActiveTaskId = x.TaskId;
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+      
+        EventBus.Receive<FlowTaskFinished>()
+            .Delay(TimeSpan.FromSeconds(1))
+            .Subscribe(x =>
+            {
+                ActiveTaskId = Guid.Empty;
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+        */
         return base.OnInitializedAsync();
     }
   
-  private IFlowTaskData? DraggedItem;
-  private int DraggedItemIndex;
-  private IFlowTaskData? DragEnter;
-    
-  public void OnDropOverElement(IFlowTaskData dropTarget)
-  {
-    DragEnter=null;
-    if (DraggedItem == null) return;
-    if (DraggedItem == dropTarget) return;
+    public void OnDropOverElement(IFlowTaskData dropTarget)
+    {
+        DragEnter=null;
+        if (DraggedItem == null) return;
+        if (DraggedItem == dropTarget) return;
         
-    var friendIndex = Flow.TaskData.IndexOf(dropTarget);
-    Flow.TaskData.Swap(friendIndex, DraggedItemIndex);
-    DraggedItem=null;
-  }
+        var friendIndex = Flow.TaskData.IndexOf(dropTarget);
+        Flow.TaskData.Swap(friendIndex, DraggedItemIndex);
+        DraggedItem=null;
+    }
 
-  public void  OnDragStart(IFlowTaskData item)
-  {
-    DraggedItem = item;
-    DraggedItemIndex = Flow.TaskData.IndexOf(item);
-  }
+    public void  OnDragStart(IFlowTaskData item)
+    {
+        DraggedItem = item;
+        DraggedItemIndex = Flow.TaskData.IndexOf(item);
+    }
 
-  public void OnDragEnterElement(IFlowTaskData item)
-  {
-    if (DraggedItem == null) { return; }
-    DragEnter = item;
-  }
+    public void OnDragEnterElement(IFlowTaskData item)
+    {
+        if (DraggedItem == null) { return; }
+        DragEnter = item;
+    }
 
-  public void  OnDragEnd()
-  {
-    DraggedItem = null;        
-    DragEnter = null;
-  }
+    public void  OnDragEnd()
+    {
+        DraggedItem = null;        
+        DragEnter = null;
+    }
+
+    public void Dispose()
+    {
+        _subs?.Dispose();
+    }
+
 }
