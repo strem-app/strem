@@ -1,0 +1,74 @@
+﻿@using Strem.Core.Extensions
+@using RestSharp
+@using Microsoft.AspNetCore.Components
+@using Strem.Flows.Default.Models
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Web.MakeHttpRequestTaskData>
+
+<label class="label">Url</label>
+<div class="field has-addons">
+    <div class="control">
+            <div class="select">
+                <select @bind="Data.Verb">
+                    <EnumSelectOptions EnumType="typeof(Method)"></EnumSelectOptions>
+                </select>
+            </div>
+        </div>
+    <div class="control is-expanded">
+        <ProcessedInput @bind-Value="Data.Url" Placeholder="i.e http://www.some-site.com/user/V(userId)"></ProcessedInput>
+    </div>
+</div>
+
+@if (Data.Verb is Method.Post or Method.Put)
+{
+    <div class="field">
+        <label class="label">Optional Body</label>
+        <div class="control">
+            <textarea class="textarea" placeholder="e.g. some json, xml or form body" @bind="Data.Body"></textarea>
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <div class="select">
+                <select @bind="Data.DataFormat">
+                    <EnumSelectOptions EnumType="typeof(DataFormat)"></EnumSelectOptions>
+                </select>
+            </div>
+        </div>
+        <HelperInfo>The body is optional and can be any of the supported data formats</HelperInfo>
+    </div>
+}
+
+<div class="field">
+    <div class="control">
+        <button class="button is-primary" @onclick="AddHeader">Add Header</button>
+    </div>
+</div>
+
+@for (var i = 0; i < Data.Headers?.Count; i++)
+{
+    var index = i;
+    <div class="field has-addons">
+        <div class="control">
+            <input class="input" placeholder="Header Name" @bind="Data.Headers[index].Name"/>
+        </div>
+        <div class="control is-expanded">
+            <ProcessedInput @bind-Value="Data.Headers[index].Value" Placeholder="Header Value"></ProcessedInput>
+        </div>
+        <div class="control">
+            <button class="button is-danger" @onclick="() => InvokeAsync(() => Data.Headers.RemoveAt(index))">
+                <span class="icon is-small">
+                  <i class="fas fa-times"></i>
+                </span>
+              </button>
+        </div>
+    </div>
+}
+
+@code {
+    public override string Title => $"Send {Data.Verb} Request To {Data.Url?.Truncate(25) ?? "Url"}";
+
+    public void AddHeader()
+    {
+        Data.Headers.Add(new HeaderData());
+    }
+}
