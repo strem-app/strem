@@ -1,6 +1,6 @@
 ﻿@using Strem.Core.Types
 
-@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Variables.SetVariableTaskData>
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Variables.DecrementVariableTaskData>
 
 <div class="field">
     <label class="label">Variable Name</label>
@@ -11,7 +11,7 @@
 <div class="field">
     <label class="label">Optional Context</label>
     <div class="control">
-        <ProcessedInput @bind-Value="Data.Context" Placeholder="i.e what the data pertains to, i.e user id, game name, platform"></ProcessedInput>
+        <ProcessedInput @bind-Value="Data.Context" Placeholder="i.e what the data pertains to, i.e user id, game name, platform"/>
     </div>
     <HelperInfo>The context is optional and allows you to use the same variable name but tie it to some other context</HelperInfo>
 </div>
@@ -28,11 +28,11 @@
 </div>
 
 <div class="field">
-    <label class="label">Variable Value</label>
+    <label class="label">Decrement Amount</label>
     <div class="control">
-        <ProcessedInput @bind-Value="Data.Value" Placeholder="i.e 1"></ProcessedInput>
+        <input class="input" @bind="Data.DecrementAmount" placeholder="i.e 1" />
     </div>
-    <HelperInfo>The value can be anything, a bit of text, a number and accepts dynamic var inputs i.e V(some-var, some-context)"</HelperInfo>
+    <HelperInfo>This value is what the value will have added to it each time this task is run</HelperInfo>
 </div>
 
 @code {
@@ -41,6 +41,6 @@
     public string GenerateTitle()
     {
         var contextSection = string.IsNullOrEmpty(Data.Context) ? "" : $":{Data.Context}";
-        return $"Set Variable <strong>{Data.Name}{contextSection}</strong> In <strong>{Data.ScopeType}</strong> Scope";
+        return $"Decrement Variable <strong>{Data.Name}{contextSection}</strong> By <strong>{Data.DecrementAmount}</strong>";
     }
 }
