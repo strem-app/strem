@@ -15,7 +15,7 @@ public class DecrementVariableTask : FlowTask<DecrementVariableTaskData>
     
     public override string Name => "Decrement A Variable";
     public override string Category => "Variables";
-    public override string Description => "Decrements a variables value by a given amount";
+    public override string Description => "Decrements an existing variable by a given amount";
 
     public DecrementVariableTask(ILogger<FlowTask<DecrementVariableTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {

@@ -16,7 +16,7 @@ public class IncrementVariableTask : FlowTask<IncrementVariableTaskData>
     
     public override string Name => "Increment A Variable";
     public override string Category => "Variables";
-    public override string Description => "Increments a variables value by a given amount";
+    public override string Description => "Increments an existing variables value by a given amount";
 
     public IncrementVariableTask(ILogger<FlowTask<IncrementVariableTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
