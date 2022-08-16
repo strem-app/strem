@@ -18,7 +18,7 @@ jobs:
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          xunit_files: "dist/*.trx"
+          trx_files: "dist/*.trx"
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
@@ -27,9 +27,8 @@ jobs:
           output: both
           format: markdown
           indicators: true
-      - name: Publish Artifact
+      - name: Publish App Artifacts
         uses: actions/upload-artifact@v3
-        if: github.tag != ''
         with:
-          name: app
-          path: "dist/*.zip"
+          name: App Build
+          path: dist/*.zip
