@@ -11,7 +11,7 @@
 <div class="field">
     <label class="label">Optional Context</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e V(channel-game, twitch)" @bind="Data.Context">
+        <input class="input" type="text" placeholder="i.e what the data pertains to, i.e user id, game name, platform" @bind="Data.Context">
     </div>
     <HelperInfo>The context is optional and allows you to use the same variable name but tie it to some other context</HelperInfo>
 </div>
@@ -30,7 +30,7 @@
 <div class="field">
     <label class="label">Variable Value</label>
     <div class="control">
-        <input class="input has-tooltip-multiline" type="text" placeholder="i.e 1" @bind="Data.Value">
+        <ProcessedInput @bind-Value="Data.Value" Placeholder="i.e 1"></ProcessedInput>
     </div>
     <HelperInfo>The value can be anything, a bit of text, a number and accepts dynamic var inputs i.e V(some-var, some-context)"</HelperInfo>
 </div>

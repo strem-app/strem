@@ -36,8 +36,7 @@
     <div class="field">
         <label class="label">Message Match @(Data.MatchTypeType == TextMatchType.Pattern ? "Regex Pattern" : "Text")</label>
         <div class="control">
-            <input class="input" type="text" @bind="Data.MatchText"
-                   placeholder="i.e @(Data.MatchTypeType == TextMatchType.Pattern ? "regex pattern to match" : "text to matching")">
+            <ProcessedInput @bind-Value="Data.MatchText" Placeholder="@(Data.MatchTypeType == TextMatchType.Pattern ? "i.e regex pattern to match" : "i.e text to matching")"></ProcessedInput>
         </div>
     </div>
     
@@ -86,7 +85,7 @@
             Require Channel Rewards?
         </label>
     </div>
-    <HelperInfo>This will only trigger if the message contains channel rewards</HelperInfo>
+    <HelperInfo>This will only trigger if the message is associated with a channel reward</HelperInfo>
 </div>
 
 @code {
