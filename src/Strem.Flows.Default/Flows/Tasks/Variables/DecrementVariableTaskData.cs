@@ -3,9 +3,9 @@ using Strem.Core.Types;
 
 namespace Strem.Flows.Default.Flows.Tasks.Variables;
 
-public class SetVariableTaskData : IFlowTaskData
+public class DecrementVariableTaskData : IFlowTaskData
 {
-    public static readonly string TaskCode = "set-variable";
+    public static readonly string TaskCode = "decrement-variable";
     public static readonly string TaskVersion = "1.0.0";
     
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -14,6 +14,6 @@ public class SetVariableTaskData : IFlowTaskData
     
     public string Name { get; set; }
     public string Context { get; set; }
-    public string Value { get; set; }
     public VariableScopeType ScopeType { get; set; }
+    public int DecrementAmount { get; set; } = 1;
 }

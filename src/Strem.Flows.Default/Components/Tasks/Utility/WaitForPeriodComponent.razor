@@ -6,8 +6,8 @@
     <label class="label">Period Type</label>
     <div class="control">
         <div class="select">
-            <select @bind="Data.WaitUnits">
-                <EnumSelectOptions EnumType="typeof(TimeUnit)"></EnumSelectOptions>
+            <select @bind="Data.WaitUnitsType">
+                <EnumSelectOptions EnumType="typeof(TimeUnitType)"></EnumSelectOptions>
             </select>
         </div>
     </div>
@@ -15,10 +15,10 @@
 <div class="field">
     <label class="label">Interval Value</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e 5 or dynamic vars" @bind="Data.WaitAmount">
+        <ProcessedInput @bind-Value="Data.WaitAmount" Placeholder="i.e 5 or dynamic vars"></ProcessedInput>
     </div>
 </div>
 
 @code {
-    public override string Title => $"Wait For <strong>{Data.WaitAmount} {Data.WaitUnits}</strong>";
+    public override string Title => $"Wait For <strong>{Data.WaitAmount} {Data.WaitUnitsType}</strong>";
 }

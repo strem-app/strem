@@ -9,7 +9,7 @@
 <div class="field">
     <label class="label">Optional Data</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e V(chat-user, twitch) or any text" @bind="Data.Data">
+        <ProcessedInput @bind-Value="Data.Data" Placeholder="i.e V(chat-user, twitch) or any text"></ProcessedInput>
     </div>
     <HelperInfo>You can provide any textual data, and use dynamic variables using the V(var-name) mechanism</HelperInfo>
 </div>

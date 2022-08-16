@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Photino.Blazor;
 using Strem.Core.DI;
+using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Flows.Default.Modules;
@@ -94,7 +95,7 @@ public class Program
         logger.Information("Starting Internal Host");
         webHost.StartHost();
         logger.Information($"Started Internal Host: http://localhost:{ApiHostConfiguration.ApiHostPort}");
-        
+
         var appLauncher = app.MainWindow
             .SetTitle("Strem")
             .SetSize(1920, 1080)
@@ -112,7 +113,9 @@ public class Program
         logger.Information("Started Flow Execution Engine");
         
         logger.Information("Strem Initialized");
+        eventBus.PublishAsync(new ApplicationStartedEvent());
         app.Run();
+        eventBus.Publish(new ApplicationClosingEvent());
         webHost.StopHost();
         logger.Information("Strem Stopped");
     }

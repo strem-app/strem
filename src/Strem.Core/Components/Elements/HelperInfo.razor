@@ -7,10 +7,10 @@
 @if (ShowHelper)
 {
     <p class="help">
-        <span class="icon has-text-info">
+        <span class="icon @(StyleType)">
             <i class="fas fa-info-circle"></i>
         </span>
-        <span class="has-text-info">
+        <span class="@(StyleType)">
             @ChildContent
         </span>
     </p>
@@ -23,6 +23,12 @@
     
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string StyleType { get; set; } = "has-text-info";
+
+    [Parameter]
+    public string IconType { get; set; } = "fa-info-circle";
     
     public bool ShowHelper { get; set; }
 

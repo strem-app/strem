@@ -1,15 +1,15 @@
 ﻿using Strem.Core.Flows.Tasks;
 
-namespace Strem.Twitch.Flows.Tasks.Clips;
+namespace Strem.Flows.Default.Flows.Tasks.Web;
 
-public class CreateTwitchClipTaskData : IFlowTaskData
+public class LoadUrlTaskData : IFlowTaskData
 {
-    public static readonly string TaskCode = "create-twitch-clip";
+    public static readonly string TaskCode = "load-url-flow";
     public static readonly string TaskVersion = "1.0.0";
     
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string Channel { get; set; }
+    public string Url { get; set; }
 }

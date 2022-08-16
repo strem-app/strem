@@ -1,0 +1,14 @@
+﻿@using Strem.Core.Extensions
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Web.LoadUrlTaskData>
+
+<div class="field">
+  <label class="label">Url To Load</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Url" Placeholder="i.e http://www.some-site.com/user/V(userId)"></ProcessedInput>
+    </div>
+    <HelperInfo>This will load the given url in your default browser window</HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"Load ${Data.Url?.Truncate(25) ?? "Url"} In Browser";
+}

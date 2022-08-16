@@ -74,8 +74,8 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     public bool IsUserAboveMinimumRequired(UserType userTypeRequired, UserType messageUserType)
     { return messageUserType >= userTypeRequired; }
 
-    public bool DoesMessageTextMeetRequirements(TextMatch matchType, string matchText, string message)
-    { return matchType == TextMatch.None || message.MatchesText(matchType, matchText); }
+    public bool DoesMessageTextMeetRequirements(TextMatchType matchTypeType, string matchText, string message)
+    { return matchTypeType == TextMatchType.None || message.MatchesText(matchTypeType, matchText); }
 
     public bool DoesMessageMeetCriteria(OnTwitchChatMessageTriggerData data, ChatMessage message)
     {
@@ -84,7 +84,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         if(data.IsSubscriber && !message.IsSubscriber) { return false; }
         if(data.HasBits && message.Bits <= 0) { return false; }
         if(data.HasChannelReward && string.IsNullOrEmpty(message.CustomRewardId)) { return false; }
-        if (!DoesMessageTextMeetRequirements(data.MatchType, data.MatchText, message.Message)) { return false; }
+        if (!DoesMessageTextMeetRequirements(data.MatchTypeType, data.MatchText, message.Message)) { return false; }
 
         return true;
     }

@@ -1,6 +1,6 @@
 ﻿namespace Strem.Core.Types;
 
-public enum VariableScope
+public enum VariableScopeType
 {
     Persisted,
     Application,

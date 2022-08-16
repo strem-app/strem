@@ -31,7 +31,8 @@ public class SendTwitchChatMessageTask : FlowTask<SendTwitchChatMessageTaskData>
     {
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var processedMessage = FlowStringProcessor.Process(data.Message, flowVars);
-        TwitchClient.SendMessage(channel, processedMessage);
+        var processedChannel = FlowStringProcessor.Process(channel, flowVars);
+        TwitchClient.SendMessage(processedChannel, processedMessage);
         return true;
     }
 }

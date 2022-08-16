@@ -5,16 +5,23 @@ namespace Strem.Core.Extensions;
 
 public static class StringExtensions
 {
-    public static bool MatchesText(this string value, TextMatch matchType, string matchText)
+    public static bool MatchesText(this string value, TextMatchType matchTypeType, string matchText)
     {
-        return matchType switch
+        return matchTypeType switch
         {
-            TextMatch.None => true,
-            TextMatch.Contains => value.Contains(matchText),
-            TextMatch.StartsWith => value.StartsWith(matchText),
-            TextMatch.EndsWith => value.EndsWith(matchText),
-            TextMatch.ExactMatch => value == matchText,
+            TextMatchType.None => true,
+            TextMatchType.Contains => value.Contains(matchText),
+            TextMatchType.StartsWith => value.StartsWith(matchText),
+            TextMatchType.EndsWith => value.EndsWith(matchText),
+            TextMatchType.ExactMatch => value == matchText,
             _ => Regex.IsMatch(value, matchText)
         };
+    }
+    
+    public static string? Truncate(this string? value, int maxLength, string truncationSuffix = "…")
+    {
+        return value?.Length > maxLength
+            ? value.Substring(0, maxLength) + truncationSuffix
+            : value;
     }
 }

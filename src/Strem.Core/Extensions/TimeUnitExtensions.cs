@@ -4,13 +4,13 @@ namespace Strem.Core.Extensions;
 
 public static class TimeUnitExtensions
 {
-    public static TimeSpan ToTimeSpan(this TimeUnit timeUnit, int unitValue)
+    public static TimeSpan ToTimeSpan(this TimeUnitType timeUnitType, int unitValue)
     {
-        return timeUnit switch
+        return timeUnitType switch
         {
-            TimeUnit.Minutes => TimeSpan.FromMinutes(unitValue),
-            TimeUnit.Hours => TimeSpan.FromHours(unitValue),
-            TimeUnit.Days => TimeSpan.FromDays(unitValue),
+            TimeUnitType.Minutes => TimeSpan.FromMinutes(unitValue),
+            TimeUnitType.Hours => TimeSpan.FromHours(unitValue),
+            TimeUnitType.Days => TimeSpan.FromDays(unitValue),
             _ => TimeSpan.FromSeconds(unitValue)
         };
     }

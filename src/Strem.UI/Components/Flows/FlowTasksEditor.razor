@@ -16,7 +16,7 @@
 {
     <li draggable="true"
         class="block @(DragEnter?.Id == data.Id ? "drag-enter-target" : "")"
-        @key=@data.Code
+        @key=@data.Id
         id="@data.Id"
         ondragover="event.preventDefault()"
         @ondragstart="@(() => OnDragStart(data))"

@@ -1,6 +1,6 @@
 ﻿namespace Strem.Core.Types;
 
-public enum TextMatch
+public enum TextMatchType
 {
     None,
     ExactMatch,

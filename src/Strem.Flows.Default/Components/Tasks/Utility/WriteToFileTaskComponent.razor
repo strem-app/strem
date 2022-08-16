@@ -1,0 +1,39 @@
+﻿@using Strem.Core.Types
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Utility.WriteToFileTaskData>
+
+<div class="field">
+  <label class="label">File Path</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e c:/some-file.txt" @bind="Data.FilePath">
+    </div>
+@*
+  <div class="control">
+   <button class="button is-primary" @onclick="BrowseForFile">Browse</button>
+  </div>
+*@
+</div>
+<div class="field">
+    <label class="label">Interaction Type</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.InteractionType">
+                <EnumSelectOptions EnumType="typeof(FileInteractionType)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="field">
+  <label class="label">Text To File</label>
+  <div class="control">
+      <ProcessedInput @bind-Value="Data.Text" Placeholder="i.e Clip created at V(clip.editUrl)"></ProcessedInput>
+  </div>
+</div>
+
+@code {
+    public override string Title => $"Write Text To {Data.FilePath}";
+
+    public void BrowseForFile()
+    {
+      // TODO: Maybe pinvoke User32 or something via IFileBrowser or something
+    }
+}
