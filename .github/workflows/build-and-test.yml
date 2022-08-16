@@ -1,4 +1,4 @@
-name: dotnet package
+name: Build And Test
 
 on: [push]
 
@@ -14,7 +14,7 @@ jobs:
       - name: Run Build Script
         shell: pwsh
         run: |
-          ./build.ps1 --buildNo='0.0.${{github.run_number}}'
+          ./build.ps1 --buildNo='0.0.${{github.run_number}}' --target='build-and-test'
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
@@ -27,8 +27,3 @@ jobs:
           output: both
           format: markdown
           indicators: true
-      - name: Publish App Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: App Build
-          path: dist/*.zip
