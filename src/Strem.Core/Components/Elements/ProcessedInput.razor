@@ -7,7 +7,7 @@
     }
     else
     {
-        <span class="input processed-input" @onclick="() => ShowInput = true">@((MarkupString)ProcessedContent)</span>
+        <span class="input processed-input @(string.IsNullOrEmpty(Value) ? "is-placeholder" : "")" @onclick="() => ShowInput = true">@((MarkupString)ProcessedContent)</span>
     }
     <span class="icon is-small is-left">
         <i class="fas fa-v"></i>
@@ -45,11 +45,7 @@
     }
 
     protected override async Task OnInitializedAsync()
-    {
-        ProcessContent();
-        
-        ProcessedContent = Pattern.Replace(Value, VariableMatchEvaluator);
-    }
+    { ProcessContent(); }
 
     public string VariableMatchEvaluator(Match x)
     {
