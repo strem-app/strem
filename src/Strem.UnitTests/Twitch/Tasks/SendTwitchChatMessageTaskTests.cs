@@ -61,7 +61,7 @@ public class SendTwitchChatMessageTaskTests
     }
     
     [Fact]
-    public async Task should_process_message_and_send_to_users_twitch_channel_when_no_channel_provided()
+    public async Task should_process_data_and_send_to_users_twitch_channel_when_no_channel_provided()
     {
         var mockLogger = new Mock<ILogger<FlowTask<SendTwitchChatMessageTaskData>>>();
         var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
@@ -70,13 +70,18 @@ public class SendTwitchChatMessageTaskTests
         var mockTwitchClient = new Mock<ITwitchClient>();
         
         var inputString = "this is a test";
+        var inputChannel = "my-channel";
+        var expectedChannel = "my-processed-channel";
         var expectedString = "this text has been processed";
         mockFlowStringProcessor
             .Setup(x => x.Process(inputString, It.IsAny<IVariables>()))
             .Returns(expectedString);
+        
+        mockFlowStringProcessor
+            .Setup(x => x.Process(inputChannel, It.IsAny<IVariables>()))
+            .Returns(expectedChannel);
 
-        var expectedChannel = "my-channel";
-        dummyAppState.AppVariables.Set(TwitchVars.Username, expectedChannel);
+        dummyAppState.AppVariables.Set(TwitchVars.Username, inputChannel);
         
         var taskData = new SendTwitchChatMessageTaskData { Message = inputString };
         var flowVars = new Variables();
@@ -88,7 +93,7 @@ public class SendTwitchChatMessageTaskTests
     
      
     [Fact]
-    public async Task should_process_message_and_send_to_custom_twitch_channel_when_channel_provided()
+    public async Task should_process_data_and_send_to_custom_twitch_channel_when_channel_provided()
     {
         var mockLogger = new Mock<ILogger<FlowTask<SendTwitchChatMessageTaskData>>>();
         var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
@@ -96,20 +101,25 @@ public class SendTwitchChatMessageTaskTests
         var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
         var mockTwitchClient = new Mock<ITwitchClient>();
         
-        var inputString = "this is a test";
-        var expectedString = "this text has been processed";
+        var inputMessage = "this is a test";
+        var inputChannel = "tmy-channel";
+        var expectedChannel = "my-processed-channel";
+        var expectedMessage = "this text has been processed";
         mockFlowStringProcessor
-            .Setup(x => x.Process(inputString, It.IsAny<IVariables>()))
-            .Returns(expectedString);
-
-        var expectedChannel = "custom-channel";
-        dummyAppState.AppVariables.Set(TwitchVars.Username, "my-channel");
+            .Setup(x => x.Process(inputMessage, It.IsAny<IVariables>()))
+            .Returns(expectedMessage);
         
-        var taskData = new SendTwitchChatMessageTaskData { Channel = expectedChannel, Message = inputString };
+        mockFlowStringProcessor
+            .Setup(x => x.Process(inputChannel, It.IsAny<IVariables>()))
+            .Returns(expectedChannel);
+
+        dummyAppState.AppVariables.Set(TwitchVars.Username, "some-other-channel-not-used");
+        
+        var taskData = new SendTwitchChatMessageTaskData { Channel = inputChannel, Message = inputMessage };
         var flowVars = new Variables();
         var task = new SendTwitchChatMessageTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
         await task.Execute(taskData, flowVars);
         
-        mockTwitchClient.Verify(x => x.SendMessage(expectedChannel, expectedString, false), Times.Once());
+        mockTwitchClient.Verify(x => x.SendMessage(expectedChannel, expectedMessage, false), Times.Once());
     }
 }
