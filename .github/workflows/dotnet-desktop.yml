@@ -18,7 +18,7 @@ jobs:
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          xunit_files: "dist/*.trx"
+          trx_files: "dist/*.trx"
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
