@@ -9,6 +9,7 @@ using Serilog;
 using Strem.Core.DI;
 using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
+using Strem.Core.Extensions;
 using Strem.Core.Flows;
 using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
@@ -92,7 +93,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<ITaskRegistry, TaskRegistry>();
         services.AddSingleton<ITriggerRegistry, TriggerRegistry>();
         services.AddSingleton<IIntegrationRegistry, IntegrationRegistry>();
-        services.AddSingleton<IFlowExecutionEngine, FlowExecutionEngine>();
+        services.AddSingleton<IFlowExecutionEngine, IFlowExecutor, FlowExecutionEngine>();
         
         // Input
         services.AddSingleton<IInputSimulator, InputSimulator>();

@@ -12,8 +12,8 @@ public class IncrementVariableTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string Name { get; set; }
-    public string Context { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Context { get; set; } = string.Empty;
     public VariableScopeType ScopeType { get; set; }
     public int IncrementAmount { get; set; } = 1;
 }

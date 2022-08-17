@@ -11,5 +11,5 @@ public class WriteToLogTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string Text { get; set; }
+    public string Text { get; set; } = string.Empty;
 }

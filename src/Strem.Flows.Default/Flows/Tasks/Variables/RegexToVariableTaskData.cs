@@ -12,10 +12,10 @@ public class RegexToVariableTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string Source { get; set; }
-    public string Pattern { get; set; }
+    public string Source { get; set; } = string.Empty;
+    public string Pattern { get; set; } = string.Empty;
     
-    public string Name { get; set; }
-    public string Context { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Context { get; set; } = string.Empty;
     public VariableScopeType ScopeType { get; set; }
 }

@@ -1,0 +1,91 @@
+﻿@using Strem.Core.Flows
+@using Strem.Core.Types
+@using Strem.Flows.Default.Types
+
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Logic.IfStatementTaskData>
+
+@inject IFlowStore FlowStore;
+
+<div class="field">
+    <label class="label">Variable A</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.ValueA" Placeholder="V(some-var)" />
+    </div>
+</div>
+
+<label class="label">Comparison Type</label>
+<div class="field is-grouped">
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.ComparisonType">
+                <EnumSelectOptions EnumType="typeof(ComparisonType)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    @if (Data.ComparisonType == ComparisonType.TextComparison)
+    {
+        <div class="control">
+            <div class="select">
+                <select @bind="Data.TextOperator">
+                    <EnumSelectOptions EnumType="typeof(TextMatchType)"></EnumSelectOptions>
+                </select>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="control">
+            <div class="select">
+                <select @bind="Data.NumberOperator">
+                    <EnumSelectOptions EnumType="typeof(OperatorType)"></EnumSelectOptions>
+                </select>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="field">
+    <label class="label">Variable/Value B</label>
+    <div class="control is-expanded">
+        <ProcessedInput @bind-Value="Data.ValueB" Placeholder="i.e some value or V(some-var)" />
+    </div>
+</div>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.RunFlowOnFailure">
+            Run Flow If Not Equal?
+        </label>
+    </div>
+</div>
+
+@if (Data.RunFlowOnFailure)
+{
+    <div class="field">
+        <label class="label">Flow</label>
+        <div class="control">
+            <div class="select">
+                <select @bind="Data.FailureFlowId">
+                    @foreach (var flow in FlowStore.Flows)
+                    {
+                        <option value="@flow.Id">@(flow.Name)</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    public override string Title => GetTitle();
+
+    public string GetTitle()
+    {
+        var operatorText = Data.ComparisonType == ComparisonType.TextComparison ? 
+            Enum.GetName(Data.TextOperator) : 
+            Enum.GetName(Data.NumberOperator);
+        
+        return $"If A <strong>{operatorText}</strong> B";
+    }
+}

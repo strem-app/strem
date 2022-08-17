@@ -5,9 +5,12 @@ namespace Strem.Core.Extensions;
 
 public static class StringExtensions
 {
-    public static bool MatchesText(this string value, TextMatchType matchTypeType, string matchText)
+    public static bool MatchesText(this string? value, TextMatchType matchType, string? matchText)
     {
-        return matchTypeType switch
+        if (value == null) { return matchType == TextMatchType.None; }
+        if (matchText == null) { return matchType == TextMatchType.None; }
+        
+        return matchType switch
         {
             TextMatchType.None => true,
             TextMatchType.Contains => value.Contains(matchText),

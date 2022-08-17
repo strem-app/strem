@@ -11,9 +11,9 @@ public class SetVariableTaskData : IFlowTaskData
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
-    
-    public string Name { get; set; }
-    public string Context { get; set; }
-    public string Value { get; set; }
+
+    public string Name { get; set; } = string.Empty;
+    public string Context { get; set; } = string.Empty;
+    public string Value { get; set; } = string.Empty;
     public VariableScopeType ScopeType { get; set; }
 }

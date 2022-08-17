@@ -35,4 +35,24 @@ public static class IServiceCollectionExtensions
         
     public static IServiceCollection AddModule<T>(this IServiceCollection services) where T : IDependencyModule, new()
     { return services.AddModule(new T()); }
+    
+    public static void AddSingleton<I1, I2, T>(this IServiceCollection services) 
+        where T : class, I1, I2
+        where I1 : class
+        where I2 : class
+    {
+        services.AddSingleton<I1, T>();
+        services.AddSingleton<I2, T>(x => (T) x.GetService<I1>());
+    }
+    
+    public static void AddSingleton<I1, I2, I3, T>(this IServiceCollection services) 
+        where T : class, I1, I2, I3
+        where I1 : class
+        where I2 : class
+        where I3 : class
+    {
+        services.AddSingleton<I1, T>();
+        services.AddSingleton<I2, T>(x => (T) x.GetService<I1>());
+        services.AddSingleton<I3, T>(x => (T) x.GetService<I1>());
+    }
 }

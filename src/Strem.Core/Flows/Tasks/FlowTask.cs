@@ -31,7 +31,7 @@ public abstract class FlowTask<T> : IFlowTask
 
     public abstract bool CanExecute();
 
-    public Task Execute(object data, IVariables flowVars)
+    public Task<bool> Execute(object data, IVariables flowVars)
     {
         if(data is T typedData)
         { return Execute(typedData, flowVars); }

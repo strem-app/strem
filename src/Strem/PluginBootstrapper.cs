@@ -30,16 +30,16 @@ public class PluginBootstrapper
 
         var taskRegistry = services.GetService<ITaskRegistry>();
         var taskDescriptors = services.GetServices<TaskDescriptor>();
-        taskRegistry.AddMany(taskDescriptors);
+        taskRegistry?.AddMany(taskDescriptors);
         
         var triggerRegistry = services.GetService<ITriggerRegistry>();
         var triggerDescriptors = services.GetServices<TriggerDescriptor>();
-        triggerRegistry.AddMany(triggerDescriptors);
+        triggerRegistry?.AddMany(triggerDescriptors);
 
         var integrationRegistry = services.GetService<IIntegrationRegistry>();
         var integrationDescriptors = services.GetServices<IIntegrationDescriptor>();
-        integrationRegistry.AddMany(integrationDescriptors);
+        integrationRegistry?.AddMany(integrationDescriptors);
         
-        executionEngine.StartEngine();
+        executionEngine?.StartEngine();
     }
 }

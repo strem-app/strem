@@ -80,8 +80,8 @@ public class Program
         
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {
-            logger.Error(error.ExceptionObject.ToString());
-            app.MainWindow.OpenAlertWindow("Fatal exception", error.ExceptionObject.ToString());
+            logger.Error(error?.ExceptionObject?.ToString() ?? "Unknown Error");
+            app.MainWindow.OpenAlertWindow("Fatal exception", error?.ExceptionObject?.ToString() ?? "Unknown Error");
         };
 
         logger.Information("Starting Plugins");

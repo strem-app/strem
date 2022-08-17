@@ -13,6 +13,6 @@ public class OnIntervalTriggerData : IFlowTriggerData
     public string Version { get; set; } = TriggerVersion;
     
     public bool StartImmediately { get; set; }
-    public string IntervalValue { get; set; }
+    public string IntervalValue { get; set; } = string.Empty;
     public TimeUnitType IntervalUnitsType { get; set; }
 }

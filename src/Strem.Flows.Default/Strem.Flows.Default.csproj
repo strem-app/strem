@@ -14,6 +14,7 @@
     <ItemGroup>
         <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.7" />
+        <PackageReference Include="RestSharp" Version="108.0.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -23,10 +24,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Types" />
     </ItemGroup>
 
 </Project>

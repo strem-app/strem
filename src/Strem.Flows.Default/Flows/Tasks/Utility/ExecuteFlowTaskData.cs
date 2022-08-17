@@ -11,6 +11,6 @@ public class ExecuteFlowTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string FlowName { get; set; }
+    public Guid FlowId { get; set; }
     public bool WaitForCompletion { get; set; }
 }

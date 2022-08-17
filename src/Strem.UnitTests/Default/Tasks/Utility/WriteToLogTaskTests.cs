@@ -8,7 +8,7 @@ using Strem.Core.Variables;
 using Strem.Flows.Default.Flows.Tasks.Utility;
 using Strem.UnitTests.Extensions;
 
-namespace Strem.UnitTests.Default.Tasks;
+namespace Strem.UnitTests.Default.Tasks.Utility;
 
 public class WriteToLogTaskTests
 {
