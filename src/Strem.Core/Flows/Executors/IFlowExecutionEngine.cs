@@ -1,12 +1,9 @@
-﻿using Strem.Core.Variables;
+﻿namespace Strem.Core.Flows.Executors;
 
-namespace Strem.Core.Flows.Executors;
-
-public interface IFlowExecutionEngine : IDisposable
+public interface IFlowExecutionEngine : IFlowExecutor, IDisposable
 {
     void StartEngine();
     void SetupFlow(Flow flow);
     void RemoveFlow(Guid flowId);
-    Task ExecuteFlow(Flow flow, IVariables flowVariables = null);
     IReadOnlyCollection<FlowExecutionLog> ExecutionLogs { get; }
 }

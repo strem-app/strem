@@ -15,34 +15,69 @@ namespace Strem.UnitTests.Default.Tasks.Utility;
 
 public class IfStatementTaskTests
 {
-
     [Theory]
-    [InlineData("a", "a", OperatorType.Equals, false)]
-    [InlineData("a", "1", OperatorType.Equals, false)]
-    [InlineData("1", "1", OperatorType.Equals, true)]
-    public void should_process_values_numerically(string valueA, string valueB, OperatorType operatorType, bool shouldMatch)
+    [InlineData("a", "a", false)]
+    [InlineData("a", "1", false)]
+    [InlineData("1", "a", false)]
+    public void should_return_false_if_neither_can_parse(string valueA, string valueB, bool shouldMatch)
     {
         var mockLogger = new Mock<ILogger<FlowTask<IfStatementTaskData>>>();
         var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
         var mockEventBus = new Mock<IEventBus>();
-        var mockFlowExecutionEngine = new Mock<IFlowExecutionEngine>();
-        var mockFlowStore = new Mock<IFlowStore>();
+        var mockFlowExecutor = new Mock<IFlowExecutor>();
         var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
         var dummyFlowVars = new Variables();
+
+        var dummyA = "a";
+        var dummyB = "b";
+        mockFlowStringProcessor
+            .Setup(x => x.Process(dummyA, dummyFlowVars))
+            .Returns(valueA);
         
-        var task = new IfStatementTask(
-            mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, 
-            mockEventBus.Object, mockFlowExecutionEngine.Object, mockFlowStore.Object);
+        mockFlowStringProcessor
+            .Setup(x => x.Process(dummyB, dummyFlowVars))
+            .Returns(valueB);
+        
+        var task = new IfStatementTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, 
+            mockEventBus.Object, mockFlowExecutor.Object);
 
         var data = new IfStatementTaskData
         {
             NumberOperator = OperatorType.Equals,
-            ValueA = "100",
-            ValueB = "100"
+            ValueA = dummyA,
+            ValueB = dummyB
         };
 
         var matches = task.NumericalComparison(data, dummyFlowVars);
-        Assert.Equal(false, false);
+        Assert.Equal(shouldMatch, matches);
+    }
+    
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(true, true, true)]
+    public void should_correctly_run_failure_flow(bool runFailureFlow, bool hasFlowId, bool shouldHaveCalled)
+    {
+        var mockLogger = new Mock<ILogger<FlowTask<IfStatementTaskData>>>();
+        var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
+        var mockEventBus = new Mock<IEventBus>();
+        var mockFlowExecutor = new Mock<IFlowExecutor>();
+        var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
+        
+        var task = new IfStatementTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, 
+            mockEventBus.Object, mockFlowExecutor.Object);
 
+        var flowGuid = Guid.NewGuid();
+        var data = new IfStatementTaskData
+        {
+            FailureFlowId = hasFlowId ? flowGuid : Guid.NewGuid(),
+            RunFlowOnFailure = runFailureFlow
+        };
+        
+        task.PossiblyRunFailureFlow(data);
+
+        var times = shouldHaveCalled ? Times.Once() : Times.Never();
+        mockFlowExecutor.Verify(x => x.ExecuteFlow(flowGuid, It.IsAny<IVariables>()), times);
     }
 }

@@ -19,30 +19,21 @@ public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
     public override string Category => "Utility";
     public override string Description => "Executes an existing flow";
 
-    public IFlowExecutionEngine FlowExecutionEngine { get; }
-    public IFlowStore FlowStore { get; }
+    public IFlowExecutor FlowExecutor { get; }
 
-    public ExecuteFlowTask(ILogger<FlowTask<ExecuteFlowTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutionEngine flowExecutionEngine, IFlowStore flowStore) : base(logger, flowStringProcessor, appState, eventBus)
+    public ExecuteFlowTask(ILogger<FlowTask<ExecuteFlowTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutor flowExecutor) : base(logger, flowStringProcessor, appState, eventBus)
     {
-        FlowExecutionEngine = flowExecutionEngine;
-        FlowStore = flowStore;
+        FlowExecutor = flowExecutor;
     }
 
     public override bool CanExecute() => true;
 
     public override async Task<bool> Execute(ExecuteFlowTaskData data, IVariables flowVars)
     {
-        var flowToExecute = FlowStore.Flows.SingleOrDefault(x => x.Id == data.FlowId);
-        if (flowToExecute == null)
-        {
-            Logger.Warning($"Cant find flow for {data.FlowId} for ExecuteFlowTask");
-            return false;
-        }
-        
         if (data.WaitForCompletion)
-        { await FlowExecutionEngine.ExecuteFlow(flowToExecute, flowVars); }
+        { await FlowExecutor.ExecuteFlow(data.FlowId, flowVars); }
         else
-        { FlowExecutionEngine.ExecuteFlow(flowToExecute, flowVars); }
+        { FlowExecutor.ExecuteFlow(data.FlowId, flowVars); }
 
         return true;
     }

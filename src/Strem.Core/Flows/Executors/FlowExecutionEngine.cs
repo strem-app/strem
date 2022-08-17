@@ -158,6 +158,13 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         executionLog.ExecutedSuccessfully = true;
     }
 
+    public async Task ExecuteFlow(Guid flowId, IVariables flowVariables = null)
+    {
+        if(flowId == Guid.Empty) { return; }
+        var matchingFlow = FlowStore.Flows.SingleOrDefault(x => x.Id == flowId);
+        await ExecuteFlow(matchingFlow, flowVariables);
+    }
+
     public void Dispose()
     {
         InternalSubs.Dispose();

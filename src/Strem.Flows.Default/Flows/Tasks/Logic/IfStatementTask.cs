@@ -21,34 +21,31 @@ public class IfStatementTask : FlowTask<IfStatementTaskData>
     public override string Category => "Logic";
     public override string Description => "Compares two values";
     
-    public IFlowExecutionEngine FlowExecutionEngine { get; }
-    public IFlowStore FlowStore { get; }
+    public IFlowExecutor FlowExecutor { get; }
 
-    public IfStatementTask(ILogger<FlowTask<IfStatementTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutionEngine flowExecutionEngine, IFlowStore flowStore) : base(logger, flowStringProcessor, appState, eventBus)
+    public IfStatementTask(ILogger<FlowTask<IfStatementTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutor flowExecutor) : base(logger, flowStringProcessor, appState, eventBus)
     {
-        FlowExecutionEngine = flowExecutionEngine;
-        FlowStore = flowStore;
+        FlowExecutor = flowExecutor;
     }
 
     public override bool CanExecute() => true;
-
+    
     public override async Task<bool> Execute(IfStatementTaskData data, IVariables flowVars)
     {
         var doesMatch = data.ComparisonType == ComparisonType.NumericalComparison ? 
             NumericalComparison(data, flowVars) : 
             TextualComparison(data, flowVars);
 
-        if (!doesMatch && data.RunFlowOnFailure && data.FailureFlowId != Guid.Empty)
-        {
-            var locatedFlow = FlowStore.Flows.SingleOrDefault(x => x.Id == data.FailureFlowId);
-            if (locatedFlow != null)
-            {
-                // This is run without await on purpose
-                FlowExecutionEngine?.ExecuteFlow(locatedFlow);
-            }
-        }
+        if(!doesMatch)
+        { PossiblyRunFailureFlow(data); }
 
         return doesMatch;
+    }
+    
+    public void PossiblyRunFailureFlow(IfStatementTaskData data)
+    {
+        if (!data.RunFlowOnFailure || data.FailureFlowId == Guid.Empty) { return; }
+        FlowExecutor.ExecuteFlow(data.FailureFlowId);
     }
 
     public bool NumericalComparison(IfStatementTaskData data, IVariables flowVars)
