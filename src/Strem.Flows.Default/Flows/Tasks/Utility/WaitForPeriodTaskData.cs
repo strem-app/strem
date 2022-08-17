@@ -12,6 +12,6 @@ public class WaitForPeriodTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string WaitAmount { get; set; }
+    public string WaitAmount { get; set; } = string.Empty;
     public TimeUnitType WaitUnitsType { get; set; }
 }

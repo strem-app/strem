@@ -12,5 +12,5 @@ public class LoadUrlTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
 }

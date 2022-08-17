@@ -11,5 +11,5 @@ public class OnEventRaisedTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
     
-    public string EventName { get; set; }
+    public string EventName { get; set; } = string.Empty;
 }

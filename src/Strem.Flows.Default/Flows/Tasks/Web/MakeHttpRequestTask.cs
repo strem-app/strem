@@ -63,8 +63,8 @@ public class MakeHttpRequestTask : FlowTask<MakeHttpRequestTaskData>
 
         var response = await restClient.ExecuteAsync(restRequest);
         flowVars.Set(ResponseStatusVariable, response.StatusCode.ToString());
-        flowVars.Set(ResponseContentVariable, response.Content);
-        flowVars.Set(ResponseContentTypeVariable, response.ContentType);
+        flowVars.Set(ResponseContentVariable, response.Content ?? string.Empty);
+        flowVars.Set(ResponseContentTypeVariable, response.ContentType ?? string.Empty);
 
         var jsonHeaders = JsonConvert.SerializeObject(response.Headers);
         flowVars.Set(ResponseHeadersVariable, jsonHeaders);

@@ -32,10 +32,10 @@ public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
 
     public override async Task<bool> Execute(ExecuteFlowTaskData data, IVariables flowVars)
     {
-        var flowToExecute = FlowStore.Flows.SingleOrDefault(x => x.Name == data.FlowName);
+        var flowToExecute = FlowStore.Flows.SingleOrDefault(x => x.Id == data.FlowId);
         if (flowToExecute == null)
         {
-            Logger.Warning($"Cant find flow for {data.FlowName} for ExecuteFlowTask");
+            Logger.Warning($"Cant find flow for {data.FlowId} for ExecuteFlowTask");
             return false;
         }
         

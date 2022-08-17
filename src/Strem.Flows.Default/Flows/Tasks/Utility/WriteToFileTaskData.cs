@@ -12,7 +12,7 @@ public class WriteToFileTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string Text { get; set; }
-    public string FilePath { get; set; }
+    public string Text { get; set; } = string.Empty;
+    public string FilePath { get; set; } = string.Empty;
     public FileInteractionType InteractionType { get; set; }
 }

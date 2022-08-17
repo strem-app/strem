@@ -13,9 +13,9 @@ public class MakeHttpRequestTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
 
-    public string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
     public Method Verb { get; set; }
-    public string Body { get; set; }
+    public string Body { get; set; } = string.Empty;
     public DataFormat DataFormat { get; set; }
     public List<HeaderData> Headers { get; set; } = new();
 }

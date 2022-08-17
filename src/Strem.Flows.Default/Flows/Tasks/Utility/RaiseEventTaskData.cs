@@ -11,6 +11,6 @@ public class RaiseEventTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string EventName { get; set; }
-    public string Data { get; set; }
+    public string EventName { get; set; } = string.Empty;
+    public string Data { get; set; } = string.Empty;
 }
