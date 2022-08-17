@@ -9,13 +9,12 @@
 <div class="field">
     <label class="label">Variable A</label>
     <div class="control">
-        <div class="select">
-            <ProcessedInput @bind-Value="Data.ValueA" Placeholder="V(some-var)" />
-        </div>
+        <ProcessedInput @bind-Value="Data.ValueA" Placeholder="V(some-var)" />
     </div>
 </div>
-<div class="field">
-    <label class="label">Comparison Type</label>
+
+<label class="label">Comparison Type</label>
+<div class="field is-grouped">
     <div class="control">
         <div class="select">
             <select @bind="Data.ComparisonType">
@@ -23,10 +22,8 @@
             </select>
         </div>
     </div>
-</div>
-@if (Data.ComparisonType == ComparisonType.TextComparison)
-{
-    <div class="field">
+    @if (Data.ComparisonType == ComparisonType.TextComparison)
+    {
         <div class="control">
             <div class="select">
                 <select @bind="Data.TextOperator">
@@ -34,11 +31,9 @@
                 </select>
             </div>
         </div>
-    </div>
-}
-else
-{
-    <div class="field">
+    }
+    else
+    {
         <div class="control">
             <div class="select">
                 <select @bind="Data.NumberOperator">
@@ -46,14 +41,13 @@ else
                 </select>
             </div>
         </div>
-    </div>
-}
+    }
+</div>
+
 <div class="field">
     <label class="label">Variable/Value B</label>
-    <div class="control">
-        <div class="select">
-            <ProcessedInput @bind-Value="Data.ValueB" Placeholder="i.e some value or V(some-var)" />
-        </div>
+    <div class="control is-expanded">
+        <ProcessedInput @bind-Value="Data.ValueB" Placeholder="i.e some value or V(some-var)" />
     </div>
 </div>
 

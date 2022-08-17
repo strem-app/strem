@@ -102,6 +102,15 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         return new Variables.Variables(allVariables.ToDictionary(x => x.Key, x => x.Value));
     }
 
+    public void CancelExecution(Flow flow, Guid currentTaskId, IVariables flowVariables, FlowExecutionLog executionLog)
+    {
+        EventBus.PublishAsync(new FlowTaskFinished(flow.Id, currentTaskId));
+        EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
+                
+        executionLog.EndTime = DateTime.Now;
+        executionLog.EndVariables = CollateActiveVariables(flowVariables);
+        executionLog.ExecutedSuccessfully = false;
+    }
 
     public async Task ExecuteFlow(Flow flow, IVariables flowVariables = null)
     {
@@ -137,16 +146,19 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             
             EventBus.PublishAsync(new FlowTaskStarted(flow.Id, taskData.Id));
             try
-            { await task.Execute(taskData, flowVariables); }
+            {
+                var executedSuccessfully = await task.Execute(taskData, flowVariables);
+                if (!executedSuccessfully)
+                {
+                    Logger.Information($"Failed Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}]");
+                    CancelExecution(flow, taskData.Id, flowVariables, executionLog);
+                    return;
+                }
+            }
             catch (Exception ex)
             {
                 Logger.Error($"Error Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}] | Error: {ex.Message}");
-                EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
-                EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
-                
-                executionLog.EndTime = DateTime.Now;
-                executionLog.EndVariables = CollateActiveVariables(flowVariables);
-                executionLog.ExecutedSuccessfully = false;
+                CancelExecution(flow, taskData.Id, flowVariables, executionLog);
                 return;
             }
             EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
