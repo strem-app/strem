@@ -1,7 +1,7 @@
 ﻿
 @typeparam T
 
-<p class="title is-5 has-text-black">Viewing @(CurrentIndex+1)-@(CurrentIndex+ElementsPerPage) of @(Data.Count)</p>
+<p class="title is-5 has-text-black">Viewing @(CurrentIndex+1)-@(GetUpperLimit()) of @(Data.Count)</p>
 @foreach (var data in GetPagedData())
 {
     @ChildContent(data)
@@ -33,6 +33,14 @@
     public IEnumerable<T> GetPagedData()
     { return Data.Skip(CurrentIndex).Take(ElementsPerPage); }
 
+    public int GetUpperLimit()
+    {
+        var calculated = CurrentIndex + ElementsPerPage;
+        var remaining = (Data.Count - CurrentIndex);
+        var upperLimit = CurrentIndex + remaining;
+        return upperLimit < calculated ? upperLimit : calculated;
+    }
+    
     public void MoveToPreviousPage()
     {
         if (!HasPreviousPage) { return; }

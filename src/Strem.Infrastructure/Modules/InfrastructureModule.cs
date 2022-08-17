@@ -86,6 +86,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IAppFileHandler, AppFileHandler>();
         services.AddSingleton<IAppState>(LoadAppState);
         services.AddSingleton<IFlowStore>(LoadFlowStore);
+        services.AddSingleton<ITodoStore, TodoStore>();
         
         // Flows
         services.AddSingleton<IFlowStringProcessor, FlowStringProcessor>();
