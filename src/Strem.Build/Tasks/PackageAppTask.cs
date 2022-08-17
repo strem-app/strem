@@ -7,8 +7,6 @@ using Cake.Frosting;
 namespace Strem.Build.Tasks;
 
 [IsDependentOn(typeof(CleanDirectoriesTask))]
-[IsDependentOn(typeof(BuildSolutionTask))]
-[IsDependentOn(typeof(RunUnitTestsTask))]
 public class PackageAppTask : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
