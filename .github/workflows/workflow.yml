@@ -34,6 +34,7 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/')
     needs: [build-and-test]
     steps:
+      - uses: actions/checkout@v3
       - name: Package App Script
         shell: pwsh
         run: ./build.ps1 --buildNo='0.0.${{github.run_number}}' --target='publish'
