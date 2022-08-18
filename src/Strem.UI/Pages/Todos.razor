@@ -34,7 +34,7 @@
                 </div>
             </HeaderContent>
             <ChildContent>
-                <TodoEntry Todo="Todo"/> 
+                <TodoEntry Todo="Todo" OnTodoComplete="OnTodoComplete"/> 
             </ChildContent>
         </PagedContent>
     }
@@ -72,4 +72,8 @@
 
     public void Dispose()
     { _subs?.Dispose(); }
+
+    private void OnTodoComplete(TodoData todo)
+    { TodoStore.Todos.Remove(todo); }
+
 }
