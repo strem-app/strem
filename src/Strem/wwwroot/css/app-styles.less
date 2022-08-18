@@ -38,6 +38,10 @@
     font-style: normal;
 }
 
+each(range(5, 100, 5), {
+    .w-@{value} { width: ~"@{value}%"; }
+});
+
 body
 {
     font-family: "Quicksand";
@@ -180,3 +184,6 @@ body
 {
     color: @is-light-grey !important;
 }
+
+.accordion .paged-content-header .title
+{ color: #000; }

@@ -4,6 +4,7 @@ using Strem.Core.Flows;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Todo;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
@@ -23,7 +24,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
     
     public override string Name => "Create Twitch Clip";
     public override string Category => "Twitch";
-    public override string Description => "Creates a clip for a given channel";
+    public override string Description => "Creates a clip for a given channel, with optional todo entry afterwards";
 
     public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {
@@ -31,6 +32,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
     };
 
     public ITwitchAPI TwitchApi { get; }
+    public ITodoStore TodoStore { get; }
 
     public CreateTwitchClipTask(ILogger<FlowTask<CreateTwitchClipTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, ITwitchAPI twitchApi) : base(logger, flowStringProcessor, appState, eventBus)
     {
@@ -46,6 +48,24 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
         flowVars.Set(ClipUrlVariable, clip.EditUrl.Replace("/Edit", "", StringComparison.OrdinalIgnoreCase));
     }
     
+    private void CreateTodoIfNeeded(CreateTwitchClipTaskData data, CreatedClipResponse clip)
+    {
+        if(!data.CreateTodo) { return; }
+
+        var truncatedChannelTitle = AppState.TransientVariables.Get(TwitchVars.ChannelTitle).Truncate(20);
+        var title = $"Twitch Clip Needs Editing - {truncatedChannelTitle}";
+        var todoElement = new TodoData
+        {
+            Payload = clip.CreatedClips[0].EditUrl,
+            ActionType = TodoActionType.Link,
+            Title = title,
+            CreatedDate = DateTime.Now,
+            ExpiryDate = DateTime.Now.AddDays(1),
+            CreatedBy = "Twitch Clip Task"
+        };
+        TodoStore.Todos.Add(todoElement);
+    }
+    
     public override async Task<bool> Execute(CreateTwitchClipTaskData data, IVariables flowVars)
     {
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
@@ -54,6 +74,8 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
         { return false; }
 
         PopulateVariablesFor(clip, flowVars);
+        CreateTodoIfNeeded(data, clip);
+        
         return true;
     }
 }

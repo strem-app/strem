@@ -8,7 +8,7 @@ namespace Strem.Infrastructure.Services.Persistence.App;
 
 public class LoadAppDataPipeline : LoadDataPipeline<Variables>, ILoadAppDataPipeline
 {
-    public override string DataFilePath => $"{PathHelper.AppDirectory}app.dat";
+    public override string DataFilePath => $"{PathHelper.StremDataDirectory}app.dat";
     public override bool IsEncrypted => false;
     
     public LoadAppDataPipeline(PipelineBuilder pipelineBuilder, IDeserializer deserializer, IEncryptor encryptor) 

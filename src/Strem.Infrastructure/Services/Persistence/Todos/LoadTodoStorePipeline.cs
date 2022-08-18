@@ -4,17 +4,17 @@ using Persistity.Flow.Builders;
 using Strem.Core.Flows;
 using Strem.Infrastructure.Services.Persistence.Generic;
 
-namespace Strem.Infrastructure.Services.Persistence.Flows;
+namespace Strem.Infrastructure.Services.Persistence.Todos;
 
-public class LoadFlowStorePipeline : LoadDataPipeline<FlowStore>, ILoadFlowStorePipeline
+public class LoadTodoStorePipeline : LoadDataPipeline<TodoStore>, ILoadTodoStorePipeline
 {
     public IDeserializer Deserializer { get; }
     public IEncryptor Encryptor { get; }
     
-    public override string DataFilePath => $"{PathHelper.StremDataDirectory}flows.dat";
+    public override string DataFilePath => $"{PathHelper.StremDataDirectory}todos.dat";
     public override bool IsEncrypted => false;
 
-    public LoadFlowStorePipeline(PipelineBuilder pipelineBuilder, IDeserializer deserializer, IEncryptor encryptor)
+    public LoadTodoStorePipeline(PipelineBuilder pipelineBuilder, IDeserializer deserializer, IEncryptor encryptor)
         : base(pipelineBuilder, deserializer, encryptor)
     {
     }

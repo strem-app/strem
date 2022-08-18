@@ -8,7 +8,7 @@
 }
 else
 {
-    <PagedContent Data="FlowExecutionEngine.ExecutionLogs" Context="executionLog" ElementsPerPage="5">
+    <PagedContent Data="FlowExecutionEngine.ExecutionLogs" Context="executionLog" ElementsPerPage="5" SplitSize="1">
             <Accordion Title="@($"{executionLog.FlowName} @ {executionLog.StartTime}")" StyleType="@(executionLog.ExecutedSuccessfully ? "is-success" : "is-danger")">
                 <div class="field">
                     <label class="label">Took @((int)(executionLog.EndTime - executionLog.StartTime).TotalSeconds)s to execute @(executionLog.ExecutedSuccessfully ? "Successfully" : "Unsuccessfully")</label>

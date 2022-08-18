@@ -5,7 +5,7 @@ namespace Strem.Core.Extensions;
 
 public static class IFlowStoreExtensions
 {
-    public static Flow Create(this IFlowStore flowStore, string name, string category = FlowStore.DefaultFlowStore)
+    public static Flow Create(this IFlowStore flowStore, string name, string category = FlowStore.DefaultFlowCategory)
     {
         var newFlow = new Flow(Guid.NewGuid(), name, category);
         return flowStore.Add(newFlow);
