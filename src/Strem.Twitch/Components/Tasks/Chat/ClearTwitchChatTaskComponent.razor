@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits CustomTaskComponent<Strem.Twitch.Flows.Tasks.Chat.ClearTwitchChatTaskData>
+
+<div class="field">
+    <label class="label">Channel To Clear</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Channel" Placeholder="Leave blank to send to your own"></ProcessedInput>
+    </div>
+    <HelperInfo>By default messages are sent to your own channel, but you can provide a different channel if needed</HelperInfo>
+</div>
+
+@code {
+    public override string Title => GenerateTitle();
+    
+    public string GenerateTitle()
+    {
+        var destinationChannel =  string.IsNullOrEmpty(Data.Channel) ? $"{Data.Channel}" : "My Channel";
+        return $"Clear Twitch Chat For {destinationChannel}";
+    }
+}

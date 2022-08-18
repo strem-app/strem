@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits CustomTaskComponent<Strem.Twitch.Flows.Tasks.Clips.CreateTwitchStreamMarkerTaskData>
+
+<div class="field">
+    <label class="label">Marker Description</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Description" Placeholder="i.e Some description for the marker" />
+    </div>
+    <HelperInfo>
+        Stream markers appear in your highlights so its easier to see when the fun stuff happened
+    </HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"Create A Twitch Stream Marker";
+}

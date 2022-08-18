@@ -14,7 +14,7 @@ public class SendTwitchWhisperMessageTask : FlowTask<SendTwitchWhisperMessageTas
     public override string Code => SendTwitchWhisperMessageTaskData.TaskCode;
     public override string Version => SendTwitchWhisperMessageTaskData.TaskVersion;
     
-    public override string Name => "Send Twitch Whisper Message";
+    public override string Name => "Send Whisper Message";
     public override string Category => "Twitch";
     public override string Description => "Sends a whisper to a user on twitch";
 

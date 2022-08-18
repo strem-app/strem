@@ -14,7 +14,7 @@ public class SendTwitchChatMessageTask : FlowTask<SendTwitchChatMessageTaskData>
     public override string Code => SendTwitchChatMessageTaskData.TaskCode;
     public override string Version => SendTwitchChatMessageTaskData.TaskVersion;
     
-    public override string Name => "Send Twitch Chat Message";
+    public override string Name => "Send Chat Message";
     public override string Category => "Twitch";
     public override string Description => "Sends a message to a twitch channel, defaults to yours if not provided";
 
