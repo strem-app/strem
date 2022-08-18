@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Components
+@using TwitchLib.Client.Enums
+
+@inherits CustomTaskComponent<Strem.Twitch.Flows.Tasks.Stream.SetStreamTitleTaskData>
+
+<div class="field">
+    <label class="label">Channel To Play Ads For</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Title" Placeholder="Whatever you want the title of your channel to be"></ProcessedInput>
+    </div>
+    <HelperInfo>
+        Remember you can put emojis in if you want to look super cool and down with the kids
+    </HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"Set Stream Title";
+}
