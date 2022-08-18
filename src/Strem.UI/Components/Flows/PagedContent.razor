@@ -2,9 +2,18 @@
 @typeparam T
 
 <p class="title is-5 has-text-black">Viewing @(CurrentIndex+1)-@(GetUpperLimit()) of @(Data.Count)</p>
-@foreach (var data in GetPagedData())
+@{ var pagedData = GetPagedData().ToArray(); }
+@for(var i=0;i<pagedData.Length;i+=SplitSize)
 {
-    @ChildContent(data)
+    <div class="columns">
+        @for (var j = 0; j < SplitSize; j++)
+        {
+            <div class="column">
+            @if(i+j < pagedData.Length)
+            { @ChildContent(pagedData[i+j]) }
+            </div>
+        }
+    </div> 
 }
 
 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
@@ -23,7 +32,16 @@
     public int ElementsPerPage { get; set; } = 25;
 
     [Parameter]
+    public int SplitSize { get; set; } = 1;
+
+    [Parameter]
     public int CurrentPage { get; set; } = 1;
+
+    [Parameter]
+    public Func<T, object> OrderBy { get; set; } = null;
+    
+    [Parameter]
+    public bool OrderByDesc { get; set; }
 
     public int CurrentIndex => (CurrentPage - 1) * ElementsPerPage;
     public int TotalPages => (int)Math.Ceiling((double)Data.Count / ElementsPerPage);
@@ -31,7 +49,13 @@
     public bool HasNextPage => CurrentPage < TotalPages;
 
     public IEnumerable<T> GetPagedData()
-    { return Data.Skip(CurrentIndex).Take(ElementsPerPage); }
+    {
+        if(OrderBy == null)
+        { return Data.Skip(CurrentIndex).Take(ElementsPerPage); }
+
+        var orderedData = OrderByDesc ? Data.OrderByDescending(OrderBy) : Data.OrderBy(OrderBy);
+        return orderedData.Skip(CurrentIndex).Take(ElementsPerPage);
+    }
 
     public int GetUpperLimit()
     {

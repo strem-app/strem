@@ -29,6 +29,7 @@ using Strem.Infrastructure.Services.Api;
 using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.Flows;
+using Strem.Infrastructure.Services.Persistence.Todos;
 using Strem.Infrastructure.Services.Persistence.User;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 
@@ -81,12 +82,14 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<ILoadUserDataPipeline, LoadUserDataPipeline>();
         services.AddSingleton<ILoadFlowStorePipeline, LoadFlowStorePipeline>();
         services.AddSingleton<ISaveFlowStorePipeline, SaveFlowStorePipeline>();
+        services.AddSingleton<ILoadTodoStorePipeline, LoadTodoStorePipeline>();
+        services.AddSingleton<ISaveTodoStorePipeline, SaveTodoStorePipeline>();
 
         // State/Stores
         services.AddSingleton<IAppFileHandler, AppFileHandler>();
         services.AddSingleton<IAppState>(LoadAppState);
         services.AddSingleton<IFlowStore>(LoadFlowStore);
-        services.AddSingleton<ITodoStore, TodoStore>();
+        services.AddSingleton<ITodoStore>(LoadTodoStore);
         
         // Flows
         services.AddSingleton<IFlowStringProcessor, FlowStringProcessor>();
@@ -113,6 +116,12 @@ public class InfrastructureModule : IRequiresApiHostingModule
     {
         var stateFileHandler = services.GetService<IAppFileHandler>();
         return Task.Run(async () => await stateFileHandler.LoadFlowStore()).Result;
+    }
+    
+    public ITodoStore LoadTodoStore(IServiceProvider services)
+    {
+        var stateFileHandler = services.GetService<IAppFileHandler>();
+        return Task.Run(async () => await stateFileHandler.LoadTodoStore()).Result;
     }
     
     public Serilog.ILogger SetupLogger()

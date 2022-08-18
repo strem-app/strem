@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Glob" Version="1.1.9" />
       <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
       <PackageReference Include="Persistity.Flow" Version="2.0.47" />
       <PackageReference Include="Persistity.Serializers.Json" Version="2.0.47" />

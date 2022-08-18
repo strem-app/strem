@@ -1,8 +1,11 @@
-﻿using Strem.Core.Flows;
+﻿using System.IO.Compression;
+using Strem.Core.Flows;
 using Strem.Core.State;
 using Strem.Core.Variables;
+using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.Flows;
+using Strem.Infrastructure.Services.Persistence.Todos;
 using Strem.Infrastructure.Services.Persistence.User;
 
 namespace Strem.Infrastructure.Services.Persistence;
@@ -17,8 +20,11 @@ public class AppFileHandler : IAppFileHandler
     
     public ILoadFlowStorePipeline FlowStoreLoader { get; }
     public ISaveFlowStorePipeline FlowStoreSaver { get; }
+    
+    public ILoadTodoStorePipeline TodoStoreLoader { get; }
+    public ISaveTodoStorePipeline TodoStoreSaver { get; }
 
-    public AppFileHandler(ISaveUserDataPipeline userDataSaver, ISaveAppDataPipeline appDataSaver, ILoadUserDataPipeline userDataLoader, ILoadAppDataPipeline appDataLoader, ILoadFlowStorePipeline flowStoreLoader, ISaveFlowStorePipeline flowStoreSaver)
+    public AppFileHandler(ISaveUserDataPipeline userDataSaver, ISaveAppDataPipeline appDataSaver, ILoadUserDataPipeline userDataLoader, ILoadAppDataPipeline appDataLoader, ILoadFlowStorePipeline flowStoreLoader, ISaveFlowStorePipeline flowStoreSaver, ILoadTodoStorePipeline todoStoreLoader, ISaveTodoStorePipeline todoStoreSaver)
     {
         UserDataSaver = userDataSaver;
         AppDataSaver = appDataSaver;
@@ -26,12 +32,14 @@ public class AppFileHandler : IAppFileHandler
         AppDataLoader = appDataLoader;
         FlowStoreLoader = flowStoreLoader;
         FlowStoreSaver = flowStoreSaver;
+        TodoStoreLoader = todoStoreLoader;
+        TodoStoreSaver = todoStoreSaver;
     }
 
     public async Task CreateAppFilesIfMissing()
     {
-        if(!Directory.Exists(PathHelper.AppDirectory))
-        { Directory.CreateDirectory(PathHelper.AppDirectory); }
+        if (!Directory.Exists(PathHelper.StremDataDirectory))
+        { Directory.CreateDirectory(PathHelper.StremDataDirectory); }
         
         var userFilePath = UserDataSaver.DataFilePath;
         if (!File.Exists(userFilePath))
@@ -44,6 +52,10 @@ public class AppFileHandler : IAppFileHandler
         var flowStoreFilePath = FlowStoreSaver.DataFilePath;
         if (!File.Exists(flowStoreFilePath))
         { await FlowStoreSaver.Execute(new FlowStore()); }
+        
+        var todoStoreFilePath = TodoStoreSaver.DataFilePath;
+        if (!File.Exists(todoStoreFilePath))
+        { await TodoStoreSaver.Execute(new TodoStore()); }
     }
     
     public async Task<AppState> LoadAppState()
@@ -66,9 +78,37 @@ public class AppFileHandler : IAppFileHandler
         return flowStore ?? new FlowStore();
     }
 
-    public async Task SaveAppState(IAppState appState)
+    public async Task<TodoStore> LoadTodoStore()
     {
-        await AppDataSaver.Execute(appState.AppVariables);
-        await UserDataSaver.Execute(appState.UserVariables);
+        await CreateAppFilesIfMissing();
+        var todoStore = await TodoStoreLoader.Execute();
+        return todoStore ?? new TodoStore();
+    }
+
+    public async Task SaveAppState(IAppState appState)
+    { await AppDataSaver.Execute(appState.AppVariables); }
+    
+    public async Task SaveUserState(IAppState appState)
+    { await UserDataSaver.Execute(appState.UserVariables); }
+
+    public async Task SaveFlowState(IFlowStore flowStore)
+    { await FlowStoreSaver.Execute(flowStore); }
+
+    public async Task SaveTodoState(ITodoStore todoStore)
+    { await TodoStoreSaver.Execute(todoStore); }
+
+    
+    public async Task BackupFiles()
+    {
+        var backupDir = $"{PathHelper.StremDataDirectory}/backups";
+        if (!Directory.Exists(backupDir))
+        { Directory.CreateDirectory(backupDir); }
+        
+        var dateFormat = DateTime.Now.ToString("yyMMdd");
+        var backupFile = $"{backupDir}/data-backup-{dateFormat}.zip";
+        if (File.Exists(backupFile)) { return; }
+        
+        using var zip = ZipFile.Open(backupFile, ZipArchiveMode.Create);
+        { zip.CreateEntryFromGlob(PathHelper.StremDataDirectory, "*.dat"); }
     }
 }

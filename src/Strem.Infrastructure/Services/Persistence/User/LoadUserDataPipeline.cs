@@ -8,7 +8,7 @@ namespace Strem.Infrastructure.Services.Persistence.User;
 
 public class LoadUserDataPipeline : LoadDataPipeline<Variables>, ILoadUserDataPipeline
 {
-    public override string DataFilePath => $"{PathHelper.AppDirectory}user.dat";
+    public override string DataFilePath => $"{PathHelper.StremDataDirectory}user.dat";
     public override bool IsEncrypted => false;
 
     public LoadUserDataPipeline(PipelineBuilder pipelineBuilder, IDeserializer deserializer, IEncryptor encryptor)
