@@ -34,6 +34,7 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/')
     needs: [build-and-test]
     steps:
+      - uses: actions/checkout@v3
       - name: Package App Script
         shell: pwsh
         run: ./build.ps1 --buildNo='0.0.${{github.run_number}}' --target='publish'
@@ -45,7 +46,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: true
+          draft: false
           prerelease: false
       - name: Upload App Release
         uses: alexellis/upload-assets@0.2.2

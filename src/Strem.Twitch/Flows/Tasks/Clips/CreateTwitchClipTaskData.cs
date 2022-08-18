@@ -12,4 +12,5 @@ public class CreateTwitchClipTaskData : IFlowTaskData
     public string Version { get; set; } = TaskVersion;
     
     public string Channel { get; set; }
+    public bool CreateTodo { get; set; }
 }

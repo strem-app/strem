@@ -1,16 +1,35 @@
 ﻿
 @typeparam T
 
-<p class="title is-5 has-text-black">Viewing @(CurrentIndex+1)-@(CurrentIndex+ElementsPerPage) of @(Data.Count)</p>
-@foreach (var data in GetPagedData())
-{
-    @ChildContent(data)
-}
-
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-  <a class="pagination-previous @(HasPreviousPage ? "" : "is-disabled")" @onclick="MoveToPreviousPage">Previous</a>
-  <a class="pagination-next @(HasNextPage ? "" : "is-disabled")" @onclick="MoveToNextPage">Next page</a>
-</nav>
+<div class="columns paged-content-header">
+    <div class="column">
+        <p class="title is-5">Viewing @(CurrentIndex+1)-@(GetUpperLimit()) of @(Data.Count)</p>
+    </div>
+    <div class="column">
+        @HeaderContent
+    </div>
+</div>
+<div class="paged-content-body">
+    @{ var pagedData = GetPagedData().ToArray(); }
+    @for(var i=0;i<pagedData.Length;i+=SplitSize)
+    {
+        <div class="columns">
+            @for (var j = 0; j < SplitSize; j++)
+            {
+                <div class="column">
+                @if(i+j < pagedData.Length)
+                { @ChildContent(pagedData[i+j]) }
+                </div>
+            }
+        </div> 
+    }
+</div>
+<div class="paged-body-footer">
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+      <a class="pagination-previous @(HasPreviousPage ? "" : "is-disabled")" @onclick="MoveToPreviousPage">Previous</a>
+      <a class="pagination-next @(HasNextPage ? "" : "is-disabled")" @onclick="MoveToNextPage">Next page</a>
+    </nav>
+</div>
 
 @code {
     [Parameter]
@@ -18,12 +37,24 @@
     
     [Parameter]
     public RenderFragment<T> ChildContent { get; set; }
+    
+    [Parameter]
+    public RenderFragment HeaderContent { get; set; }
 
     [Parameter]
     public int ElementsPerPage { get; set; } = 25;
 
     [Parameter]
+    public int SplitSize { get; set; } = 1;
+
+    [Parameter]
     public int CurrentPage { get; set; } = 1;
+
+    [Parameter]
+    public Func<T, object> OrderBy { get; set; } = null;
+    
+    [Parameter]
+    public bool OrderByDesc { get; set; }
 
     public int CurrentIndex => (CurrentPage - 1) * ElementsPerPage;
     public int TotalPages => (int)Math.Ceiling((double)Data.Count / ElementsPerPage);
@@ -31,8 +62,22 @@
     public bool HasNextPage => CurrentPage < TotalPages;
 
     public IEnumerable<T> GetPagedData()
-    { return Data.Skip(CurrentIndex).Take(ElementsPerPage); }
+    {
+        if(OrderBy == null)
+        { return Data.Skip(CurrentIndex).Take(ElementsPerPage); }
 
+        var orderedData = OrderByDesc ? Data.OrderByDescending(OrderBy) : Data.OrderBy(OrderBy);
+        return orderedData.Skip(CurrentIndex).Take(ElementsPerPage);
+    }
+
+    public int GetUpperLimit()
+    {
+        var calculated = CurrentIndex + ElementsPerPage;
+        var remaining = (Data.Count - CurrentIndex);
+        var upperLimit = CurrentIndex + remaining;
+        return upperLimit < calculated ? upperLimit : calculated;
+    }
+    
     public void MoveToPreviousPage()
     {
         if (!HasPreviousPage) { return; }
