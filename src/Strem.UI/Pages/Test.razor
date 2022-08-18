@@ -1,26 +1,20 @@
 ﻿@page "/Test"
 
-<div class="container is-fluid">
-    <div class="box">
-        <div class="field">
-            <label class="label">Auto Complete</label>
-            <div class="control">
-                <AutoComplete @bind-Value="@Entry" Data="Data"></AutoComplete>
-            </div>
-        </div>
+<div class="field">
+    <div class="control">
+        <TrueOrFalse @bind-Value="IsActive" />
     </div>
-    <div class="box">
-            <div class="field">
-                <label class="label">Entry Is</label>
-                <div class="control">
-                    <input class="input" value="@Entry" disabled/>
-                </div>
-            </div>
-        </div>
 </div>
+
+
+<span class="tag">@IsActive</span>
+
 @code {
     
     public string Entry { get; set; } = "Woop";
 
     public string[] Data = new[] { "boom", "Woop", "pow" };
+    
+    public bool IsActive { get; set; }
+
 }

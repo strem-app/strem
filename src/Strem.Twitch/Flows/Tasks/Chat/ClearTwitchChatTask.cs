@@ -26,7 +26,7 @@ public class ClearTwitchChatTask : FlowTask<ClearTwitchChatTaskData>
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.SendChat);
+    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ModerateChannel);
 
     public override async Task<bool> Execute(ClearTwitchChatTaskData data, IVariables flowVars)
     {
