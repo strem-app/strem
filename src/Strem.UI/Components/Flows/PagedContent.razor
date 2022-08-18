@@ -1,25 +1,35 @@
 ﻿
 @typeparam T
 
-<p class="title is-5 has-text-black">Viewing @(CurrentIndex+1)-@(GetUpperLimit()) of @(Data.Count)</p>
-@{ var pagedData = GetPagedData().ToArray(); }
-@for(var i=0;i<pagedData.Length;i+=SplitSize)
-{
-    <div class="columns">
-        @for (var j = 0; j < SplitSize; j++)
-        {
-            <div class="column">
-            @if(i+j < pagedData.Length)
-            { @ChildContent(pagedData[i+j]) }
-            </div>
-        }
-    </div> 
-}
-
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-  <a class="pagination-previous @(HasPreviousPage ? "" : "is-disabled")" @onclick="MoveToPreviousPage">Previous</a>
-  <a class="pagination-next @(HasNextPage ? "" : "is-disabled")" @onclick="MoveToNextPage">Next page</a>
-</nav>
+<div class="columns paged-content-header">
+    <div class="column">
+        <p class="title is-5">Viewing @(CurrentIndex+1)-@(GetUpperLimit()) of @(Data.Count)</p>
+    </div>
+    <div class="column">
+        @HeaderContent
+    </div>
+</div>
+<div class="paged-content-body">
+    @{ var pagedData = GetPagedData().ToArray(); }
+    @for(var i=0;i<pagedData.Length;i+=SplitSize)
+    {
+        <div class="columns">
+            @for (var j = 0; j < SplitSize; j++)
+            {
+                <div class="column">
+                @if(i+j < pagedData.Length)
+                { @ChildContent(pagedData[i+j]) }
+                </div>
+            }
+        </div> 
+    }
+</div>
+<div class="paged-body-footer">
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+      <a class="pagination-previous @(HasPreviousPage ? "" : "is-disabled")" @onclick="MoveToPreviousPage">Previous</a>
+      <a class="pagination-next @(HasNextPage ? "" : "is-disabled")" @onclick="MoveToNextPage">Next page</a>
+    </nav>
+</div>
 
 @code {
     [Parameter]
@@ -27,6 +37,9 @@
     
     [Parameter]
     public RenderFragment<T> ChildContent { get; set; }
+    
+    [Parameter]
+    public RenderFragment HeaderContent { get; set; }
 
     [Parameter]
     public int ElementsPerPage { get; set; } = 25;
