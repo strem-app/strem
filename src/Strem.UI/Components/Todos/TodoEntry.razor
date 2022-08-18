@@ -4,11 +4,11 @@
 @inject IBrowserLoader BrowserLoader;
 
 @{ var progress = GetProgress(Todo); }
-<div class="box mb-3 @(progress <= 0 ? "has-background-danger-dark" : "has-background-grey-dark")">
+<div class="box mb-3 @(GetBoxStyle(progress))">
     <div class="field is-grouped is-align-items-center">
         <div class="control is-expanded">
             <div class="has-text-white is-size-6 has-text-weight-semibold">@GetDescription(Todo)</div>
-            <p class="subtitle is-size-7 has-text-weight-semibold">Created At: @Todo.CreatedDate.ToString("g")</p>
+            <p class="subtitle is-size-7 has-text-weight-semibold">Created By: @Todo.CreatedBy | @Todo.CreatedDate.ToString("g")</p>
         </div>
         <div class="control has-text-centered">
             <progress class="progress mb-1 @(GetProgressStyle(progress))" value="@progress" max="100">@(progress)%</progress>
@@ -17,8 +17,21 @@
         <div class="control">
             @if (Todo.ActionType == TodoActionType.Link)
             {
-                <button class="button is-info" @onclick="() => ActionTodo(Todo)">Load Link</button>
+                <button class="button is-info" @onclick="() => ActionTodo(Todo)">
+                    <span class="icon is-small">
+                        <i class="fas fa-globe"></i>
+                    </span>
+                    <span>Load Link</span>
+                </button>
             }
+        </div>
+        <div class="control">
+            <button class="button is-danger has-tooltip-warning has-tooltip-multiline" 
+                    data-tooltip="Marks the todo as done and clears from your list">
+                <span class="icon is-small">
+                    <i class="fas fa-check"></i>
+                </span>
+            </button>
         </div>
     </div>
 </div>
@@ -42,6 +55,13 @@
         if(progress <= 25) { return "is-danger"; }
         if(progress <= 50) { return "is-warning"; }
         return "is-success";
+    }
+
+    public string GetBoxStyle(int progress)
+    {
+        if(progress <= 25) { return "has-background-danger-dark"; }
+        if(progress <= 50) { return "has-background-warning-dark"; }
+        return "has-background-grey-dark";
     }
 
     public string GetHoursLeftReading(TodoData todo)

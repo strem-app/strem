@@ -1,0 +1,61 @@
+﻿@using Strem.Core.Types
+@using Microsoft.AspNetCore.Components
+@using Strem.Core.Todo
+
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Todos.CreateTodoTaskData>
+
+<div class="field">
+    <label class="label">Title</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Title" Placeholder="i.e Some title for the todo message in the viewer" />
+    </div>
+</div>
+<div class="field">
+    <label class="label">Todo Action Type</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.ActionType">
+                <EnumSelectOptions EnumType="typeof(TodoActionType)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    <HelperInfo>The action type dictates how the action button should work when clicked, i.e for links it loads the url in the browser</HelperInfo>
+</div>
+<div class="field">
+    <label class="label">Payload</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Payload" Placeholder="i.e The url to load, or data required for the action type to work" />
+    </div>
+</div>
+<div class="field">
+    <label class="label">Timeout Type</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.TimeoutType">
+                <EnumSelectOptions EnumType="typeof(TimeUnitType)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="field">
+    <label class="label">Timeout Value</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.TimeoutValue" Placeholder="i.e 5 or dynamic vars"></ProcessedInput>
+    </div>
+</div>
+<div class="field">
+    <label class="label">Created By</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.CreatedBy" Placeholder="i.e Who/what created this todo" />
+    </div>
+    <HelperInfo>This can be set to the same thing or a dynamic var, such as a mods name who sent you a command todo something</HelperInfo>
+</div>
+
+@code {
+    public override string Title => GetTitle();
+
+    public string GetTitle()
+    {
+        return $"Create <strong>{Data.ActionType}</strong> Todo";
+    }
+}

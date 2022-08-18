@@ -2,5 +2,6 @@
 
 public enum TodoActionType
 {
+    Text,
     Link
 }

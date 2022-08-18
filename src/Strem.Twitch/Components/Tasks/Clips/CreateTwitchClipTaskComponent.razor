@@ -12,12 +12,22 @@
     </HelperInfo>
 </div>
 
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.CreateTodo">
+            Raise A Todo For Clip?
+        </label>
+    </div>
+    <HelperInfo>This will add a todo entry to your todo list with the clip edit url for you to action later</HelperInfo>
+</div>
+
 @code {
     public override string Title => GetTitle();
 
     public string GetTitle()
     {
         var channel = string.IsNullOrEmpty(Data.Channel) ? "" : $"On {Data.Channel}";
-        return $"Create A Twitch Clip {channel}";
+        return $"Create A Twitch Clip {channel} {(Data.CreateTodo ? "With Todo" : "")}";
     }
 }
