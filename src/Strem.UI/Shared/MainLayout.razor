@@ -1,6 +1,13 @@
-﻿@inherits LayoutComponentBase
+﻿@using Strem.Core.State
+@using Strem.Core.Variables
+@using Strem.Core.Extensions
+@inherits LayoutComponentBase
 
 @inject NavigationManager NavManager
+@inject IJSRuntime JS
+@inject IAppState AppState; 
+
+@implements IDisposable
 
 <section class="hero is-dark is-fullheight">
   @if (!IsSplashScreen)
@@ -26,5 +33,26 @@
 @code {
 
   public bool IsSplashScreen => (NavManager.Uri == NavManager.BaseUri);
-  
+
+  protected override async Task OnInitializedAsync()
+  {
+    UpdateZoom(null, null);
+    NavManager.LocationChanged += UpdateZoom;
+  }
+
+  private void UpdateZoom(object sender, LocationChangedEventArgs e)
+  {
+    if (IsSplashScreen){ return; }
+    if (!AppState.AppVariables.Has(UIVariables.ZoomVariable)) { return; }
+    
+    var zoomVar = AppState.AppVariables.Get<int>(UIVariables.ZoomVariable);
+    if (zoomVar >= 75 && zoomVar <= 125)
+    { JS.InvokeVoidAsync("setZoom", zoomVar); }
+  }
+
+  public void Dispose()
+  {
+    NavManager.LocationChanged -= UpdateZoom;
+  }
+
 }
