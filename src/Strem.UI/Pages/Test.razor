@@ -1,26 +1,37 @@
-﻿@page "/Test"
+﻿@page "/test"
+@using Strem.Core.Types
 
-<div class="container is-fluid">
-    <div class="box">
-        <div class="field">
-            <label class="label">Auto Complete</label>
-            <div class="control">
-                <AutoComplete @bind-Value="@Entry" Data="Data"></AutoComplete>
-            </div>
-        </div>
-    </div>
+<div class="container is-fullwidth">
     <div class="box">
             <div class="field">
-                <label class="label">Entry Is</label>
                 <div class="control">
-                    <input class="input" value="@Entry" disabled/>
+                    <TrueOrFalse @bind-Value="IsActive"/>
                 </div>
             </div>
+        
+        
+            <span class="tag">@IsActive</span>
+    </div>
+
+    <div class="box">
+        <EnumWithValueInput @bind-EnumValue="UnitType" @bind-Value="ValueType" Placeholder="Something good here chief"/>
+        <div class="notification is-info">
+            <span>@UnitType</span>
+            <span>@ValueType</span>
         </div>
+    </div>
 </div>
+
+
 @code {
     
     public string Entry { get; set; } = "Woop";
 
     public string[] Data = new[] { "boom", "Woop", "pow" };
+    
+    public bool IsActive { get; set; }
+    
+    public TimeUnitType UnitType { get; set; }
+    public string ValueType { get; set; }
+
 }

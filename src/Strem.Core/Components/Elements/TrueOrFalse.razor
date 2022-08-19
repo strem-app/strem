@@ -1,0 +1,43 @@
+﻿<div class="buttons">
+  <button class="button @(Value ? "is-success" : "")" @onclick="() => ValueChanged.InvokeAsync(true)">
+    <span class="icon">
+      <i class="fas @(Value ? "fa-square-check" : "fa-square")"></i>
+    </span>
+    <span>@TrueText</span>
+  </button>
+  <button class="button @(!Value ? "is-success" : "")" @onclick="() => ValueChanged.InvokeAsync(false)">
+      <span class="icon">
+        <i class="fas @(!Value ? "fa-square-check" : "fa-square")"></i>
+      </span>
+      <span>@FalseText</span>
+    </button>
+</div>
+
+@*
+<label class="radio">
+  <input type="radio" name="@GroupName" @onchange="() => ValueChanged.InvokeAsync(true)" checked="@(Value)">
+  @TrueText
+</label>
+<label class="radio">
+  <input type="radio" name="@GroupName"  @onchange="() => ValueChanged.InvokeAsync(false)" checked="@(!Value)">
+  @FalseText
+</label>
+*@
+
+@code {
+          
+  [Parameter]
+  public bool Value { get; set; }
+  
+  [Parameter]
+  public EventCallback<bool> ValueChanged { get; set; }
+
+  [Parameter]
+  public string GroupName { get; set; } = "yorn";
+
+  [Parameter]
+  public string TrueText { get; set; } = "Enable";
+
+  [Parameter]
+  public string FalseText { get; set; } = "Disable";
+}

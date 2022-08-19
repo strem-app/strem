@@ -1,20 +1,20 @@
 ﻿@using System.Text.RegularExpressions
 <div class="control has-icons-left">
-    @if (ShowInput)
-    {
-        <input class="input" type="text" placeholder="@Placeholder" value="@Value" @onblur="HideInput"
-               @onchange="e => ValueChanged.InvokeAsync(e.Value.ToString())" />
-    }
-    else
-    {
-        <span class="input processed-input @(string.IsNullOrEmpty(Value) ? "is-placeholder" : "")" @onclick="() => ShowInput = true">@((MarkupString)ProcessedContent)</span>
-    }
+    
+    <input class="input @(InputVisible ? "" : "is-hidden")" type="text" placeholder="@Placeholder" value="@Value" @onblur="HideInput"
+           @onchange="e => ValueChanged.InvokeAsync(e.Value.ToString())" @ref="_inputElement"/>
+
+    <span class="input processed-input @(InputVisible ? "is-hidden" : "") @(string.IsNullOrEmpty(Value) ? "is-placeholder" : "")"
+          @onclick="ShowInput">@((MarkupString)ProcessedContent)</span>
+
     <span class="icon is-small is-left">
         <i class="fas fa-v"></i>
     </span>
 </div>
 
 @code {
+    public static Regex Pattern = new(@"(V\(([\w\s\.,\-_\:\|]*)\))");
+
     [Parameter]
     public string Value { get; set; }
     
@@ -24,15 +24,23 @@
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
 
-    public static Regex Pattern = new(@"(V\(([\w\s\.,\-_\:\|]*)\))");
+    private ElementReference _inputElement { get; set; }
 
-    public bool ShowInput { get; set; }
+    public bool InputVisible { get; set; }
     public string ProcessedContent { get; set; }
 
     public void HideInput()
     {
-        ShowInput = false;
+        InputVisible = false;
         ProcessContent();
+    }
+
+    public async Task ShowInput()
+    {
+        InputVisible = true;
+        StateHasChanged();
+        await Task.Delay(10);
+        await _inputElement.FocusAsync();
     }
 
     public void ProcessContent()

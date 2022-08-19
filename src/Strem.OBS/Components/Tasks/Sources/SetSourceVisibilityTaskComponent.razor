@@ -33,7 +33,7 @@
 @code {
     public override string Title => GetTitle();
 
-    public string[] CurrentSceneItems { get; set; }
+    public string[] CurrentSceneItems { get; set; } = Array.Empty<string>();
 
     public string GetTitle()
     {
@@ -45,7 +45,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        if (AppState.HasOBSHost())
+        if (AppState.HasOBSHost() && ObsClient.IsConnected)
         {
             if (!AppState.HasCurrentSceneItems())
             { await ObsClient.PopulateActiveSceneTransientData(AppState); }

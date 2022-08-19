@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits CustomTaskComponent<Strem.Twitch.Flows.Tasks.Chat.SetTwitchEmoteOnlyChatTaskData>
+
+<div class="field">
+    <label class="label">Channel</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Channel" Placeholder="Leave blank to send to your own"></ProcessedInput>
+    </div>
+    <HelperInfo>By default messages are sent to your own channel, but you can provide a different channel if needed</HelperInfo>
+</div>
+
+<div class="field">
+    <label class="label">Enable/Disable Emote Only Chat</label>
+    <div class="control">
+        <TrueOrFalse @bind-Value="Data.SetEmoteOnlyChat"></TrueOrFalse>
+    </div>
+</div>
+
+@code {
+    public override string Title => GenerateTitle();
+    
+    public string GenerateTitle()
+    {
+        var destinationChannel =  string.IsNullOrEmpty(Data.Channel) ? "My Channel" :  Data.Channel;
+        return $"{(Data.SetEmoteOnlyChat ? "Enable": "Disable")} Emote Only Chat For {destinationChannel}";
+    }
+}

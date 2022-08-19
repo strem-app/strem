@@ -25,7 +25,7 @@
     
     public string GenerateTitle()
     {
-        var destinationChannel =  string.IsNullOrEmpty(Data.Channel) ? $"{Data.Channel}" : "My Channel";
+        var destinationChannel =  string.IsNullOrEmpty(Data.Channel) ? "My Channel" :  Data.Channel;
         return $"Send Twitch Message To {destinationChannel}";
     }
 }

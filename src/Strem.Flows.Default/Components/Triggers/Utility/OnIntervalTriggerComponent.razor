@@ -1,30 +1,18 @@
-﻿@using Strem.Core.Types
-
-@inherits CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Utility.OnIntervalTriggerData>
+﻿@inherits CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Utility.OnIntervalTriggerData>
 
 <div class="field">
     <label class="label">Interval Type</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.IntervalUnitsType">
-                <EnumSelectOptions EnumType="typeof(TimeUnitType)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumWithValueInput @bind-EnumValue="Data.IntervalUnitsType" @bind-Value="Data.IntervalValue" Placeholder="i.e 5 or dynamic vars" />
     </div>
 </div>
 <div class="field">
-    <label class="label">Interval Value</label>
     <div class="control">
-        <ProcessedInput @bind-Value="Data.IntervalValue" Placeholder="i.e 5 or dynamic vars"></ProcessedInput>
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.StartImmediately"/>
+            Should It Trigger On Start Too?
+        </label>
     </div>
-</div>
-<div class="field">
-  <div class="control">
-    <label class="checkbox">
-      <input type="checkbox" @bind="Data.StartImmediately">
-      Should It Trigger On Start Too?
-    </label>
-  </div>
 </div>
 
 @code {

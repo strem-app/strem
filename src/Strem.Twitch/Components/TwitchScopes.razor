@@ -62,19 +62,48 @@
 @code {
 
     public string[] ReadChatScopes = new[] { ChatScopes.ReadChat, ChatScopes.ReadWhispers };
+    
     public string[] ManageChatScopes = new[] { ChatScopes.SendChat, ChatScopes.SendWhisper, ChatScopes.ModerateChannel };
+    
     public string[] ReadChannelScopes = new[]
     {
         ApiScopes.ReadChannelGoals, ApiScopes.ReadBits, ApiScopes.ReadChannelPolls, ApiScopes.ReadChannelPredictions, 
         ApiScopes.ReadChannelRedemptions, ApiScopes.ReadChannelSubscriptions, ApiScopes.ReadChannelVips,
         ApiScopes.ReadChannelHypeTrain
     };
+    
     public string[] ManageChannelScopes = new[]
     {
         ApiScopes.ManageChannelBroadcast, ApiScopes.ManageChannelEditors, ApiScopes.ManageChannelExtensions,
         ApiScopes.ManageChannelModerators, ApiScopes.ManageChannelPolls, ApiScopes.ManageChannelPredications,
         ApiScopes.ManageChannelRaids, ApiScopes.ManageChannelRedemptions, ApiScopes.ManageChannelSchedule,
         ApiScopes.ManageChannelVideos, ApiScopes.ManageChannelVips
+    };
+
+    public string[] ReadModerationScopes = new[]
+    {
+        ApiScopes.ReadModeration, ApiScopes.ReadModerationAutomodSettings,
+        ApiScopes.ReadModerationBlockedTerms, ApiScopes.ReadModerationChatSettings
+    };
+
+    public string[] ManageModerationScopes = new[]
+    {
+        ApiScopes.ManageModerationAnnouncements, ApiScopes.ManageModerationAutomod,
+        ApiScopes.ManageModerationAutomodSettings, ApiScopes.ManageModerationBannedUsers,
+        ApiScopes.ManageModerationBlockedTerms, ApiScopes.ManageModerationChatMessages,
+        ApiScopes.ManageModerationChatSettings
+    };
+
+    public string[] ReadUserScopes = new[]
+    {
+        ApiScopes.ReadUsersBroadcast, ApiScopes.ReadUsersEmail, ApiScopes.ReadUsersFollows,
+        ApiScopes.ReadUsersSubscriptions, ApiScopes.ReadUsersBlockedUsers
+    };
+
+    public string[] ManageUserScopes = new[]
+    {
+        ApiScopes.ManageUser, ApiScopes.ManageUserFollows, ApiScopes.ManageUsersWhispers,
+        ApiScopes.ManageUsersBlockedUsers, ApiScopes.ManageUsersChatColours
     };
     
     public ScopeAccess ChatAccess { get; set; }
@@ -126,6 +155,28 @@
                 break;
             case ScopeAccess.ReadOnly:
                 newScopes.AddRange(ReadChannelScopes);
+                break;
+        }
+
+        switch (ModerationAccess)
+        {
+            case ScopeAccess.Full:
+                newScopes.AddRange(ReadModerationScopes);
+                newScopes.AddRange(ManageModerationScopes);
+                break;
+            case ScopeAccess.ReadOnly:
+                newScopes.AddRange(ReadChannelScopes);
+                break;
+        }
+
+        switch (UserAccess)
+        {
+            case ScopeAccess.Full:
+                newScopes.AddRange(ReadUserScopes);
+                newScopes.AddRange(ManageUserScopes);
+                break;
+            case ScopeAccess.ReadOnly:
+                newScopes.AddRange(ReadUserScopes);
                 break;
         }
 

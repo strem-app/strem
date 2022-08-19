@@ -22,7 +22,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
     public static VariableEntry ClipUrlVariable = new("clip.url", TwitchVars.TwitchContext);
     public static VariableEntry ClipEditUrlVariable = new("clip.url.edit", TwitchVars.TwitchContext);
     
-    public override string Name => "Create Twitch Clip";
+    public override string Name => "Create Clip";
     public override string Category => "Twitch";
     public override string Description => "Creates a clip for a given channel, with optional todo entry afterwards";
 

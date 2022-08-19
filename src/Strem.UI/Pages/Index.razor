@@ -1,0 +1,48 @@
+﻿@page "/"
+
+@using Strem.Core.Events.Bus
+@using System.Reactive.Disposables
+@using Strem.Core.Events
+@using Strem.Core.Extensions
+
+@inject NavigationManager NavigationManager
+@inject IEventBus EventBus
+
+@implements IDisposable
+
+<div class="container has-text-centered m-auto">
+    <p class="title">STREM</p>
+    <p class="subtitle">Initializing Stuffs</p>
+    <div class="field">
+        <div class="control w-50 m-auto">
+            <progress class="progress is-large is-info" max="100">0%</progress>
+        </div>
+    </div>
+    <div class="field">
+        <div class="control w-50 m-auto">
+                <span class="tag">Strem - v@(GetType().Assembly.GetName().Version) (Alpha)</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    private CompositeDisposable _subs = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        EventBus.Receive<ApplicationStartedEvent>()
+            .Subscribe(x => LoadMainApp())
+            .AddTo(_subs);
+    }
+
+    private void LoadMainApp()
+    {
+        NavigationManager.NavigateTo("flows");
+    }
+
+    public void Dispose()
+    {
+        _subs?.Dispose();
+    }
+
+}

@@ -5,16 +5,9 @@
 @inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Web.MakeHttpRequestTaskData>
 
 <label class="label">Url</label>
-<div class="field has-addons">
+<div class="field">
     <div class="control">
-            <div class="select">
-                <select @bind="Data.Verb">
-                    <EnumSelectOptions EnumType="typeof(Method)"></EnumSelectOptions>
-                </select>
-            </div>
-        </div>
-    <div class="control is-expanded">
-        <ProcessedInput @bind-Value="Data.Url" Placeholder="i.e http://www.some-site.com/user/V(userId)"></ProcessedInput>
+        <EnumWithValueInput @bind-EnumValue="Data.Verb" @bind-Value="Data.Url" Placeholder="i.e http://www.some-site.com/user/V(userId)"/>
     </div>
 </div>
 

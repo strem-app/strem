@@ -1,0 +1,37 @@
+﻿@typeparam TEnum
+
+<div class="field has-addons enum-with-value">
+    <div class="control">
+        <div class="select">
+            <select value="@EnumValue" @onchange="args => EnumValueChanged.InvokeAsync((TEnum)Enum.Parse(typeof(TEnum), args.Value.ToString()))">
+                <EnumSelectOptions EnumType="typeof(TEnum)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    <div class="control is-expanded">
+        <ProcessedInput @bind-Value="ProxyValue" Placeholder="@Placeholder"></ProcessedInput>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public TEnum EnumValue { get; set; }
+    
+    [Parameter]
+    public EventCallback<TEnum> EnumValueChanged { get; set; }
+    
+    [Parameter]
+    public string Value { get; set; }
+
+    public string ProxyValue
+    {
+        get => Value;
+        set => ValueChanged.InvokeAsync(value);
+    }
+    
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+    
+    [Parameter]
+    public string Placeholder { get; set; }
+}
