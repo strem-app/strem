@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Registries.Integrations;
@@ -41,5 +42,20 @@ public class PluginBootstrapper
         integrationRegistry?.AddMany(integrationDescriptors);
         
         executionEngine?.StartEngine();
+    }
+    
+    public static void LoadExternalPlugins(List<string> startupErrors)
+    {
+        var pluginsDirectory = "Plugins";
+        if (!Directory.Exists(pluginsDirectory)) { return; }
+        
+        var pluginFiles = Directory.GetFileSystemEntries(pluginsDirectory, "*.dll");
+        if(pluginFiles.Length == 0) { return; }
+
+        foreach (var pluginFile in pluginFiles)
+        {
+            try { Assembly.LoadFile(pluginFile); }
+            catch(Exception ex) { startupErrors.Add($"Failed to load Plugin {pluginFile}: {ex.Message}"); }
+        }
     }
 }

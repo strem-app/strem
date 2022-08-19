@@ -7,7 +7,8 @@ namespace Strem.Infrastructure.Services.Api;
 public class ApiWebHost : IApiWebHost
 {
     public WebApplication Host { get; protected set; }
-
+    public bool IsRunning { get; set; }
+    
     public (Assembly assembly, IRequiresApiHostingModule module)[] GetAllApiHostingPlugins()
     {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -43,7 +44,7 @@ public class ApiWebHost : IApiWebHost
         
         return builder.Build();
     }
-    
+
     public void StartHost()
     {
         var app = CreateApplication();
@@ -59,12 +60,13 @@ public class ApiWebHost : IApiWebHost
             endpoints.MapControllers();
         });
         app.RunAsync($"http://localhost:{ApiHostConfiguration.ApiHostPort}");
-
+        IsRunning = true;
         Host = app;
     }
 
     public void StopHost()
     {
         Host.DisposeAsync();
+        IsRunning = false;
     }
 }
