@@ -5,22 +5,55 @@
 @using Strem.Core.Extensions
 @using Strem.Core.Variables
 
+@inject IJSRuntime JS
 @inject IAppState AppState;
 
 <div class="container is-fluid">
-  <h3 class="title is-3">Settings</h3>
-  <div class="box">
-    <label class="label is-size-4">UI Settings</label>
-    <div class="field">
-        <div class="control">
-            <label class="checkbox">
-                <input type="checkbox" @bind="ShowHelpers">
-                Show Helper Text On UI?
-            </label>
+    
+    <h3 class="title is-3">Settings</h3>
+    <div class="box">
+        <label class="label is-size-4">UI Settings</label>
+        
+        <div class="field">
+            <label class="label">Helpers</label>
+            <div class="control">
+                <label class="checkbox">
+                    <input type="checkbox" @bind="ShowHelpers">
+                    Show Helper Text On UI?
+                </label>
+            </div>
+            <HelperInfo>This is an example of a helper, if you turn this off you wont see them throughout the system</HelperInfo>
         </div>
-        <HelperInfo>This is an example of a helper, if you turn this off you wont see them throughout the system</HelperInfo>
+        
+        <div class="field">
+            <label class="label">Zoom Level</label>
+            <div class="control">
+                <nav class="level">
+                  <div class="level-item has-text-left">
+                    <div>
+                        <span class="tag">75%</span>
+                    </div>
+                  </div>
+                  <div class="level-item has-text-centered">
+                    <div>
+                        <span class="tag">100%</span>
+                    </div>
+                  </div>
+                  <div class="level-item has-text-right">
+                    <div>
+                        <span class="tag">125%</span>
+                    </div>
+                  </div>
+                </nav>
+            </div>
+            <div class="control">
+                <input class="slider is-fullwidth" step="5" min="75" max="125" type="range" @bind="ZoomRate">
+            </div>
+            <HelperInfo>This will make everything bigger/smaller throughout the app</HelperInfo>
+        </div>
+        
     </div>
-  </div>
+    
 </div>
 
 @code {
@@ -31,5 +64,18 @@
         set =>  AppState.AppVariables.Set(UIVariables.ShowHelpersVariable, value);
     }
 
+    public int ZoomRate
+    {
+        get => AppState.AppVariables.Get<int>(UIVariables.ZoomVariable);
+        set
+        {
+            if(value is < 50 or > 150){ return; }
+            AppState.AppVariables.Set(UIVariables.ZoomVariable, value);
+            UpdateZoom(value);
+        }
+    }
+
+    public void UpdateZoom(int newValue)
+    { JS.InvokeVoidAsync("setZoom", newValue);}
 
 }

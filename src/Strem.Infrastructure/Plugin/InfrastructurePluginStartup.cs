@@ -36,12 +36,12 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     {
         AppState.UserVariables.OnVariableChanged
             .Throttle(TimeSpan.FromSeconds(5))
-            .Subscribe(_ => AppFileHandler.SaveAppState(AppState))
+            .Subscribe(_ => AppFileHandler.SaveUserState(AppState))
             .AddTo(_subs);
 
         AppState.AppVariables.OnVariableChanged
             .Throttle(TimeSpan.FromSeconds(5))
-            .Subscribe(_ => AppFileHandler.SaveUserState(AppState))
+            .Subscribe(_ => AppFileHandler.SaveAppState(AppState))
             .AddTo(_subs);
         
         AppState.UserVariables.OnVariableChanged
