@@ -12,7 +12,7 @@ It lets you build complex logic `flows` from `triggers` and `tasks`.
 
 For example you may want to play a meme on OBS every time chat contains "lollerskates", so you would make a twitch chat trigger, and have a task to show an obs source.
 
-> To run OBS you will need to go and install the v4.* [obs-websocket-remote plugin](https://obsproject.com/forum/resources/obs-websocket-remote-control-obs-studio-using-websockets.466/updates#resource-update-3807) which lets other applications communicate with OBS, version 5 of the plugin is not supported yet.
+> To run OBS you will need to go and install the [v4.*](https://github.com/obsproject/obs-websocket/releases/tag/4.9.1) [obs-websocket-remote plugin](https://obsproject.com/forum/resources/obs-websocket-remote-control-obs-studio-using-websockets.466/updates#resource-update-3807) which lets other applications communicate with OBS, version 5 of the plugin is not supported yet.
 
 ## How Do I Run It?
 Just go to releases, download the latest zip file and put it in a directory somewhere and run `strem.exe`
