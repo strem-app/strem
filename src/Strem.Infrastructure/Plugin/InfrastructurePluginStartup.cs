@@ -6,6 +6,7 @@ using Strem.Core.Extensions;
 using Strem.Core.Flows;
 using Strem.Core.Plugins;
 using Strem.Core.State;
+using Strem.Core.Todo;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Services.Persistence;
 
@@ -57,8 +58,8 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         Observable.Interval(TimeSpan.FromMinutes(5))
             .Subscribe(x =>
             {
-                AppFileHandler.SaveFlowState(FlowStore);
-                AppFileHandler.SaveTodoState(TodoStore);
+                AppFileHandler.SaveFlowStore(FlowStore);
+                AppFileHandler.SaveTodoStore(TodoStore);
             })
             .AddTo(_subs);
 

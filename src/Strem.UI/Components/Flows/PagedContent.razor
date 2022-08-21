@@ -9,7 +9,7 @@
         @HeaderContent
     </div>
 </div>
-<div class="paged-content-body">
+<div class="paged-content-body block">
     @{ var pagedData = GetPagedData().ToArray(); }
     @for(var i=0;i<pagedData.Length;i+=SplitSize)
     {

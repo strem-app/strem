@@ -1,0 +1,41 @@
+﻿@using Strem.Core.Flows
+@using Strem.Core.Portals
+@using Microsoft.AspNetCore.Components
+
+<h3 class="title is-3 has-text-black">Create Portal</h3>
+<div class="field">
+    <label class="label">Name</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e Broadcaster Portal" @bind-value="NewPortalName"/>
+    </div>
+</div>
+<div class="field is-grouped">
+  <div class="control">
+    <button class="button is-success" @onclick="Create">Create</button>
+  </div>
+  <div class="control">
+    <button class="button is-link is-light" @onclick="Cancel">Cancel</button>
+  </div>
+</div>
+
+@code {
+    [Parameter] 
+    public EventCallback<PortalData> OnPortalCreated { get; set; }
+    [Parameter] 
+    public EventCallback OnCancelled { get; set; }
+    
+    public string NewPortalName { get; set; }
+
+    public void Create()
+    {
+        var newFlow = new PortalData(Guid.NewGuid(), NewPortalName);
+        NewPortalName = string.Empty;
+        OnPortalCreated.InvokeAsync(newFlow);
+    }
+
+    public void Cancel()
+    {
+        NewPortalName = string.Empty;
+        OnCancelled.InvokeAsync();
+    }
+}

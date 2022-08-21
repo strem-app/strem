@@ -1,10 +1,13 @@
 ﻿using System.IO.Compression;
 using Strem.Core.Flows;
+using Strem.Core.Portals;
 using Strem.Core.State;
+using Strem.Core.Todo;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.Flows;
+using Strem.Infrastructure.Services.Persistence.Portals;
 using Strem.Infrastructure.Services.Persistence.Todos;
 using Strem.Infrastructure.Services.Persistence.User;
 
@@ -23,8 +26,11 @@ public class AppFileHandler : IAppFileHandler
     
     public ILoadTodoStorePipeline TodoStoreLoader { get; }
     public ISaveTodoStorePipeline TodoStoreSaver { get; }
+    
+    public ILoadPortalStorePipeline PortalStoreLoader { get; }
+    public ISavePortalStorePipeline PortalStoreSaver { get; }
 
-    public AppFileHandler(ISaveUserDataPipeline userDataSaver, ISaveAppDataPipeline appDataSaver, ILoadUserDataPipeline userDataLoader, ILoadAppDataPipeline appDataLoader, ILoadFlowStorePipeline flowStoreLoader, ISaveFlowStorePipeline flowStoreSaver, ILoadTodoStorePipeline todoStoreLoader, ISaveTodoStorePipeline todoStoreSaver)
+    public AppFileHandler(ISaveUserDataPipeline userDataSaver, ISaveAppDataPipeline appDataSaver, ILoadUserDataPipeline userDataLoader, ILoadAppDataPipeline appDataLoader, ILoadFlowStorePipeline flowStoreLoader, ISaveFlowStorePipeline flowStoreSaver, ILoadTodoStorePipeline todoStoreLoader, ISaveTodoStorePipeline todoStoreSaver, ILoadPortalStorePipeline portalStoreLoader, ISavePortalStorePipeline portalStoreSaver)
     {
         UserDataSaver = userDataSaver;
         AppDataSaver = appDataSaver;
@@ -34,6 +40,8 @@ public class AppFileHandler : IAppFileHandler
         FlowStoreSaver = flowStoreSaver;
         TodoStoreLoader = todoStoreLoader;
         TodoStoreSaver = todoStoreSaver;
+        PortalStoreLoader = portalStoreLoader;
+        PortalStoreSaver = portalStoreSaver;
     }
 
     public async Task CreateAppFilesIfMissing()
@@ -56,6 +64,10 @@ public class AppFileHandler : IAppFileHandler
         var todoStoreFilePath = TodoStoreSaver.DataFilePath;
         if (!File.Exists(todoStoreFilePath))
         { await TodoStoreSaver.Execute(new TodoStore()); }
+        
+        var portalStoreFilePath = PortalStoreSaver.DataFilePath;
+        if (!File.Exists(portalStoreFilePath))
+        { await PortalStoreSaver.Execute(new PortalStore()); }
     }
     
     public async Task<AppState> LoadAppState()
@@ -85,19 +97,28 @@ public class AppFileHandler : IAppFileHandler
         return todoStore ?? new TodoStore();
     }
 
+    public async Task<PortalStore> LoadPortalStore()
+    {
+        await CreateAppFilesIfMissing();
+        var portalStore = await PortalStoreLoader.Execute();
+        return portalStore ?? new PortalStore();
+    }
+
     public async Task SaveAppState(IAppState appState)
     { await AppDataSaver.Execute(appState.AppVariables); }
     
     public async Task SaveUserState(IAppState appState)
     { await UserDataSaver.Execute(appState.UserVariables); }
 
-    public async Task SaveFlowState(IFlowStore flowStore)
+    public async Task SaveFlowStore(IFlowStore flowStore)
     { await FlowStoreSaver.Execute(flowStore); }
 
-    public async Task SaveTodoState(ITodoStore todoStore)
+    public async Task SaveTodoStore(ITodoStore todoStore)
     { await TodoStoreSaver.Execute(todoStore); }
-
     
+    public async Task SavePortalStore(IPortalStore portalStore)
+    { await PortalStoreLoader.Execute(portalStore); }
+
     public async Task BackupFiles()
     {
         var backupDir = $"{PathHelper.StremDataDirectory}/backups";

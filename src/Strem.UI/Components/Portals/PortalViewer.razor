@@ -1,0 +1,71 @@
+﻿@using Strem.Core.Portals
+@using Strem.Core.Types
+
+@inject IJSRuntime JS
+
+<div class="box">
+    <div class="field is-grouped">
+        <div class="control">
+            <button class="button is-info" @onclick="AddButton">Add Button</button>
+        </div>
+        <div class="control">
+            <div class="select">
+                <select @bind="@Portal.ButtonSize">
+                    <EnumSelectOptions EnumType="typeof(ButtonSize)"></EnumSelectOptions>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="portal-page @(Enum.GetName(Portal.ButtonSize).ToLower())">
+        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+            @foreach (var buttonData in Portal.Buttons)
+            {
+                <a class="button portal-button m-3 is-flex is-flex-direction-column" @onclick="() => EditButton(buttonData)" 
+                   style="@GetButtonStyles(buttonData)">
+                    <span class="icon fa-3x m-auto">
+                        <i class="fas @(buttonData.IconClass)"></i>
+                    </span>
+                    <label class="label" style="white-space: break-spaces; color: @(buttonData.TextColor)">@buttonData.Text</label>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<Modal IsVisible="ShowEditModal">
+    <PortalButtonEditor ButtonData="SelectedButton" OnClosed="() => ShowEditModal = false"></PortalButtonEditor>
+</Modal>
+
+@code {
+    [Parameter]
+    public PortalData Portal { get; set; } = new();
+
+    public ButtonData SelectedButton { get; set; } = new ButtonData();
+    public bool ShowEditModal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Task.Run(async () =>
+        {
+            await Task.Delay(100);
+            JS.InvokeVoidAsync("processButtonPicker");
+        });
+    }
+
+    public void AddButton()
+    {
+        var button = new ButtonData();
+        
+        Portal.Buttons.Add(button);
+        EditButton(button);
+    }
+
+    public void EditButton(ButtonData buttonData)
+    {
+        SelectedButton = buttonData;
+        ShowEditModal = true;
+    }
+
+    public string GetButtonStyles(ButtonData buttonData)
+    { return $"background-color: {buttonData.BackgroundColor}; color: {buttonData.TextColor}"; }
+}

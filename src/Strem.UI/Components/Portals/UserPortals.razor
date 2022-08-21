@@ -1,0 +1,92 @@
+﻿@using Strem.Core.Extensions
+@using Strem.Core.Events.Bus
+@using Strem.Core.Events.Flows
+@using System.Reactive.Disposables
+@using Strem.Core.Portals
+
+@inject IPortalStore PortalStore;
+@inject IEventBus EventBus;
+
+@implements IDisposable
+
+<div class="box">
+  <div class="field">
+    <div class="control">
+      <button class="button is-success is-leveled" @onclick="CreateNewPortal">
+        <span class="icon is-small">
+          <i class="fas fa-globe"></i>
+        </span>
+        <span>Add Portal</span>
+      </button>
+    </div>
+  </div>
+  <aside class="menu portal-menu">
+    <ul class="menu-list">
+        @foreach (var portal in PortalStore.Portals)
+        {
+          <li>
+            <a class="is-portal @(SelectedPortalId == portal.Id ? "is-active" : "")"
+               @onclick="() => SelectPortal(portal)">@portal.Name</a>
+          </li>
+        }
+      </ul>
+  </aside>
+</div>
+
+<Modal IsVisible="ShowCreateModal">
+  <PortalCreator OnPortalCreated="OnPortalCreated" OnCancelled="OnPortalCancelled"></PortalCreator>
+</Modal>
+
+@code {
+  [Parameter] 
+  public EventCallback<PortalData> OnPortalSelected { get; set; }
+
+  public bool ShowCreateModal { get; set; } = false;
+  public Guid SelectedPortalId { get; set; }
+
+  private CompositeDisposable _subs = new();
+
+  protected override async Task OnInitializedAsync()
+  {
+    EventBus.Receive<PortalRemovedEvent>()
+      .Subscribe(x => OnPortalHasBeenRemoved())
+      .AddTo(_subs);
+  }
+  
+  public void OnPortalCreated(PortalData newPortal)
+  {
+    PortalStore.Portals.Add(newPortal);
+    SelectPortal(newPortal);
+    ShowCreateModal = false;
+    EventBus.PublishAsync(new FlowAddedEvent(newPortal.Id));
+  }
+
+  public void OnPortalHasBeenRemoved()
+  {
+    SelectedPortalId = Guid.Empty;
+    OnPortalSelected.InvokeAsync(null);
+    InvokeAsync(StateHasChanged);
+  }
+
+  public void OnPortalCancelled()
+  {
+    ShowCreateModal = false;
+  }
+
+  public void SelectPortal(PortalData selectedPortal)
+  {
+    SelectedPortalId = selectedPortal.Id;
+    OnPortalSelected.InvokeAsync(selectedPortal);
+  }
+
+  public void CreateNewPortal()
+  {
+    ShowCreateModal = true;
+  }
+
+  public void Dispose()
+  {
+    _subs?.Dispose();
+  }
+
+}

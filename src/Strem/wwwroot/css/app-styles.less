@@ -139,7 +139,12 @@ body
         {
             background-color: @is-info;
         }
-        
+
+        &.is-portal
+        {
+            background-color: @is-info;
+        }
+
         &.is-trigger
         {
             background-color: @is-success;
@@ -191,4 +196,27 @@ body
 .level-item {
     &.has-text-left { flex-grow: 0 !important; }
     &.has-text-right { flex-grow: 0 !important; }
+}
+
+.portal-page
+{
+    &.small .portal-button { 
+        width: 8rem;
+        height: 8rem;
+    }
+    
+    &.medium .portal-button { 
+        width: 10rem; 
+        height: 10rem; 
+    }
+    
+    &.large .portal-button { 
+        width: 12rem; 
+        height: 12rem; 
+    }
+}
+
+.portal-button {
+    width: 100%;
+    height: 100%;
 }

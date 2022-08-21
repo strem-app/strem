@@ -1,6 +1,4 @@
-﻿using Strem.Core.Todo;
-
-namespace Strem.Core.Flows;
+﻿namespace Strem.Core.Todo;
 
 public class TodoStore : ITodoStore
 {
