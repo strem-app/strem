@@ -67,7 +67,7 @@ public class ApiWebHost : IApiWebHost
             endpoints.MapBlazorHub();
         });
         
-        app.RunAsync($"http://localhost:{ApiHostConfiguration.ApiHostPort}");
+        app.RunAsync($"http://*:{ApiHostConfiguration.ApiHostPort}");
         IsRunning = true;
         Host = app;
     }
