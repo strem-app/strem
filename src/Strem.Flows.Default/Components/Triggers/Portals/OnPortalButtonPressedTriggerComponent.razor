@@ -1,0 +1,59 @@
+﻿@using Strem.Core.Portals
+@using Microsoft.AspNetCore.Components
+@inherits CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Portals.OnPortalButtonPressedTriggerData>
+
+@inject IPortalStore PortalStore
+
+<div class="field">
+    <label class="label">Required Portal</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.RequiredPortalId">
+                @foreach (var portal in PortalStore.Portals)
+                {
+                    <option value="@portal.Id">@(portal.Name)</option>
+                }
+            </select>
+        </div>
+    </div>
+    <HelperInfo>This lets you specify which portal should be used as the trigger</HelperInfo>
+</div>
+@if (Data.RequiredPortalId != Guid.Empty)
+{
+    var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == Data.RequiredPortalId);
+    if (portal != null)
+    {
+        <div class="field">
+            <label class="label">Portal Button</label>
+            <div class="control">
+                <div class="select">
+                    <select @bind="Data.RequiredButtonId">
+                        @foreach (var button in portal.Buttons)
+                        {
+                            <option value="@button.Id">@(button.Name)</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <HelperInfo>This lets you specify which button you want to listen for presses on</HelperInfo>
+        </div>
+    }
+}
+
+@code {
+    public override string Title => GetTitle();
+
+    public string GetTitle()
+    {
+        if(Data.RequiredPortalId == Guid.Empty && Data.RequiredButtonId == Guid.Empty)
+        { return $"On Portal Button Pressed"; }
+
+        var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == Data.RequiredPortalId);
+        if (portal == null){ return "On Portal Button Pressed"; }
+
+        var button = portal.Buttons.SingleOrDefault(x => x.Id == Data.RequiredButtonId);
+        if(button == null) { return "On Portal Button Pressed"; }
+
+        return $"On {button.Name} Pressed In {portal.Name}";
+    }
+}
