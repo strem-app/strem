@@ -1,7 +1,10 @@
 ﻿@using Strem.Core.Portals
 @using Strem.Core.Types
+@using Strem.Core.Web
+@using Strem.Infrastructure.Services.Api
 
 @inject IJSRuntime JS
+@inject IBrowserLoader BrowserLoader
 
 <div class="box">
     <div class="field is-grouped">
@@ -14,6 +17,9 @@
                     <EnumSelectOptions EnumType="typeof(ButtonSize)"></EnumSelectOptions>
                 </select>
             </div>
+        </div>
+        <div class="control">
+            <button class="button" @onclick="ViewPortalInBrowser">View In Browser</button>
         </div>
     </div>
     <div class="portal-page @(Enum.GetName(Portal.ButtonSize).ToLower())">
@@ -64,6 +70,12 @@
     {
         SelectedButton = buttonData;
         ShowEditModal = true;
+    }
+
+    public void ViewPortalInBrowser()
+    {
+        var portalUrl = $"http://localhost:{ApiHostConfiguration.ApiHostPort}/portals/{Portal.Id}";
+        BrowserLoader.LoadUrl(portalUrl);
     }
 
     public string GetButtonStyles(ButtonData buttonData)

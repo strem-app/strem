@@ -1,0 +1,77 @@
+﻿@model Strem.Infrastructure.Models.ViewPortalModel
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+      <title>Portals</title>
+      <link href="/css/bulma.css" rel="stylesheet" />
+      <link href="/css/all.css" rel="stylesheet" />
+      <link href="/css/app-styles.less" rel="stylesheet/less" />
+    </head>
+    <body>
+      <section class="hero is-dark is-fullheight">
+        <div class="hero-body is-align-items-stretch">
+          <div class="container is-fluid">
+            <p class="title">@Model.PortalData.Name</p>
+              <div class="portal-page @(Enum.GetName(@Model.PortalData.ButtonSize).ToLower()) box"
+                   data-portal-id="@Model.PortalData.Id" data-portal-name="@Model.PortalData.Name">
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                  @foreach (var buttonData in Model.PortalData.Buttons)
+                  {
+                    <a data-button-id="@buttonData.Id" data-button-name="@buttonData.Name" class="button portal-button m-3 is-flex is-flex-direction-column"
+                       style="background-color: @buttonData.BackgroundColor; color: @buttonData.TextColor" onclick="sendButtonPress(this)">
+                      <span class="icon fa-3x m-auto">
+                        <i class="fas @(buttonData.IconClass)"></i>
+                      </span>
+                      <label class="label" style="white-space: break-spaces; color: @(buttonData.TextColor)">@buttonData.Text</label>
+                    </a>
+                  }
+                </div>
+              </div>
+          </div>
+        </div>
+      </section>
+    <script type="text/javascript">
+        const portalId = "@Model.PortalData.Id";
+        const portalName = "@Model.PortalData.Name";
+        const buttonPressUrl = '@Url.Action("ButtonPressed")';
+        
+        async function postButtonPress(buttonData) {
+          const payload = {
+              portalId: portalId,
+              portalName: portalName,
+              buttonId: buttonData.Id,
+              buttonName: buttonData.Name
+            };
+          
+          return await fetch(buttonPressUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)            
+          });
+        }
+        
+        function onSuccess() {
+          console.log("Send button success");
+        }
+        
+        function onFailure() {
+          console.error("Error sending button");
+        }
+        
+        function sendButtonPress(element) {
+          const buttonId = element.getAttribute("data-button-id");
+          const buttonName = element.getAttribute("data-button-name");
+          postButtonPress({Id: buttonId, Name: buttonName })
+            .then((response) => { 
+              if (response.ok) { onSuccess(); }
+              else { onFailure(); }
+            })
+            .catch(() => onFailure());
+        }                 
+        
+    </script>
+     <script src="/js/less.min.js" ></script>
+    </body>
+</html>

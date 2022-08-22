@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Microsoft.AspNetCore.StaticFiles;
 using Strem.Core.Extensions;
 using Strem.Infrastructure.ActionFilters;
 
@@ -32,7 +33,6 @@ public class ApiWebHost : IApiWebHost
         foreach (var pluginModule in pluginModules)
         { builder.Services.AddModule(pluginModule.module); }
         
-        
         var mvcBuilder = builder.Services.AddMvcCore();
         mvcBuilder.AddApplicationPart(GetType().Assembly);
         
@@ -54,7 +54,10 @@ public class ApiWebHost : IApiWebHost
         }
         
         app.UseRouting();
-        app.UseStaticFiles();
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            ServeUnknownFileTypes = true
+        });
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
