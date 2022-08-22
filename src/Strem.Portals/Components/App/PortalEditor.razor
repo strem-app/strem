@@ -32,9 +32,9 @@
                 <a class="button portal-button m-3 is-flex is-flex-direction-column" @onclick="() => EditButton(buttonData)" 
                    style="@GetButtonStyles(buttonData)">
                     <span class="icon fa-3x m-auto">
-                        <i class="fas @(buttonData.IconClass)"></i>
+                        <i class="fas @(buttonData.DefaultStyles.IconClass)"></i>
                     </span>
-                    <label class="label" style="white-space: break-spaces; color: @(buttonData.TextColor)">@buttonData.Text</label>
+                    <label class="label" style="white-space: break-spaces; color: @(buttonData.DefaultStyles.TextColor)">@buttonData.DefaultStyles.Text</label>
                 </a>
             }
         </div>
@@ -82,5 +82,5 @@
     }
 
     public string GetButtonStyles(ButtonData buttonData)
-    { return $"background-color: {buttonData.BackgroundColor}; color: {buttonData.TextColor}"; }
+    { return $"background-color: {buttonData.DefaultStyles.BackgroundColor}; color: {buttonData.DefaultStyles.TextColor}"; }
 }

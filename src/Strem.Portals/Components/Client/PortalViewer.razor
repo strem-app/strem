@@ -3,6 +3,8 @@
 @using Strem.Core.Events.Portals
 @using Strem.Core.State
 @using Strem.Portals.Data
+@using Strem.Portals.Data.Overrides
+@using Strem.Portals.Extensions
 
 <section class="hero is-dark is-fullheight">
     <div class="hero-body is-align-items-stretch">
@@ -13,12 +15,13 @@
                 <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
                     @foreach (var buttonData in Portal.Buttons)
                     {
+                        var buttonStyles = ButtonRuntimeStyles.GetButtonStyles(PortalId, buttonData.Id) ?? buttonData.DefaultStyles;
                         <a data-button-id="@buttonData.Id" data-button-name="@buttonData.Name" class="button portal-button m-3 is-flex is-flex-direction-column"
-                           style="background-color: @buttonData.BackgroundColor; color: @buttonData.TextColor" @onclick="() => NotifyButtonPressed(buttonData)">
+                           style="background-color: @buttonStyles.BackgroundColor; color: @buttonStyles.TextColor" @onclick="() => NotifyButtonPressed(buttonData)">
                             <span class="icon fa-3x m-auto">
-                                <i class="fas @(buttonData.IconClass)"></i>
+                                <i class="fas @buttonStyles.IconClass"></i>
                             </span>
-                            <label class="label" style="white-space: break-spaces; color: @(buttonData.TextColor)">@buttonData.Text</label>
+                            <label class="label" style="white-space: break-spaces; color: @(@buttonStyles.TextColor)">@buttonStyles.Text</label>
                         </a>
                     }
                 </div>
@@ -30,15 +33,17 @@
 @code {
     [Parameter]
     public Guid PortalId { get; set; }
-  
+    public PortalData Portal { get; set; }
+    
+    public ButtonRuntimeStyles ButtonRuntimeStyles { get; set; }
     public IEventBus EventBus { get; set; }
     public IAppState AppState { get; set; }
-    public PortalData Portal { get; set; }
-  
+    
     protected override async Task OnInitializedAsync()
     {
         EventBus = WebHostHackExtensions.ServiceLocator.GetService<IEventBus>();
         AppState = WebHostHackExtensions.ServiceLocator.GetService<IAppState>();
+        ButtonRuntimeStyles = WebHostHackExtensions.ServiceLocator.GetService<ButtonRuntimeStyles>();
         
         var portalStore = WebHostHackExtensions.ServiceLocator.GetService<IPortalStore>();
         Portal = portalStore.Portals.SingleOrDefault(x => x.Id == PortalId);

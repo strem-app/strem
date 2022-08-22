@@ -11,25 +11,25 @@
 <div class="field">
     <label class="label">Button Text</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e Play A Meme" @bind-value="ButtonData.Text"/>
+        <input class="input" type="text" placeholder="i.e Play A Meme" @bind-value="ButtonData.DefaultStyles.Text"/>
     </div>
 </div>
 <div class="field">
     <label class="label">Button Color</label>
     <div class="control">
-        <input class="input" type="color" @bind-value="ButtonData.BackgroundColor" />
+        <input class="input" type="color" @bind-value="ButtonData.DefaultStyles.BackgroundColor" />
     </div>
 </div>
 <div class="field">
     <label class="label">Text Color</label>
     <div class="control">
-        <input class="input" type="color" @bind-value="ButtonData.TextColor" />
+        <input class="input" type="color" @bind-value="ButtonData.DefaultStyles.TextColor" />
     </div>
 </div>
 <label class="label">Icon Style</label>
 <div class="field">
     <div class="control">
-        <IconPicker @bind-Icon="ButtonData.IconClass"></IconPicker>
+        <IconPicker @bind-Icon="ButtonData.DefaultStyles.IconClass"></IconPicker>
     </div>
 </div>
 <div class="field is-grouped">
