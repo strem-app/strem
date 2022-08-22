@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Microsoft.AspNetCore.StaticFiles;
 using Strem.Core.Extensions;
 using Strem.Infrastructure.ActionFilters;
 
@@ -24,6 +23,7 @@ public class ApiWebHost : IApiWebHost
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddRouting();
         builder.Services.AddRazorPages();
+        builder.Services.AddServerSideBlazor();
         builder.Services.AddControllersWithViews(x =>
         {
             x.Filters.Add<LogActionFilter>();
@@ -54,14 +54,19 @@ public class ApiWebHost : IApiWebHost
         }
         
         app.UseRouting();
+        app.UseStaticFiles();
         app.UseStaticFiles(new StaticFileOptions
         {
-            ServeUnknownFileTypes = true
+            ServeUnknownFileTypes = true,
         });
+        
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+            endpoints.MapRazorPages();
+            endpoints.MapBlazorHub();
         });
+        
         app.RunAsync($"http://localhost:{ApiHostConfiguration.ApiHostPort}");
         IsRunning = true;
         Host = app;
