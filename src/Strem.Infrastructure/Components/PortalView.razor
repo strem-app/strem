@@ -1,0 +1,57 @@
+﻿@using Strem.Core.Portals
+@using Strem.Infrastructure.Extensions
+@using Strem.Core.Events.Bus
+@using Strem.Core.Events.Portals
+@using Strem.Core.State
+
+<section class="hero is-dark is-fullheight">
+    <div class="hero-body is-align-items-stretch">
+        <div class="container is-fluid">
+            <p class="title">@Portal.Name</p>
+            <div class="portal-page @(Enum.GetName(Portal.ButtonSize).ToLower()) box"
+                 data-portal-id="@Portal.Id" data-portal-name="@Portal.Name">
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                    @foreach (var buttonData in Portal.Buttons)
+                    {
+                        <a data-button-id="@buttonData.Id" data-button-name="@buttonData.Name" class="button portal-button m-3 is-flex is-flex-direction-column"
+                           style="background-color: @buttonData.BackgroundColor; color: @buttonData.TextColor" @onclick="() => NotifyButtonPressed(buttonData)">
+                            <span class="icon fa-3x m-auto">
+                                <i class="fas @(buttonData.IconClass)"></i>
+                            </span>
+                            <label class="label" style="white-space: break-spaces; color: @(buttonData.TextColor)">@buttonData.Text</label>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public Guid PortalId { get; set; }
+  
+    public IEventBus EventBus { get; set; }
+    public IAppState AppState { get; set; }
+    public PortalData Portal { get; set; }
+  
+    protected override async Task OnInitializedAsync()
+    {
+        EventBus = WebHostHackExtensions.ServiceLocator.GetService<IEventBus>();
+        AppState = WebHostHackExtensions.ServiceLocator.GetService<IAppState>();
+        
+        var portalStore = WebHostHackExtensions.ServiceLocator.GetService<IPortalStore>();
+        Portal = portalStore.Portals.SingleOrDefault(x => x.Id == PortalId);
+    }
+
+    public void NotifyButtonPressed(ButtonData buttonData)
+    {
+        EventBus.PublishAsync(new ButtonPressedEvent
+        {
+            PortalId = Portal.Id,
+            PortalName = Portal.Name,
+            ButtonId = buttonData.Id,
+            ButtonName = buttonData.Name
+        });
+    }
+}
