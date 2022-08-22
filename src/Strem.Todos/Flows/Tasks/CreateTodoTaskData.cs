@@ -1,8 +1,8 @@
 ﻿using Strem.Core.Flows.Tasks;
-using Strem.Core.Todo;
 using Strem.Core.Types;
+using Strem.Todos.Data;
 
-namespace Strem.Flows.Default.Flows.Tasks.Todos;
+namespace Strem.Todos.Flows.Tasks;
 
 public class CreateTodoTaskData : IFlowTaskData
 {

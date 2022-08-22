@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Types;
+using Strem.Portals.Types;
 
 namespace Strem.Portals.Data;
 

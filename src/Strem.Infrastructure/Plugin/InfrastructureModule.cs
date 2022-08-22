@@ -19,21 +19,18 @@ using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Core.Threading;
-using Strem.Core.Todo;
 using Strem.Core.Utils;
 using Strem.Core.Variables;
 using Strem.Core.Web;
-using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services;
 using Strem.Infrastructure.Services.Api;
 using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.Flows;
-using Strem.Infrastructure.Services.Persistence.Todos;
 using Strem.Infrastructure.Services.Persistence.User;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 
-namespace Strem.Infrastructure.Modules;
+namespace Strem.Infrastructure.Plugin;
 
 public class InfrastructureModule : IRequiresApiHostingModule
 {
@@ -82,14 +79,11 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<ILoadUserDataPipeline, LoadUserDataPipeline>();
         services.AddSingleton<ILoadFlowStorePipeline, LoadFlowStorePipeline>();
         services.AddSingleton<ISaveFlowStorePipeline, SaveFlowStorePipeline>();
-        services.AddSingleton<ILoadTodoStorePipeline, LoadTodoStorePipeline>();
-        services.AddSingleton<ISaveTodoStorePipeline, SaveTodoStorePipeline>();
 
         // State/Stores
         services.AddSingleton<IAppFileHandler, AppFileHandler>();
         services.AddSingleton<IAppState>(LoadAppState);
         services.AddSingleton<IFlowStore>(LoadFlowStore);
-        services.AddSingleton<ITodoStore>(LoadTodoStore);
         
         // Flows
         services.AddSingleton<IFlowStringProcessor, FlowStringProcessor>();
@@ -117,12 +111,6 @@ public class InfrastructureModule : IRequiresApiHostingModule
     {
         var stateFileHandler = services.GetService<IAppFileHandler>();
         return Task.Run(async () => await stateFileHandler.LoadFlowStore()).Result;
-    }
-    
-    public ITodoStore LoadTodoStore(IServiceProvider services)
-    {
-        var stateFileHandler = services.GetService<IAppFileHandler>();
-        return Task.Run(async () => await stateFileHandler.LoadTodoStore()).Result;
     }
     
     public Serilog.ILogger SetupLogger()

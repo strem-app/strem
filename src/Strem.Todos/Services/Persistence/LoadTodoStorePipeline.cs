@@ -1,11 +1,11 @@
 ﻿using Persistity.Core.Serialization;
 using Persistity.Encryption;
 using Persistity.Flow.Builders;
-using Strem.Core.Flows;
-using Strem.Core.Todo;
+using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.Generic;
+using Strem.Todos.Data;
 
-namespace Strem.Infrastructure.Services.Persistence.Todos;
+namespace Strem.Todos.Services.Persistence;
 
 public class LoadTodoStorePipeline : LoadDataPipeline<TodoStore>, ILoadTodoStorePipeline
 {

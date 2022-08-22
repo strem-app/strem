@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Types;
+﻿namespace Strem.Portals.Types;
 
 public enum ButtonSize
 {

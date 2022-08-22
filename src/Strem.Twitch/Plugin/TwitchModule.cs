@@ -1,9 +1,7 @@
-﻿using Strem.Core.DI;
-using Strem.Core.Extensions;
+﻿using Strem.Core.Extensions;
 using Strem.Core.Flows.Registries.Integrations;
 using Strem.Core.Plugins;
 using Strem.Infrastructure.Services.Api;
-using Strem.Twitch.Plugin;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Services.OAuth;
 using TwitchLib.Api;
@@ -14,7 +12,7 @@ using TwitchLib.Client.Interfaces;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Models;
 
-namespace Strem.Twitch.Modules;
+namespace Strem.Twitch.Plugin;
 
 public class TwitchModule : IRequiresApiHostingModule
 {

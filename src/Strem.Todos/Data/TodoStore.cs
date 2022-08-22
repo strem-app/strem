@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Todo;
+﻿namespace Strem.Todos.Data;
 
 public class TodoStore : ITodoStore
 {

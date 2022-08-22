@@ -1,16 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows;
-using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
-using Strem.Core.Todo;
 using Strem.Core.Variables;
-using Strem.Flows.Default.Flows.Tasks.Utility;
+using Strem.Todos.Data;
 
-namespace Strem.Flows.Default.Flows.Tasks.Todos;
+namespace Strem.Todos.Flows.Tasks;
 
 public class CreateTodoTask : FlowTask<CreateTodoTaskData>
 {

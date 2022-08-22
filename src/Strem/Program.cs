@@ -11,11 +11,12 @@ using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Flows.Default.Modules;
 using Strem.Infrastructure.Extensions;
-using Strem.Infrastructure.Modules;
+using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
 using Strem.OBS.Modules;
 using Strem.Portals.Plugin;
-using Strem.Twitch.Modules;
+using Strem.Todos.Plugin;
+using Strem.Twitch.Plugin;
 using Strem.UI;
 
 namespace Strem;
@@ -30,6 +31,7 @@ public class Program
         Assembly _;
         _ = typeof(InfrastructureModule).Assembly;
         _ = typeof(PortalsModule).Assembly;
+        _ = typeof(TodoModule).Assembly;
         _ = typeof(DefaultFlowsModule).Assembly;
         _ = typeof(TwitchModule).Assembly;
         _ = typeof(OBSModule).Assembly;

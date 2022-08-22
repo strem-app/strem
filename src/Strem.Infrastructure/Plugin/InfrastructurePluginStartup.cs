@@ -6,7 +6,6 @@ using Strem.Core.Extensions;
 using Strem.Core.Flows;
 using Strem.Core.Plugins;
 using Strem.Core.State;
-using Strem.Core.Todo;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Services.Persistence;
 
@@ -20,17 +19,15 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
     public IFlowStore FlowStore { get; }
-    public ITodoStore TodoStore { get; }
     public ILogger<InfrastructurePluginStartup> Logger { get; }
 
-    public InfrastructurePluginStartup(IAppFileHandler appFileHandler, IEventBus eventBus, IAppState appState, IFlowStore flowStore, ILogger<InfrastructurePluginStartup> logger, ITodoStore todoStore)
+    public InfrastructurePluginStartup(IAppFileHandler appFileHandler, IEventBus eventBus, IAppState appState, IFlowStore flowStore, ILogger<InfrastructurePluginStartup> logger)
     {
         AppFileHandler = appFileHandler;
         EventBus = eventBus;
         AppState = appState;
         FlowStore = flowStore;
         Logger = logger;
-        TodoStore = todoStore;
     }
 
     public async Task StartPlugin()
@@ -59,7 +56,6 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
             .Subscribe(x =>
             {
                 AppFileHandler.SaveFlowStore(FlowStore);
-                AppFileHandler.SaveTodoStore(TodoStore);
             })
             .AddTo(_subs);
 

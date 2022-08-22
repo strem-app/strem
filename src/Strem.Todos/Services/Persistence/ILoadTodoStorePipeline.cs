@@ -1,8 +1,7 @@
-using Strem.Core.Flows;
-using Strem.Core.Todo;
 using Strem.Infrastructure.Services.Persistence.Generic;
+using Strem.Todos.Data;
 
-namespace Strem.Infrastructure.Services.Persistence.Todos;
+namespace Strem.Todos.Services.Persistence;
 
 public interface ILoadTodoStorePipeline : ILoadDataPipeline<TodoStore>
 {

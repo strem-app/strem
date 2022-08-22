@@ -1,5 +1,5 @@
-﻿@using Strem.Core.Todo
-@using Strem.Core.Web
+﻿@using Strem.Core.Web
+@using Strem.Todos.Data
 
 @inject IBrowserLoader BrowserLoader;
 
@@ -47,11 +47,11 @@
 
     public int GetProgress(TodoData todo)
     {
-        var timeLeft = todo.ExpiryDate - todo.CreatedDate;
+        var timeLeft = todo.ExpiryDate - DateTime.Now;
         var totalHoursLeft = timeLeft.TotalHours;
         if(totalHoursLeft > 24) { return 100; }
         var percentage = (totalHoursLeft / 24) * 100;
-        return (int)percentage; //(int)Math.Ceiling(Math.Abs(percentage - 100));
+        return (int)percentage;
     }
 
     public string GetProgressStyle(int progress)
@@ -70,8 +70,10 @@
 
     public string GetHoursLeftReading(TodoData todo)
     {
-        var hoursLeft = (int)(todo.ExpiryDate - todo.CreatedDate).TotalHours;
-        return hoursLeft > 24 ? "24+" : hoursLeft.ToString();
+        var hoursLeft = (int)(todo.ExpiryDate - DateTime.Now).TotalHours;
+        if(hoursLeft > 24) { return "24+"; }
+        if(hoursLeft < 0) { return "0"; }
+        return hoursLeft.ToString();
     }
 
     public string GetDescription(TodoData todo)

@@ -1,12 +1,10 @@
 ﻿using System.IO.Compression;
 using Strem.Core.Flows;
 using Strem.Core.State;
-using Strem.Core.Todo;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.Flows;
-using Strem.Infrastructure.Services.Persistence.Todos;
 using Strem.Infrastructure.Services.Persistence.User;
 
 namespace Strem.Infrastructure.Services.Persistence;
@@ -21,12 +19,9 @@ public class AppFileHandler : IAppFileHandler
     
     public ILoadFlowStorePipeline FlowStoreLoader { get; }
     public ISaveFlowStorePipeline FlowStoreSaver { get; }
-    
-    public ILoadTodoStorePipeline TodoStoreLoader { get; }
-    public ISaveTodoStorePipeline TodoStoreSaver { get; }
 
 
-    public AppFileHandler(ISaveUserDataPipeline userDataSaver, ISaveAppDataPipeline appDataSaver, ILoadUserDataPipeline userDataLoader, ILoadAppDataPipeline appDataLoader, ILoadFlowStorePipeline flowStoreLoader, ISaveFlowStorePipeline flowStoreSaver, ILoadTodoStorePipeline todoStoreLoader, ISaveTodoStorePipeline todoStoreSaver)
+    public AppFileHandler(ISaveUserDataPipeline userDataSaver, ISaveAppDataPipeline appDataSaver, ILoadUserDataPipeline userDataLoader, ILoadAppDataPipeline appDataLoader, ILoadFlowStorePipeline flowStoreLoader, ISaveFlowStorePipeline flowStoreSaver)
     {
         UserDataSaver = userDataSaver;
         AppDataSaver = appDataSaver;
@@ -34,8 +29,6 @@ public class AppFileHandler : IAppFileHandler
         AppDataLoader = appDataLoader;
         FlowStoreLoader = flowStoreLoader;
         FlowStoreSaver = flowStoreSaver;
-        TodoStoreLoader = todoStoreLoader;
-        TodoStoreSaver = todoStoreSaver;
     }
 
     public async Task CreateAppFilesIfMissing()
@@ -54,10 +47,6 @@ public class AppFileHandler : IAppFileHandler
         var flowStoreFilePath = FlowStoreSaver.DataFilePath;
         if (!File.Exists(flowStoreFilePath))
         { await FlowStoreSaver.Execute(new FlowStore()); }
-        
-        var todoStoreFilePath = TodoStoreSaver.DataFilePath;
-        if (!File.Exists(todoStoreFilePath))
-        { await TodoStoreSaver.Execute(new TodoStore()); }
     }
     
     public async Task<AppState> LoadAppState()
@@ -80,13 +69,6 @@ public class AppFileHandler : IAppFileHandler
         return flowStore ?? new FlowStore();
     }
 
-    public async Task<TodoStore> LoadTodoStore()
-    {
-        await CreateAppFilesIfMissing();
-        var todoStore = await TodoStoreLoader.Execute();
-        return todoStore ?? new TodoStore();
-    }
-
     public async Task SaveAppState(IAppState appState)
     { await AppDataSaver.Execute(appState.AppVariables); }
     
@@ -95,9 +77,6 @@ public class AppFileHandler : IAppFileHandler
 
     public async Task SaveFlowStore(IFlowStore flowStore)
     { await FlowStoreSaver.Execute(flowStore); }
-
-    public async Task SaveTodoStore(ITodoStore todoStore)
-    { await TodoStoreSaver.Execute(todoStore); }
     
     public async Task BackupFiles()
     {

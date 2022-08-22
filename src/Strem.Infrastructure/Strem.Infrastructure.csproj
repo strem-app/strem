@@ -26,4 +26,8 @@
       <_ContentIncludedByDefault Remove="Views\Portals\View.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\Persistence\Todos" />
+    </ItemGroup>
+
 </Project>
