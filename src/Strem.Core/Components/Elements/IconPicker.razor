@@ -1,0 +1,25 @@
+﻿
+<div class="field has-addons">
+    <div class="control">
+        <input class="input is-icon-picker" type="text" value="@Icon" @onchange="OnIconChanged"/>
+    </div>
+    <div class="control">
+        <a class="button is-static">
+            <span class="icon">
+                <i class="@(Icon)"></i>
+            </span>
+        </a>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string Icon { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> IconChanged { get; set; }
+
+    private void OnIconChanged(ChangeEventArgs e)
+    { IconChanged.InvokeAsync(e.Value.ToString()); }
+}

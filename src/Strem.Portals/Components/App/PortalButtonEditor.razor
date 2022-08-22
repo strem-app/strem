@@ -27,16 +27,9 @@
     </div>
 </div>
 <label class="label">Icon Style</label>
-<div class="field has-addons">
+<div class="field">
     <div class="control">
-        <input class="input is-icon-picker" type="text" value="@ButtonData.IconClass" @onchange="OnIconChanged"/>
-    </div>
-    <div class="control">
-        <a class="button is-static">
-            <span class="icon">
-                <i class="@(ButtonData.IconClass)"></i>
-            </span>
-        </a>
+        <IconPicker @bind-Icon="ButtonData.IconClass"></IconPicker>
     </div>
 </div>
 <div class="field is-grouped">
@@ -51,9 +44,4 @@
 
     [Parameter] 
     public EventCallback OnClosed { get; set; }
-
-    private void OnIconChanged(ChangeEventArgs e)
-    {
-        ButtonData.IconClass = e.Value.ToString();
-    }
 }

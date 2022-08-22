@@ -17,7 +17,7 @@
 function processButtonPicker()
 {
     $('.is-icon-picker').iconpicker({
-        placement: 'right',
+        placement: 'top',
         hideOnSelect: true,
         inputSearch: true
     })
