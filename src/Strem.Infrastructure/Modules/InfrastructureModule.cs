@@ -6,19 +6,17 @@ using Persistity.Encryption;
 using Persistity.Flow.Builders;
 using Persistity.Serializers.Json;
 using Serilog;
-using Strem.Core.DI;
 using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows;
 using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
-using Strem.Core.Flows.Registries;
 using Strem.Core.Flows.Registries.Integrations;
+using Strem.Core.Flows.Registries.Menus;
 using Strem.Core.Flows.Registries.Tasks;
 using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Plugins;
-using Strem.Core.Portals;
 using Strem.Core.State;
 using Strem.Core.Threading;
 using Strem.Core.Todo;
@@ -31,7 +29,6 @@ using Strem.Infrastructure.Services.Api;
 using Strem.Infrastructure.Services.Persistence;
 using Strem.Infrastructure.Services.Persistence.App;
 using Strem.Infrastructure.Services.Persistence.Flows;
-using Strem.Infrastructure.Services.Persistence.Portals;
 using Strem.Infrastructure.Services.Persistence.Todos;
 using Strem.Infrastructure.Services.Persistence.User;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
@@ -87,15 +84,12 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<ISaveFlowStorePipeline, SaveFlowStorePipeline>();
         services.AddSingleton<ILoadTodoStorePipeline, LoadTodoStorePipeline>();
         services.AddSingleton<ISaveTodoStorePipeline, SaveTodoStorePipeline>();
-        services.AddSingleton<ILoadPortalStorePipeline, LoadPortalStorePipeline>();
-        services.AddSingleton<ISavePortalStorePipeline, SavePortalStorePipeline>();
 
         // State/Stores
         services.AddSingleton<IAppFileHandler, AppFileHandler>();
         services.AddSingleton<IAppState>(LoadAppState);
         services.AddSingleton<IFlowStore>(LoadFlowStore);
         services.AddSingleton<ITodoStore>(LoadTodoStore);
-        services.AddSingleton<IPortalStore>(LoadPortalStore);
         
         // Flows
         services.AddSingleton<IFlowStringProcessor, FlowStringProcessor>();
@@ -103,6 +97,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<ITaskRegistry, TaskRegistry>();
         services.AddSingleton<ITriggerRegistry, TriggerRegistry>();
         services.AddSingleton<IIntegrationRegistry, IntegrationRegistry>();
+        services.AddSingleton<IMenuRegistry, MenuRegistry>();
         services.AddSingleton<IFlowExecutionEngine, IFlowExecutor, FlowExecutionEngine>();
         
         // Input
@@ -128,12 +123,6 @@ public class InfrastructureModule : IRequiresApiHostingModule
     {
         var stateFileHandler = services.GetService<IAppFileHandler>();
         return Task.Run(async () => await stateFileHandler.LoadTodoStore()).Result;
-    }
-    
-    public IPortalStore LoadPortalStore(IServiceProvider services)
-    {
-        var stateFileHandler = services.GetService<IAppFileHandler>();
-        return Task.Run(async () => await stateFileHandler.LoadPortalStore()).Result;
     }
     
     public Serilog.ILogger SetupLogger()

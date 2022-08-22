@@ -21,4 +21,9 @@
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\PortalView.razor" />
+      <_ContentIncludedByDefault Remove="Views\Portals\View.cshtml" />
+    </ItemGroup>
+
 </Project>

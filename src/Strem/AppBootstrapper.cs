@@ -13,15 +13,6 @@ namespace Strem;
 
 public class AppBootstrapper
 {
-    public static Type[] GetAllDependencyModules()
-    {
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        
-        return assemblies
-            .SelectMany(x => x.GetTypes().WhereClassesImplement(typeof(IDependencyModule)))
-            .ToArray();
-    }
-    
     public static void StartAppSetup(PhotinoBlazorApp app, PhotinoWindow window, string[] startupErrors)
     {
         var pluginBootstrapper = new PluginBootstrapper(app.Services);

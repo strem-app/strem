@@ -14,6 +14,7 @@ using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Modules;
 using Strem.Infrastructure.Services.Api;
 using Strem.OBS.Modules;
+using Strem.Portals.Plugin;
 using Strem.Twitch.Modules;
 using Strem.UI;
 
@@ -28,6 +29,7 @@ public class Program
     {
         Assembly _;
         _ = typeof(InfrastructureModule).Assembly;
+        _ = typeof(PortalsModule).Assembly;
         _ = typeof(DefaultFlowsModule).Assembly;
         _ = typeof(TwitchModule).Assembly;
         _ = typeof(OBSModule).Assembly;
@@ -39,7 +41,7 @@ public class Program
     {
         LoadAllPluginModules();
         var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
-        var dependencyModules = AppBootstrapper.GetAllDependencyModules();
+        var dependencyModules = AppDomain.CurrentDomain.GetAllTypesImplementing<IDependencyModule>();
         appBuilder.Services.AddModules(dependencyModules);
         appBuilder.RootComponents.Add<App>("#app");
         return appBuilder.Build();

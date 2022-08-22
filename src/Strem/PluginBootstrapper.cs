@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Registries.Integrations;
+using Strem.Core.Flows.Registries.Menus;
 using Strem.Core.Flows.Registries.Tasks;
 using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Plugins;
@@ -40,6 +41,10 @@ public class PluginBootstrapper
         var integrationRegistry = services.GetService<IIntegrationRegistry>();
         var integrationDescriptors = services.GetServices<IIntegrationDescriptor>();
         integrationRegistry?.AddMany(integrationDescriptors);
+        
+        var menuRegistry = services.GetService<IMenuRegistry>();
+        var menuDescriptors = services.GetServices<MenuDescriptor>();
+        menuRegistry?.AddMany(menuDescriptors);
         
         executionEngine?.StartEngine();
     }

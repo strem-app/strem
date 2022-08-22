@@ -1,4 +1,10 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@using Strem.Core.Extensions
+@using Strem.Core.DI
+@{
+    var assemblies = AppDomain.CurrentDomain.GetAllAssembliesThatContain<IDependencyModule>();
+}
+
+<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="assemblies">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
         <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
