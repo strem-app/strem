@@ -12,7 +12,7 @@
 
 @implements IDisposable
 
-@foreach (var data in Flow.TaskData)
+@foreach (var data in TaskData)
 {
     <li draggable="true"
         class="block @(DragEnter?.Id == data.Id ? "drag-enter-target" : "")"
@@ -27,11 +27,22 @@
         <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)"
                        OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
     </li>
+    
+    if (data is IHasSubTaskData subTaskData && subTaskData.SubTaskKeys.Length > 0)
+    {
+        foreach (var subKey in subTaskData.SubTaskKeys)
+        {
+            <ul class="sub-tasks">
+                <p class="menu-label">@subKey</p>
+                <FlowTaskEditor TaskData="@subTaskData.SubTasks[subKey]" />
+            </ul>
+        }
+    }
 }
 
 @code {
     [Parameter]
-    public Flow Flow { get; set; }
+    public List<IFlowTaskData> TaskData { get; set; }
     
     public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
     public IFlowTask GetTaskFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).Task;
@@ -45,7 +56,7 @@
 
     public void RemoveTaskData(IFlowTaskData data)
     {
-        Flow.TaskData.Remove(data);
+        TaskData.Remove(data);
     }
     
     protected override Task OnInitializedAsync()
@@ -78,15 +89,15 @@
         if (DraggedItem == null) return;
         if (DraggedItem == dropTarget) return;
         
-        var friendIndex = Flow.TaskData.IndexOf(dropTarget);
-        Flow.TaskData.Swap(friendIndex, DraggedItemIndex);
+        var friendIndex = TaskData.IndexOf(dropTarget);
+        TaskData.Swap(friendIndex, DraggedItemIndex);
         DraggedItem=null;
     }
 
     public void  OnDragStart(IFlowTaskData item)
     {
         DraggedItem = item;
-        DraggedItemIndex = Flow.TaskData.IndexOf(item);
+        DraggedItemIndex = TaskData.IndexOf(item);
     }
 
     public void OnDragEnterElement(IFlowTaskData item)

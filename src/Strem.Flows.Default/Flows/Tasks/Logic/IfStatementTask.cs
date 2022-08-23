@@ -1,12 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows;
 using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
-using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Types;
 
@@ -36,7 +34,8 @@ public class IfStatementTask : FlowTask<IfStatementTaskData>
             NumericalComparison(data, flowVars) : 
             TextualComparison(data, flowVars);
 
-        return doesMatch ? ExecutionResult.Success() : ExecutionResult.Failed();
+        var activatedSubTasks = doesMatch ? IfStatementTaskData.MatchSubTaskKey : IfStatementTaskData.NoMatchSubTaskKey;
+        return ExecutionResult.Success(activatedSubTasks);
     }
 
     public bool NumericalComparison(IfStatementTaskData data, IVariables flowVars)
