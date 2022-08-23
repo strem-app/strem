@@ -1,5 +1,7 @@
 ﻿@using Strem.Portals.Data
 @using Microsoft.AspNetCore.Components
+@using Strem.Core.Extensions
+@using Strem.Portals.Types
 
 <h3 class="title is-3 has-text-black">Edit Button</h3>
 <div class="field">
@@ -26,12 +28,45 @@
         <input class="input" type="color" @bind-value="ButtonData.DefaultStyles.TextColor" />
     </div>
 </div>
-<label class="label">Icon Style</label>
 <div class="field">
-    <div class="control">
-        <IconPicker @bind-Icon="ButtonData.DefaultStyles.IconClass"></IconPicker>
+    <label class="label">Button Type</label>
+    <div class="select">
+        <select @bind="ButtonData.DefaultStyles.ButtonType">
+            <EnumSelectOptions EnumType="typeof(ButtonType)"></EnumSelectOptions>
+        </select>
     </div>
 </div>
+
+@if (ButtonData.DefaultStyles.ButtonType == ButtonType.IconButton)
+{
+    <label class="label">Icon Style</label>
+    <div class="field">
+        <div class="control">
+            <IconPicker @bind-Icon="ButtonData.DefaultStyles.IconClass"></IconPicker>
+        </div>
+    </div>
+}
+else if (ButtonData.DefaultStyles.ButtonType == ButtonType.ImageButton)
+{
+    <label class="label">Icon Image</label>
+    <div class="field">
+        <div class="control has-icons-left">
+            <input class="input" type="text" @bind="ButtonData.DefaultStyles.ImageUrl"/>
+            <span class="icon is-small is-left">
+                <i class="fas fa-image"></i>
+            </span>
+        </div>
+        <HelperInfo>This can be a url to a file online or a local file</HelperInfo>
+    </div>
+    <div class="field">
+        <div class="control">
+            <figure class="image is-128x128">
+                <img alt="@ButtonData.DefaultStyles.Text" src="@ButtonData.DefaultStyles.ImageUrl.GetImageUrl()" class="is-full"/>
+            </figure>
+        </div>
+    </div>
+}
+
 <div class="field is-grouped">
   <div class="control">
     <button class="button is-primary" @onclick="() => OnClosed.InvokeAsync()">Close</button>
