@@ -13,7 +13,7 @@ using Strem.Flows.Default.Modules;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
-using Strem.OBS.Modules;
+using Strem.OBS.Plugin;
 using Strem.Portals.Plugin;
 using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;

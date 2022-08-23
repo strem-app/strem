@@ -3,11 +3,9 @@ using Strem.Core.DI;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Registries.Integrations;
 using Strem.Core.Plugins;
-using Strem.Infrastructure.Services.Api;
-using Strem.OBS.Plugin;
 using Strem.OBS.Services.Client;
 
-namespace Strem.OBS.Modules;
+namespace Strem.OBS.Plugin;
 
 public class OBSModule : IDependencyModule
 {
