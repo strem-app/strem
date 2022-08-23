@@ -1,0 +1,36 @@
+﻿@using Strem.Core.Flows
+@using Strem.Core.Flows.Registries.Tasks
+@using Strem.Core.Flows.Tasks
+@using Strem.Core.Extensions
+@using Strem.Core.Events.Bus
+@using Strem.Core.Events.Flows.Tasks
+@using System.Reactive.Disposables
+@using System.Reactive.Linq
+
+@typeparam TData
+
+@implements IDisposable
+
+    <li draggable="true"
+        class="block @(DragController.LastEnteredObject.Equals(Data) ? "drag-enter-target" : "")"
+        ondragover="event.preventDefault()"
+        @ondragstart="@(() => DragController.OnDragStart(Data))"
+        @ondrop="@(() => DragController.OnDropOverElement(Data))"
+        @ondragenter="@(() => DragController.OnDragEnterElement(Data))"
+        @ondragend="DragController.OnDragEnd">
+        @ChildContent
+    </li>
+
+@code {
+    [Parameter]
+    public DragController DragController { get; set; }
+    
+    [Parameter]
+    public string Context { get; set; }
+    
+    [Parameter]
+    public TData Data { get; set; }
+    
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}
