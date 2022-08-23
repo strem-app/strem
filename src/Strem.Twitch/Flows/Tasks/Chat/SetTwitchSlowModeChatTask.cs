@@ -3,6 +3,7 @@ using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
@@ -29,14 +30,16 @@ public class SetTwitchSlowModeChatTask : FlowTask<SetTwitchSlowModeChatTaskData>
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ModerateChannel);
 
-    public override async Task<bool> Execute(SetTwitchSlowModeChatTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(SetTwitchSlowModeChatTaskData data, IVariables flowVars)
     {
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var processedChannel = FlowStringProcessor.Process(channel, flowVars);
+        var hadIssue = false;
         if (!FlowStringProcessor.TryProcessInt(data.TimeoutValue, flowVars, out var timeValue))
         {
             Logger.Warning("Unable to process timeoutValue in SetTwitchEmoteOnlyChatTask");
             timeValue = 1;
+            hadIssue = true;
         }
 
         var timeout = data.TimeoutUnit.ToTimeSpan(timeValue);
@@ -46,6 +49,6 @@ public class SetTwitchSlowModeChatTask : FlowTask<SetTwitchSlowModeChatTaskData>
         else
         { TwitchClient.SlowModeOff(processedChannel); }
         
-        return true;
+        return hadIssue ? ExecutionResult.FailedButContinue : ExecutionResult.Success;
     }
 }

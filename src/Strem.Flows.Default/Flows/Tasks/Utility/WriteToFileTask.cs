@@ -56,24 +56,24 @@ public class WriteToFileTask : FlowTask<WriteToFileTaskData>
         await File.AppendAllLinesAsync(data.FilePath, new []{processedContent});
     }
     
-    public override async Task<bool> Execute(WriteToFileTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(WriteToFileTaskData data, IVariables flowVars)
     {
         if (string.IsNullOrEmpty(data.FilePath))
         {
             Logger.Warning("No path provided for Write To Path task");
-            return false;
+            return ExecutionResult.Failed;
         }
         
         CreateFileIfNeeded(data.FilePath);
         try
         {
             await WriteToFile(data, flowVars);
-            return true;
+            return ExecutionResult.Success;
         }
         catch (Exception ex)
         {
             Logger.Error($"Error writing to File [{data.FilePath}]: {ex.Message}");
-            return false;
+            return ExecutionResult.Failed;
         }
     }
 }

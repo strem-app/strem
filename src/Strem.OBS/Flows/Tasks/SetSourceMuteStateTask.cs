@@ -4,6 +4,7 @@ using Strem.Core.Events.Bus;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.OBS.Extensions;
 using Strem.OBS.Services.Client;
@@ -29,7 +30,7 @@ public class SetSourceMuteStateTask : FlowTask<SetSourceMuteStateTaskData>
 
     public override bool CanExecute() => AppState.HasOBSHost();
 
-    public override async Task<bool> Execute(SetSourceMuteStateTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(SetSourceMuteStateTaskData data, IVariables flowVars)
     {
         var muted = false;   
         if (data.Status == MuteStatus.Unmute) { muted = false; }
@@ -41,6 +42,6 @@ public class SetSourceMuteStateTask : FlowTask<SetSourceMuteStateTaskData>
         }
 
         await ObsClient.SetMute(data.SourceName, muted);
-        return true;
+        return ExecutionResult.Success;
     }
 }

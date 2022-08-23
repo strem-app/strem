@@ -2,10 +2,13 @@
 
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
+@using Strem.Core.Events.Bus
 @using Strem.Core.Extensions
 @using Strem.Todos.Data
+@using Strem.Todos.Events
 
 @inject ITodoStore TodoStore;
+@inject IEventBus EventBus;
 
 @implements IDisposable
 
@@ -73,6 +76,9 @@
     { _subs?.Dispose(); }
 
     private void OnTodoComplete(TodoData todo)
-    { TodoStore.Todos.Remove(todo); }
+    {
+        TodoStore.Todos.Remove(todo);
+        EventBus.PublishAsync(new TodoRemovedEvent{ TodoId = todo.Id});
+    }
 
 }

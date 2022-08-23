@@ -4,6 +4,7 @@ using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 
 namespace Strem.Flows.Default.Flows.Tasks.Variables;
@@ -23,19 +24,19 @@ public class DecrementVariableTask : FlowTask<DecrementVariableTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task<bool> Execute(DecrementVariableTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(DecrementVariableTaskData data, IVariables flowVars)
     {
         var processedName = FlowStringProcessor.Process(data.Name, flowVars);
         var processedContext = FlowStringProcessor.Process(data.Context, flowVars);
         var currentValue = AppState.GetVariable(flowVars, processedName, processedContext);
-        if(string.IsNullOrEmpty(currentValue)){ return false; }
+        if(string.IsNullOrEmpty(currentValue)){ return ExecutionResult.Failed; }
 
         int value;
         if(!int.TryParse(currentValue, out value))
-        { return false; }
+        { return ExecutionResult.Failed; }
 
         var newValue = value - data.DecrementAmount;
         AppState.SetVariable(flowVars, data.ScopeType, processedName, processedContext, newValue.ToString());
-        return true;
+        return ExecutionResult.Success;
     }
 }

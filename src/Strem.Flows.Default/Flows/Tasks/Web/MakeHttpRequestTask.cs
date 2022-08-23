@@ -7,6 +7,7 @@ using Strem.Core.Flows;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Core.Web;
 
@@ -41,7 +42,7 @@ public class MakeHttpRequestTask : FlowTask<MakeHttpRequestTaskData>
 
     public override bool CanExecute() => true;
     
-    public override async Task<bool> Execute(MakeHttpRequestTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(MakeHttpRequestTaskData data, IVariables flowVars)
     {
         var restClient = new RestClient();
 
@@ -68,6 +69,6 @@ public class MakeHttpRequestTask : FlowTask<MakeHttpRequestTaskData>
 
         var jsonHeaders = JsonConvert.SerializeObject(response.Headers);
         flowVars.Set(ResponseHeadersVariable, jsonHeaders);
-        return true;
+        return ExecutionResult.Success;
     }
 }

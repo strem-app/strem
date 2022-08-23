@@ -4,8 +4,10 @@ using Strem.Core.Flows;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Todos.Data;
+using Strem.Todos.Events;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
@@ -64,18 +66,18 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
             CreatedBy = "Twitch Clip Task"
         };
         TodoStore.Todos.Add(todoElement);
+        EventBus.PublishAsync(new TodoCreatedEvent { TodoId = todoElement.Id });
     }
     
-    public override async Task<bool> Execute(CreateTwitchClipTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(CreateTwitchClipTaskData data, IVariables flowVars)
     {
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var clip = await TwitchApi.Helix.Clips.CreateClipAsync(channel);
-        if(clip?.CreatedClips.Length == 0)
-        { return false; }
+        if(clip?.CreatedClips.Length == 0) { return ExecutionResult.Failed; }
 
         PopulateVariablesFor(clip, flowVars);
         CreateTodoIfNeeded(data, clip);
         
-        return true;
+        return ExecutionResult.Success;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Strem.Core.Events.Bus;
 using Strem.Core.Flows.Processors;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 
 namespace Strem.Core.Flows.Tasks;
@@ -31,7 +32,7 @@ public abstract class FlowTask<T> : IFlowTask
 
     public abstract bool CanExecute();
 
-    public Task<bool> Execute(object data, IVariables flowVars)
+    public Task<ExecutionResult> Execute(object data, IVariables flowVars)
     {
         if(data is T typedData)
         { return Execute(typedData, flowVars); }
@@ -39,5 +40,5 @@ public abstract class FlowTask<T> : IFlowTask
         throw new ArgumentException($"Task type is {data.GetType()} not {typeof(T)}");
     }
 
-    public abstract Task<bool> Execute(T data, IVariables flowVars);
+    public abstract Task<ExecutionResult> Execute(T data, IVariables flowVars);
 }

@@ -3,6 +3,7 @@ using Strem.Core.Events.Bus;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Events;
 
@@ -23,9 +24,9 @@ public class RaiseEventTask : FlowTask<RaiseEventTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task<bool> Execute(RaiseEventTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(RaiseEventTaskData data, IVariables flowVars)
     {
         EventBus.PublishAsync(new UserDataEvent(data.EventName, data.Data));
-        return true;
+        return ExecutionResult.Success;
     }
 }

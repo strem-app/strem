@@ -2,6 +2,7 @@
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
@@ -31,11 +32,11 @@ public class SetStreamTitleTask : FlowTask<SetStreamTitleTaskData>
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ApiScopes.RunChannelCommercials);
 
-    public override async Task<bool> Execute(SetStreamTitleTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(SetStreamTitleTaskData data, IVariables flowVars)
     {
         var processedTitle = FlowStringProcessor.Process(data.Title, flowVars);
         var channelInformation = new ModifyChannelInformationRequest { Title = processedTitle };
         await TwitchApi.Helix.Channels.ModifyChannelInformationAsync(AppState.GetTwitchUserId(), channelInformation);
-        return true;
+        return ExecutionResult.Success;
     }
 }

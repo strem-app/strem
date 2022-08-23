@@ -6,6 +6,7 @@ using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Events;
 using Strem.Flows.Default.Types;
@@ -30,7 +31,7 @@ public class IfStatementTask : FlowTask<IfStatementTaskData>
 
     public override bool CanExecute() => true;
     
-    public override async Task<bool> Execute(IfStatementTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(IfStatementTaskData data, IVariables flowVars)
     {
         var doesMatch = data.ComparisonType == ComparisonType.NumericalComparison ? 
             NumericalComparison(data, flowVars) : 
@@ -39,7 +40,7 @@ public class IfStatementTask : FlowTask<IfStatementTaskData>
         if(!doesMatch)
         { PossiblyRunFailureFlow(data); }
 
-        return doesMatch;
+        return doesMatch ? ExecutionResult.Success : ExecutionResult.Failed;
     }
     
     public void PossiblyRunFailureFlow(IfStatementTaskData data)

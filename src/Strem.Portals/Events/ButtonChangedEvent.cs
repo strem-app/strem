@@ -1,6 +1,6 @@
 ﻿namespace Strem.Portals.Events;
 
-public class ButtonPressedEvent
+public class ButtonChangedEvent
 {
     public Guid PortalId { get; set; }
     public string PortalName { get; set; }

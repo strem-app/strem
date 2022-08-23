@@ -3,6 +3,7 @@ using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
@@ -29,7 +30,7 @@ public class SetTwitchSubscriberOnlyChatTask : FlowTask<SetTwitchSubscriberOnlyC
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ModerateChannel);
 
-    public override async Task<bool> Execute(SetTwitchSubscriberOnlyChatTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(SetTwitchSubscriberOnlyChatTaskData data, IVariables flowVars)
     {
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var processedChannel = FlowStringProcessor.Process(channel, flowVars);
@@ -39,6 +40,6 @@ public class SetTwitchSubscriberOnlyChatTask : FlowTask<SetTwitchSubscriberOnlyC
         else
         { TwitchClient.SubscribersOnlyOff(processedChannel); }
         
-        return true;
+        return ExecutionResult.Success;
     }
 }

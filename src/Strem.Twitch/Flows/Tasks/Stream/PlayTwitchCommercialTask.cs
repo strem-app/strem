@@ -2,6 +2,7 @@
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
@@ -28,11 +29,11 @@ public class PlayTwitchCommercialTask : FlowTask<PlayTwitchCommercialTaskData>
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ApiScopes.RunChannelCommercials);
 
-    public override async Task<bool> Execute(PlayTwitchCommercialTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(PlayTwitchCommercialTaskData data, IVariables flowVars)
     {
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var processedChannel = FlowStringProcessor.Process(channel, flowVars);
         TwitchClient.StartCommercial(processedChannel, data.CommercialLength);
-        return true;
+        return ExecutionResult.Success;
     }
 }

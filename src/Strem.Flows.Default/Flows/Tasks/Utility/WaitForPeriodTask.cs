@@ -4,6 +4,7 @@ using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 
 namespace Strem.Flows.Default.Flows.Tasks.Utility;
@@ -23,16 +24,16 @@ public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task<bool> Execute(WaitForPeriodTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(WaitForPeriodTaskData data, IVariables flowVars)
     {
         if (!FlowStringProcessor.TryProcessInt(data.WaitAmount, flowVars, out var intValue))
         {
             Logger.LogWarning($"Unable to process {data.WaitAmount} into a number, verify it is a number or variables exist");
-            return false;
+            return ExecutionResult.Failed;
         }
         
         var timespan = data.WaitUnitsType.ToTimeSpan(intValue);
         await Task.Delay(timespan);
-        return true;
+        return ExecutionResult.Success;
     }
 }

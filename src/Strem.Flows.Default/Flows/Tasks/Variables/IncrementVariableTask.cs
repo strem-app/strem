@@ -24,19 +24,19 @@ public class IncrementVariableTask : FlowTask<IncrementVariableTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task<bool> Execute(IncrementVariableTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(IncrementVariableTaskData data, IVariables flowVars)
     {
         var processedName = FlowStringProcessor.Process(data.Name, flowVars);
         var processedContext = FlowStringProcessor.Process(data.Context, flowVars);
         var currentValue = AppState.GetVariable(flowVars, processedName, processedContext);
-        if(string.IsNullOrEmpty(currentValue)){ return false; }
+        if(string.IsNullOrEmpty(currentValue)){ return ExecutionResult.Failed; }
 
         int value;
         if(!int.TryParse(currentValue, out value))
-        { return false; }
+        { return ExecutionResult.Failed; }
 
         var newValue = value + data.IncrementAmount;
-        AppState.SetVariable(flowVars, data.ScopeType, processedName, processedContext);
-        return true;
+        AppState.SetVariable(flowVars, data.ScopeType, processedName, processedContext, newValue.ToString());
+        return ExecutionResult.Success;
     }
 }

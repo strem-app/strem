@@ -1,12 +1,15 @@
 ﻿@using Strem.Infrastructure.Extensions
 @using Strem.Core.Events.Bus
-@using Strem.Core.Events.Portals
 @using Strem.Core.Extensions
-@using Strem.Core.State
 @using Strem.Portals.Data
 @using Strem.Portals.Data.Overrides
+@using Strem.Portals.Events
 @using Strem.Portals.Extensions
 @using Strem.Portals.Types
+@using System.Reactive.Disposables
+@using System.Reactive.Linq
+
+@implements IDisposable
 
 <section class="hero is-dark is-fullheight">
     <div class="hero-body is-align-items-stretch">
@@ -48,16 +51,25 @@
     
     public ButtonRuntimeStyles ButtonRuntimeStyles { get; set; }
     public IEventBus EventBus { get; set; }
-    public IAppState AppState { get; set; }
+
+    private CompositeDisposable _subs = new();
     
     protected override async Task OnInitializedAsync()
     {
         EventBus = WebHostHackExtensions.ServiceLocator.GetService<IEventBus>();
-        AppState = WebHostHackExtensions.ServiceLocator.GetService<IAppState>();
         ButtonRuntimeStyles = WebHostHackExtensions.ServiceLocator.GetService<ButtonRuntimeStyles>();
         
         var portalStore = WebHostHackExtensions.ServiceLocator.GetService<IPortalStore>();
         Portal = portalStore.Portals.SingleOrDefault(x => x.Id == PortalId);
+
+        EventBus.Receive<PortalChangedEvent>()
+            .Subscribe(x => InvokeAsync(StateHasChanged))
+            .AddTo(_subs);
+        
+        EventBus.Receive<ButtonChangedEvent>()
+            .Throttle(TimeSpan.FromSeconds(2))
+            .Subscribe(x => InvokeAsync(StateHasChanged))
+            .AddTo(_subs);
     }
 
     public void NotifyButtonPressed(ButtonData buttonData)
@@ -84,4 +96,10 @@
         if(portalButtonSize == ButtonSize.Large) { return "is-size-6"; }
         return "is-size-7";
     }
+
+    public void Dispose()
+    {
+        _subs.Dispose();
+    }
+
 }

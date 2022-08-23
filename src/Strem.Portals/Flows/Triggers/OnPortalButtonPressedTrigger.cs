@@ -1,12 +1,12 @@
 ﻿using System.Reactive.Linq;
 using Strem.Core.Events.Bus;
-using Strem.Core.Events.Portals;
 using Strem.Core.Extensions;
 using Strem.Core.Flows;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Triggers;
 using Strem.Core.State;
 using Strem.Core.Variables;
+using Strem.Portals.Events;
 
 namespace Strem.Portals.Flows.Triggers;
 

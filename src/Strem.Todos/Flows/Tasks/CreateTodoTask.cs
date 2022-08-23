@@ -4,8 +4,10 @@ using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Todos.Data;
+using Strem.Todos.Events;
 
 namespace Strem.Todos.Flows.Tasks;
 
@@ -48,10 +50,11 @@ public class CreateTodoTask : FlowTask<CreateTodoTaskData>
         };
     }
     
-    public override async Task<bool> Execute(CreateTodoTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(CreateTodoTaskData data, IVariables flowVars)
     {
         var newTodoItem = CreateTodoItem(data, flowVars);
         TodoStore.Todos.Add(newTodoItem);
-        return true;
+        EventBus.PublishAsync(new TodoCreatedEvent { TodoId = newTodoItem.Id });
+        return ExecutionResult.Success;
     }
 }
