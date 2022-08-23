@@ -1,10 +1,11 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using Strem.Core.Flows;
+using Strem.Core.Flows.Tasks;
 using Strem.Core.Types;
 using Strem.Flows.Default.Types;
 
 namespace Strem.Flows.Default.Flows.Tasks.Logic;
 
-public class IfStatementTaskData : IFlowTaskData
+public class IfStatementTaskData : IFlowTaskData, IHasSubTaskData
 {
     public static readonly string TaskCode = "if-statement";
     public static readonly string TaskVersion = "1.0.0";
@@ -19,6 +20,5 @@ public class IfStatementTaskData : IFlowTaskData
     public OperatorType NumberOperator { get; set; }
     public TextMatchType TextOperator { get; set; }
 
-    public bool RunFlowOnFailure { get; set; }
-    public Guid FailureFlowId { get; set; }
+    public Dictionary<string, List<IFlowTaskData>> SubTasks { get; set; }
 }

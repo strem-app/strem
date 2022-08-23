@@ -1,6 +1,7 @@
 ﻿using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -73,11 +74,11 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
     {
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var clip = await TwitchApi.Helix.Clips.CreateClipAsync(channel);
-        if(clip?.CreatedClips.Length == 0) { return ExecutionResult.Failed; }
+        if(clip?.CreatedClips.Length == 0) { return ExecutionResult.Failed(); }
 
         PopulateVariablesFor(clip, flowVars);
         CreateTodoIfNeeded(data, clip);
         
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

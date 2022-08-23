@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -32,6 +33,6 @@ public class SendTwitchWhisperMessageTask : FlowTask<SendTwitchWhisperMessageTas
     {
         var processedMessage = FlowStringProcessor.Process(data.Message, flowVars);
         TwitchClient.SendWhisper(data.Username, processedMessage);
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

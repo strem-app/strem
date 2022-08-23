@@ -4,7 +4,6 @@ using Strem.Core.Events.Flows;
 using Strem.Core.Events.Flows.Tasks;
 using Strem.Core.Events.Flows.Triggers;
 using Strem.Core.Extensions;
-using Strem.Core.Flows.Registries;
 using Strem.Core.Flows.Registries.Tasks;
 using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Flows.Tasks;
@@ -104,15 +103,15 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         return new Variables.Variables(allVariables.ToDictionary(x => x.Key, x => x.Value));
     }
 
-    public void CancelExecution(Flow flow, IFlowTaskData currentTaskData, ExecutionResult executionResult, IVariables flowVariables, FlowExecutionLog executionLog)
+    public void CancelExecution(Flow flow, IFlowTaskData currentTaskData, ExecutionResultType executionResultType, IVariables flowVariables, FlowExecutionLog executionLog)
     {
         EventBus.PublishAsync(new FlowTaskFinished(flow.Id, currentTaskData.Id));
         EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
                 
         executionLog.EndTime = DateTime.Now;
         executionLog.EndVariables = CollateActiveVariables(flowVariables);
-        executionLog.ExecutionResult = executionResult;
-        executionLog.ElementExecutionSummary.Add($"{currentTaskData.Code} - {executionResult}");
+        executionLog.ExecutionResultType = executionResultType;
+        executionLog.ElementExecutionSummary.Add($"{currentTaskData.Code} - {executionResultType}");
     }
 
     public async Task ExecuteFlow(Flow flow, IVariables flowVariables = null)
@@ -151,10 +150,10 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             try
             {
                 var executionResult = await task.Execute(taskData, flowVariables);
-                if (executionResult == ExecutionResult.Failed)
+                if (executionResult.ResultType == ExecutionResultType.Failed)
                 {
                     Logger.Information($"Failed Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}]");
-                    CancelExecution(flow, taskData, executionResult, flowVariables, executionLog);
+                    CancelExecution(flow, taskData, executionResult.ResultType, flowVariables, executionLog);
                     return;
                 }
                 
@@ -164,7 +163,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             catch (Exception ex)
             {
                 Logger.Error($"Error Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}] | Error: {ex.Message}");
-                CancelExecution(flow, taskData, ExecutionResult.Failed, flowVariables, executionLog);
+                CancelExecution(flow, taskData, ExecutionResultType.Failed, flowVariables, executionLog);
                 return;
             }
         }
@@ -172,7 +171,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
         executionLog.EndTime = DateTime.Now;
         executionLog.EndVariables = CollateActiveVariables(flowVariables);
-        executionLog.ExecutionResult = ExecutionResult.Success;
+        executionLog.ExecutionResultType = ExecutionResultType.Success;
     }
 
     public async Task ExecuteFlow(Guid flowId, IVariables flowVariables = null)

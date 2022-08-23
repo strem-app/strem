@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -34,6 +35,6 @@ public class SendTwitchChatMessageTask : FlowTask<SendTwitchChatMessageTaskData>
         var processedMessage = FlowStringProcessor.Process(data.Message, flowVars);
         var processedChannel = FlowStringProcessor.Process(channel, flowVars);
         TwitchClient.SendMessage(processedChannel, processedMessage);
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

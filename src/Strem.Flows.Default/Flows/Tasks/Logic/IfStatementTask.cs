@@ -8,7 +8,6 @@ using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Variables;
-using Strem.Flows.Default.Events;
 using Strem.Flows.Default.Types;
 
 namespace Strem.Flows.Default.Flows.Tasks.Logic;
@@ -37,16 +36,7 @@ public class IfStatementTask : FlowTask<IfStatementTaskData>
             NumericalComparison(data, flowVars) : 
             TextualComparison(data, flowVars);
 
-        if(!doesMatch)
-        { PossiblyRunFailureFlow(data); }
-
-        return doesMatch ? ExecutionResult.Success : ExecutionResult.Failed;
-    }
-    
-    public void PossiblyRunFailureFlow(IfStatementTaskData data)
-    {
-        if (!data.RunFlowOnFailure || data.FailureFlowId == Guid.Empty) { return; }
-        FlowExecutor.ExecuteFlow(data.FailureFlowId);
+        return doesMatch ? ExecutionResult.Success() : ExecutionResult.Failed();
     }
 
     public bool NumericalComparison(IfStatementTaskData data, IVariables flowVars)

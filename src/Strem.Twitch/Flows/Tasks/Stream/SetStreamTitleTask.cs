@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -37,6 +38,6 @@ public class SetStreamTitleTask : FlowTask<SetStreamTitleTaskData>
         var processedTitle = FlowStringProcessor.Process(data.Title, flowVars);
         var channelInformation = new ModifyChannelInformationRequest { Title = processedTitle };
         await TwitchApi.Helix.Channels.ModifyChannelInformationAsync(AppState.GetTwitchUserId(), channelInformation);
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

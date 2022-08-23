@@ -51,32 +51,6 @@
     </div>
 </div>
 
-<div class="field">
-    <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.RunFlowOnFailure">
-            Run Flow If Not Equal?
-        </label>
-    </div>
-</div>
-
-@if (Data.RunFlowOnFailure)
-{
-    <div class="field">
-        <label class="label">Flow</label>
-        <div class="control">
-            <div class="select">
-                <select @bind="Data.FailureFlowId">
-                    @foreach (var flow in FlowStore.Flows)
-                    {
-                        <option value="@flow.Id">@(flow.Name)</option>
-                    }
-                </select>
-            </div>
-        </div>
-    </div>
-}
-
 @code {
     public override string Title => GetTitle();
 

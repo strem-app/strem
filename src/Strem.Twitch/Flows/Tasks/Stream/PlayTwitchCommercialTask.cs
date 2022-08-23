@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -34,6 +35,6 @@ public class PlayTwitchCommercialTask : FlowTask<PlayTwitchCommercialTaskData>
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var processedChannel = FlowStringProcessor.Process(channel, flowVars);
         TwitchClient.StartCommercial(processedChannel, data.CommercialLength);
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -27,6 +28,6 @@ public class RaiseEventTask : FlowTask<RaiseEventTaskData>
     public override async Task<ExecutionResult> Execute(RaiseEventTaskData data, IVariables flowVars)
     {
         EventBus.PublishAsync(new UserDataEvent(data.EventName, data.Data));
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

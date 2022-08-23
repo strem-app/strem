@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -31,6 +32,6 @@ public class LoadUrlTask : FlowTask<LoadUrlTaskData>
     {
         var processedUrl = FlowStringProcessor.Process(data.Url, flowVars);
         BrowserLoader.LoadUrl(processedUrl);
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

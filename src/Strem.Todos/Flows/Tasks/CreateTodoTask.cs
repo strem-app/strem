@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -55,6 +56,6 @@ public class CreateTodoTask : FlowTask<CreateTodoTaskData>
         var newTodoItem = CreateTodoItem(data, flowVars);
         TodoStore.Todos.Add(newTodoItem);
         EventBus.PublishAsync(new TodoCreatedEvent { TodoId = newTodoItem.Id });
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

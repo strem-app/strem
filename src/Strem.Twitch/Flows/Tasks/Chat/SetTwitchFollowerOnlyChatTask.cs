@@ -1,5 +1,6 @@
 ﻿using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -48,6 +49,6 @@ public class SetTwitchFollowerOnlyChatTask : FlowTask<SetTwitchFollowerOnlyChatT
         else
         { TwitchClient.FollowersOnlyOff(new JoinedChannel(processedChannel)); }
         
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }
