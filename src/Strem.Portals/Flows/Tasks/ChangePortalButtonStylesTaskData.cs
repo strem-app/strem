@@ -22,5 +22,9 @@ public class ChangePortalButtonStylesTaskData : IFlowTaskData
     public bool ChangeBackgroundColor { get; set; }
     public bool ChangeTextColor { get; set; }
 
-    public ButtonStyles NewStyles { get; set; } = new();
+    public ButtonStyles NewStyles { get; set; } = new ButtonStyles
+    {
+        IconClass = string.Empty,
+        ImageUrl = string.Empty
+    };
 }

@@ -7,7 +7,6 @@
 @using Strem.Core.Types
 @using Strem.Portals.Types
 
-@inject IJSRuntime JS
 @inject IBrowserLoader BrowserLoader
 
 <div class="box">
@@ -61,16 +60,7 @@
 
     public ButtonData SelectedButton { get; set; } = new ButtonData();
     public bool ShowEditModal { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        Task.Run(async () =>
-        {
-            await Task.Delay(100);
-            JS.InvokeVoidAsync("processButtonPicker");
-        });
-    }
-
+    
     public void AddButton()
     {
         var button = new ButtonData();
