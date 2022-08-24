@@ -16,7 +16,7 @@
     </li>
 }
 
-<li draggable="true"
+<li draggable="@(CanDrag.ToString())"
     class="@(Classes) @(IsCurrentDropTarget ? "drag-source" : "")"
     ondragover="event.preventDefault()"
     @ondragstart="@(() => DragController.OnDragStart(Data, ContainingList, DropType))"
@@ -28,9 +28,9 @@
 @code {
     [Parameter]
     public string DropType { get; set; }
-    
+
     [Parameter]
-    public IReadOnlyCollection<string> SupportedDropTypes { get; set; }
+    public IReadOnlyCollection<string> SupportedDropTypes { get; set; } = Array.Empty<string>();
     
     [Parameter]
     public TData Data { get; set; }
@@ -43,6 +43,9 @@
     
     [Parameter]
     public string Classes { get; set; }
+
+    [Parameter]
+    public bool CanDrag { get; set; } = true;
 
     private CompositeDisposable _subs = new();
     private bool IsCurrentDropTarget { get; set; }

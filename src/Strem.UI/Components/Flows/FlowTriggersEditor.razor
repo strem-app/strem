@@ -38,17 +38,34 @@
     {
         DragController.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.FlowTrigger && x.DestinationDropType == DropTypes.FlowTrigger)
-            .Subscribe(MoveDraggedElement)
+            .Subscribe(MoveTriggerElement)
+            .AddTo(_subs);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.NewTrigger && x.DestinationDropType == DropTypes.FlowTrigger)
+            .Subscribe(AddNewTrigger)
             .AddTo(_subs);
     }
     
-    public void MoveDraggedElement(DropData args)
+    public void MoveTriggerElement(DropData args)
     {
         args.SourceList.Remove(args.SourceObject);
         var indexOfDestination = args.DestinationList.IndexOf(args.DestinationObject);
         if (indexOfDestination == -1) { indexOfDestination = 0; }
         args.DestinationList.Insert(indexOfDestination, args.SourceObject);
 
+        InvokeAsync(StateHasChanged);
+    }
+    
+    public void AddNewTrigger(DropData args)
+    {
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject);
+        if (indexToAddAt == -1) { indexToAddAt = 0; }
+        var taskDescriptor = args.SourceObject as TriggerDescriptor;
+        if(taskDescriptor == null) { return; }
+
+        var newTaskData = taskDescriptor.Data();
+        args.DestinationList.Insert(indexToAddAt, newTaskData);
         InvokeAsync(StateHasChanged);
     }
     

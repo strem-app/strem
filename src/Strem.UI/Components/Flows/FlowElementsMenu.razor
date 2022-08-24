@@ -37,13 +37,13 @@
   <aside class="menu trigger-menu">
     @foreach (var triggerGroup in GetFilteredTriggers())
     {
-      <p class="menu-label category-(@triggerGroup.Key.Replace(" ", ""))">
+      <p class="menu-label category-@triggerGroup.Key.Replace(" ", "")">
         @triggerGroup.Key
       </p>
       <ul class="menu-list">
         @foreach (var trigger in triggerGroup)
         {
-          <li>
+          <DraggableListElement Data="trigger" DropType="@DropTypes.NewTrigger">
             <a class="is-trigger has-tooltip-left has-tooltip-multiline @(IsTriggerEnabled(trigger.Trigger) ? "enabled" : "disabled")"
                data-tooltip="@trigger.Trigger.Description" @onclick="@(() => OnTriggerSelected.InvokeAsync(trigger))">
               <span class="icon is-small">
@@ -51,7 +51,7 @@
               </span>
               <span class="ml-2 menu-text">@trigger.Trigger.Name</span>
             </a>
-          </li>
+          </DraggableListElement>
         }
       </ul>
     }
@@ -62,20 +62,20 @@
 <aside class="menu task-menu">
   @foreach (var taskGroup in GetFilteredTasks())
   {
-    <p class="menu-label category-(@taskGroup.Key.Replace(" ", ""))">
+    <p class="menu-label category-@taskGroup.Key.Replace(" ", "")">
       @taskGroup.Key
     </p>
     <ul class="menu-list">
       @foreach (var task in taskGroup)
       {
         <DraggableListElement Data="task" DropType="@DropTypes.NewTask">
-          <a class="is-task has-tooltip-left has-tooltip-multiline @(IsTaskEnabled(task.Task) ? "enabled" : "disabled")" 
-             data-tooltip="@task.Task.Description">
-            <span class="icon is-small">
-              <i class="fa fa-plus"></i>
-            </span>
-            <span class="ml-2 menu-text">@task.Task.Name</span>
-          </a>
+            <a class="is-task has-tooltip-left has-tooltip-multiline @(IsTaskEnabled(task.Task) ? "enabled" : "disabled")"
+               data-tooltip="@task.Task.Description">
+              <span class="icon is-small">
+                <i class="fa fa-plus"></i>
+              </span>
+              <span class="ml-2 menu-text">@task.Task.Name</span>
+            </a>
         </DraggableListElement>
       }
     </ul>
@@ -105,9 +105,6 @@
         .AddTo(_subs);
   }
 
-  public bool DoesFlowContainTrigger(IFlowTrigger trigger)
-  { return Flow.TriggerData.Any(x => x.Code == trigger.Code); }
-
   public IEnumerable<IGrouping<string, TriggerDescriptor>> GetFilteredTriggers()
   {
     return TriggerRegistry.GetAll()
@@ -133,7 +130,7 @@
   }
 
   public bool IsTriggerEnabled(IFlowTrigger trigger)
-  { return !DoesFlowContainTrigger(trigger) && trigger.CanExecute(); }
+  { return trigger.CanExecute(); }
 
   public bool IsTaskEnabled(IFlowTask task)
   { return task.CanExecute(); }

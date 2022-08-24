@@ -14,11 +14,11 @@ public class DragController : IDisposable
     public object? DestinationObject { get; private set; }
     public string DestinationDropType { get; private set; } = string.Empty;
     
-    private readonly Subject<DropData> _droppedItemSubject = new();
-    public IObservable<DropData> OnDroppedItem => _droppedItemSubject;
+    private readonly Subject<DropData> _onDroppedItem = new();
+    public IObservable<DropData> OnDroppedItem => _onDroppedItem;
 
-    public readonly Subject<Unit> _destinationObjectChanged = new();
-    public IObservable<Unit> OnDestinationObjectChanged => _destinationObjectChanged;
+    public readonly Subject<Unit> _onDestinationObjectChanged = new();
+    public IObservable<Unit> OnDestinationObjectChanged => _onDestinationObjectChanged;
     
     public void OnDragStart(object draggingObject, IList draggingList, string sourceDropType)
     {
@@ -33,7 +33,7 @@ public class DragController : IDisposable
         DestinationObject = destinationObject;
         DestinationList = destinationList;
         DestinationDropType = destinationDropType;
-        _destinationObjectChanged.OnNext(Unit.Default);
+        _onDestinationObjectChanged.OnNext(Unit.Default);
     }
 
     public void OnDragEnd()
@@ -41,14 +41,14 @@ public class DragController : IDisposable
         if (SourceObject == null || DestinationObject == null || SourceObject.Equals(DestinationObject))
         {
             ResetState();
-            _destinationObjectChanged.OnNext(Unit.Default);
+            _onDestinationObjectChanged.OnNext(Unit.Default);
             return;
         }
 
         var dropData = new DropData(SourceObject, SourceList, SourceDropType, DestinationObject, DestinationList, DestinationDropType);
         ResetState();
-        _droppedItemSubject.OnNext(dropData);
-        _destinationObjectChanged.OnNext(Unit.Default);
+        _onDroppedItem.OnNext(dropData);
+        _onDestinationObjectChanged.OnNext(Unit.Default);
     }
 
     public void ResetState()
@@ -63,7 +63,8 @@ public class DragController : IDisposable
 
     public void Dispose()
     {
-        _droppedItemSubject.Dispose();
+        _onDroppedItem.Dispose();
+        _onDestinationObjectChanged.Dispose();
     }
 
     public bool IsDragSupported(object comparisonObject)

@@ -50,6 +50,11 @@
             .Where(x => x.SourceDropType == DropTypes.FlowTask && x.DestinationDropType == DropTypes.FlowTask)
             .Subscribe(MoveTaskElement)
             .AddTo(_subs);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.NewTask && x.DestinationDropType == DropTypes.FlowTask)
+            .Subscribe(AddNewTask)
+            .AddTo(_subs);
     }
 
     public void RemoveTaskData(IFlowTaskData data)
@@ -60,10 +65,22 @@
     public void MoveTaskElement(DropData args)
     {
         args.SourceList.Remove(args.SourceObject);
-        var indexOfDestination = args.DestinationList.IndexOf(args.DestinationObject);
-        if (indexOfDestination == -1) { indexOfDestination = 0; }
-        args.DestinationList.Insert(indexOfDestination, args.SourceObject);
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject);
+        if (indexToAddAt == -1) { indexToAddAt = 0; }
+        args.DestinationList.Insert(indexToAddAt, args.SourceObject);
 
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void AddNewTask(DropData args)
+    {
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject);
+        if (indexToAddAt == -1) { indexToAddAt = 0; }
+        var taskDescriptor = args.SourceObject as TaskDescriptor;
+        if(taskDescriptor == null) { return; }
+
+        var newTaskData = taskDescriptor.Data();
+        args.DestinationList.Insert(indexToAddAt, newTaskData);
         InvokeAsync(StateHasChanged);
     }
 
