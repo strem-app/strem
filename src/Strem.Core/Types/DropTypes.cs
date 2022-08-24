@@ -2,6 +2,8 @@
 
 public class DropTypes
 {
+    public static readonly string None = "none";
+
     public static readonly string FlowTrigger = "flow-trigger";
     public static readonly string FlowTask = "flow-task";
     public static readonly string NewTask = "new-task";

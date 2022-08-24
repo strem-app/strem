@@ -67,7 +67,7 @@ public class DragController : IDisposable
         _onDestinationObjectChanged.Dispose();
     }
 
-    public bool IsDragSupported(object comparisonObject)
+    public bool IsSourceObject(object comparisonObject)
     { return SourceObject?.Equals(comparisonObject) ?? false; }
     
     public bool IsDestinationObject(object comparisonObject)

@@ -8,22 +8,21 @@
 
 @implements IDisposable
 
-<li draggable="@(CanDrag.ToString())"
+<div draggable="@(CanDrag.ToString())"
     class="@(Classes) @(DragController.IsSourceObject(Data) ? "drag-source" : "")"
     ondragover="event.preventDefault()"
     @ondragstart="@(() => DragController.OnDragStart(Data, ContainingList, DropType))"
     @ondragenter="@(() => { DragController.OnDragEnterElement(Data, ContainingList, DropType); CheckForDragTarget(); })"
     @ondragend="DragController.OnDragEnd">
     @ChildContent
-</li>
+</div>
 
 @if (IsCurrentDropTarget)
 {
-    <li class="block drag-enter-target">
+    <div class="block drag-enter-target">
         <button class="button is-leveled" disabled></button>
-    </li>
+    </div>
 }
-
 
 @code {
     [Parameter]

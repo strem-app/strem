@@ -14,6 +14,14 @@
 
 @implements IDisposable
 
+@if (TaskData.Count == 0)
+{
+    <DraggableElement Data="string.Empty" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTask }" 
+                      CanDrag="false" Classes="notification has-text-centered">
+        <p class="title is-5 has-text-black-ter">Drag tasks in here to give your flow something to do</p>
+    </DraggableElement>
+}
+
 @foreach (var data in TaskData)
 {
     <DraggableListElement Data="data" DropType="@DropTypes.FlowTask" ContainingList="TaskData" SupportedDropTypes="@(new []{ DropTypes.FlowTask, DropTypes.NewTask })">
@@ -53,34 +61,52 @@
         
         DragController.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.NewTask && x.DestinationDropType == DropTypes.FlowTask)
-            .Subscribe(AddNewTask)
+            .Subscribe(AddNewTaskIntoExisting)
+            .AddTo(_subs);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.NewTask && x.DestinationDropType == DropTypes.None)
+            .Subscribe(AddNewTaskIntoFresh)
             .AddTo(_subs);
     }
 
     public void RemoveTaskData(IFlowTaskData data)
-    {
-        TaskData.Remove(data);
-    }
+    { TaskData.Remove(data); }
 
     public void MoveTaskElement(DropData args)
     {
         args.SourceList.Remove(args.SourceObject);
-        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject);
-        if (indexToAddAt == -1) { indexToAddAt = 0; }
-        args.DestinationList.Insert(indexToAddAt, args.SourceObject);
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject) + 1;
+        if (indexToAddAt == args.DestinationList.Count)
+        { args.DestinationList.Add(args.SourceObject); }
+        else
+        { args.DestinationList.Insert(indexToAddAt, args.SourceObject); }
 
         InvokeAsync(StateHasChanged);
     }
 
-    public void AddNewTask(DropData args)
+    public void AddNewTaskIntoExisting(DropData args)
     {
-        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject);
-        if (indexToAddAt == -1) { indexToAddAt = 0; }
         var taskDescriptor = args.SourceObject as TaskDescriptor;
         if(taskDescriptor == null) { return; }
-
         var newTaskData = taskDescriptor.Data();
-        args.DestinationList.Insert(indexToAddAt, newTaskData);
+        
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject) + 1;
+        if (indexToAddAt == args.DestinationList.Count)
+        { args.DestinationList.Add(newTaskData); }
+        else
+        { args.DestinationList.Insert(indexToAddAt, newTaskData); }
+
+        InvokeAsync(StateHasChanged);
+    }
+    
+    public void AddNewTaskIntoFresh(DropData args)
+    {
+        var taskDescriptor = args.SourceObject as TaskDescriptor;
+        if(taskDescriptor == null) { return; }
+        
+        var newTaskData = taskDescriptor.Data();
+        TaskData.Add(newTaskData);
         InvokeAsync(StateHasChanged);
     }
 

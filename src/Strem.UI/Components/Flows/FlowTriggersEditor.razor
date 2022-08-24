@@ -15,6 +15,15 @@
 
 @implements IDisposable
 
+@if (Flow.TriggerData.Count == 0)
+{
+    <DraggableElement Data="string.Empty" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTrigger }" 
+                      CanDrag="false" Classes="notification has-text-centered">
+        <p class="title is-5 has-text-black-ter">Drag triggers in here to have them start your flows</p>
+    </DraggableElement>
+}
+
+
 @foreach (var data in Flow.TriggerData)
 {
     <DraggableListElement Data="data" DropType="@DropTypes.FlowTrigger" ContainingList="Flow.TriggerData" SupportedDropTypes="@(new[] { DropTypes.FlowTrigger, DropTypes.NewTrigger })">
@@ -43,29 +52,49 @@
         
         DragController.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.NewTrigger && x.DestinationDropType == DropTypes.FlowTrigger)
-            .Subscribe(AddNewTrigger)
+            .Subscribe(AddNewTriggerIntoExisting)
+            .AddTo(_subs);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.NewTrigger && x.DestinationDropType == DropTypes.None)
+            .Subscribe(AddNewTriggerIntoFresh)
             .AddTo(_subs);
     }
     
     public void MoveTriggerElement(DropData args)
     {
         args.SourceList.Remove(args.SourceObject);
-        var indexOfDestination = args.DestinationList.IndexOf(args.DestinationObject);
-        if (indexOfDestination == -1) { indexOfDestination = 0; }
-        args.DestinationList.Insert(indexOfDestination, args.SourceObject);
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject) + 1;
+        if (indexToAddAt == args.DestinationList.Count)
+        { args.DestinationList.Add(args.SourceObject); }
+        else
+        { args.DestinationList.Insert(indexToAddAt, args.SourceObject); }
 
         InvokeAsync(StateHasChanged);
     }
     
-    public void AddNewTrigger(DropData args)
+    public void AddNewTriggerIntoExisting(DropData args)
     {
-        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject);
-        if (indexToAddAt == -1) { indexToAddAt = 0; }
+        var triggerDescriptor = args.SourceObject as TriggerDescriptor;
+        if(triggerDescriptor == null) { return; }
+        var newTaskData = triggerDescriptor.Data();
+        
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject) + 1;
+        if (indexToAddAt == args.DestinationList.Count)
+        { args.DestinationList.Add(newTaskData); }
+        else
+        { args.DestinationList.Insert(indexToAddAt, newTaskData); }
+
+        InvokeAsync(StateHasChanged);
+    }
+    
+    public void AddNewTriggerIntoFresh(DropData args)
+    {
         var taskDescriptor = args.SourceObject as TriggerDescriptor;
         if(taskDescriptor == null) { return; }
-
+        
         var newTaskData = taskDescriptor.Data();
-        args.DestinationList.Insert(indexToAddAt, newTaskData);
+        Flow.TriggerData.Add(newTaskData);
         InvokeAsync(StateHasChanged);
     }
     
