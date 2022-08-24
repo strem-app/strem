@@ -12,8 +12,8 @@ namespace Strem.Flows.Default.Flows.Tasks.Logic;
 
 public class StopFlowTask : FlowTask<StopFlowTaskData>
 {
-    public override string Code => IfStatementTaskData.TaskCode;
-    public override string Version => IfStatementTaskData.TaskVersion;
+    public override string Code => StopFlowTaskData.TaskCode;
+    public override string Version => StopFlowTaskData.TaskVersion;
     
     public override string Name => "Stop Flow";
     public override string Category => "Logic";
