@@ -10,8 +10,8 @@ public class IfStatementTaskData : IFlowTaskData, IHasSubTaskData
 {
     public static readonly string TaskCode = "if-statement";
     public static readonly string TaskVersion = "1.0.0";
-    public static readonly string MatchSubTaskKey = "match";
-    public static readonly string NoMatchSubTaskKey = "no-match";
+    public static readonly string TrueSubTaskKey = "true";
+    public static readonly string FalseSubTaskKey = "false";
     
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
@@ -24,11 +24,9 @@ public class IfStatementTaskData : IFlowTaskData, IHasSubTaskData
     public TextMatchType TextOperator { get; set; }
 
     [JsonIgnore]
-    public string[] SubTaskKeys { get; } = new[] { MatchSubTaskKey, NoMatchSubTaskKey };
+    public string[] SubTaskKeys { get; } = new[] { TrueSubTaskKey, FalseSubTaskKey };
     public Dictionary<string, List<IFlowTaskData>> SubTasks { get; set; }
 
     public IfStatementTaskData()
-    {
-        SubTasks ??= SubTaskKeys.ToDictionary(x => x, x => new List<IFlowTaskData>());
-    }
+    { SubTasks ??= SubTaskKeys.ToDictionary(x => x, x => new List<IFlowTaskData>()); }
 }

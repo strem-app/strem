@@ -4,5 +4,6 @@ public enum ExecutionResultType
 {
     Success,
     Failed,
+    CascadingFailure,
     FailedButContinue
 }
