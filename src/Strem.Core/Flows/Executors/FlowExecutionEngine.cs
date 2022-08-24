@@ -141,7 +141,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         {
             var executionResult = await task.Execute(taskData, flowVariables);
             
-            if (executionResult.ResultType == ExecutionResultType.Failed)
+            if (executionResult.ResultType is ExecutionResultType.Failed or ExecutionResultType.CascadingFailure)
             {
                 Logger.Warning($"Failed Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}]");
                 EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
@@ -157,8 +157,8 @@ public class FlowExecutionEngine : IFlowExecutionEngine
                     foreach (var subTaskDataEntry in subTaskData.SubTasks[subTaskKey])
                     {
                         var subExecutionResult = await ExecuteTask(flow, subTaskDataEntry, flowVariables, executionLog);
-                        if (subExecutionResult.ResultType == ExecutionResultType.Failed)
-                        { break; }
+                        if (subExecutionResult.ResultType == ExecutionResultType.Failed) { break; }
+                        if (subExecutionResult.ResultType == ExecutionResultType.CascadingFailure) { return executionResult; }
                     }
                     executionLog.ElementExecutionSummary.Add($"Finished Sub Task For {taskData.Code} With Key {subTaskKey}");
                 }

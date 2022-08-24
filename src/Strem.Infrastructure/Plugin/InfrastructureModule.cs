@@ -6,6 +6,7 @@ using Persistity.Encryption;
 using Persistity.Flow.Builders;
 using Persistity.Serializers.Json;
 using Serilog;
+using Strem.Core.Components.Elements.Drag;
 using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
@@ -96,6 +97,9 @@ public class InfrastructureModule : IRequiresApiHostingModule
         
         // Input
         services.AddSingleton<IInputSimulator, InputSimulator>();
+        
+        // UI
+        services.AddSingleton<DragController>();
         
         // Plugin (this isnt technically a plugin I know)
         services.AddSingleton<IPluginStartup, InfrastructurePluginStartup>();

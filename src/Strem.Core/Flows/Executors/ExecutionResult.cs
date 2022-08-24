@@ -15,5 +15,6 @@ public class ExecutionResult
 
     public static ExecutionResult Success(params string[] subTaskKeys) => new(ExecutionResultType.Success, subTaskKeys);
     public static ExecutionResult Failed(params string[] subTaskKeys) => new(ExecutionResultType.Failed, subTaskKeys);
+    public static ExecutionResult CascadingFailure(params string[] subTaskKeys) => new(ExecutionResultType.CascadingFailure, subTaskKeys);
     public static ExecutionResult FailedButContinue(params string[] subTaskKeys) => new(ExecutionResultType.FailedButContinue, subTaskKeys);
 }

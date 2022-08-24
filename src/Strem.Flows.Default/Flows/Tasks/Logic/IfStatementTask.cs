@@ -34,7 +34,7 @@ public class IfStatementTask : FlowTask<IfStatementTaskData>
             NumericalComparison(data, flowVars) : 
             TextualComparison(data, flowVars);
 
-        var activatedSubTasks = doesMatch ? IfStatementTaskData.MatchSubTaskKey : IfStatementTaskData.NoMatchSubTaskKey;
+        var activatedSubTasks = doesMatch ? IfStatementTaskData.TrueSubTaskKey : IfStatementTaskData.FalseSubTaskKey;
         return ExecutionResult.Success(activatedSubTasks);
     }
 
