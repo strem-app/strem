@@ -7,26 +7,20 @@
 @using Strem.Core.Extensions
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
+@using Strem.Core.Types
 
 @inject ITriggerRegistry TriggerRegistry;
 @inject IEventBus EventBus;
+@inject DragController DragController
 
 @implements IDisposable
 
 @foreach (var data in Flow.TriggerData)
 {
-    <li draggable="true"
-        class="block @(DragEnter?.Id == data.Id ? "drag-enter-target" : "")"
-        @key=@data.Id
-        id="@data.Id"
-        ondragover="event.preventDefault()"
-        @ondragstart="@(() => OnDragStart(data))"
-        @ondrop="@(() => OnDropOverElement(data))"
-        @ondragenter="@(() => OnDragEnterElement(data))"
-        @ondragend="OnDragEnd">
+    <DraggableListElement Data="data" DropType="@DropTypes.FlowTrigger" ContainingList="Flow.TriggerData" SupportedDropTypes="@(new[] { DropTypes.FlowTrigger, DropTypes.NewTrigger })">
         <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)"
-                          OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"/>
-    </li>
+                                  OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"/>
+    </DraggableListElement>
 }
 
 @code {
@@ -38,10 +32,25 @@
     public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
     public IFlowTrigger GetTriggerFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).Trigger;
   
-    private IFlowTriggerData? DraggedItem;
-    private int DraggedItemIndex;
-    private IFlowTriggerData? DragEnter;
     private CompositeDisposable _subs = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.FlowTrigger && x.DestinationDropType == DropTypes.FlowTrigger)
+            .Subscribe(MoveDraggedElement)
+            .AddTo(_subs);
+    }
+    
+    public void MoveDraggedElement(DropData args)
+    {
+        args.SourceList.Remove(args.SourceObject);
+        var indexOfDestination = args.DestinationList.IndexOf(args.DestinationObject);
+        if (indexOfDestination == -1) { indexOfDestination = 0; }
+        args.DestinationList.Insert(indexOfDestination, args.SourceObject);
+
+        InvokeAsync(StateHasChanged);
+    }
     
     public void RemoveTriggerData(IFlowTriggerData data)
     {
@@ -51,35 +60,6 @@
 
     public void ResetTriggers(IFlowTriggerData data)
     { EventBus.PublishAsync(new FlowTriggersChangedEvent(Flow.Id)); }
-
-    public void OnDropOverElement(IFlowTriggerData dropTarget)
-    {
-        DragEnter=null;
-        if (DraggedItem == null) return;
-        if (DraggedItem == dropTarget) return;
-        
-        var friendIndex = Flow.TriggerData.IndexOf(dropTarget);
-        Flow.TriggerData.Swap(friendIndex, DraggedItemIndex);
-        DraggedItem=null;
-    }
-
-    public void  OnDragStart(IFlowTriggerData item)
-    {
-        DraggedItem = item;
-        DraggedItemIndex = Flow.TriggerData.IndexOf(item);
-    }
-
-    public void OnDragEnterElement(IFlowTriggerData item)
-    {
-        if (DraggedItem == null) { return; }
-        DragEnter = item;
-    }
-
-    public void  OnDragEnd()
-    {
-        DraggedItem = null;        
-        DragEnter = null;
-    }
 
     public void Dispose()
     {

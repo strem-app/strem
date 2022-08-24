@@ -8,6 +8,7 @@
 @using Strem.Core.Flows.Registries.Triggers
 @using Strem.Core.Flows.Tasks
 @using Strem.Core.Flows.Triggers
+@using Strem.Core.Types
 
 @inject IEventBus EventBus;
 @inject ITaskRegistry TaskRegistry;
@@ -67,15 +68,15 @@
     <ul class="menu-list">
       @foreach (var task in taskGroup)
       {
-        <li>
+        <DraggableListElement Data="task" DropType="@DropTypes.NewTask">
           <a class="is-task has-tooltip-left has-tooltip-multiline @(IsTaskEnabled(task.Task) ? "enabled" : "disabled")" 
-             data-tooltip="@task.Task.Description" @onclick="() => OnTaskSelected.InvokeAsync(task)">
+             data-tooltip="@task.Task.Description">
             <span class="icon is-small">
               <i class="fa fa-plus"></i>
             </span>
             <span class="ml-2 menu-text">@task.Task.Name</span>
           </a>
-        </li>
+        </DraggableListElement>
       }
     </ul>
   }

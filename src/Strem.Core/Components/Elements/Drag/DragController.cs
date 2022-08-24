@@ -6,54 +6,59 @@ namespace Strem.Core.Components.Elements.Drag;
 
 public class DragController : IDisposable
 {
-    public IList? DraggingList { get; private set; }
-    public object? DraggingObject { get; private set; }
-    public string DropType { get; private set; } = string.Empty;
-
-    public object? LastEnteredObject { get; private set; }
-    public IList? LastEnteredList { get; private set; }
+    public IList? SourceList { get; private set; }
+    public object? SourceObject { get; private set; }
+    public string SourceDropType { get; private set; } = string.Empty;
+    
+    public IList? DestinationList { get; private set; }
+    public object? DestinationObject { get; private set; }
+    public string DestinationDropType { get; private set; } = string.Empty;
     
     private readonly Subject<DropData> _droppedItemSubject = new();
     public IObservable<DropData> OnDroppedItem => _droppedItemSubject;
 
-    public readonly Subject<Unit> _dragEnterObjectChanged = new();
-    public IObservable<Unit> OnDragEnterObjectChanged => _dragEnterObjectChanged;
+    public readonly Subject<Unit> _destinationObjectChanged = new();
+    public IObservable<Unit> OnDestinationObjectChanged => _destinationObjectChanged;
     
-    public void OnDragStart(object draggingObject, string dropType, IList draggingList)
+    public void OnDragStart(object draggingObject, IList draggingList, string sourceDropType)
     {
-        DraggingObject = draggingObject;
-        DraggingList = draggingList;
-        DropType = dropType;
+        SourceObject = draggingObject;
+        SourceList = draggingList;
+        SourceDropType = sourceDropType;
     }
 
-    public void OnDragEnterElement(object enteredObject, IList lastEnteredList)
+    public void OnDragEnterElement(object destinationObject, IList destinationList, string destinationDropType)
     {
-        if (DraggingObject == null) { return; }
-        LastEnteredObject = enteredObject;
-        LastEnteredList = lastEnteredList;
-        _dragEnterObjectChanged.OnNext(Unit.Default);
+        if (SourceObject == null) { return; }
+        DestinationObject = destinationObject;
+        DestinationList = destinationList;
+        DestinationDropType = destinationDropType;
+        _destinationObjectChanged.OnNext(Unit.Default);
     }
 
     public void OnDragEnd()
     {
-        if (DraggingObject == null || LastEnteredObject == null)
+        if (SourceObject == null || DestinationObject == null || SourceObject.Equals(DestinationObject))
         {
             ResetState();
+            _destinationObjectChanged.OnNext(Unit.Default);
             return;
         }
 
-        var dropData = new DropData(DropType, DraggingObject, LastEnteredObject, DraggingList, LastEnteredList);
+        var dropData = new DropData(SourceObject, SourceList, SourceDropType, DestinationObject, DestinationList, DestinationDropType);
         ResetState();
         _droppedItemSubject.OnNext(dropData);
-        _dragEnterObjectChanged.OnNext(Unit.Default);
+        _destinationObjectChanged.OnNext(Unit.Default);
     }
 
     public void ResetState()
     {
-        DraggingObject = null;        
-        DraggingList = null;        
-        LastEnteredObject = null;
-        DropType = string.Empty;
+        SourceObject = null;        
+        SourceList = null;        
+        SourceDropType = string.Empty;        
+        DestinationObject = null;
+        DestinationList = null;
+        DestinationDropType = string.Empty;
     }
 
     public void Dispose()
@@ -61,9 +66,9 @@ public class DragController : IDisposable
         _droppedItemSubject.Dispose();
     }
 
-    public bool IsDraggedObject(object comparisonObject)
-    { return DraggingObject?.Equals(comparisonObject) ?? false; }
+    public bool IsDragSupported(object comparisonObject)
+    { return SourceObject?.Equals(comparisonObject) ?? false; }
     
-    public bool IsLastEnteredObject(object comparisonObject)
-    { return LastEnteredObject?.Equals(comparisonObject) ?? false; }
+    public bool IsDestinationObject(object comparisonObject)
+    { return DestinationObject?.Equals(comparisonObject) ?? false; }
 }

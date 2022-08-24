@@ -47,8 +47,8 @@
     protected override async Task OnInitializedAsync()
     {
         DragController.OnDroppedItem
-            .Where(x => x.DropType == DropTypes.FlowTask)
-            .Subscribe(MoveDraggedElement)
+            .Where(x => x.SourceDropType == DropTypes.FlowTask && x.DestinationDropType == DropTypes.FlowTask)
+            .Subscribe(MoveTaskElement)
             .AddTo(_subs);
     }
 
@@ -57,14 +57,12 @@
         TaskData.Remove(data);
     }
 
-    public void MoveDraggedElement(DropData args)
+    public void MoveTaskElement(DropData args)
     {
-        args.DraggedItemList.Remove(args.DraggedItem);
-        var indexOfDestination = args.DroppedItemList.IndexOf(args.DroppedItem);
-        if (args.DroppedItemList.Count == indexOfDestination || indexOfDestination == -1)
-        { args.DroppedItemList.Add(args.DraggedItem); }
-        else
-        { args.DroppedItemList.Insert(indexOfDestination, args.DraggedItem); }
+        args.SourceList.Remove(args.SourceObject);
+        var indexOfDestination = args.DestinationList.IndexOf(args.DestinationObject);
+        if (indexOfDestination == -1) { indexOfDestination = 0; }
+        args.DestinationList.Insert(indexOfDestination, args.SourceObject);
 
         InvokeAsync(StateHasChanged);
     }
