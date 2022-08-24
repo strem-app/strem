@@ -1,36 +1,73 @@
-﻿@using Strem.Core.Flows
-@using Strem.Core.Flows.Registries.Tasks
-@using Strem.Core.Flows.Tasks
-@using Strem.Core.Extensions
-@using Strem.Core.Events.Bus
-@using Strem.Core.Events.Flows.Tasks
+﻿@using Strem.Core.Extensions
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
-
 @typeparam TData
+
+@inject DragController DragController
+@inject ILogger<DragController> Logger
 
 @implements IDisposable
 
-    <li draggable="true"
-        class="block @(DragController.LastEnteredObject.Equals(Data) ? "drag-enter-target" : "")"
-        ondragover="event.preventDefault()"
-        @ondragstart="@(() => DragController.OnDragStart(Data))"
-        @ondrop="@(() => DragController.OnDropOverElement(Data))"
-        @ondragenter="@(() => DragController.OnDragEnterElement(Data))"
-        @ondragend="DragController.OnDragEnd">
-        @ChildContent
+@if (IsCurrentDropTarget)
+{
+    <li class="block drag-enter-target">
+        <button class="button is-leveled" disabled></button>
     </li>
+}
+
+<li draggable="true"
+    class="block @(DragController.IsDraggedObject(Data) ? "drag-source" : "")"
+    ondragover="event.preventDefault()"
+    @ondragstart="@(() => DragController.OnDragStart(Data, DropType, ContainingList))"
+    @ondragenter="@(() => { DragController.OnDragEnterElement(Data, ContainingList); CheckForDragTarget(); })"
+    @ondragend="DragController.OnDragEnd">
+    @ChildContent
+</li>
 
 @code {
     [Parameter]
-    public DragController DragController { get; set; }
+    public string DropType { get; set; }
     
     [Parameter]
-    public string Context { get; set; }
+    public IReadOnlyCollection<string> SupportedDropTypes { get; set; }
     
     [Parameter]
     public TData Data { get; set; }
+
+    [Parameter]
+    public List<TData> ContainingList { get; set; }
     
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    private CompositeDisposable _subs = new();
+    private bool IsCurrentDropTarget { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        DragController.OnDragEnterObjectChanged
+            .Where(x => IsCurrentDropTarget)
+            .Subscribe(x =>
+            {
+                CheckForDragTarget();
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+    }
+
+    public bool IsDropTarget()
+    {
+        return SupportedDropTypes.Contains(DragController.DropType, StringComparer.OrdinalIgnoreCase) && 
+               DragController.IsLastEnteredObject(Data);
+    }
+
+    public void CheckForDragTarget()
+    {
+        IsCurrentDropTarget = IsDropTarget();
+    }
+
+    public void Dispose()
+    {
+        _subs.Dispose();
+    }
 }

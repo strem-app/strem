@@ -1,15 +1,21 @@
-﻿namespace Strem.Core.Components.Elements.Drag;
+﻿using System.Collections;
+
+namespace Strem.Core.Components.Elements.Drag;
 
 public class DropData
 {
     public object DraggedItem { get; } 
-    public object? DroppedOn { get; }
-    public string Context { get; }
+    public IList DraggedItemList { get; }
+    public object? DroppedItem { get; }
+    public IList DroppedItemList { get; }
+    public string DropType { get; }
 
-    public DropData(object draggedItem, string context, object? droppedOn = null)
+    public DropData(string dropType, object draggedItem, object? droppedItem, IList draggedItemList, IList droppedItemList)
     {
         DraggedItem = draggedItem;
-        DroppedOn = droppedOn;
-        Context = context;
+        DroppedItem = droppedItem;
+        DraggedItemList = draggedItemList;
+        DroppedItemList = droppedItemList;
+        DropType = dropType;
     }
 }

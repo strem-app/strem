@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Strem.Core.Extensions;
 using Strem.Core.Flows.Registries.Menus;
+using Strem.Core.Plugins;
 using Strem.Infrastructure.Services.Api;
 using Strem.Todos.Data;
 using Strem.Todos.Services.Persistence;
@@ -29,6 +30,9 @@ public class TodoModule : IRequiresApiHostingModule
         var thisAssembly = GetType().Assembly;
         services.RegisterAllTasksAndComponentsIn(thisAssembly);
         services.RegisterAllTriggersAndComponentsIn(thisAssembly);
+        
+        // Startup
+        services.AddSingleton<IPluginStartup, TodoPluginStartup>();
     }
     
     public ITodoStore LoadTodoStore(IServiceProvider services)

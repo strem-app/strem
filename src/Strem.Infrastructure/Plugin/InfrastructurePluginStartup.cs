@@ -34,12 +34,20 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     {
         AppState.UserVariables.OnVariableChanged
             .Throttle(TimeSpan.FromSeconds(5))
-            .Subscribe(_ => AppFileHandler.SaveUserState(AppState))
+            .Subscribe(_ =>
+            {
+                Logger.Information("Saving User Vars");
+                AppFileHandler.SaveUserState(AppState);
+            })
             .AddTo(_subs);
 
         AppState.AppVariables.OnVariableChanged
             .Throttle(TimeSpan.FromSeconds(5))
-            .Subscribe(_ => AppFileHandler.SaveAppState(AppState))
+            .Subscribe(_ =>
+            {
+                Logger.Information("Saving App Vars");
+                AppFileHandler.SaveAppState(AppState);
+            })
             .AddTo(_subs);
         
         AppState.UserVariables.OnVariableChanged
@@ -55,6 +63,7 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         Observable.Interval(TimeSpan.FromMinutes(5))
             .Subscribe(x =>
             {
+                Logger.Information("Saving Flows");
                 AppFileHandler.SaveFlowStore(FlowStore);
             })
             .AddTo(_subs);
