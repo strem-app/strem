@@ -8,16 +8,18 @@
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
 @using Strem.Core.Types
+@using Strem.Core.Utils
 
 @inject ITriggerRegistry TriggerRegistry;
 @inject IEventBus EventBus;
 @inject DragController DragController
+@inject IRandomizer Randomizer
 
 @implements IDisposable
 
 @if (Flow.TriggerData.Count == 0)
 {
-    <DraggableElement Data="string.Empty" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTrigger }" 
+    <DraggableElement Data="@ScopeContext" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTrigger }" 
                       CanDrag="false" Classes="notification has-text-centered">
         <p class="title is-5 has-text-black-ter">Drag triggers in here to have them start your flows</p>
     </DraggableElement>
@@ -37,6 +39,7 @@
     public Flow Flow { get; set; }
     
     public Guid ActiveTriggerId { get; set; }
+    public string ScopeContext { get; set; }
     
     public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
     public IFlowTrigger GetTriggerFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).Trigger;
@@ -45,18 +48,26 @@
     
     protected override async Task OnInitializedAsync()
     {
+        ScopeContext = Randomizer.RandomString(30);
+        
         DragController.OnDroppedItem
-            .Where(x => x.SourceDropType == DropTypes.FlowTrigger && x.DestinationDropType == DropTypes.FlowTrigger)
+            .Where(x => x.SourceDropType == DropTypes.FlowTrigger && 
+                        x.DestinationDropType == DropTypes.FlowTrigger && 
+                        Equals(x.DestinationList, Flow.TriggerData))
             .Subscribe(MoveTriggerElement)
             .AddTo(_subs);
         
         DragController.OnDroppedItem
-            .Where(x => x.SourceDropType == DropTypes.NewTrigger && x.DestinationDropType == DropTypes.FlowTrigger)
+            .Where(x => x.SourceDropType == DropTypes.NewTrigger && 
+                        x.DestinationDropType == DropTypes.FlowTrigger &&
+                        Equals(x.DestinationList, Flow.TriggerData))
             .Subscribe(AddNewTriggerIntoExisting)
             .AddTo(_subs);
         
         DragController.OnDroppedItem
-            .Where(x => x.SourceDropType == DropTypes.NewTrigger && x.DestinationDropType == DropTypes.None)
+            .Where(x => x.SourceDropType == DropTypes.NewTrigger && 
+                        x.DestinationDropType == DropTypes.None &&
+                        ScopeContext.Equals(x.DestinationObject))
             .Subscribe(AddNewTriggerIntoFresh)
             .AddTo(_subs);
     }

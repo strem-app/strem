@@ -42,6 +42,15 @@ each(range(5, 100, 5), {
     .w-@{value} { width: ~"@{value}%"; }
 });
 
+each(range(5, 100, 5), {
+    .h-@{value} { height: ~"@{value}%"; }
+});
+
+each(range(5, 100, 5), {
+    .opacity-@{value} { opacity: ~"@{value}%"; }
+});
+
+
 body
 {
     font-family: "Quicksand";

@@ -7,16 +7,18 @@
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
 @using Strem.Core.Types
+@using Strem.Core.Utils
 
 @inject ITaskRegistry TaskRegistry
 @inject IEventBus EventBus
 @inject DragController DragController
+@inject IRandomizer Randomizer
 
 @implements IDisposable
 
 @if (TaskData.Count == 0)
 {
-    <DraggableElement Data="string.Empty" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTask }" 
+    <DraggableElement Data="@ScopeContext" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTask }" 
                       CanDrag="false" Classes="notification has-text-centered">
         <p class="title is-5 has-text-black-ter">Drag tasks in here to give your flow something to do</p>
     </DraggableElement>
@@ -35,7 +37,7 @@
         {
             <ul class="sub-tasks">
                 <p class="menu-label">@subKey</p>
-                <FlowTaskEditor TaskData="@subTaskData.SubTasks[subKey]" />
+                <FlowTasksEditor TaskData="@subTaskData.SubTasks[subKey]" />
             </ul>
         }
     }
@@ -49,23 +51,33 @@
     public IFlowTask GetTaskFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).Task;
 
     public Guid ActiveTaskId { get; set; }
+    public string ScopeContext { get; set; }
   
     private CompositeDisposable _subs = new();
 
     protected override async Task OnInitializedAsync()
     {
+        // We do this to differentiate nested recursive scopes
+        ScopeContext = Randomizer.RandomString(30);
+        
         DragController.OnDroppedItem
-            .Where(x => x.SourceDropType == DropTypes.FlowTask && x.DestinationDropType == DropTypes.FlowTask)
+            .Where(x => x.SourceDropType == DropTypes.FlowTask && 
+                        x.DestinationDropType == DropTypes.FlowTask && 
+                        Equals(x.DestinationList, TaskData))
             .Subscribe(MoveTaskElement)
             .AddTo(_subs);
         
         DragController.OnDroppedItem
-            .Where(x => x.SourceDropType == DropTypes.NewTask && x.DestinationDropType == DropTypes.FlowTask)
+            .Where(x => x.SourceDropType == DropTypes.NewTask && 
+                        x.DestinationDropType == DropTypes.FlowTask && 
+                        Equals(x.DestinationList, TaskData))
             .Subscribe(AddNewTaskIntoExisting)
             .AddTo(_subs);
         
         DragController.OnDroppedItem
-            .Where(x => x.SourceDropType == DropTypes.NewTask && x.DestinationDropType == DropTypes.None)
+            .Where(x => x.SourceDropType == DropTypes.NewTask && 
+                        x.DestinationDropType == DropTypes.None &&
+                        ScopeContext.Equals(x.DestinationObject))
             .Subscribe(AddNewTaskIntoFresh)
             .AddTo(_subs);
     }
