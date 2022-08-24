@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -31,6 +32,6 @@ public class SetVariableTask : FlowTask<SetVariableTaskData>
         var processedValue = FlowStringProcessor.Process(data.Value, flowVars);
 
         AppState.SetVariable(flowVars, data.ScopeType, processedName, processedContext, processedValue);
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

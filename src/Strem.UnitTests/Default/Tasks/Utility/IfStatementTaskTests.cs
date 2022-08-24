@@ -51,33 +51,4 @@ public class IfStatementTaskTests
         var matches = task.NumericalComparison(data, dummyFlowVars);
         Assert.Equal(shouldMatch, matches);
     }
-    
-    [Theory]
-    [InlineData(false, false, false)]
-    [InlineData(true, false, false)]
-    [InlineData(false, true, false)]
-    [InlineData(true, true, true)]
-    public void should_correctly_run_failure_flow(bool runFailureFlow, bool hasFlowId, bool shouldHaveCalled)
-    {
-        var mockLogger = new Mock<ILogger<FlowTask<IfStatementTaskData>>>();
-        var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
-        var mockEventBus = new Mock<IEventBus>();
-        var mockFlowExecutor = new Mock<IFlowExecutor>();
-        var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
-        
-        var task = new IfStatementTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, 
-            mockEventBus.Object, mockFlowExecutor.Object);
-
-        var flowGuid = Guid.NewGuid();
-        var data = new IfStatementTaskData
-        {
-            FailureFlowId = hasFlowId ? flowGuid : Guid.NewGuid(),
-            RunFlowOnFailure = runFailureFlow
-        };
-        
-        task.PossiblyRunFailureFlow(data);
-
-        var times = shouldHaveCalled ? Times.Once() : Times.Never();
-        mockFlowExecutor.Verify(x => x.ExecuteFlow(flowGuid, It.IsAny<IVariables>()), times);
-    }
 }

@@ -4,7 +4,6 @@ using Strem.Core.Events.Flows;
 using Strem.Core.Events.Flows.Tasks;
 using Strem.Core.Events.Flows.Triggers;
 using Strem.Core.Extensions;
-using Strem.Core.Flows.Registries;
 using Strem.Core.Flows.Registries.Tasks;
 using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Flows.Tasks;
@@ -104,28 +103,18 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         return new Variables.Variables(allVariables.ToDictionary(x => x.Key, x => x.Value));
     }
 
-    public void CancelExecution(Flow flow, IFlowTaskData currentTaskData, ExecutionResult executionResult, IVariables flowVariables, FlowExecutionLog executionLog)
+    public void CancelExecution(Flow flow, IFlowTaskData currentTaskData, ExecutionResultType executionResultType, IVariables flowVariables, FlowExecutionLog executionLog)
     {
-        EventBus.PublishAsync(new FlowTaskFinished(flow.Id, currentTaskData.Id));
         EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
                 
         executionLog.EndTime = DateTime.Now;
         executionLog.EndVariables = CollateActiveVariables(flowVariables);
-        executionLog.ExecutionResult = executionResult;
-        executionLog.ElementExecutionSummary.Add($"{currentTaskData.Code} - {executionResult}");
+        executionLog.ExecutionResultType = executionResultType;
+        executionLog.ElementExecutionSummary.Add($"{currentTaskData.Code} - {executionResultType}");
     }
 
-    public async Task ExecuteFlow(Flow flow, IVariables flowVariables = null)
+    public FlowExecutionLog SetupLogFor(Flow flow, IVariables flowVariables)
     {
-        if(flow.TaskData.Count == 0) { return; }
-        if(!flow.Enabled) { return; }
-        
-        // TODO: Maybe need to handle multiple calls here, should it run in parallel or queue or forget
-        //if(FlowExecutions.ContainsKey(flow.Id)) { return; }
-        
-        if (flowVariables == null)
-        { flowVariables = new Variables.Variables(); }
-
         var executionLog = new FlowExecutionLog
         {
             FlowId = flow.Id,
@@ -134,37 +123,77 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             StartVariables = CollateActiveVariables(flowVariables)
         };
         Logs.Add(executionLog);
+        return executionLog;
+    }
 
+    public async Task<ExecutionResult> ExecuteTask(Flow flow, IFlowTaskData taskData, IVariables flowVariables, FlowExecutionLog executionLog)
+    {
+        var task = TaskRegistry.Get(taskData.Code)?.Task;
+
+        if (task == null)
+        {
+            Logger.LogWarning($"Task cant be found for task code: {taskData.Code} (v{taskData.Version})");
+            return ExecutionResult.FailedButContinue();
+        }
+            
+        EventBus.PublishAsync(new FlowTaskStarted(flow.Id, taskData.Id));
+        try
+        {
+            var executionResult = await task.Execute(taskData, flowVariables);
+            
+            if (executionResult.ResultType is ExecutionResultType.Failed or ExecutionResultType.CascadingFailure)
+            {
+                Logger.Warning($"Failed Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}]");
+                EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
+                return executionResult;
+            }
+
+            if (taskData is IHasSubTaskData subTaskData && executionResult.SubTaskKeys.Length > 0)
+            {
+                foreach (var subTaskKey in executionResult.SubTaskKeys)
+                {
+                    if(!subTaskData.SubTasks.ContainsKey(subTaskKey)) { continue; }
+                    executionLog.ElementExecutionSummary.Add($"Entering Sub Task For {taskData.Code} With Key {subTaskKey}");
+                    foreach (var subTaskDataEntry in subTaskData.SubTasks[subTaskKey])
+                    {
+                        var subExecutionResult = await ExecuteTask(flow, subTaskDataEntry, flowVariables, executionLog);
+                        if (subExecutionResult.ResultType == ExecutionResultType.Failed) { break; }
+                        if (subExecutionResult.ResultType == ExecutionResultType.CascadingFailure) { return executionResult; }
+                    }
+                    executionLog.ElementExecutionSummary.Add($"Finished Sub Task For {taskData.Code} With Key {subTaskKey}");
+                }
+            }
+
+            EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
+            executionLog.ElementExecutionSummary.Add($"{taskData.Code} - {executionResult}");
+            return executionResult;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Error Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}] | Error: {ex.Message}");
+            EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
+            return ExecutionResult.Failed();
+        }
+    }
+
+    public async Task ExecuteFlow(Flow flow, IVariables? flowVariables = null)
+    {
+        if(flow.TaskData.Count == 0) { return; }
+        if(!flow.Enabled) { return; }
+        
+        // TODO: Maybe need to handle multiple calls here, should it run in parallel or queue or forget
+        //if(FlowExecutions.ContainsKey(flow.Id)) { return; }
+        
+        flowVariables ??= new Variables.Variables();
+        var executionLog = SetupLogFor(flow, flowVariables);
         EventBus.PublishAsync(new FlowStartedEvent(flow.Id));
         
         foreach (var taskData in flow.TaskData)
         {
-            var task = TaskRegistry.Get(taskData.Code)?.Task;
-
-            if (task == null)
+            var executionResult = await ExecuteTask(flow, taskData, flowVariables, executionLog);
+            if (executionResult.ResultType == ExecutionResultType.Failed)
             {
-                Logger.LogWarning($"Task cant be found for task code: {taskData.Code} (v{taskData.Version})");
-                continue;
-            }
-            
-            EventBus.PublishAsync(new FlowTaskStarted(flow.Id, taskData.Id));
-            try
-            {
-                var executionResult = await task.Execute(taskData, flowVariables);
-                if (executionResult == ExecutionResult.Failed)
-                {
-                    Logger.Information($"Failed Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}]");
-                    CancelExecution(flow, taskData, executionResult, flowVariables, executionLog);
-                    return;
-                }
-                
-                EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
-                executionLog.ElementExecutionSummary.Add($"{taskData.Code} - {executionResult}");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"Error Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}] | Error: {ex.Message}");
-                CancelExecution(flow, taskData, ExecutionResult.Failed, flowVariables, executionLog);
+                CancelExecution(flow, taskData, executionResult.ResultType, flowVariables, executionLog);
                 return;
             }
         }
@@ -172,7 +201,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
         executionLog.EndTime = DateTime.Now;
         executionLog.EndVariables = CollateActiveVariables(flowVariables);
-        executionLog.ExecutionResult = ExecutionResult.Success;
+        executionLog.ExecutionResultType = ExecutionResultType.Success;
     }
 
     public async Task ExecuteFlow(Guid flowId, IVariables flowVariables = null)

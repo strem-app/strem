@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using OBSWebsocketDotNet.Types;
 using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -42,6 +43,6 @@ public class SetSourceMuteStateTask : FlowTask<SetSourceMuteStateTaskData>
         }
 
         await ObsClient.SetMute(data.SourceName, muted);
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

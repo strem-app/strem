@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -29,14 +30,14 @@ public class DecrementVariableTask : FlowTask<DecrementVariableTaskData>
         var processedName = FlowStringProcessor.Process(data.Name, flowVars);
         var processedContext = FlowStringProcessor.Process(data.Context, flowVars);
         var currentValue = AppState.GetVariable(flowVars, processedName, processedContext);
-        if(string.IsNullOrEmpty(currentValue)){ return ExecutionResult.Failed; }
+        if(string.IsNullOrEmpty(currentValue)){ return ExecutionResult.Failed(); }
 
         int value;
         if(!int.TryParse(currentValue, out value))
-        { return ExecutionResult.Failed; }
+        { return ExecutionResult.Failed(); }
 
         var newValue = value - data.DecrementAmount;
         AppState.SetVariable(flowVars, data.ScopeType, processedName, processedContext, newValue.ToString());
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

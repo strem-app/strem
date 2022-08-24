@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -61,19 +62,19 @@ public class WriteToFileTask : FlowTask<WriteToFileTaskData>
         if (string.IsNullOrEmpty(data.FilePath))
         {
             Logger.Warning("No path provided for Write To Path task");
-            return ExecutionResult.Failed;
+            return ExecutionResult.Failed();
         }
         
         CreateFileIfNeeded(data.FilePath);
         try
         {
             await WriteToFile(data, flowVars);
-            return ExecutionResult.Success;
+            return ExecutionResult.Success();
         }
         catch (Exception ex)
         {
             Logger.Error($"Error writing to File [{data.FilePath}]: {ex.Message}");
-            return ExecutionResult.Failed;
+            return ExecutionResult.Failed();
         }
     }
 }

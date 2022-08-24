@@ -1,6 +1,7 @@
 ﻿using InputSimulatorStandard;
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -29,13 +30,13 @@ public class SimulateKeyPressTask : FlowTask<SimulateKeyPressTaskData>
     
     public override async Task<ExecutionResult> Execute(SimulateKeyPressTaskData data, IVariables flowVars)
     {
-        if(data.KeysToPress.Count == 0 && data.KeyModifiers.Count == 0) { return ExecutionResult.FailedButContinue; }
+        if(data.KeysToPress.Count == 0 && data.KeyModifiers.Count == 0) { return ExecutionResult.FailedButContinue(); }
 
         if (data.KeyModifiers.Count == 0)
         { InputSimulator.Keyboard.KeyPress(data.KeysToPress.ToArray()); }
         else
         { InputSimulator.Keyboard.ModifiedKeyStroke(data.KeyModifiers, data.KeysToPress); }
 
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

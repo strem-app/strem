@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -33,6 +34,6 @@ public class CreateTwitchStreamMarkerTask : FlowTask<CreateTwitchStreamMarkerTas
     {
         var markerRequest = new CreateStreamMarkerRequest { Description = data.Description, UserId = AppState.GetTwitchUserId()};
         var response = await TwitchApi.Helix.Streams.CreateStreamMarkerAsync(markerRequest);
-        return (response.Data.Length > 0) ? ExecutionResult.Success : ExecutionResult.Failed;
+        return (response.Data.Length > 0) ? ExecutionResult.Success() : ExecutionResult.Failed();
     }
 }

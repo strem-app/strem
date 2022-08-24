@@ -1,8 +1,9 @@
 ﻿namespace Strem.Core.Types;
 
-public enum ExecutionResult
+public enum ExecutionResultType
 {
     Success,
     Failed,
+    CascadingFailure,
     FailedButContinue
 }

@@ -6,104 +6,122 @@
 @using Strem.Core.Events.Flows.Tasks
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
+@using Strem.Core.Types
+@using Strem.Core.Utils
 
-@inject ITaskRegistry TaskRegistry;
-@inject IEventBus EventBus;
+@inject ITaskRegistry TaskRegistry
+@inject IEventBus EventBus
+@inject DragController DragController
+@inject IRandomizer Randomizer
 
 @implements IDisposable
 
-@foreach (var data in Flow.TaskData)
+@if (TaskData.Count == 0)
 {
-    <li draggable="true"
-        class="block @(DragEnter?.Id == data.Id ? "drag-enter-target" : "")"
-        @key=@data.Id
-        id="@data.Id"
-        ondragover="event.preventDefault()"
-        @ondragstart="@(() => OnDragStart(data))"
-        @ondrop="@(() => OnDropOverElement(data))"
-        @ondragenter="@(() => OnDragEnterElement(data))"
-        @ondragend="OnDragEnd">
-    
+    <DraggableElement Data="@ScopeContext" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTask }" 
+                      CanDrag="false" Classes="notification has-text-centered">
+        <p class="title is-5 has-text-black-ter">Drag tasks in here to give your flow something to do</p>
+    </DraggableElement>
+}
+
+@foreach (var data in TaskData)
+{
+    <DraggableListElement Data="data" DropType="@DropTypes.FlowTask" ContainingList="TaskData" SupportedDropTypes="@(new []{ DropTypes.FlowTask, DropTypes.NewTask })">
         <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)"
-                       OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
-    </li>
+                               OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
+    </DraggableListElement>
+
+    if (data is IHasSubTaskData subTaskData && subTaskData.SubTaskKeys.Length > 0)
+    {
+        foreach (var subKey in subTaskData.SubTaskKeys)
+        {
+            <ul class="sub-tasks">
+                <p class="menu-label">@subKey</p>
+                <FlowTasksEditor TaskData="@subTaskData.SubTasks[subKey]" />
+            </ul>
+        }
+    }
 }
 
 @code {
     [Parameter]
-    public Flow Flow { get; set; }
+    public List<IFlowTaskData> TaskData { get; set; }
     
     public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
     public IFlowTask GetTaskFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).Task;
 
     public Guid ActiveTaskId { get; set; }
+    public string ScopeContext { get; set; }
   
-    private IFlowTaskData? DraggedItem;
-    private int DraggedItemIndex;
-    private IFlowTaskData? DragEnter;
     private CompositeDisposable _subs = new();
 
-    public void RemoveTaskData(IFlowTaskData data)
+    protected override async Task OnInitializedAsync()
     {
-        Flow.TaskData.Remove(data);
+        // We do this to differentiate nested recursive scopes
+        ScopeContext = Randomizer.RandomString(30);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.FlowTask && 
+                        x.DestinationDropType == DropTypes.FlowTask && 
+                        Equals(x.DestinationList, TaskData))
+            .Subscribe(MoveTaskElement)
+            .AddTo(_subs);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.NewTask && 
+                        x.DestinationDropType == DropTypes.FlowTask && 
+                        Equals(x.DestinationList, TaskData))
+            .Subscribe(AddNewTaskIntoExisting)
+            .AddTo(_subs);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.NewTask && 
+                        x.DestinationDropType == DropTypes.None &&
+                        ScopeContext.Equals(x.DestinationObject))
+            .Subscribe(AddNewTaskIntoFresh)
+            .AddTo(_subs);
+    }
+
+    public void RemoveTaskData(IFlowTaskData data)
+    { TaskData.Remove(data); }
+
+    public void MoveTaskElement(DropData args)
+    {
+        args.SourceList.Remove(args.SourceObject);
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject) + 1;
+        if (indexToAddAt == args.DestinationList.Count)
+        { args.DestinationList.Add(args.SourceObject); }
+        else
+        { args.DestinationList.Insert(indexToAddAt, args.SourceObject); }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void AddNewTaskIntoExisting(DropData args)
+    {
+        var taskDescriptor = args.SourceObject as TaskDescriptor;
+        if(taskDescriptor == null) { return; }
+        var newTaskData = taskDescriptor.Data();
+        
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject) + 1;
+        if (indexToAddAt == args.DestinationList.Count)
+        { args.DestinationList.Add(newTaskData); }
+        else
+        { args.DestinationList.Insert(indexToAddAt, newTaskData); }
+
+        InvokeAsync(StateHasChanged);
     }
     
-    protected override Task OnInitializedAsync()
+    public void AddNewTaskIntoFresh(DropData args)
     {
-        // TODO Find a nice way of handling this, possibly a local queue we add to and process on a separate observable
-        /*
-        EventBus.Receive<FlowTaskStarted>()
-            .Subscribe(x =>
-            {
-                ActiveTaskId = x.TaskId;
-                InvokeAsync(StateHasChanged);
-            })
-            .AddTo(_subs);
-      
-        EventBus.Receive<FlowTaskFinished>()
-            .Delay(TimeSpan.FromSeconds(1))
-            .Subscribe(x =>
-            {
-                ActiveTaskId = Guid.Empty;
-                InvokeAsync(StateHasChanged);
-            })
-            .AddTo(_subs);
-        */
-        return base.OnInitializedAsync();
-    }
-  
-    public void OnDropOverElement(IFlowTaskData dropTarget)
-    {
-        DragEnter=null;
-        if (DraggedItem == null) return;
-        if (DraggedItem == dropTarget) return;
+        var taskDescriptor = args.SourceObject as TaskDescriptor;
+        if(taskDescriptor == null) { return; }
         
-        var friendIndex = Flow.TaskData.IndexOf(dropTarget);
-        Flow.TaskData.Swap(friendIndex, DraggedItemIndex);
-        DraggedItem=null;
-    }
-
-    public void  OnDragStart(IFlowTaskData item)
-    {
-        DraggedItem = item;
-        DraggedItemIndex = Flow.TaskData.IndexOf(item);
-    }
-
-    public void OnDragEnterElement(IFlowTaskData item)
-    {
-        if (DraggedItem == null) { return; }
-        DragEnter = item;
-    }
-
-    public void  OnDragEnd()
-    {
-        DraggedItem = null;        
-        DragEnter = null;
+        var newTaskData = taskDescriptor.Data();
+        TaskData.Add(newTaskData);
+        InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
-    {
-        _subs?.Dispose();
-    }
-
+    { _subs?.Dispose(); }
 }

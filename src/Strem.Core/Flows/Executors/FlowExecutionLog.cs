@@ -7,7 +7,7 @@ public class FlowExecutionLog
 {
     public Guid FlowId { get; set; }
     public string FlowName { get; set; }
-    public ExecutionResult ExecutionResult { get; set; }
+    public ExecutionResultType ExecutionResultType { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public IVariables StartVariables { get; set; }

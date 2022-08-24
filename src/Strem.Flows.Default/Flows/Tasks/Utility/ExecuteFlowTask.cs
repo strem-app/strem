@@ -36,6 +36,6 @@ public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
         else
         { FlowExecutor.ExecuteFlow(data.FlowId, flowVars); }
 
-        return ExecutionResult.Success;
+        return ExecutionResult.Success();
     }
 }

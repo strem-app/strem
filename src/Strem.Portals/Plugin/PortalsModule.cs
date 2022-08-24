@@ -1,5 +1,6 @@
 ﻿using Strem.Core.Extensions;
 using Strem.Core.Flows.Registries.Menus;
+using Strem.Core.Plugins;
 using Strem.Infrastructure.Services.Api;
 using Strem.Portals.Data;
 using Strem.Portals.Data.Overrides;
@@ -30,6 +31,9 @@ public class PortalsModule : IRequiresApiHostingModule
         var thisAssembly = GetType().Assembly;
         services.RegisterAllTasksAndComponentsIn(thisAssembly);
         services.RegisterAllTriggersAndComponentsIn(thisAssembly);
+        
+        // Startup
+        services.AddSingleton<IPluginStartup, PortalsPluginStartup>();
     }
     
     public IPortalStore LoadPortalStore(IServiceProvider services)
