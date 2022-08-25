@@ -35,7 +35,7 @@
     {
         foreach (var subKey in subTaskData.SubTaskKeys)
         {
-            <ul class="sub-tasks">
+            <ul class="sub-tasks @subKey">
                 <p class="menu-label">@subKey</p>
                 <FlowTasksEditor TaskData="@subTaskData.SubTasks[subKey]" />
             </ul>

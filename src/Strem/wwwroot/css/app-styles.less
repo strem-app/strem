@@ -247,6 +247,9 @@ ul.sub-tasks
     margin-left: 0.5em;
     border-left: 0.25em solid rgba(0,0,0,0.1);
     padding-left: 0.5em;
+    
+    &.true { border-left-color: fade(@is-success, 20%); }
+    &.false { border-left-color: fade(@is-danger, 20%); }
 }
 
 li.drag-source
