@@ -46,7 +46,7 @@ public class PluginBootstrapper
         var menuDescriptors = services.GetServices<MenuDescriptor>();
         menuRegistry?.AddMany(menuDescriptors);
         
-        executionEngine?.StartEngine();
+        await executionEngine?.StartEngine();
     }
     
     public static void LoadExternalPlugins(List<string> startupErrors)

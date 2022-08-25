@@ -89,7 +89,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         return true;
     }
 
-    public override IObservable<IVariables> Execute(OnTwitchChatMessageTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnTwitchChatMessageTriggerData data)
     {
         return TwitchClient.OnMessageReceived
             .Where(x => DoesMessageMeetCriteria(data, x.ChatMessage))

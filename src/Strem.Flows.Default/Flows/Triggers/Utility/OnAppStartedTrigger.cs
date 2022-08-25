@@ -25,7 +25,7 @@ public class OnAppStartedTrigger : FlowTrigger<OnAppStartedTriggerData>
 
     public override bool CanExecute() => true;
 
-    public override IObservable<IVariables> Execute(OnAppStartedTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnAppStartedTriggerData data)
     {
         return EventBus.Receive<ApplicationStartedEvent>()
             .Select(x => new Variables());

@@ -41,11 +41,28 @@ public class OnMuteStateChangedTrigger : FlowTrigger<OnMuteStateChangedTriggerDa
 
     public override bool CanExecute() => AppState.HasOBSHost();
 
-    public override IObservable<IVariables> Execute(OnMuteStateChangedTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnMuteStateChangedTriggerData data)
     {
-        return ObsClient.OnSourceMuteStateChanged
-            .Where(x => MatchesEvent(data, x))
-            .Select(PopulateVariables);
+        if(string.IsNullOrEmpty(data.SourceName))
+        { return Observable.Empty<IVariables>(); }
+        
+        var observableChain = ObsClient.OnSourceMuteStateChanged;
+        if (data.TriggerOnStart)
+        {
+            var muteState = await GetInitialValue(data);
+            var args = new SourceMuteStateChangedEventArgs { SourceName = data.SourceName, Muted = muteState };
+            observableChain = observableChain.StartWith(args);
+        }
+
+        return observableChain
+                .Where(x => MatchesEvent(data, x))
+                .Select(PopulateVariables);
+    }
+
+    public async Task<bool> GetInitialValue(OnMuteStateChangedTriggerData data)
+    {
+        if(!ObsClient.IsConnected) { return false; }
+        return await ObsClient.GetMute(data.SourceName);
     }
 
     public bool MatchesEvent(OnMuteStateChangedTriggerData data, SourceMuteStateChangedEventArgs args)

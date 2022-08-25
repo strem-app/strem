@@ -67,7 +67,7 @@ public class OnTwitchChatMessageTriggerTests
     }
     
     [Fact]
-    public void should_trigger_on_chat_message_with_no_restrictions()
+    public async Task should_trigger_on_chat_message_with_no_restrictions()
     {
         var mockLogger = new Mock<ILogger<FlowTrigger<OnTwitchChatMessageTriggerData>>>();
         var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
@@ -86,7 +86,7 @@ public class OnTwitchChatMessageTriggerTests
             MinimumUserType = UserType.Viewer
         };
         var trigger = new OnTwitchChatMessageTrigger(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
-        var observable = trigger.Execute(triggerData);
+        var observable = await trigger.Execute(triggerData);
 
         var wasCalled = false;
         var sub = observable.Subscribe(x => wasCalled = true);

@@ -24,7 +24,7 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
 
     public override bool CanExecute() => true;
 
-    public override IObservable<IVariables> Execute(OnIntervalTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnIntervalTriggerData data)
     {
         var variables = new Variables();
 

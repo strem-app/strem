@@ -31,6 +31,16 @@
     </div>
 </div>
 
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.TriggerOnStart">
+            Trigger On Start?
+        </label>
+    </div>
+    <HelperInfo>By default these triggers wait to be told when mute state changes, but with this you can trigger it with the current state when it starts</HelperInfo>
+</div>
+
 @code {
     public override string Title => $"On {Data.SourceName} Mute State Changed";
 

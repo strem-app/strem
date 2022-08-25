@@ -14,4 +14,5 @@ public class OnMuteStateChangedTriggerData : IFlowTriggerData
     public string SourceName { get; set; }
     public bool TriggerOnMuted { get; set; }
     public bool TriggerOnUnmuted { get; set; }
+    public bool TriggerOnStart { get; set; }
 }

@@ -46,7 +46,7 @@ public class OnPortalButtonPressedTrigger : FlowTrigger<OnPortalButtonPressedTri
         return true;
     }
     
-    public override IObservable<IVariables> Execute(OnPortalButtonPressedTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnPortalButtonPressedTriggerData data)
     {
         return EventBus.Receive<ButtonPressedEvent>()
             .Where(x => EventMatchesData(data, x))

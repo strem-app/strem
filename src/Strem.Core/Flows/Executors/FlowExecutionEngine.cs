@@ -37,7 +37,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         AppState = appState;
     }
 
-    public void StartEngine()
+    public async Task StartEngine()
     {
         EventBus.Receive<FlowAddedEvent>()
             .Subscribe(x => SetupFlow(FlowStore.Get(x.FlowId)))
@@ -56,10 +56,10 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             .AddTo(InternalSubs);
         
         foreach(var flow in FlowStore.Flows)
-        { SetupFlow(flow); }
+        { await SetupFlow(flow); }
     }
     
-    public void SetupFlow(Flow flow)
+    public async Task SetupFlow(Flow flow)
     {
         if (flow.TriggerData.Count == 0) { return; }
         
@@ -75,8 +75,8 @@ public class FlowExecutionEngine : IFlowExecutionEngine
                 continue;
             }
             
-            trigger.Execute(triggerData)
-                .Subscribe(vars =>
+            var observable = await trigger.Execute(triggerData);
+            observable.Subscribe(vars =>
                 {
                     EventBus.PublishAsync(new FlowTriggerStarted(flow.Id, triggerData.Id));
                     ExecuteFlow(flow, vars);

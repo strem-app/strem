@@ -29,11 +29,11 @@ public abstract class FlowTrigger<T> : IFlowTrigger
         EventBus = eventBus;
     }
 
-    public abstract IObservable<IVariables> Execute(T data);
+    public abstract Task<IObservable<IVariables>> Execute(T data);
 
     public abstract bool CanExecute();
 
-    public IObservable<IVariables> Execute(object data)
+    public Task<IObservable<IVariables>> Execute(object data)
     {
         if(data is T typedData)
         { return Execute(typedData); }

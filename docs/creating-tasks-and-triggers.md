@@ -109,7 +109,7 @@ public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
     public override bool CanExecute() => true;
 
     // Returns an observable with the variables for this flow, takes in the data object for state
-    public override IObservable<IVariables> Execute(OnEventRaisedTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnEventRaisedTriggerData data)
     {
         return EventBus.Receive<UserDataEvent>()
             .Where(x => x.EventName == data.EventName)

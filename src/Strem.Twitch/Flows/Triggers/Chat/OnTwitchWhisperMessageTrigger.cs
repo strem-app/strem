@@ -67,7 +67,7 @@ public class OnTwitchWhisperMessageTrigger : FlowTrigger<OnTwitchWhisperMessageT
         return true;
     }
 
-    public override IObservable<IVariables> Execute(OnTwitchWhisperMessageTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnTwitchWhisperMessageTriggerData data)
     {
         return TwitchClient.OnWhisperReceived
             .Where(x => DoesMessageMeetCriteria(data, x.WhisperMessage))
