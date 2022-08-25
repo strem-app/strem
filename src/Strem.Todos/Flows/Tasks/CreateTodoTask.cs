@@ -46,7 +46,8 @@ public class CreateTodoTask : FlowTask<CreateTodoTaskData>
             Title = FlowStringProcessor.Process(data.Title, flowVars),
             CreatedDate = DateTime.Now,
             ExpiryDate = expiryDate,
-            CreatedBy = FlowStringProcessor.Process(data.CreatedBy, flowVars)
+            CreatedBy = FlowStringProcessor.Process(data.CreatedBy, flowVars),
+            Tags = data.Tags.ToList()
         };
     }
     

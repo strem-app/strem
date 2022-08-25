@@ -29,6 +29,13 @@
     </div>
     <HelperInfo>This can be set to anything, such as a mods name who triggered the todo, or the task name that automatically generated it</HelperInfo>
 </div>
+<div class="field">
+    <label class="label">Tags</label>
+    <div class="control">
+        <TagEditor Tags="Data.Tags"/>
+    </div>
+    <HelperInfo>You can add custom tags to filter todos in other parts of the system, they are completely optional</HelperInfo>
+</div>
 
 @code {
     public override string Title => GetTitle();

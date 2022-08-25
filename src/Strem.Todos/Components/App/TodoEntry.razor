@@ -8,11 +8,15 @@
     <div class="field is-grouped is-align-items-center">
         <div class="control is-expanded">
             <div class="has-text-white is-size-6 has-text-weight-semibold">@GetDescription(Todo)</div>
-            <p class="subtitle is-size-7 has-text-weight-semibold">Created By: @Todo.CreatedBy | @Todo.CreatedDate.ToString("g")</p>
+            <div class="subtitle is-size-7 has-text-weight-semibold mb-2">Created By: @Todo.CreatedBy | @Todo.CreatedDate.ToString("g")</div>
+            <span class="tags">
+                @foreach(var tag in Todo.Tags)
+                { <span class="tag is-info">@tag</span> }
+            </span>
         </div>
         <div class="control has-text-centered">
             <progress class="progress mb-1 @(GetProgressStyle(progress))" value="@progress" max="100">@(progress)%</progress>
-            <span class="tag  @(GetProgressStyle(progress))">@GetHoursLeftReading(Todo)h Left</span>
+            <span class="tag @(GetProgressStyle(progress))">@GetHoursLeftReading(Todo)h Left</span>
         </div>
         <div class="control">
             @if (Todo.ActionType == TodoActionType.Link)

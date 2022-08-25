@@ -1,0 +1,49 @@
+﻿<div class="field has-addons">
+    <div class="control">
+        <input class="input" type="text" placeholder="tag name to add" @bind="TagInput" @onkeyup="AddTagIfEnterPressed">
+    </div>
+    <div class="control">
+        <a class="button is-info" @onclick="AddTag">
+            Add
+        </a>
+    </div>
+</div>
+
+<div class="field is-grouped is-grouped-multiline">
+    @foreach (var tag in Tags)
+    {
+        <div class="control">
+            <div class="tags has-addons">
+                <span class="tag is-info">@tag</span>
+                <span class="tag is-delete" @onclick="() => RemoveTag(tag)"></span>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public List<string> Tags { get; set; }
+  
+    public string TagInput { get; set; }
+
+    private void RemoveTag(string tag)
+    { Tags.Remove(tag); }
+
+    private void AddTag()
+    {
+        if(!Tags.Contains(TagInput)) 
+        { Tags.Add(TagInput); }
+    
+        TagInput = string.Empty;
+    }
+
+    private void AddTagIfEnterPressed(KeyboardEventArgs e)
+    {
+        if (e.Code is "Enter" or "NumpadEnter")
+        {
+            AddTag();
+        }
+    }
+}
