@@ -1,5 +1,5 @@
 ﻿<div class="field has-addons">
-    <div class="control">
+    <div class="control is-expanded">
         <input class="input" type="text" placeholder="tag name to add" @bind="TagInput" @onkeyup="AddTagIfEnterPressed">
     </div>
     <div class="control">
@@ -25,16 +25,25 @@
 
     [Parameter]
     public List<string> Tags { get; set; }
-  
+
+    [Parameter]
+    public EventCallback OnTagsChanged { get; set; }
+
     public string TagInput { get; set; }
 
     private void RemoveTag(string tag)
-    { Tags.Remove(tag); }
+    {
+        Tags.Remove(tag);
+        OnTagsChanged.InvokeAsync();
+    }
 
     private void AddTag()
     {
-        if(!Tags.Contains(TagInput)) 
-        { Tags.Add(TagInput); }
+        if (!Tags.Contains(TagInput))
+        {
+            Tags.Add(TagInput.ToLower());
+            OnTagsChanged.InvokeAsync();
+        }
     
         TagInput = string.Empty;
     }
