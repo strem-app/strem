@@ -77,7 +77,7 @@
 
     public void ViewPortalInBrowser()
     {
-        var portalUrl = $"http://localhost:{ApiHostConfiguration.ApiHostPort}/portals/{Portal.Id}";
+        var portalUrl = $"http://localhost:{InternalWebHostConfiguration.ApiHostPort}/portals/{Portal.Id}";
         BrowserLoader.LoadUrl(portalUrl);
     }
 

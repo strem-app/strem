@@ -1,6 +1,6 @@
 ﻿namespace Strem.Infrastructure.Services.Api;
 
-public interface IApiWebHost
+public interface IInternalWebHost
 {
     bool IsRunning { get; }
     void StartHost();

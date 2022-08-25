@@ -4,7 +4,7 @@ using Strem.Infrastructure.ActionFilters;
 
 namespace Strem.Infrastructure.Services.Api;
 
-public class ApiWebHost : IApiWebHost
+public class InternalWebHost : IInternalWebHost
 {
     public WebApplication Host { get; protected set; }
     public bool IsRunning { get; set; }
@@ -67,7 +67,7 @@ public class ApiWebHost : IApiWebHost
             endpoints.MapBlazorHub();
         });
         
-        app.RunAsync($"http://*:{ApiHostConfiguration.ApiHostPort}");
+        app.RunAsync($"http://*:{InternalWebHostConfiguration.ApiHostPort}");
         IsRunning = true;
         Host = app;
     }
