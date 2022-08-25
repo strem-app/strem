@@ -60,7 +60,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IBrowserLoader, BrowserLoader>();
         
         // Hosting
-        services.AddSingleton<IApiWebHost, ApiWebHost>();
+        services.AddSingleton<IInternalWebHost, InternalWebHost>();
         services.AddSingleton(SetupLogger());
         
         // Encryption

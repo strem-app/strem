@@ -18,7 +18,7 @@ namespace Strem.Twitch.Services.OAuth;
 
 public class TwitchOAuthClient : ITwitchOAuthClient
 {
-    public static readonly string OAuthCallbackUrl = $"http://localhost:{ApiHostConfiguration.ApiHostPort}/api/twitch/oauth";
+    public static readonly string OAuthCallbackUrl = $"http://localhost:{InternalWebHostConfiguration.ApiHostPort}/api/twitch/oauth";
 
     public static readonly string TwitchApiUrl = "https://id.twitch.tv/oauth2";  
     public static readonly string AuthorizeEndpoint = "authorize";
