@@ -63,11 +63,12 @@
         Portal = portalStore.Portals.SingleOrDefault(x => x.Id == PortalId);
 
         EventBus.Receive<PortalChangedEvent>()
+            .Where(x => x.PortalId == PortalId)
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
         
         EventBus.Receive<ButtonChangedEvent>()
-            .Throttle(TimeSpan.FromSeconds(2))
+            .Where(x => x.PortalId == PortalId)
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
     }
