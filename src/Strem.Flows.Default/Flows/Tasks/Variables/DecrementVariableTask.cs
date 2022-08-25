@@ -17,7 +17,7 @@ public class DecrementVariableTask : FlowTask<DecrementVariableTaskData>
     
     public override string Name => "Decrement A Variable";
     public override string Category => "Variables";
-    public override string Description => "Decrements an existing variable by a given amount";
+    public override string Description => "Decrements a variable by a given amount";
 
     public DecrementVariableTask(ILogger<FlowTask<DecrementVariableTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {
@@ -30,7 +30,7 @@ public class DecrementVariableTask : FlowTask<DecrementVariableTaskData>
         var processedName = FlowStringProcessor.Process(data.Name, flowVars);
         var processedContext = FlowStringProcessor.Process(data.Context, flowVars);
         var currentValue = AppState.GetVariable(flowVars, processedName, processedContext);
-        if(string.IsNullOrEmpty(currentValue)){ return ExecutionResult.Failed(); }
+        if(string.IsNullOrEmpty(currentValue)){ currentValue = "0"; }
 
         int value;
         if(!int.TryParse(currentValue, out value))

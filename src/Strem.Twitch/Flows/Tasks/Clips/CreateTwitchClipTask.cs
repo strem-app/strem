@@ -5,7 +5,6 @@ using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
-using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Todos.Data;
 using Strem.Todos.Events;
@@ -64,7 +63,8 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
             Title = title,
             CreatedDate = DateTime.Now,
             ExpiryDate = DateTime.Now.AddDays(1),
-            CreatedBy = "Twitch Clip Task"
+            CreatedBy = "Twitch Clip Task",
+            Tags = data.Tags
         };
         TodoStore.Todos.Add(todoElement);
         EventBus.PublishAsync(new TodoCreatedEvent { TodoId = todoElement.Id });

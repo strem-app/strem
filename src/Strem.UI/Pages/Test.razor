@@ -20,6 +20,9 @@
             <span>@ValueType</span>
         </div>
     </div>
+    
+    <TagEditor Tags="Tags"></TagEditor>
+    
 </div>
 
 
@@ -30,6 +33,8 @@
     public string[] Data = new[] { "boom", "Woop", "pow" };
     
     public bool IsActive { get; set; }
+
+    public List<string> Tags = new() { "clips", "example", "mods", "reward" };
     
     public TimeUnitType UnitType { get; set; }
     public string ValueType { get; set; }

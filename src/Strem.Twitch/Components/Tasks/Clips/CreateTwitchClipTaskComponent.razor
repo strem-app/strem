@@ -22,6 +22,17 @@
     <HelperInfo>This will add a todo entry to your todo list with the clip edit url for you to action later</HelperInfo>
 </div>
 
+@if (Data.CreateTodo)
+{
+    <div class="field">
+        <label class="label">Tags</label>
+        <div class="control">
+            <TagEditor Tags="Data.Tags"/>
+        </div>
+        <HelperInfo>Add any custom tags you want to this auto created todo element</HelperInfo>
+    </div>
+}
+
 @code {
     public override string Title => GetTitle();
 

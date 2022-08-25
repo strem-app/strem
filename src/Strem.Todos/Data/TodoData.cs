@@ -8,5 +8,6 @@ public class TodoData
     public string CreatedBy { get; set; }
     public string Title { get; set; }
     public string Payload { get; set; }
+    public List<string> Tags { get; set; } = new();
     public TodoActionType ActionType { get; set; }
 }

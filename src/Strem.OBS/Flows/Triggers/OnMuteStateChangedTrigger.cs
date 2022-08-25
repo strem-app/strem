@@ -20,7 +20,7 @@ public class OnMuteStateChangedTrigger : FlowTrigger<OnMuteStateChangedTriggerDa
     public override string Version => OnMuteStateChangedTriggerData.TriggerVersion;
 
     public override string Name => "On Mute State Changed";
-    public override string Category => "OBS";
+    public override string Category => "OBS v4";
     public override string Description => "Triggers when a mute state has changed on a specific source";
 
     public static VariableEntry ObsSourceVariable = new("source.name", OBSVars.OBSContext);

@@ -14,19 +14,28 @@
 
 <div class="container is-fluid">
     <h3 class="title is-3">Todos</h3>
-    @if (TodoStore.Todos.Count == 0)
-    {
-        <p class="title is-5">Nothing to action yet, it will refresh as data comes in</p>
-    }
-    else
-    {
-        <PagedContent Data="TodoStore.Todos" ElementsPerPage="10" Context="Todo" SplitSize="2" OrderBy="GetOrderBy()">
-            <HeaderContent>
-                <div class="field is-grouped is-pulled-right">
+    <Accordion Title="Todo Sort/Filter" StyleType="is-primary">
+        <div class="columns">
+            <div class="column">
+                <div class="field">
+                    <label class="label">Filter By Name</label>
                     <div class="control">
-                        <label class="label has-text-white">Sort By</label>
+                        <input class="input" type="text" placeholder="Put in the partial name of a todo" @bind="SearchCriteria"/>
                     </div>
-                    <div class="control">
+                </div>
+            </div>
+            <div class="column">
+                <div class="field">
+                    <label class="label">Filter By Tags</label>
+                    <div class="control is-expanded">
+                        <TagEditor Tags="SearchTags" OnTagsChanged="StateHasChanged"></TagEditor>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="field">
+                    <label class="label">Sort By</label>
+                    <div class="control is-expanded">
                         <div class="select">
                             <select @bind="SortBy">
                                 <EnumSelectOptions EnumType="typeof(TodoSortBy)"></EnumSelectOptions>
@@ -34,10 +43,18 @@
                         </div>
                     </div>
                 </div>
-            </HeaderContent>
-            <ChildContent>
-                <TodoEntry Todo="Todo" OnTodoComplete="OnTodoComplete"/> 
-            </ChildContent>
+            </div>
+        </div>
+    </Accordion>
+    
+    @if (TodoStore.Todos.Count == 0)
+    {
+        <p class="title is-5">Nothing to action yet, it will refresh as data comes in</p>
+    }
+    else
+    {
+        <PagedContent Data="GetFilteredTodos()" ElementsPerPage="10" Context="Todo" SplitSize="2" OrderBy="GetOrderBy()">
+            <TodoEntry Todo="Todo" OnTodoComplete="OnTodoComplete"/> 
         </PagedContent>
     }
 </div>
@@ -52,7 +69,9 @@
     }
 
     public TodoSortBy SortBy { get; set; } = TodoSortBy.ExpiryDate;
-    
+    public string SearchCriteria { get; set; }
+    public List<string> SearchTags { get; set; } = new();
+
     private CompositeDisposable _subs = new();
 
     public Func<TodoData, object> GetOrderBy()
@@ -63,6 +82,31 @@
             TodoSortBy.ActionType => x => x.ActionType,
             _ => x => x.ExpiryDate
         };
+    }
+
+    public bool DoesTodoMatchFilters(TodoData todo)
+    {
+        if (!string.IsNullOrEmpty(SearchCriteria))
+        {
+            if(!todo.Title.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase))
+            { return false; }
+        }
+
+        if (SearchTags.Count > 0)
+        {
+            if(!SearchTags.All(tag => todo.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase)))
+            { return false; }
+        }
+
+        return true;
+    }
+    
+    public IReadOnlyCollection<TodoData> GetFilteredTodos()
+    {
+        return TodoStore.Todos
+            .Where(DoesTodoMatchFilters)
+            .OrderBy(GetOrderBy())
+            .ToArray();
     }
     
     protected override async Task OnInitializedAsync()
