@@ -48,7 +48,7 @@
   </div>
   <div class="field">
     <div class="control">
-      <button @onclick="() => Flow.Enabled = !Flow.Enabled" class="button is-leveled @(Flow.Enabled ? "is-danger" : "is-success")">
+      <button @onclick="ToggleFlowEnablement" class="button is-leveled @(Flow.Enabled ? "is-danger" : "is-success")">
         @(Flow.Enabled ? "Disable Flow" : "Enable Flow")
       </button>
     </div>
@@ -134,10 +134,18 @@
     ShowDeleteModal = false;
   }
 
- 
-
   public void Dispose()
   {
+  }
+
+  public void ToggleFlowEnablement()
+  {
+    Flow.Enabled = !Flow.Enabled;
+    
+    if (Flow.Enabled)
+    { EventBus.PublishAsync(new FlowEnabledEvent(Flow.Id));}
+    else
+    { EventBus.PublishAsync(new FlowDisabledEvent(Flow.Id));}
   }
 
 }

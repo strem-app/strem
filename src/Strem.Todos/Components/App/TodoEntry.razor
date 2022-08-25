@@ -29,15 +29,18 @@
                 </button>
             }
         </div>
-        <div class="control">
-            <button class="button is-danger has-tooltip-warning has-tooltip-multiline" 
-                    @onclick="() => OnTodoComplete.InvokeAsync(Todo)"
-                    data-tooltip="Marks the todo as done and clears from your list">
-                <span class="icon is-small">
-                    <i class="fas fa-check"></i>
-                </span>
-            </button>
-        </div>
+        @if (CanRemove)
+        {
+            <div class="control">
+                <button class="button is-danger has-tooltip-warning has-tooltip-multiline"
+                        @onclick="() => OnTodoComplete.InvokeAsync(Todo)"
+                        data-tooltip="Marks the todo as done and clears from your list">
+                    <span class="icon is-small">
+                        <i class="fas fa-check"></i>
+                    </span>
+                </button>
+            </div>
+        }
     </div>
 </div>
 
@@ -48,6 +51,9 @@
     
     [Parameter]
     public EventCallback<TodoData> OnTodoComplete { get; set; }
+
+    [Parameter]
+    public bool CanRemove { get; set; } = true;
 
     public int GetProgress(TodoData todo)
     {

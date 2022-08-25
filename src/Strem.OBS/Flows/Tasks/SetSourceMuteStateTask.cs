@@ -19,7 +19,7 @@ public class SetSourceMuteStateTask : FlowTask<SetSourceMuteStateTaskData>
     public override string Version => SetSourceMuteStateTaskData.TaskVersion;
     
     public override string Name => "Set Source Mute State";
-    public override string Category => "OBS";
+    public override string Category => "OBS v4";
     public override string Description => "Sets if a given source should be muted or not";
 
     public IObservableOBSClient ObsClient { get; }

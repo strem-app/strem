@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Strem.Core.DI;
+﻿namespace Strem.Core.DI;
 
 public interface IDependencyModule
 {

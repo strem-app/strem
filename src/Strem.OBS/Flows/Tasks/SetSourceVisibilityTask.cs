@@ -19,7 +19,7 @@ public class SetSourceVisibilityTask : FlowTask<SetSourceVisibilityTaskData>
     public override string Version => SetSourceVisibilityTaskData.TaskVersion;
     
     public override string Name => "Set Source Visibility";
-    public override string Category => "OBS";
+    public override string Category => "OBS v4";
     public override string Description => "Sets the visibility of a given source";
 
     public IObservableOBSClient ObsClient { get; }

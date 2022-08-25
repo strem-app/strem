@@ -6,49 +6,117 @@
 @using Strem.Core.Extensions
 @using Strem.Core.Types
 @using Strem.Portals.Types
+@using Strem.Todos.Data
 
 @inject IBrowserLoader BrowserLoader
+@inject ITodoStore TodoStore 
 
 <div class="box">
+    
     <div class="field is-grouped">
         <div class="control">
-            <button class="button is-info" @onclick="AddButton">Add Button</button>
+            <h3 class="title is-3 has-text-black">Editing @Portal.Name</h3>
         </div>
-        <div class="control">
-            <div class="select">
-                <select @bind="@Portal.ButtonSize">
-                    <EnumSelectOptions EnumType="typeof(ButtonSize)"></EnumSelectOptions>
-                </select>
+        <div class="control is-expanded">
+            <button class="button is-primary is-pulled-right" @onclick="ViewPortalInBrowser">
+                <span class="icon is-small">
+                    <i class="fas fa-globe"></i>
+                </span>
+                <span>View In Browser</span>
+            </button>
+        </div>
+    </div>
+
+    <Accordion Title="Portal Settings" StyleType="is-info">
+        <div class="field">
+                <label class="label">Button Size</label>
+                <div class="control">
+                    <div class="select">
+                        <select @bind="@Portal.ButtonSize">
+                            <EnumSelectOptions EnumType="typeof(ButtonSize)"></EnumSelectOptions>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="field">
+                <div class="control">
+                    <label class="label">Portal Todos</label>
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" @bind="Portal.ShowTodos">
+                            Show Todos On Portal?
+                        </label>
+                    </div>
+                </div>
+            </div>
+            @if (Portal.ShowTodos)
+            {
+                <div class="field">
+                    <div class="control is-expanded">
+                        <TagEditor Tags="Portal.TodoTags" OnTagsChanged="StateHasChanged"></TagEditor>
+                    </div>
+                </div>
+            }
+    </Accordion>
+    
+</div>
+
+<div class="columns">
+    <div class="column">
+        <div class="box">
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-info" @onclick="AddButton">
+                        <span class="icon is-small">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Add New Button</span>
+                    </button>
+                </div>
+            </div>
+            <div class="portal-page @(Enum.GetName(Portal.ButtonSize).ToLower())">
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                    @foreach (var buttonData in Portal.Buttons)
+                    {
+                        <a class="button portal-button m-3 is-flex is-flex-direction-column"
+                           @onclick="() => EditButton(buttonData)" style="@GetButtonStyles(buttonData)">
+                            @if (buttonData.DefaultStyles.ButtonType == ButtonType.IconButton)
+                            {
+                                <span class="icon fa-3x m-auto">
+                                    <i class="fas @(buttonData.DefaultStyles.IconClass)"></i>
+                                </span>
+                            }
+                            else if (buttonData.DefaultStyles.ButtonType == ButtonType.ImageButton)
+                            {
+                                <figure class="image @GetImageSize(Portal.ButtonSize)">
+                                    <img alt="@buttonData.DefaultStyles.Text" src="@buttonData.DefaultStyles.ImageUrl.GetImageUrl()" class="is-full"/>
+                                </figure>
+                            }
+                            <label class="label @GetTextSize(Portal.ButtonSize)" style="white-space: break-spaces; color: @(buttonData.DefaultStyles.TextColor)">@buttonData.DefaultStyles.Text</label>
+                        </a>
+                    }
+                </div>
             </div>
         </div>
-        <div class="control">
-            <button class="button" @onclick="ViewPortalInBrowser">View In Browser</button>
-        </div>
     </div>
-    <div class="portal-page @(Enum.GetName(Portal.ButtonSize).ToLower())">
-        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-            @foreach (var buttonData in Portal.Buttons)
-            {
-                <a class="button portal-button m-3 is-flex is-flex-direction-column" 
-                   @onclick="() => EditButton(buttonData)" style="@GetButtonStyles(buttonData)">
-                    @if (buttonData.DefaultStyles.ButtonType == ButtonType.IconButton)
-                    {
-                        <span class="icon fa-3x m-auto">
-                            <i class="fas @(buttonData.DefaultStyles.IconClass)"></i>
-                        </span>
-                    }
-                    else if (buttonData.DefaultStyles.ButtonType == ButtonType.ImageButton)
-                    {
-                        <figure class="image @GetImageSize(Portal.ButtonSize)">
-                            <img alt="@buttonData.DefaultStyles.Text" src="@buttonData.DefaultStyles.ImageUrl.GetImageUrl()" class="is-full" />
-                        </figure>
-                    }
-                    <label class="label @GetTextSize(Portal.ButtonSize)" style="white-space: break-spaces; color: @(buttonData.DefaultStyles.TextColor)">@buttonData.DefaultStyles.Text</label>
-                </a>
-            }
-        </div>
-    </div>
+    @if (Portal.ShowTodos)
+    {
+        var filteredTodos = GetFilteredTodos().ToArray();
+        if (filteredTodos.Length > 0)
+        {
+            <div class="column is-one-half todo-section">
+                <div class="box">
+                    <PagedContent Data="filteredTodos" ElementsPerPage="5" Context="Todo" OrderBy="x => x.ExpiryDate">
+                        <TodoEntry Todo="Todo" CanRemove="false"></TodoEntry>
+                    </PagedContent>
+                </div>
+            </div>
+        }
+        
+    }
 </div>
+
 
 <Modal IsVisible="ShowEditModal">
     <PortalButtonEditor ButtonData="SelectedButton" OnClosed="() => ShowEditModal = false"></PortalButtonEditor>
@@ -81,6 +149,15 @@
         BrowserLoader.LoadUrl(portalUrl);
     }
 
+    public IEnumerable<TodoData> GetFilteredTodos()
+    {
+        if (Portal.TodoTags.Count == 0)
+        { return TodoStore.Todos; }
+
+        return TodoStore.Todos
+            .Where(x => x.Tags.All(tag => Portal.TodoTags.Contains(tag, StringComparer.OrdinalIgnoreCase)));
+    }
+    
     public string GetButtonStyles(ButtonData buttonData)
     { return $"background-color: {buttonData.DefaultStyles.BackgroundColor}; color: {buttonData.DefaultStyles.TextColor}"; }
 

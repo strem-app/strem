@@ -41,7 +41,7 @@ public class CreateTodoTask : FlowTask<CreateTodoTaskData>
         var expiryDate = DateTime.Now + timeoutTimespan;
         return new TodoData
         {
-            Payload = FlowStringProcessor.Process(data.Payload, flowVars),
+            Payload = FlowStringProcessor.Process(data.Payload ?? string.Empty, flowVars),
             ActionType = data.ActionType,
             Title = FlowStringProcessor.Process(data.Title, flowVars),
             CreatedDate = DateTime.Now,

@@ -8,6 +8,8 @@
 @using Strem.Portals.Types
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
+@using Strem.Todos.Data
+@using Strem.Todos.Events
 
 @implements IDisposable
 
@@ -15,30 +17,47 @@
     <div class="hero-body is-align-items-stretch">
         <div class="container is-fluid">
             <p class="title">@Portal.Name</p>
-            <div class="portal-page @(Enum.GetName(Portal.ButtonSize).ToLower()) box"
-                 data-portal-id="@Portal.Id" data-portal-name="@Portal.Name">
-                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-                    @foreach (var buttonData in Portal.Buttons)
-                    {
-                        var buttonStyles = ButtonRuntimeStyles.GetButtonStyles(PortalId, buttonData.Id) ?? buttonData.DefaultStyles;
-                        <a data-button-id="@buttonData.Id" data-button-name="@buttonData.Name" class="button portal-button m-3 is-flex is-flex-direction-column"
-                           style="background-color: @buttonStyles.BackgroundColor; color: @buttonStyles.TextColor" @onclick="() => NotifyButtonPressed(buttonData)">
-                            @if (buttonStyles.ButtonType == ButtonType.IconButton)
+            <div class="columns">
+                <div class="column">
+                    <div class="portal-page box @(Enum.GetName(Portal.ButtonSize).ToLower())">
+                        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                            @foreach (var buttonData in Portal.Buttons)
                             {
-                                <span class="icon fa-3x m-auto">
-                                    <i class="fas @buttonStyles.IconClass"></i>
-                                </span>
+                                var buttonStyles = ButtonRuntimeStyles.GetButtonStyles(PortalId, buttonData.Id) ?? buttonData.DefaultStyles;
+                                <a data-button-id="@buttonData.Id" data-button-name="@buttonData.Name" class="button portal-button m-3 is-flex is-flex-direction-column"
+                                   style="background-color: @buttonStyles.BackgroundColor; color: @buttonStyles.TextColor" @onclick="() => NotifyButtonPressed(buttonData)">
+                                    @if (buttonStyles.ButtonType == ButtonType.IconButton)
+                                    {
+                                        <span class="icon fa-3x m-auto">
+                                            <i class="fas @buttonStyles.IconClass"></i>
+                                        </span>
+                                    }
+                                    else if (buttonStyles.ButtonType == ButtonType.ImageButton)
+                                    {
+                                        <figure class="image @GetImageSize(Portal.ButtonSize)">
+                                            <img alt="@buttonStyles.Text" src="@buttonStyles.ImageUrl.GetImageUrl()" class="is-full" />
+                                        </figure>
+                                    }
+                                    <label class="label @GetTextSize(Portal.ButtonSize)" style="white-space: break-spaces; color: @(@buttonStyles.TextColor)">@buttonStyles.Text</label>
+                                </a>
                             }
-                            else if (buttonStyles.ButtonType == ButtonType.ImageButton)
-                            {
-                                <figure class="image @GetImageSize(Portal.ButtonSize)">
-                                    <img alt="@buttonStyles.Text" src="@buttonStyles.ImageUrl.GetImageUrl()" class="is-full" />
-                                </figure>
-                            }
-                            <label class="label @GetTextSize(Portal.ButtonSize)" style="white-space: break-spaces; color: @(@buttonStyles.TextColor)">@buttonStyles.Text</label>
-                        </a>
-                    }
+                        </div>
+                    </div>
                 </div>
+                @if (Portal.ShowTodos)
+                {
+                    var filteredTodos = GetFilteredTodos().ToArray();
+                    if (filteredTodos.Length > 0)
+                    {
+                        <div class="column is-one-third todo-section">
+                            <div class="box">
+                                <PagedContent Data="filteredTodos" ElementsPerPage="5" Context="Todo" OrderBy="x => x.ExpiryDate">
+                                    <TodoEntry Todo="Todo" OnTodoComplete="OnTodoCompleted"></TodoEntry>
+                                </PagedContent>
+                            </div>
+                        </div>
+                    }
+                }
             </div>
         </div>
     </div>
@@ -51,6 +70,7 @@
     
     public ButtonRuntimeStyles ButtonRuntimeStyles { get; set; }
     public IEventBus EventBus { get; set; }
+    public ITodoStore TodoStore { get; set; }
 
     private CompositeDisposable _subs = new();
     
@@ -60,6 +80,7 @@
         ButtonRuntimeStyles = WebHostHackExtensions.ServiceLocator.GetService<ButtonRuntimeStyles>();
         
         var portalStore = WebHostHackExtensions.ServiceLocator.GetService<IPortalStore>();
+        TodoStore = WebHostHackExtensions.ServiceLocator.GetService<ITodoStore>();
         Portal = portalStore.Portals.SingleOrDefault(x => x.Id == PortalId);
 
         EventBus.Receive<PortalChangedEvent>()
@@ -71,6 +92,19 @@
             .Where(x => x.PortalId == PortalId)
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
+        
+        EventBus.Receive<TodoCreatedEvent>()
+            .Subscribe(x => InvokeAsync(StateHasChanged))
+            .AddTo(_subs);
+    }
+    
+    public IEnumerable<TodoData> GetFilteredTodos()
+    {
+        if (Portal.TodoTags.Count == 0)
+        { return TodoStore.Todos; }
+
+        return TodoStore.Todos
+            .Where(x => x.Tags.All(tag => Portal.TodoTags.Contains(tag, StringComparer.OrdinalIgnoreCase)));
     }
 
     public void NotifyButtonPressed(ButtonData buttonData)
@@ -101,6 +135,13 @@
     public void Dispose()
     {
         _subs.Dispose();
+    }
+
+    private void OnTodoCompleted(TodoData todoData)
+    {
+        TodoStore.Todos.Remove(todoData);
+        EventBus.Publish(new TodoRemovedEvent { TodoId = todoData.Id });
+        StateHasChanged();
     }
 
 }

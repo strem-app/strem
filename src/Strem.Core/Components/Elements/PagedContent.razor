@@ -3,7 +3,7 @@
 
 <div class="columns paged-content-header">
     <div class="column">
-        <p class="title is-5">Viewing @(CurrentIndex+1)-@(GetUpperLimit()) of @(Data.Count)</p>
+        <p class="title is-5 mb-2 page-summary">Viewing @(CurrentIndex+1)-@(GetUpperLimit()) of @(Data.Count)</p>
     </div>
     <div class="column">
         @HeaderContent
@@ -16,7 +16,7 @@
         <div class="columns">
             @for (var j = 0; j < SplitSize; j++)
             {
-                <div class="column">
+                <div class="column paged-element split-size-@(SplitSize)">
                 @if(i+j < pagedData.Length)
                 { @ChildContent(pagedData[i+j]) }
                 </div>
