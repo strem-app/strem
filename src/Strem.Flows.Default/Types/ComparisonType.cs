@@ -2,6 +2,6 @@
 
 public enum ComparisonType
 {
-    LogicalComparison,
+    NumericalComparison,
     TextComparison
 }

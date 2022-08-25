@@ -17,6 +17,7 @@ public static class StringExtensions
             TextMatchType.StartsWith => value.StartsWith(matchText),
             TextMatchType.EndsWith => value.EndsWith(matchText),
             TextMatchType.ExactMatch => value == matchText,
+            TextMatchType.Match => value.Equals(matchText, StringComparison.OrdinalIgnoreCase),
             _ => Regex.IsMatch(value, matchText)
         };
     }

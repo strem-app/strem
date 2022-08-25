@@ -30,7 +30,7 @@ public class IfStatementTask : FlowTask<IfStatementTaskData>
     
     public override async Task<ExecutionResult> Execute(IfStatementTaskData data, IVariables flowVars)
     {
-        var doesMatch = data.ComparisonType == ComparisonType.LogicalComparison ? 
+        var doesMatch = data.ComparisonType == ComparisonType.NumericalComparison ? 
             NumericalComparison(data, flowVars) : 
             TextualComparison(data, flowVars);
 
