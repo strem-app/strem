@@ -6,6 +6,7 @@ using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 
 namespace Strem.Flows.Default.Flows.Tasks.Utility;
@@ -28,13 +29,13 @@ public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task<bool> Execute(ExecuteFlowTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(ExecuteFlowTaskData data, IVariables flowVars)
     {
         if (data.WaitForCompletion)
         { await FlowExecutor.ExecuteFlow(data.FlowId, flowVars); }
         else
         { FlowExecutor.ExecuteFlow(data.FlowId, flowVars); }
 
-        return true;
+        return ExecutionResult.Success();
     }
 }

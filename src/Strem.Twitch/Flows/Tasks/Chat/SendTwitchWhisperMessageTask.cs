@@ -1,7 +1,9 @@
 ﻿using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
@@ -27,10 +29,10 @@ public class SendTwitchWhisperMessageTask : FlowTask<SendTwitchWhisperMessageTas
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.SendWhisper);
 
-    public override async Task<bool> Execute(SendTwitchWhisperMessageTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(SendTwitchWhisperMessageTaskData data, IVariables flowVars)
     {
         var processedMessage = FlowStringProcessor.Process(data.Message, flowVars);
         TwitchClient.SendWhisper(data.Username, processedMessage);
-        return true;
+        return ExecutionResult.Success();
     }
 }

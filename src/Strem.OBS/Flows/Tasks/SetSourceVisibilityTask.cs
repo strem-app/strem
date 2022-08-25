@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using OBSWebsocketDotNet.Types;
 using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.OBS.Extensions;
 using Strem.OBS.Services.Client;
@@ -29,11 +31,11 @@ public class SetSourceVisibilityTask : FlowTask<SetSourceVisibilityTaskData>
 
     public override bool CanExecute() => AppState.HasOBSHost();
 
-    public override async Task<bool> Execute(SetSourceVisibilityTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(SetSourceVisibilityTaskData data, IVariables flowVars)
     {
         var sceneName = string.IsNullOrEmpty(data.SceneName) ? AppState.GetCurrentSceneName() : data.SceneName;
         var properties = await ObsClient.GetSceneItemProperties(data.SourceName, sceneName);
-        if (properties == null) { return false; }
+        if (properties == null) { return ExecutionResult.Failed(); }
         
         if (data.Status == VisibilityStatus.Visible) { properties.Visible = true; }
         else if(data.Status == VisibilityStatus.Invisible) { properties.Visible = false; }
@@ -41,6 +43,6 @@ public class SetSourceVisibilityTask : FlowTask<SetSourceVisibilityTaskData>
         { properties.Visible = !properties.Visible; }
         
         await ObsClient.SetSceneItemProperties(properties, sceneName);
-        return true;
+        return ExecutionResult.Success();
     }
 }

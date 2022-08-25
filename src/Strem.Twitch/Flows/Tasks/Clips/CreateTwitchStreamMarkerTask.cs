@@ -1,7 +1,9 @@
 ﻿using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
@@ -28,10 +30,10 @@ public class CreateTwitchStreamMarkerTask : FlowTask<CreateTwitchStreamMarkerTas
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ApiScopes.ManageClips);
     
-    public override async Task<bool> Execute(CreateTwitchStreamMarkerTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(CreateTwitchStreamMarkerTaskData data, IVariables flowVars)
     {
         var markerRequest = new CreateStreamMarkerRequest { Description = data.Description, UserId = AppState.GetTwitchUserId()};
         var response = await TwitchApi.Helix.Streams.CreateStreamMarkerAsync(markerRequest);
-        return response.Data.Length > 0;
+        return (response.Data.Length > 0) ? ExecutionResult.Success() : ExecutionResult.Failed();
     }
 }

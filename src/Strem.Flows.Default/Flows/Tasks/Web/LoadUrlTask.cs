@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Core.Web;
 
@@ -26,10 +28,10 @@ public class LoadUrlTask : FlowTask<LoadUrlTaskData>
 
     public override bool CanExecute() => true;
     
-    public override async Task<bool> Execute(LoadUrlTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(LoadUrlTaskData data, IVariables flowVars)
     {
         var processedUrl = FlowStringProcessor.Process(data.Url, flowVars);
         BrowserLoader.LoadUrl(processedUrl);
-        return true;
+        return ExecutionResult.Success();
     }
 }

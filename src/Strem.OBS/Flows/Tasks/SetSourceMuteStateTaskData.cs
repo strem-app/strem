@@ -5,7 +5,7 @@ namespace Strem.OBS.Flows.Tasks;
 
 public class SetSourceMuteStateTaskData : IFlowTaskData
 {
-    public static readonly string TaskCode = "set-source-mute-state";
+    public static readonly string TaskCode = "set-obs-v4-source-mute-state";
     public static readonly string TaskVersion = "1.0.0";
     
     public Guid Id { get; set; } = Guid.NewGuid();

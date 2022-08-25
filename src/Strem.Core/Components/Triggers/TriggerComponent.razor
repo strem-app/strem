@@ -2,20 +2,22 @@
 @using Strem.Core.Flows.Triggers
 
 <Accordion Title="@Title" StyleType="@(IsRunning ? "is-success is-running" : "is-success")">
-    <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
-    @if (Trigger.VariableOutputs.Length > 0)
-    {
-        <Accordion Title="Output Variables" StyleType="is-info">
-            <VariableDescriptorList VariableDescriptors="Trigger.VariableOutputs" />
-        </Accordion>
-    }
-    <div class="field is-grouped is-grouped-right">
-        <div class="control">
-            <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Trigger</button>
+    <div draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">
+        <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
+        @if (Trigger.VariableOutputs.Length > 0)
+        {
+            <Accordion Title="Output Variables" StyleType="is-info">
+                <VariableDescriptorList VariableDescriptors="Trigger.VariableOutputs"/>
+            </Accordion>
+        }
+        <div class="field is-grouped is-grouped-right">
+            <div class="control">
+                <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Trigger</button>
+            </div>
+            <div class="control">
+                <button class="button is-info" @onclick="() => OnRequestedReset.InvokeAsync(Data)">Reset Trigger</button>
+            </div>
         </div>
-          <div class="control">
-            <button class="button is-info" @onclick="() => OnRequestedReset.InvokeAsync(Data)">Reset Trigger</button>
-          </div>
     </div>
 </Accordion>
 

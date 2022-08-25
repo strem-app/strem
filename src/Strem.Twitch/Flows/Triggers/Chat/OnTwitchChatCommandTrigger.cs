@@ -85,7 +85,7 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
         return data.CommandName.Equals(parsedCommand.CommandName, StringComparison.OrdinalIgnoreCase);
     }
 
-    public override IObservable<IVariables> Execute(OnTwitchChatCommandTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnTwitchChatCommandTriggerData data)
     {
         return TwitchClient.OnMessageReceived
             .Where(x => DoesMessageMeetCriteria(data, x.ChatMessage))

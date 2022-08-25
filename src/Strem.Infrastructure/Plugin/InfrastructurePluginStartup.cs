@@ -19,29 +19,35 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
     public IFlowStore FlowStore { get; }
-    public ITodoStore TodoStore { get; }
     public ILogger<InfrastructurePluginStartup> Logger { get; }
 
-    public InfrastructurePluginStartup(IAppFileHandler appFileHandler, IEventBus eventBus, IAppState appState, IFlowStore flowStore, ILogger<InfrastructurePluginStartup> logger, ITodoStore todoStore)
+    public InfrastructurePluginStartup(IAppFileHandler appFileHandler, IEventBus eventBus, IAppState appState, IFlowStore flowStore, ILogger<InfrastructurePluginStartup> logger)
     {
         AppFileHandler = appFileHandler;
         EventBus = eventBus;
         AppState = appState;
         FlowStore = flowStore;
         Logger = logger;
-        TodoStore = todoStore;
     }
 
     public async Task StartPlugin()
     {
         AppState.UserVariables.OnVariableChanged
             .Throttle(TimeSpan.FromSeconds(5))
-            .Subscribe(_ => AppFileHandler.SaveUserState(AppState))
+            .Subscribe(_ =>
+            {
+                Logger.Information("Saving User Vars");
+                AppFileHandler.SaveUserState(AppState);
+            })
             .AddTo(_subs);
 
         AppState.AppVariables.OnVariableChanged
             .Throttle(TimeSpan.FromSeconds(5))
-            .Subscribe(_ => AppFileHandler.SaveAppState(AppState))
+            .Subscribe(_ =>
+            {
+                Logger.Information("Saving App Vars");
+                AppFileHandler.SaveAppState(AppState);
+            })
             .AddTo(_subs);
         
         AppState.UserVariables.OnVariableChanged
@@ -57,8 +63,8 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         Observable.Interval(TimeSpan.FromMinutes(5))
             .Subscribe(x =>
             {
-                AppFileHandler.SaveFlowState(FlowStore);
-                AppFileHandler.SaveTodoState(TodoStore);
+                Logger.Information("Saving Flows");
+                AppFileHandler.SaveFlowStore(FlowStore);
             })
             .AddTo(_subs);
 

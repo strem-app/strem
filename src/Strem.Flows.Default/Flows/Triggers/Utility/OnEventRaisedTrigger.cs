@@ -29,7 +29,7 @@ public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
 
     public override bool CanExecute() => true;
 
-    public override IObservable<IVariables> Execute(OnEventRaisedTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnEventRaisedTriggerData data)
     {
         return EventBus.Receive<UserDataEvent>()
             .Where(x => x.EventName == data.EventName)

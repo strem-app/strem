@@ -1,0 +1,44 @@
+﻿@using Strem.Core.Flows
+
+<h3 class="title is-3 has-text-danger">Deleting @(Flow.Name)</h3>
+<p class="subtitle has-text-danger">This Is A Destructive Action And Cannot Be Undone</p>
+<div class="field">
+    <label class="label">Are you sure you wish to do this?</label>
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="TheyKnowWhatTheyAreAbout">
+            I know what im about son.
+        </label>
+    </div>
+</div>
+<div class="field is-grouped">
+    <div class="control">
+        <button class="button is-danger" disabled="@(!TheyKnowWhatTheyAreAbout)" @onclick="DeleteFlow">Delete The Flow!</button>
+    </div>
+    <div class="control">
+        <button class="button is-link is-light" @onclick="CancelFlow">Cancel</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Flow Flow { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnFlowDeleted { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnCancelled { get; set; }
+    
+    public bool TheyKnowWhatTheyAreAbout { get; set; }
+    
+    public void DeleteFlow()
+    {
+        OnFlowDeleted.InvokeAsync();
+    }
+
+    public void CancelFlow()
+    {
+        OnCancelled.InvokeAsync();
+    }
+}

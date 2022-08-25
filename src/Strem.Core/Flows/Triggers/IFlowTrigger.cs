@@ -6,5 +6,5 @@ namespace Strem.Core.Flows.Triggers;
 public interface IFlowTrigger : IFlowElement
 {
     bool CanExecute();
-    IObservable<IVariables> Execute(object data);
+    Task<IObservable<IVariables>> Execute(object data);
 }

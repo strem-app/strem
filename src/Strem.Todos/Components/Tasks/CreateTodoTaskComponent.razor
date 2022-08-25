@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits Strem.Core.Components.Tasks.CustomTaskComponent<Strem.Todos.Flows.Tasks.CreateTodoTaskData>
+
+<div class="field">
+    <label class="label">Title</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Title" Placeholder="i.e Some title for the todo message in the viewer" />
+    </div>
+</div>
+<div class="field">
+    <label class="label">Payload Data</label>
+    <div class="control">
+        <EnumWithValueInput @bind-EnumValue="Data.ActionType" @bind-Value="Data.Payload" Placeholder="i.e The url to load, or data required for the action type to work"/>
+    </div>
+    <HelperInfo>The action type dictates how the action button should work when clicked, i.e for links it loads the url in the browser</HelperInfo>
+</div>
+<div class="field">
+    <label class="label">Timeout/Expiry</label>
+    <div class="control">
+        <EnumWithValueInput @bind-EnumValue="Data.TimeoutType" @bind-Value="Data.TimeoutValue" Placeholder="i.e 5 or dynamic vars"/>
+    </div>
+    <HelperInfo>The expiry is how long you have to action to todo, i.e twitch clips are only editable for 24 hours</HelperInfo>
+</div>
+<div class="field">
+    <label class="label">Created By</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.CreatedBy" Placeholder="i.e Who/what created this todo" />
+    </div>
+    <HelperInfo>This can be set to anything, such as a mods name who triggered the todo, or the task name that automatically generated it</HelperInfo>
+</div>
+
+@code {
+    public override string Title => GetTitle();
+
+    public string GetTitle()
+    {
+        return $"Create <strong>{Data.ActionType}</strong> Todo";
+    }
+}

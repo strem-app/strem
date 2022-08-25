@@ -1,13 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows;
 using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
-using Strem.Flows.Default.Events;
 using Strem.Flows.Default.Types;
 
 namespace Strem.Flows.Default.Flows.Tasks.Logic;
@@ -30,22 +28,14 @@ public class IfStatementTask : FlowTask<IfStatementTaskData>
 
     public override bool CanExecute() => true;
     
-    public override async Task<bool> Execute(IfStatementTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(IfStatementTaskData data, IVariables flowVars)
     {
         var doesMatch = data.ComparisonType == ComparisonType.NumericalComparison ? 
             NumericalComparison(data, flowVars) : 
             TextualComparison(data, flowVars);
 
-        if(!doesMatch)
-        { PossiblyRunFailureFlow(data); }
-
-        return doesMatch;
-    }
-    
-    public void PossiblyRunFailureFlow(IfStatementTaskData data)
-    {
-        if (!data.RunFlowOnFailure || data.FailureFlowId == Guid.Empty) { return; }
-        FlowExecutor.ExecuteFlow(data.FailureFlowId);
+        var activatedSubTasks = doesMatch ? IfStatementTaskData.TrueSubTaskKey : IfStatementTaskData.FalseSubTaskKey;
+        return ExecutionResult.Success(activatedSubTasks);
     }
 
     public bool NumericalComparison(IfStatementTaskData data, IVariables flowVars)

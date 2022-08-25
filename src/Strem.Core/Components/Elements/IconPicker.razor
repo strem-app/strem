@@ -1,0 +1,39 @@
+﻿@inject IJSRuntime JS
+
+<div class="field has-addons">
+    <div class="control">
+        <input class="input is-icon-picker" type="text" value="@Icon" 
+               disabled="@Disabled" @onchange="OnIconChanged"/>
+    </div>
+    <div class="control">
+        <a class="button is-static">
+            <span class="icon">
+                <i class="@(Icon) has-text-black-ter"></i>
+            </span>
+        </a>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string Icon { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> IconChanged { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; } = false;
+
+    private void OnIconChanged(ChangeEventArgs e)
+    { IconChanged.InvokeAsync(e.Value.ToString()); }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Task.Run(async () =>
+        {
+            await Task.Delay(100);
+            JS.InvokeVoidAsync("processButtonPicker");
+        });
+    }
+}

@@ -1,0 +1,135 @@
+﻿@using Strem.Portals.Data
+@using Strem.Core.Extensions
+@inherits Strem.Core.Components.Tasks.CustomTaskComponent<Strem.Portals.Flows.Tasks.ChangePortalButtonStylesTaskData>
+
+@inject IPortalStore PortalStore
+
+
+<div class="field">
+    <label class="label">Required Portal</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.PortalId">
+                @foreach (var portal in PortalStore.Portals)
+                {
+                    <option value="@portal.Id">@(portal.Name)</option>
+                }
+            </select>
+        </div>
+    </div>
+    <HelperInfo>This lets you specify which portal should be used as the trigger</HelperInfo>
+</div>
+@if (Data.PortalId != Guid.Empty)
+{
+    var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == Data.PortalId);
+    if (portal != null)
+    {
+        <div class="field">
+            <label class="label">Portal Button</label>
+            <div class="control">
+                <div class="select">
+                    <select @bind="Data.ButtonId">
+                        @foreach (var button in portal.Buttons)
+                        {
+                            <option value="@button.Id">@(button.Name)</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <HelperInfo>This lets you specify which button you want to listen for presses on</HelperInfo>
+        </div>
+    }
+}
+
+@if (Data.ButtonId != Guid.Empty)
+{
+    <div class="field">
+        <label class="label">Change Button Color</label>
+        <div class="control">
+            <GatedInput @bind-Value="Data.NewStyles.BackgroundColor" @bind-Enabled="Data.ChangeBackgroundColor" Type="color"></GatedInput>
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Change Text Color</label>
+        <div class="control">
+            <GatedInput @bind-Value="Data.NewStyles.TextColor" @bind-Enabled="Data.ChangeTextColor" Type="color"></GatedInput>
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Change Button Text</label>
+        <div class="control">
+            <GatedInput @bind-Value="Data.NewStyles.Text" @bind-Enabled="Data.ChangeText"></GatedInput>
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Change Button Type</label>
+        <div class="control">
+            <GatedSelect @bind-Value="Data.NewStyles.ButtonType" @bind-Enabled="Data.ChangeButtonType"></GatedSelect>
+        </div>
+    </div>
+
+    <label class="label">Button Icon</label>
+    <div class="field has-addons">
+        <div class="control">
+            <button class="button @(Data.ChangeIcon ? "is-success" : "is-danger")" @onclick="() => Data.ChangeIcon = !Data.ChangeIcon">
+                <span class="icon is-small">
+                    <i class="fas @(Data.ChangeIcon ? "fa-check" : "fa-xmark")"></i>
+                </span>
+            </button>
+        </div>
+        <div class="control">
+            <IconPicker @bind-Icon="Data.NewStyles.IconClass" Disabled="!Data.ChangeIcon"></IconPicker>
+        </div>
+    </div>
+
+    <label class="label">Button Image</label>
+    <div class="field has-addons">
+        <div class="control">
+            <button class="button @(Data.ChangeImage ? "is-success" : "is-danger")" @onclick="() => Data.ChangeImage = !Data.ChangeImage">
+                <span class="icon is-small">
+                    <i class="fas @(Data.ChangeImage ? "fa-check" : "fa-xmark")"></i>
+                </span>
+            </button>
+        </div>
+        <div class="control has-icons-left">
+            <input class="input" type="text" @bind="Data.NewStyles.ImageUrl" disabled="@(!Data.ChangeImage)"/>
+            <span class="icon is-small is-left">
+                <i class="fas fa-image"></i>
+            </span>
+        </div>
+    </div>
+    <HelperInfo>This can be a url to a file online or a local file, local files need more processing though so the larger they are the longer they will take to load, try to keep sizes below 256x256 pixels</HelperInfo>
+
+    if (!string.IsNullOrEmpty(Data.NewStyles.ImageUrl))
+    {
+        <div class="field">
+            <div class="control">
+                <figure class="image is-128x128">
+                    <img alt="@Data.NewStyles.Text" src="@Data.NewStyles.ImageUrl.GetImageUrl()" class="is-full"/>
+                </figure>
+            </div>
+        </div>
+    }
+    <HelperInfo>If you do not want to change the value leave the inputs disabled and it will be ignored</HelperInfo>
+}
+
+@code {
+    public override string Title => GetTitle();
+    
+    public string GetTitle()
+    {
+        if(Data.PortalId == Guid.Empty && Data.ButtonId == Guid.Empty)
+        { return $"Change Button Style"; }
+
+        var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == Data.PortalId);
+        if (portal == null){ return "Change Button Style"; }
+
+        var button = portal.Buttons.SingleOrDefault(x => x.Id == Data.ButtonId);
+        if(button == null) { return "Change Button Style"; }
+
+        return $"Change {button.Name} Styles In {portal.Name}";
+    }
+}

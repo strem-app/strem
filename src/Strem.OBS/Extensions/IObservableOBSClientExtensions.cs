@@ -58,11 +58,7 @@ public static class IObservableOBSClientExtensions
     {
         appState.TransientVariables.Set(OBSVars.CurrentScene, sceneName);
 
-        var sceneItemNames = sceneItems
-            .Select(x => x.SourceName)
-            .ToArray();
-
-        if (sceneItemNames.Length == 0) { return; }
+        var sceneItemNames = sceneItems.GetAllSourceNames();
         var itemNames = string.Join(",", sceneItemNames);
         appState.TransientVariables.Set(OBSVars.CurrentSceneItems, itemNames);
     }

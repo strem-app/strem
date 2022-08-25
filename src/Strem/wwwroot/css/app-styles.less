@@ -42,6 +42,15 @@ each(range(5, 100, 5), {
     .w-@{value} { width: ~"@{value}%"; }
 });
 
+each(range(5, 100, 5), {
+    .h-@{value} { height: ~"@{value}%"; }
+});
+
+each(range(5, 100, 5), {
+    .opacity-@{value} { opacity: ~"@{value}%"; }
+});
+
+
 body
 {
     font-family: "Quicksand";
@@ -139,7 +148,12 @@ body
         {
             background-color: @is-info;
         }
-        
+
+        &.is-portal
+        {
+            background-color: @is-info;
+        }
+
         &.is-trigger
         {
             background-color: @is-success;
@@ -191,4 +205,57 @@ body
 .level-item {
     &.has-text-left { flex-grow: 0 !important; }
     &.has-text-right { flex-grow: 0 !important; }
+}
+
+.portal-page
+{
+    &.small .portal-button { 
+        width: 8rem;
+        height: 8rem;
+    }
+    
+    &.medium .portal-button { 
+        width: 10rem; 
+        height: 10rem; 
+    }
+    
+    &.large .portal-button { 
+        width: 12rem; 
+        height: 12rem; 
+    }
+}
+
+.portal-button {
+    width: 100%;
+    height: 100%;
+}
+
+.is-160x160
+{
+    width: 160px;
+    height: 160px;
+}
+
+img.is-full
+{
+    width: 100%;
+    height: 100%;
+}
+
+ul.sub-tasks
+{
+    margin-left: 0.5em;
+    border-left: 0.25em solid rgba(0,0,0,0.1);
+    padding-left: 0.5em;
+    
+    &.true { border-left-color: fade(@is-success, 20%); }
+    &.false { border-left-color: fade(@is-danger, 20%); }
+}
+
+li.drag-source
+{
+    .accordion
+    {
+        opacity: 20%;
+    }
 }

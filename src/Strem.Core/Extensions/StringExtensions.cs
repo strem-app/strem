@@ -17,6 +17,7 @@ public static class StringExtensions
             TextMatchType.StartsWith => value.StartsWith(matchText),
             TextMatchType.EndsWith => value.EndsWith(matchText),
             TextMatchType.ExactMatch => value == matchText,
+            TextMatchType.Match => value.Equals(matchText, StringComparison.OrdinalIgnoreCase),
             _ => Regex.IsMatch(value, matchText)
         };
     }
@@ -26,5 +27,29 @@ public static class StringExtensions
         return value?.Length > maxLength
             ? value.Substring(0, maxLength) + truncationSuffix
             : value;
+    }
+
+    public static string ToBase64Image(this string imageFilePath)
+    {
+        if(!File.Exists(imageFilePath)) { return string.Empty; }
+        var fileExtension = Path.GetExtension(imageFilePath);
+        var base64Data = Convert.ToBase64String(File.ReadAllBytes(imageFilePath));
+        return $"data:image/{fileExtension};base64, {base64Data}";
+    }
+
+    public static string GetImageUrl(this string imageFileOrUrlPath)
+    {
+        if(string.IsNullOrEmpty(imageFileOrUrlPath))
+        { return string.Empty; }
+        
+        if(imageFileOrUrlPath.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || 
+           imageFileOrUrlPath.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        { return imageFileOrUrlPath; }
+
+        var actualFilePath = imageFileOrUrlPath;
+        if (imageFileOrUrlPath.StartsWith("file://"))
+        { actualFilePath = imageFileOrUrlPath.Replace("file:///", "").Replace("file://", ""); }
+
+        return actualFilePath.ToBase64Image();
     }
 }

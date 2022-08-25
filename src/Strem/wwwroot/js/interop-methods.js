@@ -13,3 +13,12 @@
     console.log("new scaling", newVhScaling);
     document.querySelectorAll(".is-fullheight").forEach(x => x.style.minHeight = newVhScaling);
 }
+
+function processButtonPicker()
+{
+    $('.is-icon-picker').iconpicker({
+        placement: 'top',
+        hideOnSelect: true,
+        inputSearch: true
+    })
+}

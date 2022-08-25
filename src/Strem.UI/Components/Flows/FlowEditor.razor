@@ -5,6 +5,7 @@
 @using Strem.Core.Events.Bus
 @using Strem.Core.Events.Flows
 @using System.Reactive.Disposables
+@using Strem.Core.Components.Elements.Drag
 @using Strem.Core.Extensions
 @using Strem.Core.Flows.Registries.Tasks
 @using Strem.Core.Flows.Registries.Triggers
@@ -66,7 +67,7 @@
     Tasks
   </p>
   <ul class="menu-list tasks">
-    <FlowTasksEditor Flow="Flow"></FlowTasksEditor>
+    <FlowTasksEditor TaskData="Flow.TaskData"></FlowTasksEditor>
   </ul>
 </aside>
 

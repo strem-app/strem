@@ -1,0 +1,34 @@
+﻿<div class="field has-addons">
+    <div class="control">
+        <button class="button @(Enabled ? "is-success" : "is-danger")" @onclick="() => EnabledChanged.InvokeAsync(!Enabled)">
+            <span class="icon is-small">
+                <i class="fas @(Enabled ? "fa-check" : "fa-xmark")"></i>
+            </span>
+        </button>
+    </div>
+    <div class="control is-expanded">
+        <input class="input is-expanded" type="@Type" value="@Value" disabled="@(!Enabled)" placeholder="@Placeholder"
+               @onchange="e => ValueChanged.InvokeAsync(e.Value.ToString())" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public bool Enabled { get; set; }
+    
+    [Parameter]
+    public EventCallback<bool> EnabledChanged { get; set; } 
+    
+    [Parameter]
+    public string Value { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; } 
+    
+    [Parameter]
+    public string Placeholder { get; set; }
+
+    [Parameter]
+    public string Type { get; set; } = "text";
+
+}

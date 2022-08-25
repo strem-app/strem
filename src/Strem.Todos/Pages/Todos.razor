@@ -1,0 +1,84 @@
+﻿@page "/todos"
+
+@using System.Reactive.Disposables
+@using System.Reactive.Linq
+@using Strem.Core.Events.Bus
+@using Strem.Core.Extensions
+@using Strem.Todos.Data
+@using Strem.Todos.Events
+
+@inject ITodoStore TodoStore;
+@inject IEventBus EventBus;
+
+@implements IDisposable
+
+<div class="container is-fluid">
+    <h3 class="title is-3">Todos</h3>
+    @if (TodoStore.Todos.Count == 0)
+    {
+        <p class="title is-5">Nothing to action yet, it will refresh as data comes in</p>
+    }
+    else
+    {
+        <PagedContent Data="TodoStore.Todos" ElementsPerPage="10" Context="Todo" SplitSize="2" OrderBy="GetOrderBy()">
+            <HeaderContent>
+                <div class="field is-grouped is-pulled-right">
+                    <div class="control">
+                        <label class="label has-text-white">Sort By</label>
+                    </div>
+                    <div class="control">
+                        <div class="select">
+                            <select @bind="SortBy">
+                                <EnumSelectOptions EnumType="typeof(TodoSortBy)"></EnumSelectOptions>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </HeaderContent>
+            <ChildContent>
+                <TodoEntry Todo="Todo" OnTodoComplete="OnTodoComplete"/> 
+            </ChildContent>
+        </PagedContent>
+    }
+</div>
+
+@code {
+
+    public enum TodoSortBy
+    {
+        ExpiryDate,
+        CreatedDate,
+        ActionType
+    }
+
+    public TodoSortBy SortBy { get; set; } = TodoSortBy.ExpiryDate;
+    
+    private CompositeDisposable _subs = new();
+
+    public Func<TodoData, object> GetOrderBy()
+    {
+        return SortBy switch
+        {
+            TodoSortBy.CreatedDate => x => x.CreatedDate,
+            TodoSortBy.ActionType => x => x.ActionType,
+            _ => x => x.ExpiryDate
+        };
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Observable.Interval(TimeSpan.FromMinutes(1))
+            .Subscribe(x => InvokeAsync(StateHasChanged))
+            .AddTo(_subs);
+    }
+
+    public void Dispose()
+    { _subs?.Dispose(); }
+
+    private void OnTodoComplete(TodoData todo)
+    {
+        TodoStore.Todos.Remove(todo);
+        EventBus.PublishAsync(new TodoRemovedEvent{ TodoId = todo.Id});
+    }
+
+}

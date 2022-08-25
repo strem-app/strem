@@ -2,8 +2,8 @@
 
 public interface IFlowExecutionEngine : IFlowExecutor, IDisposable
 {
-    void StartEngine();
-    void SetupFlow(Flow flow);
+    Task StartEngine();
+    Task SetupFlow(Flow flow);
     void RemoveFlow(Guid flowId);
     IReadOnlyCollection<FlowExecutionLog> ExecutionLogs { get; }
 }

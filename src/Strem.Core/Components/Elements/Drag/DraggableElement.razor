@@ -1,0 +1,79 @@
+﻿@using Strem.Core.Extensions
+@using System.Reactive.Disposables
+@using System.Reactive.Linq
+
+@typeparam TData
+
+@inject DragController DragController
+
+@implements IDisposable
+
+<div draggable="@(CanDrag.ToString())"
+    class="@(Classes) @(DragController.IsSourceObject(Data) ? "drag-source" : "")"
+    ondragover="event.preventDefault()"
+    @ondragstart="@(() => DragController.OnDragStart(Data, ContainingList, DropType))"
+    @ondragenter="@(() => { DragController.OnDragEnterElement(Data, ContainingList, DropType); CheckForDragTarget(); })"
+    @ondragend="DragController.OnDragEnd">
+    @ChildContent
+</div>
+
+@if (IsCurrentDropTarget)
+{
+    <div class="block drag-enter-target">
+        <button class="button is-leveled" disabled></button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string DropType { get; set; }
+
+    [Parameter]
+    public IReadOnlyCollection<string> SupportedDropTypes { get; set; } = Array.Empty<string>();
+    
+    [Parameter]
+    public TData Data { get; set; }
+
+    [Parameter]
+    public List<TData> ContainingList { get; set; }
+    
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    
+    [Parameter]
+    public string Classes { get; set; }
+
+    [Parameter]
+    public bool CanDrag { get; set; } = true;
+
+    private CompositeDisposable _subs = new();
+    private bool IsCurrentDropTarget { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        DragController.OnDestinationObjectChanged
+            .Where(x => IsCurrentDropTarget)
+            .Subscribe(x =>
+            {
+                CheckForDragTarget();
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+    }
+
+    public bool IsDropTarget()
+    {
+        return SupportedDropTypes.Contains(DragController.SourceDropType, StringComparer.OrdinalIgnoreCase) && 
+               DragController.IsDestinationObject(Data);
+    }
+
+    public void CheckForDragTarget()
+    {
+        IsCurrentDropTarget = IsDropTarget();
+    }
+
+    public void Dispose()
+    {
+        _subs.Dispose();
+    }
+}

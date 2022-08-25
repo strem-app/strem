@@ -1,9 +1,10 @@
-﻿using Strem.Core.Variables;
+﻿using Strem.Core.Flows.Executors;
+using Strem.Core.Variables;
 
 namespace Strem.Core.Flows.Tasks;
 
 public interface IFlowTask : IFlowElement
 {
     bool CanExecute();
-    Task<bool> Execute(object data, IVariables flowVars);
+    Task<ExecutionResult> Execute(object data, IVariables flowVars);
 }

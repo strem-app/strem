@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
@@ -24,13 +25,13 @@ public class SetVariableTask : FlowTask<SetVariableTaskData>
 
     public override bool CanExecute() => true;
 
-    public override async Task<bool> Execute(SetVariableTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(SetVariableTaskData data, IVariables flowVars)
     {
         var processedName = FlowStringProcessor.Process(data.Name, flowVars);
         var processedContext = FlowStringProcessor.Process(data.Context, flowVars);
         var processedValue = FlowStringProcessor.Process(data.Value, flowVars);
 
         AppState.SetVariable(flowVars, data.ScopeType, processedName, processedContext, processedValue);
-        return true;
+        return ExecutionResult.Success();
     }
 }

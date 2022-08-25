@@ -1,4 +1,8 @@
-﻿<div class="tabs is-centered is-boxed">
+﻿@using Strem.Core.Flows.Registries.Menus
+
+@inject IMenuRegistry MenuRegistry
+
+<div class="tabs is-centered is-boxed">
   <ul class="pt-4">
     <li>
       <NavLink href="flows" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
@@ -6,12 +10,17 @@
         <span>Flows</span>
       </NavLink>
     </li>
-        <li>
-          <NavLink href="todos" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
-            <span class="icon is-small"><i class="fas fa-clipboard-list" aria-hidden="true"></i></span>
-            <span>Todos</span>
-          </NavLink>
-        </li>
+    
+    @foreach (var menuDescriptor in MenuRegistry.GetAll())
+    {
+      <li>
+        <NavLink href="@menuDescriptor.PageUrl" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
+          <span class="icon is-small"><i class="@menuDescriptor.IconClass" aria-hidden="true"></i></span>
+          <span>@menuDescriptor.Title</span>
+        </NavLink>
+      </li>
+    }
+    
     <li>
       <NavLink href="integrations" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
         <span class="icon is-small"><i class="fas fa-cubes" aria-hidden="true"></i></span>

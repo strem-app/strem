@@ -1,7 +1,9 @@
 ﻿using Strem.Core.Events.Bus;
+using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
+using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
@@ -28,7 +30,7 @@ public class SetTwitchEmoteOnlyChatTask : FlowTask<SetTwitchEmoteOnlyChatTaskDat
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ModerateChannel);
 
-    public override async Task<bool> Execute(SetTwitchEmoteOnlyChatTaskData data, IVariables flowVars)
+    public override async Task<ExecutionResult> Execute(SetTwitchEmoteOnlyChatTaskData data, IVariables flowVars)
     {
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var processedChannel = FlowStringProcessor.Process(channel, flowVars);
@@ -37,6 +39,6 @@ public class SetTwitchEmoteOnlyChatTask : FlowTask<SetTwitchEmoteOnlyChatTaskDat
         else
         { TwitchClient.EmoteOnlyOff(processedChannel); }
         
-        return true;
+        return ExecutionResult.Success();
     }
 }
