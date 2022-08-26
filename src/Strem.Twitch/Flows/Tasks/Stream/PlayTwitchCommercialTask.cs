@@ -28,7 +28,7 @@ public class PlayTwitchCommercialTask : FlowTask<PlayTwitchCommercialTaskData>
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ApiScopes.RunChannelCommercials);
+    public override bool CanExecute() => TwitchClient.IsConnected && AppState.HasTwitchScope(ApiScopes.RunChannelCommercials);
 
     public override async Task<ExecutionResult> Execute(PlayTwitchCommercialTaskData data, IVariables flowVars)
     {
