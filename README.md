@@ -5,7 +5,6 @@ A free and open source automation tool geared for assisting streamers.
 
 > Currently this is the most ALPHA of all alphas, so by all means use it, but just keep in mind this is SUPER early days.
 
-
 ## What Does It Do?
 
 It lets you build complex logic `flows` from `triggers` and `tasks`.
@@ -20,6 +19,19 @@ Just go to releases, download the latest zip file and put it in a directory some
 The only integrations supported out of the box currently are `Twitch` and `OBS`, however we only have a small subset of available triggers/tasks available for the moment to assist with testing, these will rapidly get fleshed out as more time is spent..
 
 > For the moment the docs are sparse, feel free to ask questions in issues though and more docs will be provided in the `docs` folder as time goes by.
+
+## HALP!
+
+Here are some of the existing tutorials for how to do basic use cases for the app:
+
+### Creating A Death Counter (Per Game)
+[![Watch the video](https://img.youtube.com/vi/Dg-VzJN4Mk4/default.jpg)](https://youtu.be/Dg-VzJN4Mk4)
+
+### Create Todos From Commands (Or Anything)
+[![Watch the video](https://img.youtube.com/vi/0XYkXwu0SBk/default.jpg)](https://youtu.be/0XYkXwu0SBk)
+
+### How To Delete Flows
+[![Watch the video](https://img.youtube.com/vi/TkI_oELPkys/default.jpg)](https://youtu.be/TkI_oELPkys)
 
 ## I Want To Add To This Project
 
