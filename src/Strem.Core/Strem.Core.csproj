@@ -17,6 +17,9 @@
       <Reference Include="Microsoft.Extensions.Logging.Abstractions">
         <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.7\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
       </Reference>
+      <Reference Include="TextCopy">
+        <HintPath>C:\Users\leepr\.nuget\packages\textcopy\6.1.0\lib\net6.0\TextCopy.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

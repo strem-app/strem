@@ -22,3 +22,14 @@ function processButtonPicker()
         inputSearch: true
     })
 }
+
+function showNotification(text, type)
+{
+    bulmaToast.toast({ message: text, type: type })
+}
+
+bulmaToast.setDefaults({
+    duration: 1000,
+    position: 'bottom-right',
+    closeOnClick: true
+})

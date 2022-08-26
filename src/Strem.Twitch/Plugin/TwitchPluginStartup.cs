@@ -6,11 +6,11 @@ using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Twitch.Events.OAuth;
 using Strem.Twitch.Extensions;
+using Strem.Twitch.Services.Client;
 using Strem.Twitch.Services.OAuth;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
 using TwitchLib.Api.Interfaces;
-using TwitchLib.Client.Interfaces;
 
 namespace Strem.Twitch.Plugin;
 
@@ -20,12 +20,12 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     
     public ITwitchOAuthClient TwitchOAuthClient { get; }
     public ITwitchAPI TwitchApi { get; }
-    public ITwitchClient TwitchClient { get; }
+    public IObservableTwitchClient TwitchClient { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
     public ILogger<TwitchPluginStartup> Logger { get; }
 
-    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, ITwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger)
+    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger)
     {
         TwitchOAuthClient = twitchOAuthClient;
         TwitchApi = twitchApi;
@@ -48,6 +48,10 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.RefreshChannelPeriodInMins))
             .Subscribe(x => RefreshChannelDetails())
             .AddTo(_subs);
+
+        TwitchClient.OnChannelStateChanged
+            .Subscribe(x => RefreshChannelDetails())
+            .AddTo(_subs);
         
         EventBus.Receive<TwitchOAuthSuccessEvent>()
             .Subscribe(x => VerifyAndSetupConnections())
@@ -61,10 +65,10 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public void AttemptToConnectToChat()
     {
         if(!AppState.HasTwitchOAuth()) { return; }
-        if(TwitchClient.IsConnected) { return; }
+        if(TwitchClient.Client.IsConnected) { return; }
         if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
         
-        var result = TwitchClient.ConnectOrRefresh(AppState);
+        var result = TwitchClient.Client.ConnectOrRefresh(AppState);
         if(result.success)
         { Logger.Information($"Connected to twitch chat"); }
         else
@@ -80,8 +84,8 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
 
     public async Task DisconnectEverything()
     {
-        if(TwitchClient.IsConnected)
-        { TwitchClient.Disconnect(); }
+        if(TwitchClient.Client.IsConnected)
+        { TwitchClient.Client.Disconnect(); }
     }
 
     public async Task VerifyToken()
