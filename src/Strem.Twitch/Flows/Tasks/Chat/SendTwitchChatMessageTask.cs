@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Events.Bus;
+using Strem.Core.Extensions;
 using Strem.Core.Flows.Executors;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Tasks;
@@ -31,6 +32,12 @@ public class SendTwitchChatMessageTask : FlowTask<SendTwitchChatMessageTaskData>
 
     public override async Task<ExecutionResult> Execute(SendTwitchChatMessageTaskData data, IVariables flowVars)
     {
+        if (string.IsNullOrEmpty(data.Message))
+        {
+            Logger.Warning("There is no message provided to send");
+            return ExecutionResult.Failed();
+        }
+        
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var processedMessage = FlowStringProcessor.Process(data.Message, flowVars);
         var processedChannel = FlowStringProcessor.Process(channel, flowVars);
