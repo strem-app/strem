@@ -131,6 +131,14 @@
         if (HasScopesFor(ManageChannelScopes)){ ChannelAccess = ScopeAccess.Full; }
         else if(HasScopesFor(ReadChannelScopes)) { ChannelAccess = ScopeAccess.ReadOnly; }
         else { ChannelAccess = ScopeAccess.None; }
+        
+        if (HasScopesFor(ManageUserScopes)){ UserAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ReadUserScopes)) { UserAccess = ScopeAccess.ReadOnly; }
+        else { UserAccess = ScopeAccess.None; }
+        
+        if (HasScopesFor(ManageModerationScopes)){ ModerationAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ReadModerationScopes)) { ModerationAccess = ScopeAccess.ReadOnly; }
+        else { ModerationAccess = ScopeAccess.None; }
     }
 
     public void RequestScopeChange()

@@ -68,7 +68,17 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
             })
             .AddTo(_subs);
 
+        SetDefaultSettingsIfNotSet();
         CheckIfBackupIsNeeded();
+    }
+    
+    public void SetDefaultSettingsIfNotSet()
+    {
+        if(!AppState.AppVariables.Has(UIVariables.ShowHelpersVariable))
+        { AppState.AppVariables.Set(UIVariables.ShowHelpersVariable, true); }
+        
+        if(!AppState.AppVariables.Has(UIVariables.ZoomVariable))
+        { AppState.AppVariables.Set(UIVariables.ZoomVariable, 100); }
     }
 
     public void CheckIfBackupIsNeeded()
