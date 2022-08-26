@@ -41,7 +41,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
             .Subscribe(x => VerifyToken())
             .AddTo(_subs);
         
-        Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.ReconnectToChatTimeout))
+        Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.ChatReconnectInMins))
             .Subscribe(x => AttemptToConnectToChat())
             .AddTo(_subs);
         
