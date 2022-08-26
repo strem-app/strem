@@ -70,8 +70,8 @@ public class OnStreamingStateChangedTrigger : FlowTrigger<OnStreamingStateChange
     public bool MatchesEvent(OnStreamingStateChangedTriggerData data, OutputStateChangedEventArgs args)
     {
         var isStreaming = args.OutputState == OutputState.Started;
-        if(data.TriggerOnStartedStreaming && isStreaming) { return true; }
-        if(data.TriggerOnStoppedStreaming && !isStreaming) { return true; }
+        if(data.TriggerOnStarted && isStreaming) { return true; }
+        if(data.TriggerOnStopped && !isStreaming) { return true; }
         return false;
     }
     
