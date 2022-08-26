@@ -50,7 +50,11 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
             .AddTo(_subs);
         
         EventBus.Receive<TwitchOAuthSuccessEvent>()
-            .Subscribe(x => VerifyToken())
+            .Subscribe(x => VerifyAndSetupConnections())
+            .AddTo(_subs);
+        
+        EventBus.Receive<TwitchOAuthRevokedEvent>()
+            .Subscribe(x => DisconnectEverything())
             .AddTo(_subs);
     }
 
@@ -65,6 +69,19 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         { Logger.Information($"Connected to twitch chat"); }
         else
         { Logger.LogError($"Unable to connect to twitch chat/pubsub due to error: {result.message}"); }
+    }
+
+    public async Task VerifyAndSetupConnections()
+    {
+        await VerifyToken();
+        AttemptToConnectToChat();
+        await RefreshChannelDetails();
+    }
+
+    public async Task DisconnectEverything()
+    {
+        if(TwitchClient.IsConnected)
+        { TwitchClient.Disconnect(); }
     }
 
     public async Task VerifyToken()

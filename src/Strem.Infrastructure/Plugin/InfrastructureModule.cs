@@ -104,7 +104,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         // Plugin (this isnt technically a plugin I know)
         services.AddSingleton<IPluginStartup, InfrastructurePluginStartup>();
     }
-
+    
     public IAppState LoadAppState(IServiceProvider services)
     {
         var stateFileHandler = services.GetService<IAppFileHandler>();

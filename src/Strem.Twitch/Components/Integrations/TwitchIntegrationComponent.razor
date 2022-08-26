@@ -1,17 +1,15 @@
 ﻿@using System.Reactive.Disposables
 @using System.Reactive.Linq
-@using Strem.Core.Events
 @using Strem.Core.Events.Bus
 @using Strem.Core.Extensions
 @using Strem.Core.State
-@using Strem.Twitch.Events
 @using Strem.Twitch.Events.OAuth
 @using Strem.Twitch.Extensions
+@using Strem.Twitch.Services.Client
 @using Strem.Twitch.Services.OAuth
+@using Strem.Twitch.Types
 @using Strem.Twitch.Variables
-@using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation
-@using TwitchLib.Api.Helix.Models.Streams.GetStreams
-@using TwitchLib.Api.Interfaces
+@using TwitchLib.Client.Interfaces
 
 @inject ITwitchOAuthClient TwitchOAuthClient
 @inject IAppState AppState
@@ -19,27 +17,62 @@
 
 @implements IDisposable
 
+@inject ITwitchClient TwitchClient
+@inject IObservableTwitchClient ObservableTwitchClient
 
-<label class="label">Connection Details</label>
-<div class="field is-grouped">
-    <div class="control is-expanded">
-        <input class="input" type="text" placeholder="Account Not Linked" value="@Username" disabled/>
+<div class="columns">
+    
+    <div class="column">
+        <label class="label">Connected Account</label>
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                <input class="input" type="text" placeholder="Account Not Linked" value="@Username" disabled/>
+            </div>
+            <div class="control">
+                @if (IsTwitchAccountLinked && !HavePermissionsChanged)
+                {
+                    <a class="button is-danger" @onclick="DisconnectFromTwitch">Disconnect From Twitch</a>
+                }
+                else if (IsTwitchAccountLinked && HavePermissionsChanged)
+                {
+                    <a class="button is-warning" @onclick="ConnectToTwitch">Request New Permissions</a>
+                }
+                else
+                {
+                    <a class="button is-success" @onclick="ConnectToTwitch">Connect To Twitch</a>
+                }
+            </div>
+        </div>
     </div>
-    <div class="control">
-        @if (IsTwitchAccountLinked && !HavePermissionsChanged)
-        {
-            <a class="button is-danger" @onclick="DisconnectFromTwitch">Disconnect From Twitch</a>
-        }
-        else if (IsTwitchAccountLinked && HavePermissionsChanged)
-        {
-            <a class="button is-warning" @onclick="ConnectToTwitch">Request New Permissions</a>
-        }
-        else
-        {
-            <a class="button is-success" @onclick="ConnectToTwitch">Connect To Twitch</a>
-        }
+    
+    <div class="column">
+        <div class="field">
+            <label class="label">Chat Connection</label>
+            <div class="control">
+                @if (TwitchClient.IsConnected)
+                {
+                    <button class="button is-success" disabled="@(!CanStartTwitchChat)">
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span>Chat Connected</span>
+                    </button>
+                }
+                else
+                {
+                    <button class="button is-danger" @onclick="AttemptChatConnect" disabled="@(!CanStartTwitchChat)">
+                        <span class="icon">
+                            <i class="fas fa-xmark"></i>
+                        </span>
+                        <span>Chat Disconnected</span>
+                    </button>
+                }
+            </div>
+        </div>
     </div>
+
 </div>
+
 <label class="label">Requested Privilages</label>
 <TwitchScopes ExistingScopes="CurrentScopes" OnScopesChanged="RequestNewScopeAccess"></TwitchScopes>
 
@@ -52,6 +85,9 @@
     public bool HavePermissionsChanged { get; set; }
     public string[] CurrentScopes { get; set; } = Array.Empty<string>();
     public string[] NewScopes { get; set; } = Array.Empty<string>();
+
+    public bool CanStartTwitchChat => IsTwitchAccountLinked && AppState.HasTwitchScope(ChatScopes.ReadChat);
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,6 +107,14 @@
                 Username = AppState.AppVariables.Get(TwitchVars.Username);
                 InvokeAsync(StateHasChanged);
             })
+            .AddTo(_subs);
+
+        ObservableTwitchClient.OnConnected
+            .Subscribe(x => InvokeAsync(StateHasChanged))
+            .AddTo(_subs);
+        
+        ObservableTwitchClient.OnDisconnected
+            .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
         
         EventBus.Receive<TwitchOAuthSuccessEvent>()
@@ -99,6 +143,12 @@
     public void DisconnectFromTwitch()
     {
         TwitchOAuthClient.RevokeToken();
+    }
+
+    public void AttemptChatConnect()
+    {
+        if (!TwitchClient.IsConnected)
+        { TwitchClient.ConnectOrRefresh(AppState); }
     }
     
     public void RequestNewScopeAccess(string[] newScopes)
