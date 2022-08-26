@@ -47,9 +47,9 @@
     {
         if (AppState.HasOBSHost() && ObsClient.IsConnected)
         {
-            if (!AppState.HasCurrentSceneItems())
-            { await ObsClient.PopulateActiveSceneTransientData(AppState); }
-            CurrentSceneItems = AppState.GetCurrentSceneItems();
+            if (!AppState.HasSourceList())
+            { await ObsClient.PopulateSourceListData(AppState); }
+            CurrentSceneItems = AppState.GetSourceList();
         }
         else
         { CurrentSceneItems = Array.Empty<string>(); }

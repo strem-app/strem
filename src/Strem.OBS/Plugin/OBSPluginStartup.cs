@@ -40,16 +40,19 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
             .Subscribe(x => Logger.Error($"Unhandled Error in OBS: {x}"))
             .AddTo(_subs);
         
-        if (AppState.HasOBSHost())
-        { await ConnectToOBS(); }
-        
-        Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(OBSPluginSettings.RefreshScenePeriodInSeconds))
+        OBSClient.OnSceneChanged
+            .Subscribe(x => AppState.SetCurrentSceneName(x.NewSceneName))
+            .AddTo(_subs);
+
+        Observable.Merge(OBSClient.OnSourceCreated.ToUnit(), OBSClient.OnSourceDestroyed.ToUnit(), OBSClient.OnSourceRenamed.ToUnit())
             .Subscribe(x => RefreshOBSData())
             .AddTo(_subs);
 
-        OBSClient.OnSceneChanged
-            .Subscribe(x => AppState.UpdateActiveSceneTransientData(x.NewSceneName, x.SceneItems))
-            .AddTo(_subs);
+        if (AppState.HasOBSHost())
+        {
+            await ConnectToOBS();
+            await RefreshOBSData();
+        }
     }
 
     public async Task ConnectToOBS()
@@ -63,11 +66,13 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
 
     public async Task RefreshOBSData()
     {
-        if (AppState.HasOBSHost() && !OBSClient.IsConnected)
-        { await ConnectToOBS();  }
+        if (!OBSClient.IsConnected)
+        { await ConnectToOBS(); }
 
         if (!OBSClient.IsConnected) { return; }
-        await OBSClient.PopulateActiveSceneTransientData(AppState);
+        var scene = await OBSClient.GetCurrentScene();
+        AppState.SetCurrentSceneName(scene.Name);
+        await OBSClient.PopulateSourceListData(AppState);
     }
 
     public void Dispose()

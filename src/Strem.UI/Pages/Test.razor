@@ -1,5 +1,8 @@
 ﻿@page "/test"
 @using Strem.Core.Types
+@using Strem.OBS.Services.Client
+
+@inject IObservableOBSClient ObsClient;
 
 <div class="container is-fullwidth">
     <div class="box">
@@ -38,5 +41,11 @@
     
     public TimeUnitType UnitType { get; set; }
     public string ValueType { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ObsClient.GetSourcesList();
+        result.Select(x => x.Name).Distinct();
+    }
 
 }

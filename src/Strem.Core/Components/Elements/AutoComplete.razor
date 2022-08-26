@@ -8,7 +8,7 @@
     </div>
     <div class="dropdown-menu" id="dropdown-menu" role="menu">
         <div class="dropdown-content">
-            @foreach (var entry in CurrentMatches)
+            @foreach (var entry in CurrentMatches.Take(MaxResults))
             {
                 var entryText = entry;
                 <a class="dropdown-item has-text-black" @onclick="() => SetSelection(entryText)">
@@ -28,6 +28,9 @@
 
     [Parameter]
     public IReadOnlyCollection<string> Data { get; set; }
+
+    [Parameter]
+    public int MaxResults { get; set; } = 10;
     
     public IEnumerable<string> CurrentMatches { get; set; }
     
