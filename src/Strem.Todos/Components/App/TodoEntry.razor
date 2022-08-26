@@ -83,8 +83,9 @@
         var timeLeft = (todo.ExpiryDate - DateTime.Now);
         if(timeLeft.TotalHours > 24) { return "24+h"; }
         if(timeLeft.TotalHours < 0) { return "0"; }
+        
         if(timeLeft.TotalHours < 1) { return $"{(int)timeLeft.TotalMinutes}m"; }
-        return ((int)timeLeft.TotalHours).ToString();
+        return $"{(int)timeLeft.TotalHours}h";
     }
 
     public string GetDescription(TodoData todo)

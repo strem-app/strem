@@ -17,7 +17,6 @@ namespace OBSWebsocketDotNet.Types
         /// <summary>
         /// Text Alignment ("left", "center", "right").
         /// </summary>
-        [JsonRequired]
         [JsonProperty(PropertyName = "align")]
         public string Alignment { set; get; } = null!;
 
@@ -145,7 +144,6 @@ namespace OBSWebsocketDotNet.Types
         /// <summary>
         /// Text vertical alignment ("top", "center", "bottom").
         /// </summary>
-        [JsonRequired]
         [JsonProperty(PropertyName = "valign")]
         public string VerticalAlignment { set; get; } = null!;
 

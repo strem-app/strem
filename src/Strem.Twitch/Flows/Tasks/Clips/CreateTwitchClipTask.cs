@@ -11,6 +11,7 @@ using Strem.Todos.Events;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
+using TwitchLib.Api.Helix;
 using TwitchLib.Api.Helix.Models.Clips.CreateClip;
 using TwitchLib.Api.Interfaces;
 
@@ -36,9 +37,10 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
     public ITwitchAPI TwitchApi { get; }
     public ITodoStore TodoStore { get; }
 
-    public CreateTwitchClipTask(ILogger<FlowTask<CreateTwitchClipTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, ITwitchAPI twitchApi) : base(logger, flowStringProcessor, appState, eventBus)
+    public CreateTwitchClipTask(ILogger<FlowTask<CreateTwitchClipTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, ITwitchAPI twitchApi, ITodoStore todoStore) : base(logger, flowStringProcessor, appState, eventBus)
     {
         TwitchApi = twitchApi;
+        TodoStore = todoStore;
     }
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ApiScopes.ManageClips);
@@ -58,6 +60,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
         var title = $"Twitch Clip Needs Editing - {truncatedChannelTitle}";
         var todoElement = new TodoData
         {
+            Id = Guid.NewGuid(),
             Payload = clip.CreatedClips[0].EditUrl,
             ActionType = TodoActionType.Link,
             Title = title,
@@ -72,8 +75,22 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
     
     public override async Task<ExecutionResult> Execute(CreateTwitchClipTaskData data, IVariables flowVars)
     {
-        var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
-        var clip = await TwitchApi.Helix.Clips.CreateClipAsync(channel);
+        var userId = AppState.GetTwitchUserId();
+        if (!string.IsNullOrEmpty(data.Channel))
+        {
+            var userDetails = await TwitchApi.Helix.Users.GetUsersAsync(logins: new () { data.Channel });
+            if (userDetails.Users.Length == 0)
+            {
+                Logger.Warning($"Couldnt Find UserId For Use [{ data.Channel }]");
+                return ExecutionResult.Failed();
+            }
+
+            userId = userDetails.Users[0].Id;
+        }
+        
+        
+        
+        var clip = await TwitchApi.Helix.Clips.CreateClipAsync(userId);
         if(clip?.CreatedClips.Length == 0) { return ExecutionResult.Failed(); }
 
         PopulateVariablesFor(clip, flowVars);
