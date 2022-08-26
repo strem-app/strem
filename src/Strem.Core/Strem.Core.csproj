@@ -9,14 +9,10 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="System.Reactive" Version="5.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Logging.Abstractions">
-        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.7\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-      </Reference>
+      <PackageReference Include="TextCopy" Version="6.1.0" />
     </ItemGroup>
 
 </Project>

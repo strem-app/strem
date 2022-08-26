@@ -9,7 +9,7 @@ namespace Strem.Twitch.Services.Client;
 
 public class ObservableTwitchClient : IObservableTwitchClient
 {
-    public ITwitchClient TwitchClient { get; }
+    public ITwitchClient Client { get; }
     
     /// <summary>Occurs when [on being hosted].</summary>
     public IObservable<OnBeingHostedArgs> OnBeingHosted { get; private set; }
@@ -139,9 +139,6 @@ public class ObservableTwitchClient : IObservableTwitchClient
     /// <summary>Occurs when [on message deleted].</summary>
     public IObservable<OnMessageClearedArgs> OnMessageCleared { get; private set; }
 
-    /// <summary>Occurs when [on ritual for new chatter received].</summary>
-    public IObservable<OnRitualNewChatterArgs> OnRitualNewChatter { get; private set; }
-
     /// <summary>
     /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.
     /// </summary>
@@ -157,248 +154,242 @@ public class ObservableTwitchClient : IObservableTwitchClient
     /// </summary>
     public IObservable<OnBannedEmailAliasArgs> OnBannedEmailAlias { get; private set; }
 
-    public ObservableTwitchClient(ITwitchClient twitchClient)
+    public ObservableTwitchClient(ITwitchClient client)
     {
-        TwitchClient = twitchClient;
+        Client = client;
         SetupObservables();
     }
     
     public void SetupObservables()
     {
         OnConnected = Observable.FromEventPattern<OnConnectedArgs>(
-            e => TwitchClient.OnConnected += e,
-            e => TwitchClient.OnConnected -= e)
+            e => Client.OnConnected += e,
+            e => Client.OnConnected -= e)
             .Select(x => x.EventArgs);
         
         OnDisconnected = Observable.FromEventPattern<OnDisconnectedEventArgs>(
-                e => TwitchClient.OnDisconnected += e,
-                e => TwitchClient.OnDisconnected -= e)
+                e => Client.OnDisconnected += e,
+                e => Client.OnDisconnected -= e)
             .Select(x => x.EventArgs);
         
         OnError = Observable.FromEventPattern<OnErrorEventArgs>(
-                e => TwitchClient.OnError += e,
-                e => TwitchClient.OnError -= e)
+                e => Client.OnError += e,
+                e => Client.OnError -= e)
             .Select(x => x.EventArgs);
         
         OnLog = Observable.FromEventPattern<OnLogArgs>(
-                e => TwitchClient.OnLog += e,
-                e => TwitchClient.OnLog -= e)
+                e => Client.OnLog += e,
+                e => Client.OnLog -= e)
             .Select(x => x.EventArgs);
         
         OnReconnected = Observable.FromEventPattern<OnReconnectedEventArgs>(
-                e => TwitchClient.OnReconnected += e,
-                e => TwitchClient.OnReconnected -= e)
+                e => Client.OnReconnected += e,
+                e => Client.OnReconnected -= e)
             .Select(x => x.EventArgs);
         
         OnBeingHosted = Observable.FromEventPattern<OnBeingHostedArgs>(
-                e => TwitchClient.OnBeingHosted += e,
-                e => TwitchClient.OnBeingHosted -= e)
+                e => Client.OnBeingHosted += e,
+                e => Client.OnBeingHosted -= e)
             .Select(x => x.EventArgs);
         
         OnChatCleared = Observable.FromEventPattern<OnChatClearedArgs>(
-                e => TwitchClient.OnChatCleared += e,
-                e => TwitchClient.OnChatCleared -= e)
+                e => Client.OnChatCleared += e,
+                e => Client.OnChatCleared -= e)
             .Select(x => x.EventArgs);
         
         OnCommunitySubscription = Observable.FromEventPattern<OnCommunitySubscriptionArgs>(
-                e => TwitchClient.OnCommunitySubscription += e,
-                e => TwitchClient.OnCommunitySubscription -= e)
+                e => Client.OnCommunitySubscription += e,
+                e => Client.OnCommunitySubscription -= e)
             .Select(x => x.EventArgs);
         
         OnConnectionError = Observable.FromEventPattern<OnConnectionErrorArgs>(
-                e => TwitchClient.OnConnectionError += e,
-                e => TwitchClient.OnConnectionError -= e)
+                e => Client.OnConnectionError += e,
+                e => Client.OnConnectionError -= e)
             .Select(x => x.EventArgs);
         
         OnGiftedSubscription = Observable.FromEventPattern<OnGiftedSubscriptionArgs>(
-                e => TwitchClient.OnGiftedSubscription += e,
-                e => TwitchClient.OnGiftedSubscription -= e)
+                e => Client.OnGiftedSubscription += e,
+                e => Client.OnGiftedSubscription -= e)
             .Select(x => x.EventArgs);
         
         OnHostingStarted = Observable.FromEventPattern<OnHostingStartedArgs>(
-                e => TwitchClient.OnHostingStarted += e,
-                e => TwitchClient.OnHostingStarted -= e)
+                e => Client.OnHostingStarted += e,
+                e => Client.OnHostingStarted -= e)
             .Select(x => x.EventArgs);
         
         OnHostingStopped = Observable.FromEventPattern<OnHostingStoppedArgs>(
-                e => TwitchClient.OnHostingStopped += e,
-                e => TwitchClient.OnHostingStopped -= e)
+                e => Client.OnHostingStopped += e,
+                e => Client.OnHostingStopped -= e)
             .Select(x => x.EventArgs);
         
         OnHostLeft = Observable.FromEventPattern(
-                e => TwitchClient.OnHostLeft += e,
-                e => TwitchClient.OnHostLeft -= e)
+                e => Client.OnHostLeft += e,
+                e => Client.OnHostLeft -= e)
             .ToUnit();
 
         OnGiftedSubscription = Observable.FromEventPattern<OnGiftedSubscriptionArgs>(
-                e => TwitchClient.OnGiftedSubscription += e,
-                e => TwitchClient.OnGiftedSubscription -= e)
+                e => Client.OnGiftedSubscription += e,
+                e => Client.OnGiftedSubscription -= e)
             .Select(x => x.EventArgs);
         
         OnIncorrectLogin = Observable.FromEventPattern<OnIncorrectLoginArgs>(
-                e => TwitchClient.OnIncorrectLogin += e,
-                e => TwitchClient.OnIncorrectLogin -= e)
+                e => Client.OnIncorrectLogin += e,
+                e => Client.OnIncorrectLogin -= e)
             .Select(x => x.EventArgs);
         
         OnJoinedChannel = Observable.FromEventPattern<OnJoinedChannelArgs>(
-                e => TwitchClient.OnJoinedChannel += e,
-                e => TwitchClient.OnJoinedChannel -= e)
+                e => Client.OnJoinedChannel += e,
+                e => Client.OnJoinedChannel -= e)
             .Select(x => x.EventArgs);
         
         OnLeftChannel = Observable.FromEventPattern<OnLeftChannelArgs>(
-                e => TwitchClient.OnLeftChannel += e,
-                e => TwitchClient.OnLeftChannel -= e)
+                e => Client.OnLeftChannel += e,
+                e => Client.OnLeftChannel -= e)
             .Select(x => x.EventArgs);
         
         OnMessageCleared = Observable.FromEventPattern<OnMessageClearedArgs>(
-                e => TwitchClient.OnMessageCleared += e,
-                e => TwitchClient.OnMessageCleared -= e)
+                e => Client.OnMessageCleared += e,
+                e => Client.OnMessageCleared -= e)
             .Select(x => x.EventArgs);
         
         OnMessageReceived = Observable.FromEventPattern<OnMessageReceivedArgs>(
-                e => TwitchClient.OnMessageReceived += e,
-                e => TwitchClient.OnMessageReceived -= e)
+                e => Client.OnMessageReceived += e,
+                e => Client.OnMessageReceived -= e)
             .Select(x => x.EventArgs);
         
         OnMessageSent = Observable.FromEventPattern<OnMessageSentArgs>(
-                e => TwitchClient.OnMessageSent += e,
-                e => TwitchClient.OnMessageSent -= e)
+                e => Client.OnMessageSent += e,
+                e => Client.OnMessageSent -= e)
             .Select(x => x.EventArgs);
         
         OnMessageThrottled = Observable.FromEventPattern<OnMessageThrottledEventArgs>(
-                e => TwitchClient.OnMessageThrottled += e,
-                e => TwitchClient.OnMessageThrottled -= e)
+                e => Client.OnMessageThrottled += e,
+                e => Client.OnMessageThrottled -= e)
             .Select(x => x.EventArgs);
         
         OnModeratorJoined = Observable.FromEventPattern<OnModeratorJoinedArgs>(
-                e => TwitchClient.OnModeratorJoined += e,
-                e => TwitchClient.OnModeratorJoined -= e)
+                e => Client.OnModeratorJoined += e,
+                e => Client.OnModeratorJoined -= e)
             .Select(x => x.EventArgs);
         
         OnModeratorLeft = Observable.FromEventPattern<OnModeratorLeftArgs>(
-                e => TwitchClient.OnModeratorLeft += e,
-                e => TwitchClient.OnModeratorLeft -= e)
+                e => Client.OnModeratorLeft += e,
+                e => Client.OnModeratorLeft -= e)
             .Select(x => x.EventArgs);
         
         OnModeratorsReceived = Observable.FromEventPattern<OnModeratorsReceivedArgs>(
-                e => TwitchClient.OnModeratorsReceived += e,
-                e => TwitchClient.OnModeratorsReceived -= e)
+                e => Client.OnModeratorsReceived += e,
+                e => Client.OnModeratorsReceived -= e)
             .Select(x => x.EventArgs);
         
         OnNewSubscriber = Observable.FromEventPattern<OnNewSubscriberArgs>(
-                e => TwitchClient.OnNewSubscriber += e,
-                e => TwitchClient.OnNewSubscriber -= e)
+                e => Client.OnNewSubscriber += e,
+                e => Client.OnNewSubscriber -= e)
             .Select(x => x.EventArgs);
         
         OnNowHosting = Observable.FromEventPattern<OnNowHostingArgs>(
-                e => TwitchClient.OnNowHosting += e,
-                e => TwitchClient.OnNowHosting -= e)
+                e => Client.OnNowHosting += e,
+                e => Client.OnNowHosting -= e)
             .Select(x => x.EventArgs);
         
         OnRaidNotification = Observable.FromEventPattern<OnRaidNotificationArgs>(
-                e => TwitchClient.OnRaidNotification += e,
-                e => TwitchClient.OnRaidNotification -= e)
+                e => Client.OnRaidNotification += e,
+                e => Client.OnRaidNotification -= e)
             .Select(x => x.EventArgs);
         
         OnReSubscriber = Observable.FromEventPattern<OnReSubscriberArgs>(
-                e => TwitchClient.OnReSubscriber += e,
-                e => TwitchClient.OnReSubscriber -= e)
+                e => Client.OnReSubscriber += e,
+                e => Client.OnReSubscriber -= e)
             .Select(x => x.EventArgs);
         
         OnUserBanned = Observable.FromEventPattern<OnUserBannedArgs>(
-                e => TwitchClient.OnUserBanned += e,
-                e => TwitchClient.OnUserBanned -= e)
+                e => Client.OnUserBanned += e,
+                e => Client.OnUserBanned -= e)
             .Select(x => x.EventArgs);
         
         OnUserJoined = Observable.FromEventPattern<OnUserJoinedArgs>(
-                e => TwitchClient.OnUserJoined += e,
-                e => TwitchClient.OnUserJoined -= e)
+                e => Client.OnUserJoined += e,
+                e => Client.OnUserJoined -= e)
             .Select(x => x.EventArgs);        
         
         OnUserLeft = Observable.FromEventPattern<OnUserLeftArgs>(
-                e => TwitchClient.OnUserLeft += e,
-                e => TwitchClient.OnUserLeft -= e)
+                e => Client.OnUserLeft += e,
+                e => Client.OnUserLeft -= e)
             .Select(x => x.EventArgs);
         
         OnUserTimedout = Observable.FromEventPattern<OnUserTimedoutArgs>(
-                e => TwitchClient.OnUserTimedout += e,
-                e => TwitchClient.OnUserTimedout -= e)
+                e => Client.OnUserTimedout += e,
+                e => Client.OnUserTimedout -= e)
             .Select(x => x.EventArgs);
         
         OnWhisperReceived = Observable.FromEventPattern<OnWhisperReceivedArgs>(
-                e => TwitchClient.OnWhisperReceived += e,
-                e => TwitchClient.OnWhisperReceived -= e)
+                e => Client.OnWhisperReceived += e,
+                e => Client.OnWhisperReceived -= e)
             .Select(x => x.EventArgs);
         
         OnWhisperSent = Observable.FromEventPattern<OnWhisperSentArgs>(
-                e => TwitchClient.OnWhisperSent += e,
-                e => TwitchClient.OnWhisperSent -= e)
+                e => Client.OnWhisperSent += e,
+                e => Client.OnWhisperSent -= e)
             .Select(x => x.EventArgs);
         
         OnWhisperThrottled = Observable.FromEventPattern<OnWhisperThrottledEventArgs>(
-                e => TwitchClient.OnWhisperThrottled += e,
-                e => TwitchClient.OnWhisperThrottled -= e)
+                e => Client.OnWhisperThrottled += e,
+                e => Client.OnWhisperThrottled -= e)
             .Select(x => x.EventArgs);
         
         OnBannedEmailAlias = Observable.FromEventPattern<OnBannedEmailAliasArgs>(
-                e => TwitchClient.OnBannedEmailAlias += e,
-                e => TwitchClient.OnBannedEmailAlias -= e)
+                e => Client.OnBannedEmailAlias += e,
+                e => Client.OnBannedEmailAlias -= e)
             .Select(x => x.EventArgs);
         
         OnChannelStateChanged = Observable.FromEventPattern<OnChannelStateChangedArgs>(
-                e => TwitchClient.OnChannelStateChanged += e,
-                e => TwitchClient.OnChannelStateChanged -= e)
+                e => Client.OnChannelStateChanged += e,
+                e => Client.OnChannelStateChanged -= e)
             .Select(x => x.EventArgs);
         
         OnChatColorChanged = Observable.FromEventPattern<OnChatColorChangedArgs>(
-                e => TwitchClient.OnChatColorChanged += e,
-                e => TwitchClient.OnChatColorChanged -= e)
+                e => Client.OnChatColorChanged += e,
+                e => Client.OnChatColorChanged -= e)
             .Select(x => x.EventArgs);
         
         OnChatCommandReceived = Observable.FromEventPattern<OnChatCommandReceivedArgs>(
-                e => TwitchClient.OnChatCommandReceived += e,
-                e => TwitchClient.OnChatCommandReceived -= e)
+                e => Client.OnChatCommandReceived += e,
+                e => Client.OnChatCommandReceived -= e)
             .Select(x => x.EventArgs);
         
         OnExistingUsersDetected = Observable.FromEventPattern<OnExistingUsersDetectedArgs>(
-                e => TwitchClient.OnExistingUsersDetected += e,
-                e => TwitchClient.OnExistingUsersDetected -= e)
+                e => Client.OnExistingUsersDetected += e,
+                e => Client.OnExistingUsersDetected -= e)
             .Select(x => x.EventArgs);
         
         OnRequiresVerifiedEmail = Observable.FromEventPattern<OnRequiresVerifiedEmailArgs>(
-                e => TwitchClient.OnRequiresVerifiedEmail += e,
-                e => TwitchClient.OnRequiresVerifiedEmail -= e)
-            .Select(x => x.EventArgs);
-        
-        OnRitualNewChatter = Observable.FromEventPattern<OnRitualNewChatterArgs>(
-                e => TwitchClient.OnRitualNewChatter += e,
-                e => TwitchClient.OnRitualNewChatter -= e)
+                e => Client.OnRequiresVerifiedEmail += e,
+                e => Client.OnRequiresVerifiedEmail -= e)
             .Select(x => x.EventArgs);
         
         OnSendReceiveData = Observable.FromEventPattern<OnSendReceiveDataArgs>(
-                e => TwitchClient.OnSendReceiveData += e,
-                e => TwitchClient.OnSendReceiveData -= e)
+                e => Client.OnSendReceiveData += e,
+                e => Client.OnSendReceiveData -= e)
             .Select(x => x.EventArgs);
         
         OnUserStateChanged = Observable.FromEventPattern<OnUserStateChangedArgs>(
-                e => TwitchClient.OnUserStateChanged += e,
-                e => TwitchClient.OnUserStateChanged -= e)
+                e => Client.OnUserStateChanged += e,
+                e => Client.OnUserStateChanged -= e)
             .Select(x => x.EventArgs);
         
         OnWhisperCommandReceived = Observable.FromEventPattern<OnWhisperCommandReceivedArgs>(
-                e => TwitchClient.OnWhisperCommandReceived += e,
-                e => TwitchClient.OnWhisperCommandReceived -= e)
+                e => Client.OnWhisperCommandReceived += e,
+                e => Client.OnWhisperCommandReceived -= e)
             .Select(x => x.EventArgs);
         
         OnRequiresVerifiedPhoneNumber = Observable.FromEventPattern<OnRequiresVerifiedPhoneNumberArgs>(
-                e => TwitchClient.OnRequiresVerifiedPhoneNumber += e,
-                e => TwitchClient.OnRequiresVerifiedPhoneNumber -= e)
+                e => Client.OnRequiresVerifiedPhoneNumber += e,
+                e => Client.OnRequiresVerifiedPhoneNumber -= e)
             .Select(x => x.EventArgs);
         
         OnVIPsReceived = Observable.FromEventPattern<OnVIPsReceivedArgs>(
-                e => TwitchClient.OnVIPsReceived += e,
-                e => TwitchClient.OnVIPsReceived -= e)
+                e => Client.OnVIPsReceived += e,
+                e => Client.OnVIPsReceived -= e)
             .Select(x => x.EventArgs);
-
     }
 }

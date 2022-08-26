@@ -1,11 +1,14 @@
 ﻿using System.Reactive;
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Communication.Events;
 
 namespace Strem.Twitch.Services.Client;
 
 public interface IObservableTwitchClient
 {
+    ITwitchClient Client { get; }
+    
     /// <summary>Occurs when [on being hosted].</summary>
     IObservable<OnBeingHostedArgs> OnBeingHosted { get; }
 
@@ -133,9 +136,6 @@ public interface IObservableTwitchClient
 
     /// <summary>Occurs when [on message deleted].</summary>
     IObservable<OnMessageClearedArgs> OnMessageCleared { get; }
-
-    /// <summary>Occurs when [on ritual for new chatter received].</summary>
-    IObservable<OnRitualNewChatterArgs> OnRitualNewChatter { get; }
 
     /// <summary>
     /// Occurs when chatting in a channel that requires a verified email without a verified email attached to the account.

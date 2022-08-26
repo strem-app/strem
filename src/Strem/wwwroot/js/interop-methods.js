@@ -5,7 +5,6 @@
     if(scaleAlteration >= 0) { scaleAlteration *= 1.5; }
     if(scaleAlteration < 0) { scaleAlteration /= 1.5; }
 
-
     console.log("alteration", scaleAlteration);
     const scalingFactor = 1+scaleAlteration;
     const base = 100;
@@ -22,3 +21,33 @@ function processButtonPicker()
         inputSearch: true
     })
 }
+
+function showNotification(text, type)
+{
+    bulmaToast.toast({ message: text, type: type })
+}
+
+const animateCSS = (element, animation, prefix = 'animate__') =>
+    // We create a Promise and return it
+    new Promise((resolve, reject) => {
+        const animationName = `${prefix}${animation}`;
+        const node = document.querySelector(element);
+
+        node.classList.add(`${prefix}animated`, animationName);
+
+        // When the animation ends, we clean the classes and resolve the Promise
+        function handleAnimationEnd(event) {
+            event.stopPropagation();
+            node.classList.remove(`${prefix}animated`, animationName);
+            resolve('Animation ended');
+        }
+
+        node.addEventListener('animationend', handleAnimationEnd, {once: true});
+    });
+
+bulmaToast.setDefaults({
+    duration: 2000,
+    position: 'bottom-right',
+    closeOnClick: true,
+    animate: {in: 'bounceInRight', out: 'bounceOutRight'}
+});

@@ -13,7 +13,7 @@ public class OBSIntegrationDescriptor : IIntegrationDescriptor
 
     public VariableDescriptor[] VariableOutputs { get; } = new[]
     {
-        OBSVars.CurrentScene.ToDescriptor(), OBSVars.CurrentSceneItems.ToDescriptor()
+        OBSVars.CurrentScene.ToDescriptor(), OBSVars.SourceItems.ToDescriptor()
     };
 
     public Type ComponentType { get; } = typeof(OBSIntegration);

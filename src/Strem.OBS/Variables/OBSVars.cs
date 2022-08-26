@@ -11,5 +11,5 @@ public class OBSVars
     public static readonly VariableEntry Password = new("password", OBSContext);
     
     public static readonly VariableEntry CurrentScene = new("current-scene", OBSContext);
-    public static readonly VariableEntry CurrentSceneItems = new("current-scene.items", OBSContext);
+    public static readonly VariableEntry SourceItems = new("source-items", OBSContext);
 }

@@ -47,19 +47,21 @@ public static class IObservableOBSClientExtensions
         return await client.AttemptConnect(host, port, password);
     }
     
-    public static async Task PopulateActiveSceneTransientData(this IObservableOBSClient client, IAppState appState)
+    public static async Task PopulateSourceListData(this IObservableOBSClient client, IAppState appState)
     {
-        if(!appState.HasOBSHost()) { return; }
-        var scene = await client.GetCurrentScene();
-        await UpdateActiveSceneTransientData(appState, scene.Name, scene.Items);
+        if(!client.IsConnected) { return; }
+        var sources = await client.GetSourcesList();
+        await UpdateTransientData(appState, sources);
     }
 
-    public static async Task UpdateActiveSceneTransientData(this IAppState appState, string sceneName, IEnumerable<SceneItem> sceneItems)
+    public static async Task UpdateTransientData(this IAppState appState, IEnumerable<SourceInfo> sourceInfo)
     {
-        appState.TransientVariables.Set(OBSVars.CurrentScene, sceneName);
-
-        var sceneItemNames = sceneItems.GetAllSourceNames();
+        var sceneItemNames = sourceInfo
+            .Select(x => x.Name)
+            .Distinct()
+            .OrderBy(x => x);
+        
         var itemNames = string.Join(",", sceneItemNames);
-        appState.TransientVariables.Set(OBSVars.CurrentSceneItems, itemNames);
+        appState.TransientVariables.Set(OBSVars.SourceItems, itemNames);
     }
 }

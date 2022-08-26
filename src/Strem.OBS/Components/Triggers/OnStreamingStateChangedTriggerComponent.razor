@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.State
+@using Strem.OBS.Extensions
+@using Strem.OBS.Services.Client
+
+@inherits Strem.Core.Components.Triggers.CustomTriggerComponent<Strem.OBS.Flows.Triggers.OnStreamingStateChangedTriggerData>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.TriggerOnStarted">
+            Trigger When Streaming?
+        </label>
+    </div>
+</div>
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.TriggerOnStopped">
+            Trigger When Stopped Streaming?
+        </label>
+    </div>
+</div>
+
+<div class="field">
+    <div class="control">
+        <label class="checkbox">
+            <input type="checkbox" @bind="Data.TriggerOnStart">
+            Trigger On Start?
+        </label>
+    </div>
+    <HelperInfo>By default these triggers wait to be told when streaming state changes, but with this you can trigger it with the current state when it starts</HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"On Streaming State Changed";
+}
