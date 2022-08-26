@@ -5,7 +5,9 @@
 @using Strem.Core.State
 @using Strem.Twitch.Events.OAuth
 @using Strem.Twitch.Extensions
+@using Strem.Twitch.Services.Client
 @using Strem.Twitch.Services.OAuth
+@using Strem.Twitch.Types
 @using Strem.Twitch.Variables
 @using TwitchLib.Client.Interfaces
 
@@ -16,6 +18,7 @@
 @implements IDisposable
 
 @inject ITwitchClient TwitchClient
+@inject IObservableTwitchClient ObservableTwitchClient
 
 <div class="columns">
     
@@ -48,7 +51,7 @@
             <div class="control">
                 @if (TwitchClient.IsConnected)
                 {
-                    <button class="button is-success" disabled="@(!IsTwitchAccountLinked)">
+                    <button class="button is-success" disabled="@(!CanStartTwitchChat)">
                         <span class="icon">
                             <i class="fas fa-check"></i>
                         </span>
@@ -57,7 +60,7 @@
                 }
                 else
                 {
-                    <button class="button is-danger" @onclick="AttemptChatConnect" disabled="@(!IsTwitchAccountLinked)">
+                    <button class="button is-danger" @onclick="AttemptChatConnect" disabled="@(!CanStartTwitchChat)">
                         <span class="icon">
                             <i class="fas fa-xmark"></i>
                         </span>
@@ -83,6 +86,9 @@
     public string[] CurrentScopes { get; set; } = Array.Empty<string>();
     public string[] NewScopes { get; set; } = Array.Empty<string>();
 
+    public bool CanStartTwitchChat => IsTwitchAccountLinked && AppState.HasTwitchScope(ChatScopes.ReadChat);
+
+
     protected override async Task OnInitializedAsync()
     {
         IsTwitchAccountLinked = AppState.HasTwitchOAuth();
@@ -101,6 +107,14 @@
                 Username = AppState.AppVariables.Get(TwitchVars.Username);
                 InvokeAsync(StateHasChanged);
             })
+            .AddTo(_subs);
+
+        ObservableTwitchClient.OnConnected
+            .Subscribe(x => InvokeAsync(StateHasChanged))
+            .AddTo(_subs);
+        
+        ObservableTwitchClient.OnDisconnected
+            .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
         
         EventBus.Receive<TwitchOAuthSuccessEvent>()
@@ -134,10 +148,7 @@
     public void AttemptChatConnect()
     {
         if (!TwitchClient.IsConnected)
-        { 
-            TwitchClient.ConnectOrRefresh(AppState);
-            StateHasChanged();
-        }
+        { TwitchClient.ConnectOrRefresh(AppState); }
     }
     
     public void RequestNewScopeAccess(string[] newScopes)
