@@ -1,11 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Strem.Core.State
-@using Strem.OBS.Extensions
 @using Strem.OBS.Services.Client
 
 @inherits Strem.Core.Components.Triggers.CustomTriggerComponent<Strem.OBS.Flows.Triggers.OnSceneChangedTriggerData>
 
-@inject IAppState AppState;
 @inject IObservableOBSClient ObsClient;
 
 <div class="field">
@@ -24,12 +21,14 @@
     
     protected override async Task OnInitializedAsync()
     {
-        if (AppState.HasOBSHost() && ObsClient.IsConnected)
+        if (ObsClient.IsConnected)
         {
             var scenes = await ObsClient.GetSceneList();
             SceneNames = scenes.Scenes.Select(x => x.Name).ToArray();
         }
         else
         { SceneNames = Array.Empty<string>(); }
+        
+        await base.OnInitializedAsync();
     }
 }

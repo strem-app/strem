@@ -92,8 +92,8 @@
         InvokeAsync(StateHasChanged);
         
         var result = await ObsClient.AttemptConnect(Host, Port, Password);
-        ConnectionError = result.message;
-
+        ConnectionError = string.Empty;
+        
         if (result.success)
         {
             AppState.AppVariables.Delete(OBSVars.Password);
@@ -104,6 +104,10 @@
                 var encryptedPassword = Encryptor.Encrypt(Password);
                 AppState.AppVariables.Set(OBSVars.Password, encryptedPassword);
             }
+        }
+        else
+        {
+            ConnectionError = result.message;
         }
         
         IsConnecting = false;

@@ -11,5 +11,5 @@ public class OnSceneChangedTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
 
-    public string MatchingSceneName { get; set; } = string.Empty;
+    public string MatchingSceneName { get; set; }
 }

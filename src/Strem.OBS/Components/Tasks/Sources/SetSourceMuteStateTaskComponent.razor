@@ -44,7 +44,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (AppState.HasOBSHost() && ObsClient.IsConnected)
+        if (ObsClient.IsConnected)
         {
             if (!AppState.HasCurrentSceneItems())
             { await ObsClient.PopulateActiveSceneTransientData(AppState); }
@@ -52,6 +52,8 @@
         }
         else
         { CurrentSceneItems = Array.Empty<string>(); }
+        
+        await base.OnInitializedAsync();
     }
 
 }

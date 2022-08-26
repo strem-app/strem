@@ -10,7 +10,7 @@
     @foreach (var descriptor in VariableDescriptors)
     {
         <div class="control">
-            <div class="tags has-addons" @onclick="() => CopyVariableToClipboard(descriptor.VariableEntry)">
+            <div class="tags has-addons is-clickable" @onclick="() => CopyVariableToClipboard(descriptor.VariableEntry)">
                 <span class="tag @(descriptor.IsMandatory ? "is-success" : "is-warning")">@descriptor.VariableEntry.Name</span>
                 @if (!string.IsNullOrEmpty(descriptor.VariableEntry.Context))
                 {
