@@ -16,7 +16,7 @@
         </div>
         <div class="control has-text-centered">
             <progress class="progress mb-1 @(GetProgressStyle(progress))" value="@progress" max="100">@(progress)%</progress>
-            <span class="tag @(GetProgressStyle(progress))">@GetHoursLeftReading(Todo)h Left</span>
+            <span class="tag @(GetProgressStyle(progress))">@GetHoursLeftReading(Todo) Left</span>
         </div>
         <div class="control">
             @if (Todo.ActionType == TodoActionType.Link)
@@ -66,24 +66,25 @@
 
     public string GetProgressStyle(int progress)
     {
-        if(progress <= 25) { return "is-danger"; }
-        if(progress <= 50) { return "is-warning"; }
+        if(progress <= 10) { return "is-danger"; }
+        if(progress <= 30) { return "is-warning"; }
         return "is-success";
     }
 
     public string GetBoxStyle(int progress)
     {
-        if(progress <= 25) { return "has-background-danger-dark"; }
-        if(progress <= 50) { return "has-background-warning-dark"; }
+        if(progress <= 10) { return "has-background-danger-dark"; }
+        if(progress <= 30) { return "has-background-warning-dark"; }
         return "has-background-grey-dark";
     }
 
     public string GetHoursLeftReading(TodoData todo)
     {
-        var hoursLeft = (int)(todo.ExpiryDate - DateTime.Now).TotalHours;
-        if(hoursLeft > 24) { return "24+"; }
-        if(hoursLeft < 0) { return "0"; }
-        return hoursLeft.ToString();
+        var timeLeft = (todo.ExpiryDate - DateTime.Now);
+        if(timeLeft.TotalHours > 24) { return "24+h"; }
+        if(timeLeft.TotalHours < 0) { return "0"; }
+        if(timeLeft.TotalHours < 1) { return $"{(int)timeLeft.TotalMinutes}m"; }
+        return ((int)timeLeft.TotalHours).ToString();
     }
 
     public string GetDescription(TodoData todo)
