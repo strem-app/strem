@@ -16,6 +16,8 @@ For example you may want to play a meme on OBS every time chat contains "lollers
 ## How Do I Run It?
 Just go to releases, download the latest zip file and put it in a directory somewhere and run `strem.exe`
 
+> Currently only windows is supported, but only a few things realistically require windows so in the long run we may pull those dependencies out to support other platforms too (i.e file browsing, keyboard input simulation, tts etc).
+
 The only integrations supported out of the box currently are `Twitch` and `OBS`, however we only have a small subset of available triggers/tasks available for the moment to assist with testing, these will rapidly get fleshed out as more time is spent..
 
 > For the moment the docs are sparse, feel free to ask questions in issues though and more docs will be provided in the `docs` folder as time goes by.
