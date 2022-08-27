@@ -191,7 +191,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         foreach (var taskData in flow.TaskData)
         {
             var executionResult = await ExecuteTask(flow, taskData, flowVariables, executionLog);
-            if (executionResult.ResultType == ExecutionResultType.Failed)
+            if (executionResult.ResultType is ExecutionResultType.Failed or ExecutionResultType.CascadingFailure)
             {
                 CancelExecution(flow, taskData, executionResult.ResultType, flowVariables, executionLog);
                 return;
