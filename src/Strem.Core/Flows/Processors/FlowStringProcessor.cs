@@ -38,6 +38,8 @@ public class FlowStringProcessor : IFlowStringProcessor
     
     public string Process(string textToProcess, IVariables flowVariables)
     {
+        if(string.IsNullOrEmpty(textToProcess)) { return string.Empty; }
+        
         var processor = new MatchEvaluator(x => VariableMatchEvaluator(x, flowVariables));
         
         var output = string.Empty;
