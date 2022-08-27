@@ -31,8 +31,8 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
 
     public override async Task<ExecutionResult> Execute(ChangePortalButtonStylesTaskData data, IVariables flowVars)
     {
-        if (!ButtonRuntimeStyles.RuntimeStyles.ContainsKey(data.PortalId)) { return ExecutionResult.FailedButContinue(); }
-        if (!ButtonRuntimeStyles.RuntimeStyles[data.PortalId].ContainsKey(data.ButtonId)) { return ExecutionResult.FailedButContinue(); }
+        if (!ButtonRuntimeStyles.RuntimeStyles.ContainsKey(data.PortalId)) { return ExecutionResult.FailedButContinue("Cant find portal"); }
+        if (!ButtonRuntimeStyles.RuntimeStyles[data.PortalId].ContainsKey(data.ButtonId)) { return ExecutionResult.FailedButContinue("Cant find button"); }
 
         var runtimeStyles = ButtonRuntimeStyles.GetButtonStyles(data.PortalId, data.ButtonId);
         if(data.ChangeText) { runtimeStyles.Text = data.NewStyles.Text; }

@@ -35,7 +35,7 @@ public class SetSourceVisibilityTask : FlowTask<SetSourceVisibilityTaskData>
     {
         var sceneName = string.IsNullOrEmpty(data.SceneName) ? AppState.GetCurrentSceneName() : data.SceneName;
         var properties = await ObsClient.GetSceneItemProperties(data.SourceName, sceneName);
-        if (properties == null) { return ExecutionResult.Failed(); }
+        if (properties == null) { return ExecutionResult.Failed("Cannot get scene properties"); }
         
         if (data.Status == VisibilityStatus.Visible) { properties.Visible = true; }
         else if(data.Status == VisibilityStatus.Invisible) { properties.Visible = false; }

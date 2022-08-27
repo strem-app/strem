@@ -30,7 +30,7 @@ public class WaitForPeriodTask : FlowTask<WaitForPeriodTaskData>
         if (!FlowStringProcessor.TryProcessInt(data.WaitAmount, flowVars, out var intValue))
         {
             Logger.LogWarning($"Unable to process {data.WaitAmount} into a number, verify it is a number or variables exist");
-            return ExecutionResult.Failed();
+            return ExecutionResult.Failed($"Unable to process integer value from {data.WaitAmount}");
         }
         
         var timespan = data.WaitUnitsType.ToTimeSpan(intValue);

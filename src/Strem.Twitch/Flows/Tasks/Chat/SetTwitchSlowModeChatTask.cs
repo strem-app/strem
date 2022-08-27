@@ -50,6 +50,6 @@ public class SetTwitchSlowModeChatTask : FlowTask<SetTwitchSlowModeChatTaskData>
         else
         { TwitchClient.SlowModeOff(processedChannel); }
         
-        return hadIssue ? ExecutionResult.FailedButContinue() : ExecutionResult.Success();
+        return hadIssue ? ExecutionResult.FailedButContinue("Couldnt process number correctly, defaulted to 1") : ExecutionResult.Success();
     }
 }

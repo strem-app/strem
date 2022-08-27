@@ -31,7 +31,10 @@ public class SetTextSourceTask : FlowTask<SetTextSourceTaskData>
     public override async Task<ExecutionResult> Execute(SetTextSourceTaskData data, IVariables flowVars)
     {
         if(string.IsNullOrEmpty(data.SourceName))
-        { return ExecutionResult.Failed(); }
+        { return ExecutionResult.Failed("SourceName is empty and is required"); }
+        
+        if(string.IsNullOrEmpty(data.Text))
+        { return ExecutionResult.Failed("Text is empty and is required"); }
 
         var textProperties = await ObsClient.GetTextGDIPlusProperties(data.SourceName);
         textProperties.Text = FlowStringProcessor.Process(data.Text, flowVars);

@@ -133,7 +133,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         if (task == null)
         {
             Logger.LogWarning($"Task cant be found for task code: {taskData.Code} (v{taskData.Version})");
-            return ExecutionResult.FailedButContinue();
+            return ExecutionResult.FailedButContinue("Task Failed, See Log");
         }
             
         EventBus.PublishAsync(new FlowTaskStarted(flow.Id, taskData.Id));
@@ -172,7 +172,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         {
             Logger.Error($"Error Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}] | Error: {ex.Message}");
             EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
-            return ExecutionResult.Failed();
+            return ExecutionResult.Failed($"Task Failed With Exception: {ex.Message}");
         }
     }
 
