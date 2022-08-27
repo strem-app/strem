@@ -1,0 +1,46 @@
+﻿@using Strem.Core.Types
+
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Variables.GenerateRandomNumberTaskData>
+
+<div class="field">
+    <label class="label">Variable Name</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="i.e deaths" @bind="Data.Name">
+    </div>
+</div>
+<div class="field">
+    <label class="label">Optional Context</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Context" Placeholder="i.e what the data pertains to, i.e user id, game name, platform"></ProcessedInput>
+    </div>
+    <HelperInfo>The context is optional and allows you to use the same variable name but tie it to some other context</HelperInfo>
+</div>
+<div class="field">
+    <label class="label">Variable Scope</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.ScopeType">
+                <EnumSelectOptions EnumType="typeof(VariableScopeType)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    <HelperInfo>Persisted vars are saved and available even after app closes, Application vars are available until app closes, Flow vars are only available for the rest of the flow</HelperInfo>
+</div>
+
+<div class="field">
+    <label class="label">Minimum Value</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.MinimumNumber" Placeholder="i.e 1"></ProcessedInput>
+    </div>
+</div>
+
+<div class="field">
+    <label class="label">Maximum Value</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.MaximumNumber" Placeholder="i.e 10"></ProcessedInput>
+    </div>
+</div>
+
+@code {
+    public override string Title => "Generate Random Number";
+}
