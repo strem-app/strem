@@ -62,7 +62,7 @@ public class WriteToFileTask : FlowTask<WriteToFileTaskData>
         if (string.IsNullOrEmpty(data.FilePath))
         {
             Logger.Warning("No path provided for Write To Path task");
-            return ExecutionResult.Failed();
+            return ExecutionResult.Failed("No file path provided");
         }
         
         CreateFileIfNeeded(data.FilePath);
@@ -74,7 +74,7 @@ public class WriteToFileTask : FlowTask<WriteToFileTaskData>
         catch (Exception ex)
         {
             Logger.Error($"Error writing to File [{data.FilePath}]: {ex.Message}");
-            return ExecutionResult.Failed();
+            return ExecutionResult.Failed($"Cannot write to file: [{data.FilePath}] | {ex.Message}");
         }
     }
 }

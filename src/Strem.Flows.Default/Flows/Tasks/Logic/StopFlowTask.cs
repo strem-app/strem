@@ -29,5 +29,5 @@ public class StopFlowTask : FlowTask<StopFlowTaskData>
     public override bool CanExecute() => true;
     
     public override async Task<ExecutionResult> Execute(StopFlowTaskData data, IVariables flowVars)
-    { return data.StopParentFlowsToo ? ExecutionResult.CascadingFailure() : ExecutionResult.Failed(); }
+    { return data.StopParentFlowsToo ? ExecutionResult.CascadingFailure("This is on purpose") : ExecutionResult.Failed("This is on purpose"); }
 }

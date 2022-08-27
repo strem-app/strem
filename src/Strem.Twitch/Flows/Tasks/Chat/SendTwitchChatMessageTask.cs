@@ -35,7 +35,7 @@ public class SendTwitchChatMessageTask : FlowTask<SendTwitchChatMessageTaskData>
         if (string.IsNullOrEmpty(data.Message))
         {
             Logger.Warning("There is no message provided to send");
-            return ExecutionResult.Failed();
+            return ExecutionResult.Failed("There is no message and its required");
         }
         
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;

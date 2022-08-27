@@ -33,7 +33,7 @@ public class IncrementVariableTask : FlowTask<IncrementVariableTaskData>
 
         int value;
         if(!int.TryParse(currentValue, out value))
-        { return ExecutionResult.Failed(); }
+        { return ExecutionResult.Failed($"Couldnt parse integer value from ({data.Name}, {data.Context})"); }
 
         var newValue = value + data.IncrementAmount;
         AppState.SetVariable(flowVars, data.ScopeType, processedName, processedContext, newValue.ToString());

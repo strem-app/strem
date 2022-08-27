@@ -34,6 +34,6 @@ public class CreateTwitchStreamMarkerTask : FlowTask<CreateTwitchStreamMarkerTas
     {
         var markerRequest = new CreateStreamMarkerRequest { Description = data.Description, UserId = AppState.GetTwitchUserId()};
         var response = await TwitchApi.Helix.Streams.CreateStreamMarkerAsync(markerRequest);
-        return (response.Data.Length > 0) ? ExecutionResult.Success() : ExecutionResult.Failed();
+        return (response.Data.Length > 0) ? ExecutionResult.Success() : ExecutionResult.Failed("Twitch didn't create marker for some reason");
     }
 }

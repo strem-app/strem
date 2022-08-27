@@ -1,0 +1,40 @@
+﻿@using System.Speech.Synthesis
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Utility.TextToSpeechTaskData>
+
+<div class="field">
+    <label class="label">Text To Say</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.TextToPlay" Placeholder="i.e V(chat.username) says V(someVar)"></ProcessedInput>
+    </div>
+</div>
+
+<div class="field">
+    <label class="label">Volume</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Volume" Placeholder="i.e 100"></ProcessedInput>
+    </div>
+    <HelperInfo>The volume will default as 100 if not provided, but needs to be a value between 0-100 if provided</HelperInfo>
+</div>
+
+<label class="label">Voice Details</label>
+<div class="field is-grouped">
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.VoiceGender">
+                <EnumSelectOptions EnumType="typeof(VoiceGender)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.VoiceAge">
+                <EnumSelectOptions EnumType="typeof(VoiceAge)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+</div>
+<HelperInfo>The voices available are dependent on what voice packs are installed within windows for text to voice, so you may hear no change with different values</HelperInfo>
+
+@code {
+    public override string Title => "Text To Speech";
+}

@@ -30,7 +30,8 @@ public class SimulateKeyPressTask : FlowTask<SimulateKeyPressTaskData>
     
     public override async Task<ExecutionResult> Execute(SimulateKeyPressTaskData data, IVariables flowVars)
     {
-        if(data.KeysToPress.Count == 0 && data.KeyModifiers.Count == 0) { return ExecutionResult.FailedButContinue(); }
+        if(data.KeysToPress.Count == 0 && data.KeyModifiers.Count == 0) 
+        { return ExecutionResult.FailedButContinue("No keys were provided"); }
 
         if (data.KeyModifiers.Count == 0)
         { InputSimulator.Keyboard.KeyPress(data.KeysToPress.ToArray()); }

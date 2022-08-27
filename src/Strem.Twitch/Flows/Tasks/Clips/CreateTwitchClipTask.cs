@@ -82,7 +82,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
             if (userDetails.Users.Length == 0)
             {
                 Logger.Warning($"Couldnt Find UserId For Use [{ data.Channel }]");
-                return ExecutionResult.Failed();
+                return ExecutionResult.Failed($"Couldnt Find UserId For Use [{ data.Channel }]");
             }
 
             userId = userDetails.Users[0].Id;
@@ -91,7 +91,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
         
         
         var clip = await TwitchApi.Helix.Clips.CreateClipAsync(userId);
-        if(clip?.CreatedClips.Length == 0) { return ExecutionResult.Failed(); }
+        if(clip?.CreatedClips.Length == 0) { return ExecutionResult.Failed("Twitch couldnt create clip for some reason"); }
 
         PopulateVariablesFor(clip, flowVars);
         CreateTodoIfNeeded(data, clip);

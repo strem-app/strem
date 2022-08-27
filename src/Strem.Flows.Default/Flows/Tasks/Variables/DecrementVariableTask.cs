@@ -34,7 +34,7 @@ public class DecrementVariableTask : FlowTask<DecrementVariableTaskData>
 
         int value;
         if(!int.TryParse(currentValue, out value))
-        { return ExecutionResult.Failed(); }
+        { return ExecutionResult.Failed($"Couldnt parse integer value from ({data.Name}, {data.Context})"); }
 
         var newValue = value - data.DecrementAmount;
         AppState.SetVariable(flowVars, data.ScopeType, processedName, processedContext, newValue.ToString());
