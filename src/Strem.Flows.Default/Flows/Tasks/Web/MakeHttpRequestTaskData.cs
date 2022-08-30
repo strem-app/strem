@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using System.ComponentModel.DataAnnotations;
+using RestSharp;
 using Strem.Core.Flows.Tasks;
 using Strem.Flows.Default.Models;
 
@@ -13,7 +14,9 @@ public class MakeHttpRequestTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
 
+    [Required]
     public string Url { get; set; } = string.Empty;
+    [Required]
     public Method Verb { get; set; }
     public string Body { get; set; } = string.Empty;
     public DataFormat DataFormat { get; set; }

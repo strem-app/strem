@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 
 namespace Strem.Flows.Default.Flows.Tasks.Utility;
 
@@ -11,6 +12,7 @@ public class RaiseEventTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string EventName { get; set; } = string.Empty;
     public string Data { get; set; } = string.Empty;
 }

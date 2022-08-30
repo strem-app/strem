@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 
 namespace Strem.Flows.Default.Flows.Tasks.Utility;
 
@@ -11,6 +12,7 @@ public class ExecuteFlowTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public Guid FlowId { get; set; }
     public bool WaitForCompletion { get; set; }
 }

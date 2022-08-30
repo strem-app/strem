@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Triggers;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Triggers;
 
 namespace Strem.Flows.Default.Flows.Triggers.Utility;
 
@@ -11,5 +12,6 @@ public class OnEventRaisedTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
     
+    [Required]
     public string EventName { get; set; } = string.Empty;
 }

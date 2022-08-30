@@ -1,4 +1,5 @@
-﻿using InputSimulatorStandard.Native;
+﻿using System.ComponentModel.DataAnnotations;
+using InputSimulatorStandard.Native;
 using Strem.Core.Flows.Tasks;
 
 namespace Strem.Flows.Default.Flows.Tasks.Input;
@@ -13,5 +14,6 @@ public class SimulateKeyPressTaskData : IFlowTaskData
     public string Version { get; set; } = TaskVersion;
 
     public List<VirtualKeyCode> KeyModifiers { get; set; } = new();
+    [MinLength(1)]
     public List<VirtualKeyCode> KeysToPress { get; set; } = new();
 }

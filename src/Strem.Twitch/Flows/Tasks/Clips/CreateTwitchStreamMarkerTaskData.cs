@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 
 namespace Strem.Twitch.Flows.Tasks.Clips;
 
@@ -11,5 +12,6 @@ public class CreateTwitchStreamMarkerTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string Description { get; set; }
 }

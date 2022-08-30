@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 using Strem.OBS.Types;
 
 namespace Strem.OBS.Flows.Tasks;
@@ -11,7 +12,10 @@ public class SetSourceMuteStateTaskData : IFlowTaskData
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
-    
+
+    [Required]
     public string SourceName { get; set; }
+    
+    [Required]
     public MuteStatus Status { get; set; }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 using Strem.Core.Flows;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.Types;
@@ -17,7 +18,9 @@ public class IfStatementTaskData : IFlowTaskData, IHasSubTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string ValueA { get; set; } = string.Empty;
+    [Required]
     public string ValueB { get; set; } = string.Empty;
     public ComparisonType ComparisonType { get; set; }
     public OperatorType NumberOperator { get; set; }

@@ -13,5 +13,5 @@ public class CreateTwitchClipTaskData : IFlowTaskData
     
     public string Channel { get; set; }
     public bool CreateTodo { get; set; }
-    public List<string> Tags { get; set; } = new() { "twitch", "clip" };
+    public List<string> Tags { get; set; } = new();
 }

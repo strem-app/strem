@@ -63,7 +63,7 @@
   private void SelectFlow(Flow newFlow)
   {
     CurrentFlow = newFlow;
-    InvokeAsync(StateHasChanged);
+    StateHasChanged();
   }
 
 }

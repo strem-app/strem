@@ -58,6 +58,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IEventBus, EventBus>();
         services.AddSingleton<IRandomizer>(new DefaultRandomizer(new Random()));
         services.AddSingleton<IBrowserLoader, BrowserLoader>();
+        services.AddSingleton<ICloner, Cloner>();
         
         // Hosting
         services.AddSingleton<IInternalWebHost, InternalWebHost>();

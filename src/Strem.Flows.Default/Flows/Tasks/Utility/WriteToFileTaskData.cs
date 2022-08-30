@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 using Strem.Core.Types;
 
 namespace Strem.Flows.Default.Flows.Tasks.Utility;
@@ -12,7 +13,10 @@ public class WriteToFileTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string Text { get; set; } = string.Empty;
+    [Required]
     public string FilePath { get; set; } = string.Empty;
+    [Required]
     public FileInteractionType InteractionType { get; set; }
 }

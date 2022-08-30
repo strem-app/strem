@@ -1,21 +1,36 @@
 ﻿@using Strem.Core.Flows.Tasks
+@using Strem.Core.Utils
 
-<Accordion Title="@Title" StyleType="@(IsRunning ? "is-info is-running" : "is-info ")">
-    <div draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">
-        <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
+@inject ICloner Cloner
+
+<EditForm Model="EditingClone" OnValidSubmit="OnTaskEdited" @ref="_formRef">
+    <DataAnnotationsValidator />  
+    <Accordion Title="@Title" StyleType="@(IsRunning ? "is-info is-running" : "is-info ")">
+        <div draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">
+            <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
             @if (Task.VariableOutputs.Length > 0)
             {
                 <Accordion Title="Output Variables" StyleType="is-info">
                     <VariableDescriptorList VariableDescriptors="Task.VariableOutputs"/>
                 </Accordion>
             }
-            <div class="field is-grouped is-grouped-right">
+            @if (HasValidationErrors)
+            {
+                <div class="notification is-danger">
+                    <ValidationSummary />
+                </div>
+            }
+            <div class="field is-grouped">
                 <div class="control">
-                    <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Task</button>
+                    <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(EditingClone)">Delete Task</button>
+                </div>
+                <div class="control is-expanded">
+                    <button type="submit" class="button is-pulled-right @(HasValidationErrors ? "is-warning" : "is-primary")">Save Task</button>
                 </div>
             </div>
-    </div>
-</Accordion>
+        </div>
+    </Accordion>
+</EditForm>
 
 @code {
 
@@ -37,13 +52,29 @@
     [Parameter]
     public string Title { get; set; }
     
+    private EditForm _formRef;
+
+    public bool HasValidationErrors => _formRef.EditContext.GetValidationMessages().Any();
+    
+    public IFlowTaskData EditingClone { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        EditingClone = Cloner.Clone(Data);
+    }
+
     public Dictionary<string, object> GetProps() => new() {
-        {"Data", Data },
+        {"Data", EditingClone },
         {"OnTitleChanged", EventCallback.Factory.Create<string>(this, OnTitleChanged)}
     };
 
     public void OnTitleChanged(string newTitle)
     {
         Title = newTitle;
+    }
+
+    public void OnTaskEdited()
+    {
+        Cloner.Clone(EditingClone, Data);
     }
 }

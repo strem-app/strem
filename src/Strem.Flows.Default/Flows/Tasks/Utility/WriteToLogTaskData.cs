@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 
 namespace Strem.Flows.Default.Flows.Tasks.Utility;
 
@@ -11,5 +12,6 @@ public class WriteToLogTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string Text { get; set; } = string.Empty;
 }
