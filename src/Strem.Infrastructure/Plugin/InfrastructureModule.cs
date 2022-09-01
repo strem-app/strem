@@ -1,10 +1,12 @@
 ﻿using System.Text;
 using InputSimulatorStandard;
+using Microsoft.AspNetCore.Components.Web;
 using Newtonsoft.Json;
 using Persistity.Core.Serialization;
 using Persistity.Encryption;
 using Persistity.Flow.Builders;
 using Persistity.Serializers.Json;
+using PeterLeslieMorris.Blazor.Validation;
 using Serilog;
 using Strem.Core.Components.Elements.Drag;
 using Strem.Core.Events.Broker;
@@ -51,6 +53,9 @@ public class InfrastructureModule : IRequiresApiHostingModule
         
         // Logging
         services.AddLogging(x => x.AddSerilog(SetupLogger()));
+        services.AddSingleton<IErrorBoundaryLogger, ErrorBoundryLogger>();
+        
+        services.AddFormValidation(config => config.AddDataAnnotationsValidation());
         
         // General
         services.AddSingleton<IMessageBroker, MessageBroker>();

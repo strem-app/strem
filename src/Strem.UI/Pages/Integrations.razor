@@ -5,11 +5,18 @@
 @inject IIntegrationRegistry IntegrationRegistry;
 
 <div class="container">
-    <h3 class="title is-3">Integrations</h3>
-    @foreach (var integrationDescriptor in IntegrationRegistry.GetAll())
-    {
-      <IntegrationComponent Descriptor="integrationDescriptor"></IntegrationComponent>
-    }
+    <ErrorBoundary>
+        <ChildContent>
+        <h3 class="title is-3">Integrations</h3>
+        @foreach (var integrationDescriptor in IntegrationRegistry.GetAll())
+        {
+            <IntegrationComponent Descriptor="integrationDescriptor"></IntegrationComponent>
+        }
+        </ChildContent>
+        <ErrorContent>
+            <TheSkyIsFalling/>
+        </ErrorContent>
+    </ErrorBoundary>
 </div>
 
 @code {

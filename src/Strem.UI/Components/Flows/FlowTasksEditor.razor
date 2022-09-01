@@ -26,8 +26,8 @@
 
 @foreach (var data in TaskData)
 {
-    <DraggableListElement Data="data" DropType="@DropTypes.FlowTask" ContainingList="TaskData" SupportedDropTypes="@(new []{ DropTypes.FlowTask, DropTypes.NewTask })">
-        <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)"
+    <DraggableListElement Data="data" DropType="@DropTypes.FlowTask" ContainingList="TaskData" SupportedDropTypes="@(new []{ DropTypes.FlowTask, DropTypes.NewTask })" @key="data.Id">
+        <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)" @key="data.Id"
                                OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
     </DraggableListElement>
 

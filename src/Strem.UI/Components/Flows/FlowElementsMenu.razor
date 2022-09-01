@@ -16,7 +16,7 @@
 
 @implements IDisposable
 
-<Accordion Title="Task & Trigger Filter" StyleType="is-primary">
+<Accordion Title="Task & Trigger Filter" HeaderClasses="is-primary">
   <div class="field">
     <label class="label">Filter Tasks & Triggers By Name</label>
     <div class="control">
@@ -33,7 +33,7 @@
   </div>
 </Accordion>
 
-<Accordion Title="Available Triggers" StyleType="is-success" IsExpanded="true">
+<Accordion Title="Available Triggers" HeaderClasses="is-success" IsExpanded="true">
   <aside class="menu trigger-menu">
     @foreach (var triggerGroup in GetFilteredTriggers())
     {
@@ -58,7 +58,7 @@
   </aside>
 </Accordion>
 
-<Accordion Title="Available Tasks" StyleType="is-info" IsExpanded="true">
+<Accordion Title="Available Tasks" HeaderClasses="is-info" IsExpanded="true">
 <aside class="menu task-menu">
   @foreach (var taskGroup in GetFilteredTasks())
   {

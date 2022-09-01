@@ -1,0 +1,18 @@
+﻿<article class="message is-danger">
+  <div class="message-header">
+    <p>Validation Errors</p>
+  </div>
+  <div class="message-body">
+    <ul>
+      @foreach (var message in Messages)
+      {
+          <li class="has-text-danger has-text-weight-semibold">@message</li>
+      }
+    </ul>
+  </div>
+</article>
+
+@code {
+    [Parameter]
+    public IEnumerable<string> Messages { get; set; }
+}

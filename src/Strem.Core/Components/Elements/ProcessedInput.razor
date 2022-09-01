@@ -1,9 +1,11 @@
 ﻿@using System.Text.RegularExpressions
+@using System.Linq.Expressions
+@inherits InputText
 
 <div class="control has-icons-left">
     
     <input class="input @(InputVisible ? "" : "is-hidden")" type="text" placeholder="@Placeholder" value="@Value" @onblur="HideInput"
-           @onchange="e => ValueChanged.InvokeAsync(e.Value.ToString())" @ref="_inputElement"/>
+           @onchange="OnValueChanged" @ref="_inputElement"/>
 
     <span class="input processed-input @(InputVisible ? "is-hidden" : "") @(string.IsNullOrEmpty(Value) ? "is-placeholder" : "")"
           @onclick="ShowInput">@((MarkupString)ProcessedContent)</span>
@@ -15,20 +17,18 @@
 
 @code {
     public static Regex Pattern = new(@"(V\(([\w\s\.,\-_\:\|]*)\))");
-
-    [Parameter]
-    public string Value { get; set; }
     
     [Parameter]
     public string Placeholder { get; set; }
     
-    [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
-
-    private ElementReference _inputElement { get; set; }
+    [CascadingParameter]
+    public EditContext? EditContext { get; set; }
 
     public bool InputVisible { get; set; }
     public string ProcessedContent { get; set; }
+    
+    private ElementReference _inputElement { get; set; }
+    private FieldIdentifier? _fieldIdentifier { get; set; }
 
     public void HideInput()
     {
@@ -54,7 +54,11 @@
     }
 
     protected override async Task OnInitializedAsync()
-    { ProcessContent(); }
+    {
+        var field = EditContext?.Field(((MemberExpression)ValueExpression.Body).Member.Name);
+        if (field != null) { _fieldIdentifier = field.Value; }
+        ProcessContent();
+    }
 
     public string VariableMatchEvaluator(Match x)
     {
@@ -68,4 +72,19 @@
             _ => x.Value
         };
     }
+
+    protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = null;
+        return true;
+    }
+
+    private void OnValueChanged(ChangeEventArgs obj)
+    {
+        ValueChanged.InvokeAsync(obj.Value.ToString());
+        if(_fieldIdentifier != null)
+        { EditContext?.NotifyFieldChanged(_fieldIdentifier.Value); }
+    }
+
 }

@@ -99,10 +99,16 @@ body
     }
 }
 
-.is-running {
+.has-success-pulse {
     box-shadow: 0 0 0 0 @is-success;
     animation: pulse-success 1s infinite;
 }
+
+.has-danger-pulse {
+    box-shadow: 0 0 0 0 @is-danger;
+    animation: pulse-danger 1s infinite;
+}
+
 
 .pulse-effect(@color)
 {
@@ -114,6 +120,7 @@ body
 @keyframes pulse-success { .pulse-effect(@is-success) }
 @keyframes pulse-primary { .pulse-effect(@is-primary) }
 @keyframes pulse-warning { .pulse-effect(@is-warning) }
+@keyframes pulse-danger { .pulse-effect(@is-danger) }
 @keyframes pulse-info { .pulse-effect(@is-info) }
 @keyframes pulse-dark { .pulse-effect(@is-dark-grey) }
 

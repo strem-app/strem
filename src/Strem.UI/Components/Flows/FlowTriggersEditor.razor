@@ -28,8 +28,8 @@
 
 @foreach (var data in Flow.TriggerData)
 {
-    <DraggableListElement Data="data" DropType="@DropTypes.FlowTrigger" ContainingList="Flow.TriggerData" SupportedDropTypes="@(new[] { DropTypes.FlowTrigger, DropTypes.NewTrigger })">
-        <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)"
+    <DraggableListElement Data="data" DropType="@DropTypes.FlowTrigger" ContainingList="Flow.TriggerData" SupportedDropTypes="@(new[] { DropTypes.FlowTrigger, DropTypes.NewTrigger })" @key="data.Id">
+        <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)" @key="data.Id"
                                   OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"/>
     </DraggableListElement>
 }
