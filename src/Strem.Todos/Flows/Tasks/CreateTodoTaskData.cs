@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 using Strem.Core.Types;
 using Strem.Todos.Data;
 
@@ -13,9 +14,12 @@ public class CreateTodoTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string Title { get; set; }
+    [Required]
     public string CreatedBy { get; set; }
     public TimeUnitType TimeoutType { get; set; }
+    [Required]
     public string TimeoutValue { get; set; }
     public string Payload { get; set; } = string.Empty;
     public List<string> Tags { get; set; } = new();
