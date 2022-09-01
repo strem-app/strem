@@ -194,12 +194,21 @@ body
     animation: pulse-dark 1s infinite;
 }
 
-.processed-input .tags
+.processed-input
 {
-    margin-bottom: -0.5em;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
+    &.invalid {
+        input, .processed-output { border: 1px solid @is-danger; }
+    }
+    
+    .processed-output .tags
+    {
+        margin-bottom: -0.5em;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+    }
 }
+
+
 
 .is-placeholder
 {
