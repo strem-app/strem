@@ -1,5 +1,7 @@
 ﻿@typeparam TEnum
 
+@inherits ValidatedInputBase<string>
+
 <div class="field has-addons enum-with-value">
     <div class="control">
         <div class="select">
@@ -20,18 +22,19 @@
     [Parameter]
     public EventCallback<TEnum> EnumValueChanged { get; set; }
     
-    [Parameter]
-    public string Value { get; set; }
-
     public string ProxyValue
     {
         get => Value;
-        set => ValueChanged.InvokeAsync(value);
+        set => OnValueChanged(value);
     }
     
     [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
-    
-    [Parameter]
     public string Placeholder { get; set; }
+    
+    protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = null;
+        return true;
+    }
 }

@@ -1,11 +1,11 @@
 ﻿@using System.Text.RegularExpressions
 @using System.Linq.Expressions
-@inherits InputText
+@inherits ValidatedInputBase<string>
 
 <div class="processed-input control has-icons-left @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     
     <input class="input @(InputVisible ? "" : "is-hidden")" type="text" placeholder="@Placeholder" value="@Value" 
-           @onblur="HideInput" @onchange="OnValueChanged" @ref="_inputElement"/>
+           @onblur="HideInput" @onchange="e => OnValueChanged(e.Value.ToString())" @ref="_inputElement"/>
 
     <span class="input processed-output @(InputVisible ? "is-hidden" : "") @(string.IsNullOrEmpty(Value) ? "is-placeholder" : "")"
           @onclick="ShowInput">@((MarkupString)ProcessedContent)</span>
@@ -21,23 +21,10 @@
     [Parameter]
     public string Placeholder { get; set; }
     
-    [CascadingParameter]
-    public EditContext? EditContext { get; set; }
-
     public bool InputVisible { get; set; }
     public string ProcessedContent { get; set; }
     
-    public bool? IsValid
-    {
-        get
-        {
-            if (_fieldIdentifier is not { }){ return null; }
-            return !EditContext.GetValidationMessages(_fieldIdentifier.Value).Any();
-        }
-    }
-
     private ElementReference _inputElement { get; set; }
-    private FieldIdentifier? _fieldIdentifier { get; set; }
 
     public void HideInput()
     {
@@ -64,8 +51,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var field = EditContext?.Field(((MemberExpression)ValueExpression.Body).Member.Name);
-        if (field != null) { _fieldIdentifier = field.Value; }
+        await base.OnInitializedAsync();
         ProcessContent();
     }
 
@@ -88,12 +74,4 @@
         validationErrorMessage = null;
         return true;
     }
-
-    private void OnValueChanged(ChangeEventArgs obj)
-    {
-        ValueChanged.InvokeAsync(obj.Value.ToString());
-        if(_fieldIdentifier != null)
-        { EditContext?.NotifyFieldChanged(_fieldIdentifier.Value); }
-    }
-
 }

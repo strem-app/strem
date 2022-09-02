@@ -46,6 +46,9 @@
     public IFlowTaskData Data { get; set; }
     
     [Parameter]
+    public EventCallback DataChanged { get; set; }
+    
+    [Parameter]
     public bool IsRunning { get; set; }
     
     [Parameter] 
@@ -61,7 +64,6 @@
         {"Data", Data },
         {"OnTitleChanged", EventCallback.Factory.Create<string>(this, OnTitleChanged)},
     };
-
 
     public CompositeDisposable _subs = new();
 
@@ -86,9 +88,7 @@
     }
 
     private void OnFieldChanged()
-    {
-        // Todo: Trigger save or something
-    }
+    { DataChanged.InvokeAsync(); }
 
     public void OnValidationStateChanged()
     {
