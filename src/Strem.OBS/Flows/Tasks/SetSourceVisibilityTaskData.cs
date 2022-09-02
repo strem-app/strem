@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 using Strem.OBS.Types;
 
 namespace Strem.OBS.Flows.Tasks;
@@ -12,7 +13,12 @@ public class SetSourceVisibilityTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string SceneName { get; set; }
+    
+    [Required]
     public string SourceName { get; set; }
+    
+    [Required]
     public VisibilityStatus Status { get; set; }
 }

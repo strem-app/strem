@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Triggers;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Triggers;
 
 namespace Strem.OBS.Flows.Triggers;
 
@@ -11,6 +12,7 @@ public class OnVisibilityStateChangedTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
     
+    [Required]
     public string SourceName { get; set; }
     public bool TriggerOnVisible { get; set; }
     public bool TriggerOnInvisible { get; set; }

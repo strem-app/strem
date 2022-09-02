@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Triggers;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Triggers;
 
 namespace Strem.OBS.Flows.Triggers;
 
@@ -11,7 +12,9 @@ public class OnMuteStateChangedTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
     
+    [Required]
     public string SourceName { get; set; }
+    
     public bool TriggerOnMuted { get; set; }
     public bool TriggerOnUnmuted { get; set; }
     public bool TriggerOnStart { get; set; }

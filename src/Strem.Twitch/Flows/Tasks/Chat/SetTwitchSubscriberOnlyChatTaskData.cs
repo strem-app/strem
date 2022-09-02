@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 using Strem.Core.Types;
 
 namespace Strem.Twitch.Flows.Tasks.Chat;
@@ -13,5 +14,7 @@ public class SetTwitchSubscriberOnlyChatTaskData : IFlowTaskData
     public string Version { get; set; } = TaskVersion;
     
     public string Channel { get; set; }
+    
+    [Required]
     public bool SetSubscriberOnlyChat { get; set; }
 }

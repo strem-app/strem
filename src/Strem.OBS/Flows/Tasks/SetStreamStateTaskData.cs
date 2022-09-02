@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 
 namespace Strem.OBS.Flows.Tasks;
 
@@ -11,5 +12,6 @@ public class SetStreamStateTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public bool StartStream { get; set; }
 }

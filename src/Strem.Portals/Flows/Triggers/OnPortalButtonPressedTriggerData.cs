@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Flows.Triggers;
+using Strem.Core.Validation;
 
 namespace Strem.Portals.Flows.Triggers;
 
@@ -11,6 +12,8 @@ public class OnPortalButtonPressedTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
     
+    [NotEmpty]
     public Guid RequiredPortalId { get; set; }
+    [NotEmpty]
     public Guid RequiredButtonId { get; set; }
 }

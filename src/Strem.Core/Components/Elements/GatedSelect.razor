@@ -1,6 +1,8 @@
 ﻿@typeparam TEnum
 
-<div class="field has-addons">
+@inherits ValidatedInputBase<TEnum>
+
+<div class="gated-select field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control">
         <button class="button @(Enabled ? "is-success" : "is-danger")" @onclick="() => EnabledChanged.InvokeAsync(!Enabled)">
             <span class="icon is-small">
@@ -10,7 +12,7 @@
     </div>
     <div class="control is-expanded">
         <div class="select">
-            <select value="@Value" disabled="@(!Enabled)" @onchange="args => ValueChanged.InvokeAsync((TEnum)Enum.Parse(typeof(TEnum), args.Value.ToString()))">
+            <select value="@Value" disabled="@(!Enabled)" @onchange="args => OnValueChanged((TEnum)Enum.Parse(typeof(TEnum), args.Value.ToString()))">
                 <EnumSelectOptions EnumType="typeof(TEnum)"></EnumSelectOptions>
             </select>
         </div>
@@ -25,15 +27,8 @@
     public EventCallback<bool> EnabledChanged { get; set; } 
     
     [Parameter]
-    public TEnum Value { get; set; }
-    
-    [Parameter]
-    public EventCallback<TEnum> ValueChanged { get; set; } 
-    
-    [Parameter]
     public string Placeholder { get; set; }
 
     [Parameter]
     public string Type { get; set; } = "text";
-
 }

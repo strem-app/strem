@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 
 namespace Strem.OBS.Flows.Tasks;
 
@@ -11,6 +12,9 @@ public class SetBrowserSourceUrlTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string SourceName { get; set; }
+    
+    [Required]
     public string Url { get; set; }
 }

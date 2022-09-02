@@ -41,7 +41,17 @@ public class SendTwitchChatMessageTask : FlowTask<SendTwitchChatMessageTaskData>
         var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
         var processedMessage = FlowStringProcessor.Process(data.Message, flowVars);
         var processedChannel = FlowStringProcessor.Process(channel, flowVars);
-        TwitchClient.SendMessage(processedChannel, processedMessage);
+        try
+        {
+            // TODO: Look into handling this passively
+            TwitchClient.JoinChannel(processedChannel);
+            TwitchClient.SendMessage(processedChannel, processedMessage);
+            TwitchClient.LeaveChannel(processedChannel);
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Bad Stuff: {e.Message}");
+        }
         return ExecutionResult.Success();
     }
 }

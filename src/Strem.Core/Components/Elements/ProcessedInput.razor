@@ -1,11 +1,13 @@
 ﻿@using System.Text.RegularExpressions
+@using System.Linq.Expressions
+@inherits ValidatedInputBase<string>
 
-<div class="control has-icons-left">
+<div class="processed-input control has-icons-left @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     
-    <input class="input @(InputVisible ? "" : "is-hidden")" type="text" placeholder="@Placeholder" value="@Value" @onblur="HideInput"
-           @onchange="e => ValueChanged.InvokeAsync(e.Value.ToString())" @ref="_inputElement"/>
+    <input class="input @(InputVisible ? "" : "is-hidden")" type="text" placeholder="@Placeholder" value="@Value" 
+           @onblur="HideInput" @onchange="e => OnValueChanged(e.Value.ToString())" @ref="_inputElement"/>
 
-    <span class="input processed-input @(InputVisible ? "is-hidden" : "") @(string.IsNullOrEmpty(Value) ? "is-placeholder" : "")"
+    <span class="input processed-output @(InputVisible ? "is-hidden" : "") @(string.IsNullOrEmpty(Value) ? "is-placeholder" : "")"
           @onclick="ShowInput">@((MarkupString)ProcessedContent)</span>
 
     <span class="icon is-small is-left">
@@ -15,20 +17,14 @@
 
 @code {
     public static Regex Pattern = new(@"(V\(([\w\s\.,\-_\:\|]*)\))");
-
-    [Parameter]
-    public string Value { get; set; }
     
     [Parameter]
     public string Placeholder { get; set; }
     
-    [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
-
-    private ElementReference _inputElement { get; set; }
-
     public bool InputVisible { get; set; }
     public string ProcessedContent { get; set; }
+    
+    private ElementReference _inputElement { get; set; }
 
     public void HideInput()
     {
@@ -54,7 +50,10 @@
     }
 
     protected override async Task OnInitializedAsync()
-    { ProcessContent(); }
+    {
+        await base.OnInitializedAsync();
+        ProcessContent();
+    }
 
     public string VariableMatchEvaluator(Match x)
     {

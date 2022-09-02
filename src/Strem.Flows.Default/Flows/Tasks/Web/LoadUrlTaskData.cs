@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using System.ComponentModel.DataAnnotations;
+using RestSharp;
 using Strem.Core.Flows.Tasks;
 
 namespace Strem.Flows.Default.Flows.Tasks.Web;
@@ -12,5 +13,6 @@ public class LoadUrlTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string Url { get; set; } = string.Empty;
 }

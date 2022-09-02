@@ -9,51 +9,56 @@
 @inject IAppState AppState;
 
 <div class="container is-fluid">
-    
-    <h3 class="title is-3">Settings</h3>
-    <div class="box">
-        <label class="label is-size-4">UI Settings</label>
-        
-        <div class="field">
-            <label class="label">Helpers</label>
-            <div class="control">
-                <label class="checkbox">
-                    <input type="checkbox" @bind="ShowHelpers">
-                    Show Helper Text On UI?
-                </label>
+    <ErrorBoundary>
+        <ChildContent>
+        <h3 class="title is-3">Settings</h3>
+        <div class="box">
+            <label class="label is-size-4">UI Settings</label>
+
+            <div class="field">
+                <label class="label">Helpers</label>
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" @bind="ShowHelpers">
+                        Show Helper Text On UI?
+                    </label>
+                </div>
+                <HelperInfo>This is an example of a helper, if you turn this off you wont see them throughout the system</HelperInfo>
             </div>
-            <HelperInfo>This is an example of a helper, if you turn this off you wont see them throughout the system</HelperInfo>
+
+            <div class="field">
+                <label class="label">Zoom Level</label>
+                <div class="control">
+                    <nav class="level">
+                        <div class="level-item has-text-left">
+                            <div>
+                                <span class="tag">75%</span>
+                            </div>
+                        </div>
+                        <div class="level-item has-text-centered">
+                            <div>
+                                <span class="tag">100%</span>
+                            </div>
+                        </div>
+                        <div class="level-item has-text-right">
+                            <div>
+                                <span class="tag">125%</span>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <div class="control">
+                    <input class="slider is-fullwidth" step="5" min="75" max="125" type="range" @bind="ZoomRate">
+                </div>
+                <HelperInfo>This will make everything bigger/smaller throughout the app</HelperInfo>
+            </div>
+
         </div>
-        
-        <div class="field">
-            <label class="label">Zoom Level</label>
-            <div class="control">
-                <nav class="level">
-                  <div class="level-item has-text-left">
-                    <div>
-                        <span class="tag">75%</span>
-                    </div>
-                  </div>
-                  <div class="level-item has-text-centered">
-                    <div>
-                        <span class="tag">100%</span>
-                    </div>
-                  </div>
-                  <div class="level-item has-text-right">
-                    <div>
-                        <span class="tag">125%</span>
-                    </div>
-                  </div>
-                </nav>
-            </div>
-            <div class="control">
-                <input class="slider is-fullwidth" step="5" min="75" max="125" type="range" @bind="ZoomRate">
-            </div>
-            <HelperInfo>This will make everything bigger/smaller throughout the app</HelperInfo>
-        </div>
-        
-    </div>
-    
+        </ChildContent>
+        <ErrorContent>
+            <TheSkyIsFalling/>
+        </ErrorContent>
+    </ErrorBoundary>
 </div>
 
 @code {

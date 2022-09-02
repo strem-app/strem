@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 using Strem.Core.Types;
 
 namespace Strem.Flows.Default.Flows.Tasks.Variables;
@@ -12,8 +13,11 @@ public class DecrementVariableTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string Name { get; set; } = string.Empty;
     public string Context { get; set; } = string.Empty;
+    [Required]
     public VariableScopeType ScopeType { get; set; }
+    [Required]
     public int DecrementAmount { get; set; } = 1;
 }

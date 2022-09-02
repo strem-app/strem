@@ -1,9 +1,9 @@
 ﻿@using Strem.Core.Flows.Registries.Integrations
-<Accordion Title="@Descriptor.Title" StyleType="@Descriptor.Code" IsExpanded="true">
+<Accordion Title="@Descriptor.Title" HeaderClasses="@Descriptor.Code" IsExpanded="true">
     <DynamicComponent Type="Descriptor.ComponentType" />
     @if (Descriptor.VariableOutputs.Length > 0)
     {
-        <Accordion Title="Output Variables" StyleType="is-info">
+        <Accordion Title="Output Variables" HeaderClasses="is-info">
             <VariableDescriptorList VariableDescriptors="Descriptor.VariableOutputs" />
         </Accordion>
     }

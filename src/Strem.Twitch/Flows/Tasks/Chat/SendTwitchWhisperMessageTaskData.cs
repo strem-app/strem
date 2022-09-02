@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 
 namespace Strem.Twitch.Flows.Tasks.Chat;
 
@@ -11,6 +12,9 @@ public class SendTwitchWhisperMessageTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [Required]
     public string Username { get; set; }
+    
+    [Required]
     public string Message { get; set; }
 }

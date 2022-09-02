@@ -79,6 +79,10 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
 
     public bool DoesMessageMeetCriteria(OnTwitchChatMessageTriggerData data, ChatMessage message)
     {
+        // TODO: This check may need to be removed depending on if we support multiple channels supported
+        var userChannel = AppState.GetTwitchUsername();
+        if(!message.Channel.Equals(userChannel)) { return false; }
+        
         if(!IsUserAboveMinimumRequired(data.MinimumUserType, message.UserType)) { return false; }
         if(data.IsVip && !message.IsVip) { return false; }
         if(data.IsSubscriber && !message.IsSubscriber) { return false; }

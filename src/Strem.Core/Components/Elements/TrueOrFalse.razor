@@ -1,11 +1,14 @@
-﻿<div class="buttons">
-  <button class="button @(Value ? "is-success" : "")" @onclick="() => ValueChanged.InvokeAsync(true)">
+﻿@using System.Linq.Expressions
+@inherits ValidatedInputBase<bool>
+
+<div class="true-or-false buttons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
+  <button class="button @(Value ? "is-success" : "")" @onclick="() => OnValueChanged(true)">
     <span class="icon">
       <i class="fas @(Value ? "fa-square-check" : "fa-square")"></i>
     </span>
     <span>@TrueText</span>
   </button>
-  <button class="button @(!Value ? "is-success" : "")" @onclick="() => ValueChanged.InvokeAsync(false)">
+  <button class="button @(!Value ? "is-success" : "")" @onclick="() => OnValueChanged(false)">
       <span class="icon">
         <i class="fas @(!Value ? "fa-square-check" : "fa-square")"></i>
       </span>
@@ -13,14 +16,8 @@
     </button>
 </div>
 
-@code {
-          
-  [Parameter]
-  public bool Value { get; set; }
-  
-  [Parameter]
-  public EventCallback<bool> ValueChanged { get; set; }
-
+@code 
+{
   [Parameter]
   public string GroupName { get; set; } = "yorn";
 

@@ -39,6 +39,7 @@
 
     private void AddTag()
     {
+        if (string.IsNullOrEmpty(TagInput)){return;}
         if (!Tags.Contains(TagInput))
         {
             Tags.Add(TagInput.ToLower());

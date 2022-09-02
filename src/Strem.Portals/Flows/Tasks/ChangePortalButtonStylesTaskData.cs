@@ -1,4 +1,5 @@
 ﻿using Strem.Core.Flows.Tasks;
+using Strem.Core.Validation;
 using Strem.Portals.Data;
 
 namespace Strem.Portals.Flows.Tasks;
@@ -12,7 +13,9 @@ public class ChangePortalButtonStylesTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
+    [NotEmpty]
     public Guid PortalId { get; set; }
+    [NotEmpty]
     public Guid ButtonId { get; set; }
     
     public bool ChangeText { get; set; }

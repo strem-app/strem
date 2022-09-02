@@ -12,30 +12,37 @@
 @inject IEventBus EventBus
 
 <div class="container is-fluid">
-  <div class="columns is-variable is-6">
-    <div class="column is-one-quarter">
-      <UserFlows OnFlowSelected="SelectFlow"></UserFlows>
-      <div class="block">
+  <ErrorBoundary>
+    <ChildContent>
+    <div class="columns is-variable is-6">
+      <div class="column is-one-quarter">
+        <UserFlows OnFlowSelected="SelectFlow"></UserFlows>
+        <div class="block">
           <button class="button is-info is-leveled" @onclick="SaveFlows">Manually Save Flows</button>
+        </div>
+      </div>
+      <div class="column">
+        @if (CurrentFlow == null)
+        {
+          <h3 class="title is-3">Select A Flow To Edit</h3>
+        }
+        else
+        {
+          <FlowEditor Flow="CurrentFlow"></FlowEditor>
+        }
+      </div>
+      <div class="column is-one-quarter">
+        @if (CurrentFlow != null)
+        {
+          <FlowElementsMenu Flow="CurrentFlow" OnTaskSelected="AddTask" OnTriggerSelected="AddTrigger"></FlowElementsMenu>
+        }
       </div>
     </div>
-    <div class="column">
-    @if (CurrentFlow == null)
-    {
-      <h3 class="title is-3">Select A Flow To Edit</h3>
-    }
-    else
-    {
-      <FlowEditor Flow="CurrentFlow"></FlowEditor>
-    }
-    </div>
-    <div class="column is-one-quarter">
-    @if (CurrentFlow != null)
-    {
-      <FlowElementsMenu Flow="CurrentFlow" OnTaskSelected="AddTask" OnTriggerSelected="AddTrigger"></FlowElementsMenu>
-    }
-    </div>
-  </div>
+    </ChildContent>
+    <ErrorContent>
+      <TheSkyIsFalling/>
+    </ErrorContent>
+  </ErrorBoundary>
 </div>
 
 @code {
@@ -63,7 +70,7 @@
   private void SelectFlow(Flow newFlow)
   {
     CurrentFlow = newFlow;
-    InvokeAsync(StateHasChanged);
+    StateHasChanged();
   }
 
 }

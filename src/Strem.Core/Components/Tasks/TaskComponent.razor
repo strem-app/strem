@@ -1,21 +1,35 @@
 ﻿@using Strem.Core.Flows.Tasks
+@using Strem.Core.Utils
+@using System.Reactive.Disposables
+@using System.Reactive.Linq
+@using Strem.Core.Extensions
+@using System.Reactive
+@using System.ComponentModel.DataAnnotations
 
-<Accordion Title="@Title" StyleType="@(IsRunning ? "is-info is-running" : "is-info ")">
-    <div draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">
-        <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
+@implements IDisposable
+
+<EditForm EditContext="EditContext">
+    <Accordion Title="@Title" HeaderClasses="is-info" ContainerClasses="@(!IsValid ? "has-validation-errors has-danger-pulse" : "")">
+        <div draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">
+            <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
             @if (Task.VariableOutputs.Length > 0)
             {
-                <Accordion Title="Output Variables" StyleType="is-info">
+                <Accordion Title="Output Variables" HeaderClasses="is-info">
                     <VariableDescriptorList VariableDescriptors="Task.VariableOutputs"/>
                 </Accordion>
             }
+            @if (!IsValid)
+            {
+                <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+            }
             <div class="field is-grouped is-grouped-right">
                 <div class="control">
-                    <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Task</button>
+                    <button type="button" class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Task</button>
                 </div>
             </div>
-    </div>
-</Accordion>
+        </div>
+    </Accordion>
+</EditForm>
 
 @code {
 
@@ -29,6 +43,9 @@
     public IFlowTaskData Data { get; set; }
     
     [Parameter]
+    public EventCallback DataChanged { get; set; }
+    
+    [Parameter]
     public bool IsRunning { get; set; }
     
     [Parameter] 
@@ -37,13 +54,53 @@
     [Parameter]
     public string Title { get; set; }
     
+    public EditContext EditContext { get; private set; }
+    public bool IsValid { get; private set; }
+        
     public Dictionary<string, object> GetProps() => new() {
         {"Data", Data },
-        {"OnTitleChanged", EventCallback.Factory.Create<string>(this, OnTitleChanged)}
+        {"OnTitleChanged", EventCallback.Factory.Create<string>(this, OnTitleChanged)},
     };
+
+    public CompositeDisposable _subs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        EditContext = new EditContext(Data);
+        EditContext.EnableDataAnnotationsValidation().AddTo(_subs);
+        
+        Observable.FromEventPattern<ValidationStateChangedEventArgs>(
+            x => EditContext.OnValidationStateChanged += x,
+            x => EditContext.OnValidationStateChanged -= x)
+            .Subscribe(x => OnValidationStateChanged())
+            .AddTo(_subs);
+
+        Observable.FromEventPattern<FieldChangedEventArgs>(
+            x => EditContext.OnFieldChanged += x,
+            x => EditContext.OnFieldChanged -= x)
+            .Subscribe(x => OnFieldChanged())
+            .AddTo(_subs);
+        
+        IsValid = EditContext.Validate();
+    }
+
+    private void OnFieldChanged()
+    { DataChanged.InvokeAsync(); }
+
+    public void OnValidationStateChanged()
+    {
+        IsValid = !EditContext.GetValidationMessages().Any();
+        InvokeAsync(StateHasChanged);
+    }
 
     public void OnTitleChanged(string newTitle)
     {
         Title = newTitle;
     }
+
+    public void Dispose()
+    {
+        _subs.Dispose();
+    }
+
 }

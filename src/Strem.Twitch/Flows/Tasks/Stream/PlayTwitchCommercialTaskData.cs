@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 using TwitchLib.Client.Enums;
 
 namespace Strem.Twitch.Flows.Tasks.Stream;
@@ -13,5 +14,7 @@ public class PlayTwitchCommercialTaskData : IFlowTaskData
     public string Version { get; set; } = TaskVersion;
     
     public string Channel { get; set; }
+    
+    [Required]
     public CommercialLength CommercialLength { get; set; }
 }

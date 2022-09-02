@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Strem.Core.Events.Bus;
+using Strem.Core.Extensions;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Triggers;
 using Strem.Core.State;
@@ -67,13 +68,16 @@ public class OnTwitchChatMessageTriggerTests
     }
     
     [Fact]
-    public async Task should_trigger_on_chat_message_with_no_restrictions()
+    public async Task should_trigger_on_chat_message_with_no_restrictions_and_matching_channel()
     {
         var mockLogger = new Mock<ILogger<FlowTrigger<OnTwitchChatMessageTriggerData>>>();
         var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
         var mockEventBus = new Mock<IEventBus>();
         var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
         var mockTwitchClient = new Mock<IObservableTwitchClient>();
+
+        var expectedChannel = "some-channel";
+        dummyAppState.AppVariables.Set(TwitchVars.Username, expectedChannel);
 
         var onChatMessageSubject = new Subject<OnMessageReceivedArgs>();
         mockTwitchClient
@@ -90,13 +94,13 @@ public class OnTwitchChatMessageTriggerTests
 
         var wasCalled = false;
         var sub = observable.Subscribe(x => wasCalled = true);
-        onChatMessageSubject.OnNext(new OnMessageReceivedArgs { ChatMessage = ChatMessageBuilder.Create().Build() });
+        onChatMessageSubject.OnNext(new OnMessageReceivedArgs { ChatMessage = ChatMessageBuilder.Create().WithChannel(expectedChannel).Build() });
         
         Assert.True(wasCalled);
     }
     
     [Fact]
-    public void should_meet_chat_criteria_with_no_restrictions()
+    public async Task should_not_trigger_on_chat_message_with_no_restrictions_and_not_matching_channel()
     {
         var mockLogger = new Mock<ILogger<FlowTrigger<OnTwitchChatMessageTriggerData>>>();
         var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
@@ -104,14 +108,68 @@ public class OnTwitchChatMessageTriggerTests
         var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
         var mockTwitchClient = new Mock<IObservableTwitchClient>();
 
+        var expectedChannel = "some-channel";
+
+        var onChatMessageSubject = new Subject<OnMessageReceivedArgs>();
+        mockTwitchClient
+            .Setup(x => x.OnMessageReceived)
+            .Returns(onChatMessageSubject);
+
         var triggerData = new OnTwitchChatMessageTriggerData
         {
             MatchTypeType = TextMatchType.None,
             MinimumUserType = UserType.Viewer
         };
         var trigger = new OnTwitchChatMessageTrigger(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
-        var meetsCriteria = trigger.DoesMessageMeetCriteria(triggerData, ChatMessageBuilder.Create().Build());
+        var observable = await trigger.Execute(triggerData);
+
+        var wasCalled = false;
+        var sub = observable.Subscribe(x => wasCalled = true);
+        onChatMessageSubject.OnNext(new OnMessageReceivedArgs { ChatMessage = ChatMessageBuilder.Create().WithChannel(expectedChannel).Build() });
+        
+        Assert.False(wasCalled);
+    }
+    
+    [Fact]
+    public void should_meet_chat_criteria_with_no_restrictions_and_channel_matches_user()
+    {
+        var mockLogger = new Mock<ILogger<FlowTrigger<OnTwitchChatMessageTriggerData>>>();
+        var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
+        var mockEventBus = new Mock<IEventBus>();
+        var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
+        var mockTwitchClient = new Mock<IObservableTwitchClient>();
+
+        var expectedChannel = "some-channel";
+        dummyAppState.AppVariables.Set(TwitchVars.Username, expectedChannel);
+
+        var triggerData = new OnTwitchChatMessageTriggerData
+        {
+            MatchTypeType = TextMatchType.None,
+            MinimumUserType = UserType.Viewer
+        };
+        var trigger = new OnTwitchChatMessageTrigger(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
+        var meetsCriteria = trigger.DoesMessageMeetCriteria(triggerData, ChatMessageBuilder.Create().WithChannel(expectedChannel).Build());
         Assert.True(meetsCriteria);
+    }
+    
+    [Fact]
+    public void should_not_meet_chat_criteria_with_no_restrictions_when_channel_doesnt_match_users_channel()
+    {
+        var mockLogger = new Mock<ILogger<FlowTrigger<OnTwitchChatMessageTriggerData>>>();
+        var mockFlowStringProcessor = new Mock<IFlowStringProcessor>();
+        var mockEventBus = new Mock<IEventBus>();
+        var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
+        var mockTwitchClient = new Mock<IObservableTwitchClient>();
+
+        var expectedChannel = "some-channel";
+        var triggerData = new OnTwitchChatMessageTriggerData
+        {
+            MatchTypeType = TextMatchType.None,
+            MinimumUserType = UserType.Viewer
+        };
+        var trigger = new OnTwitchChatMessageTrigger(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
+        var meetsCriteria = trigger.DoesMessageMeetCriteria(triggerData, ChatMessageBuilder.Create().WithChannel(expectedChannel).Build());
+        Assert.False(meetsCriteria);
     }
     
     [Theory]

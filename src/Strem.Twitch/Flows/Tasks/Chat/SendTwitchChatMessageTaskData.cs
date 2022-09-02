@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 
 namespace Strem.Twitch.Flows.Tasks.Chat;
 
@@ -12,5 +13,7 @@ public class SendTwitchChatMessageTaskData : IFlowTaskData
     public string Version { get; set; } = TaskVersion;
     
     public string Channel { get; set; }
+    
+    [Required]
     public string Message { get; set; }
 }

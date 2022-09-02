@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Components
 
-<div class="dropdown @(ShowDropdown ? "is-active" : "")">
+@inherits ValidatedInputBase<string>
+
+<div class="autocomplete dropdown @(ShowDropdown ? "is-active" : "") @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="dropdown-trigger">
         <input class="input" aria-haspopup="true" aria-controls="dropdown-menu" value="@Value"
                @onfocus="() => ShowDropdown = true" @onblur="HideDropDown"
@@ -21,12 +23,6 @@
 
 @code {
     [Parameter]
-    public string Value { get; set; }
-    
-    [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
-
-    [Parameter]
     public IReadOnlyCollection<string> Data { get; set; }
 
     [Parameter]
@@ -38,13 +34,14 @@
     
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         CurrentMatches = Data;
     }
 
     private void RefreshOptions(string currentInput)
     {
         CurrentMatches = Data.Where(x => x.Contains(currentInput, StringComparison.OrdinalIgnoreCase));
-        ValueChanged.InvokeAsync(currentInput);
+        OnValueChanged(currentInput);
     }
 
     private void SetSelection(string entry)
@@ -58,5 +55,4 @@
         await Task.Delay(100);
         ShowDropdown = false;
     }
-
 }
