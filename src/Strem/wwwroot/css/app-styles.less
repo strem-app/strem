@@ -208,6 +208,24 @@ body
     }
 }
 
+.true-or-false
+{
+    &.invalid button {
+        border: 1px solid @is-danger;
+    }
+}
+
+.gated-input.invalid, .gated-select.invalid, .enum-with-value.invalid
+{
+    border: 1px solid @is-danger;
+}
+
+.autocomplete
+{
+    &.invalid input {
+        border: 1px solid @is-danger;
+    }
+}
 
 
 .is-placeholder

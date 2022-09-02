@@ -4,8 +4,17 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace Strem.Core.Components.Elements;
 
-public abstract class ValidatedInputBase<T> : InputBase<T>
+public abstract class ValidatedInputBase<T> : ComponentBase
 {
+    [Parameter]
+    public T Value { get; set; }
+    
+    [Parameter]
+    public EventCallback<T> ValueChanged { get; set; }
+    
+    [Parameter] 
+    public Expression<Func<T>>? ValueExpression { get; set; }
+    
     [CascadingParameter]
     protected EditContext? EditContext { get; set; }
     protected FieldIdentifier? _fieldIdentifier { get; set; }
@@ -23,7 +32,6 @@ public abstract class ValidatedInputBase<T> : InputBase<T>
     {
         if (EditContext != null)
         { _fieldIdentifier = FieldIdentifier.Create(ValueExpression); }
-        await base.OnInitializedAsync();
     }
     
     public void OnValueChanged(T value)

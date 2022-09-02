@@ -1,6 +1,6 @@
 ﻿@inherits ValidatedInputBase<string>
 
-<div class="field has-addons">
+<div class="gated-input field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control">
         <button class="button @(Enabled ? "is-success" : "is-danger")" @onclick="() => EnabledChanged.InvokeAsync(!Enabled)">
             <span class="icon is-small">
@@ -26,11 +26,4 @@
 
     [Parameter]
     public string Type { get; set; } = "text";
-
-    protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
-    {
-        result = value;
-        validationErrorMessage = null;
-        return true;
-    }
 }

@@ -1,7 +1,7 @@
 ﻿@using System.Linq.Expressions
 @inherits ValidatedInputBase<bool>
 
-<div class="buttons">
+<div class="true-or-false buttons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
   <button class="button @(Value ? "is-success" : "")" @onclick="() => OnValueChanged(true)">
     <span class="icon">
       <i class="fas @(Value ? "fa-square-check" : "fa-square")"></i>
@@ -26,11 +26,4 @@
 
   [Parameter]
   public string FalseText { get; set; } = "Disable";
-
-  protected override bool TryParseValueFromString(string? value, out bool result, out string? validationErrorMessage)
-  {
-    var didSucceed = bool.TryParse(value, out result);
-    validationErrorMessage = !didSucceed ? "Couldn't convert value to boolean" : null;
-    return didSucceed;
-  }
 }

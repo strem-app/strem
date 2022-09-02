@@ -2,7 +2,7 @@
 
 @inherits ValidatedInputBase<string>
 
-<div class="field has-addons enum-with-value">
+<div class="enum-with-value field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control">
         <div class="select">
             <select value="@EnumValue" @onchange="args => EnumValueChanged.InvokeAsync((TEnum)Enum.Parse(typeof(TEnum), args.Value.ToString()))">
@@ -30,11 +30,4 @@
     
     [Parameter]
     public string Placeholder { get; set; }
-    
-    protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
-    {
-        result = value;
-        validationErrorMessage = null;
-        return true;
-    }
 }

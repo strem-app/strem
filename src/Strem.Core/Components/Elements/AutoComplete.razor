@@ -2,7 +2,7 @@
 
 @inherits ValidatedInputBase<string>
 
-<div class="dropdown @(ShowDropdown ? "is-active" : "")">
+<div class="autocomplete dropdown @(ShowDropdown ? "is-active" : "") @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="dropdown-trigger">
         <input class="input" aria-haspopup="true" aria-controls="dropdown-menu" value="@Value"
                @onfocus="() => ShowDropdown = true" @onblur="HideDropDown"
@@ -55,12 +55,4 @@
         await Task.Delay(100);
         ShowDropdown = false;
     }
-
-    protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
-    {
-        result = value;
-        validationErrorMessage = null;
-        return true;
-    }
-    
 }

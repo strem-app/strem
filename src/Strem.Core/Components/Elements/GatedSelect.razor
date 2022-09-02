@@ -2,7 +2,7 @@
 
 @inherits ValidatedInputBase<TEnum>
 
-<div class="field has-addons">
+<div class="gated-select field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control">
         <button class="button @(Enabled ? "is-success" : "is-danger")" @onclick="() => EnabledChanged.InvokeAsync(!Enabled)">
             <span class="icon is-small">
@@ -31,12 +31,4 @@
 
     [Parameter]
     public string Type { get; set; } = "text";
-    
-    protected override bool TryParseValueFromString(string? value, out TEnum result, out string? validationErrorMessage)
-    {
-        var success = Enum.TryParse(typeof(TEnum), value, out var enumValue);
-        validationErrorMessage = !success ? "Could not parse enum value" : null;
-        result = success ? (TEnum)enumValue : default;
-        return success;
-    }
 }
