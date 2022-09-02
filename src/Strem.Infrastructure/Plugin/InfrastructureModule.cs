@@ -22,6 +22,7 @@ using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Core.Threading;
 using Strem.Core.Utils;
+using Strem.Core.Validation;
 using Strem.Core.Variables;
 using Strem.Core.Web;
 using Strem.Infrastructure.Services;
@@ -61,12 +62,14 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IRandomizer>(new DefaultRandomizer(new Random()));
         services.AddSingleton<IBrowserLoader, BrowserLoader>();
         services.AddSingleton<ICloner, Cloner>();
+        services.AddSingleton<IDataValidator, DataValidator>();
         
         // Hosting
         services.AddSingleton<IInternalWebHost, InternalWebHost>();
         services.AddSingleton(SetupLogger());
         
         // Encryption
+        // TODO: this needs to be moved somewhere else at some point
         var key = Encoding.UTF8.GetBytes("UxRBN8hfjzTG86d6SkSSNzyUhERGu5Zj");
         var iv = Encoding.UTF8.GetBytes("7cA8jkRMJGZ8iMeJ");
         services.AddSingleton<IEncryptor>(new CustomEncryptor(key, iv));

@@ -5,7 +5,7 @@
 <div class="enum-with-value field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control">
         <div class="select">
-            <select value="@EnumValue" @onchange="args => EnumValueChanged.InvokeAsync((TEnum)Enum.Parse(typeof(TEnum), args.Value.ToString()))">
+            <select value="@EnumValue" @onchange="OnEnumChanged">
                 <EnumSelectOptions EnumType="typeof(TEnum)"></EnumSelectOptions>
             </select>
         </div>
@@ -30,4 +30,10 @@
     
     [Parameter]
     public string Placeholder { get; set; }
+
+    public void OnEnumChanged(ChangeEventArgs args)
+    {
+        EnumValueChanged.InvokeAsync((TEnum)Enum.Parse(typeof(TEnum), args.Value.ToString()));
+        OnValueChanged(Value);
+    }
 }

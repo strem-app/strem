@@ -1,4 +1,5 @@
-﻿using System.Reactive.Disposables;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Reactive.Disposables;
 using Strem.Core.Events.Bus;
 using Strem.Core.Events.Flows;
 using Strem.Core.Events.Flows.Tasks;
@@ -9,6 +10,7 @@ using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
 using Strem.Core.Types;
+using Strem.Core.Validation;
 using Strem.Core.Variables;
 
 namespace Strem.Core.Flows.Executors;
@@ -21,13 +23,14 @@ public class FlowExecutionEngine : IFlowExecutionEngine
     public ITaskRegistry TaskRegistry { get; }
     public ITriggerRegistry TriggerRegistry { get; }
     public ILogger<FlowExecutionEngine> Logger { get; }
+    public IDataValidator DataValidator { get; }
 
     public CompositeDisposable InternalSubs { get; } = new();
     public Dictionary<Guid, CompositeDisposable> FlowSubscriptions { get; } = new();
     public List<FlowExecutionLog> Logs { get; } = new();
     public IReadOnlyCollection<FlowExecutionLog> ExecutionLogs => Logs;
 
-    public FlowExecutionEngine(IFlowStore flowStore, IEventBus eventBus, ITaskRegistry taskRegistry, ITriggerRegistry triggerRegistry, ILogger<FlowExecutionEngine> logger, IAppState appState)
+    public FlowExecutionEngine(IFlowStore flowStore, IEventBus eventBus, ITaskRegistry taskRegistry, ITriggerRegistry triggerRegistry, ILogger<FlowExecutionEngine> logger, IAppState appState, IDataValidator dataValidator)
     {
         FlowStore = flowStore;
         EventBus = eventBus;
@@ -35,6 +38,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         TriggerRegistry = triggerRegistry;
         Logger = logger;
         AppState = appState;
+        DataValidator = dataValidator;
     }
 
     public async Task StartEngine()
@@ -72,6 +76,13 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             if (trigger == null)
             {
                 Logger.LogWarning($"Trigger cant be found for trigger code: {triggerData.Code} (v{triggerData.Version})");
+                continue;
+            }
+
+            var validationResults = DataValidator.Validate(triggerData);
+            if (!validationResults.IsValid)
+            {
+                Logger.LogWarning($"Trigger data contains invalid data for {triggerData.Id}|{triggerData.Code}, with errors {string.Join(" | ", validationResults.Errors)}");
                 continue;
             }
             
@@ -135,6 +146,13 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             Logger.LogWarning($"Task cant be found for task code: {taskData.Code} (v{taskData.Version})");
             return ExecutionResult.FailedButContinue("Task Failed, See Log");
         }
+        
+        var validationResults = DataValidator.Validate(taskData);
+        if (!validationResults.IsValid)
+        {
+            Logger.LogWarning($"Task data contains invalid data for {taskData.Id}|{taskData.Code}, with errors {string.Join(" | ", validationResults.Errors)}");
+            return ExecutionResult.Failed("Task Data Failed Validation, See Log");
+        }
             
         EventBus.PublishAsync(new FlowTaskStarted(flow.Id, taskData.Id));
         try
@@ -180,9 +198,6 @@ public class FlowExecutionEngine : IFlowExecutionEngine
     {
         if(flow.TaskData.Count == 0) { return; }
         if(!flow.Enabled) { return; }
-        
-        // TODO: Maybe need to handle multiple calls here, should it run in parallel or queue or forget
-        //if(FlowExecutions.ContainsKey(flow.Id)) { return; }
         
         flowVariables ??= new Variables.Variables();
         var executionLog = SetupLogFor(flow, flowVariables);

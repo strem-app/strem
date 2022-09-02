@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Strem.Core.Flows.Tasks;
 using Strem.Core.Types;
+using Strem.Core.Validation;
 using Strem.Todos.Data;
 
 namespace Strem.Todos.Flows.Tasks;
@@ -21,7 +22,8 @@ public class CreateTodoTaskData : IFlowTaskData
     public TimeUnitType TimeoutType { get; set; }
     [Required]
     public string TimeoutValue { get; set; }
-    public string Payload { get; set; } = string.Empty;
     public List<string> Tags { get; set; } = new();
     public TodoActionType ActionType { get; set; }
+    [RequiredIf("ActionType", TodoActionType.Text, IsInverted = true)]
+    public string Payload { get; set; } = string.Empty;
 }
