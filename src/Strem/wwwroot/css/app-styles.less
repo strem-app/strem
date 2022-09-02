@@ -109,13 +109,14 @@ body
     animation: pulse-danger 1s infinite;
 }
 
-
 .pulse-effect(@color)
 {
     0% { box-shadow: 0 0 0 0 fade(@color, 70%); }
     70% { box-shadow: 0 0 0 10px fade(@color, 0%); }
     100% { box-shadow: 0 0 0 0 fade(@color, 0%); }
 }
+
+.has-error-border() { border: 1px solid @is-danger; }
 
 @keyframes pulse-success { .pulse-effect(@is-success) }
 @keyframes pulse-primary { .pulse-effect(@is-primary) }
@@ -197,7 +198,7 @@ body
 .processed-input
 {
     &.invalid {
-        input, .processed-output { border: 1px solid @is-danger; }
+        input, .processed-output { .has-error-border(); }
     }
     
     .processed-output .tags
@@ -211,19 +212,17 @@ body
 .true-or-false
 {
     &.invalid button {
-        border: 1px solid @is-danger;
+        .has-error-border();
     }
 }
 
 .gated-input.invalid, .gated-select.invalid, .enum-with-value.invalid
-{
-    border: 1px solid @is-danger;
-}
+{ .has-error-border(); }
 
 .autocomplete
 {
     &.invalid input {
-        border: 1px solid @is-danger;
+        .has-error-border();
     }
 }
 
