@@ -22,12 +22,9 @@
             {
                 <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
             }
-            <div class="field is-grouped">
+            <div class="field is-grouped is-grouped-right">
                 <div class="control">
                     <button type="button" class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Task</button>
-                </div>
-                <div class="control is-expanded">
-                    <button type="submit" class="button is-pulled-right @(!IsValid ? "is-warning" : "is-primary")">Save Task</button>
                 </div>
             </div>
         </div>
