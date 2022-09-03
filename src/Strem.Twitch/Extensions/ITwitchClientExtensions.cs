@@ -22,7 +22,16 @@ public static class ITwitchClientExtensions
         if (client.Connect())
         { return (true, string.Empty); }
         else
-        { return (false, "Couldnt connect to twitch chat for unknown reason");}
+        { return (false, "Couldnt connect to twitch chat for unknown reason"); }
+    }
 
+    public static bool HasJoinedChannel(this ITwitchClient client, string channel)
+    { return client.JoinedChannels.Any(x => x.Channel.Equals(channel, StringComparison.OrdinalIgnoreCase)); }
+
+    public static void TemporarilyJoinChannelFor(this ITwitchClient client, string channel, Action action)
+    {
+        client.JoinChannel(channel);
+        action();
+        client.LeaveChannel(channel);
     }
 }

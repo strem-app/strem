@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits CustomTaskComponent<Strem.Twitch.Flows.Tasks.Channels.JoinTwitchChannelTaskData>
+
+<div class="field">
+    <label class="label">Channel To Join</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Channel" Placeholder="i.e some-channel-name"></ProcessedInput>
+    </div>
+    <HelperInfo>You only need to join channels explicitly if you wish to trigger flows from them</HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"Join {Data.Channel}'s Twitch Channel";
+}
