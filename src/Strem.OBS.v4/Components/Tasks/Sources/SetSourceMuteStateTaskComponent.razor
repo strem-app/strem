@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Components.Tasks
+@using Strem.Core.State
+@using Strem.OBS.v4.Extensions
+@using Strem.OBS.v4.Flows.Tasks
+@using Strem.OBS.v4.Services.Client
+@using Strem.OBS.v4.Types
+
+@inherits CustomTaskComponent<SetSourceMuteStateTaskData>
+
+@inject IAppState AppState;
+@inject IObservableOBSClient ObsClient;
+
+<div class="field">
+    <label class="label">Source Name</label>
+    <div class="control">
+        <AutoComplete @bind-Value="@Data.SourceName" Data="CurrentSceneItems"></AutoComplete>
+    </div>
+</div>
+<div class="field">
+    <label class="label">Mute State</label>
+    <div class="control">
+        <div class="select">
+            <select @bind="Data.Status">
+                <EnumSelectOptions EnumType="typeof(MuteStatus)"></EnumSelectOptions>
+            </select>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public override string Title => GetTitle();
+    
+    public string GetTitle()
+    {
+        var starter = Data.Status == MuteStatus.Toggle ? 
+            $"Toggle Mute Status For {Data.SourceName}" : 
+            $"Set {Data.SourceName} To {Enum.GetName(Data.Status)}ed";
+        return $"<strong>{starter}</strong> In OBS";
+    }
+
+    public string[] CurrentSceneItems { get; set; } = Array.Empty<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ObsClient.IsConnected)
+        {
+            if (!AppState.HasSourceList())
+            { await ObsClient.PopulateSourceListData(AppState); }
+            CurrentSceneItems = AppState.GetSourceList();
+        }
+        else
+        { CurrentSceneItems = Array.Empty<string>(); }
+        
+        await base.OnInitializedAsync();
+    }
+
+}

@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strem.UnitTests", "Strem.Un
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strem.Flows.Default", "Strem.Flows.Default\Strem.Flows.Default.csproj", "{7D773BE3-F965-4AF3-BC6E-9329C76F3353}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strem.OBS", "Strem.OBS\Strem.OBS.csproj", "{6093FE82-7907-4087-B1D7-BBBEFC2AC7AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strem.OBS.v4", "Strem.OBS.v4\Strem.OBS.v4.csproj", "{6093FE82-7907-4087-B1D7-BBBEFC2AC7AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strem.StreamElements", "Strem.StreamElements\Strem.StreamElements.csproj", "{8A471E64-96F8-424F-AB5F-082E4A5F32FE}"
 EndProject

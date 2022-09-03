@@ -1,0 +1,41 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Components.Tasks
+@using Strem.Core.State
+@using Strem.OBS.v4.Extensions
+@using Strem.OBS.v4.Flows.Tasks
+@using Strem.OBS.v4.Services.Client
+@using Strem.OBS.v4.Types
+
+@inherits CustomTaskComponent<ChangeSceneTaskData>
+
+@inject IAppState AppState;
+@inject IObservableOBSClient ObsClient;
+
+<div class="field">
+    <label class="label">Scene Name</label>
+    <div class="control">
+        <AutoComplete @bind-Value="@Data.NewScene" Data="SceneNames"></AutoComplete>
+    </div>
+</div>
+
+@code {
+    public override string Title => $"Change Scene To {Data.NewScene}";
+    
+    public string[] SceneNames { get; set; } = Array.Empty<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ObsClient.IsConnected)
+        {
+            var scenes = await ObsClient.GetSceneList();
+            SceneNames = scenes.Scenes.Select(x => x.Name).ToArray();
+        }
+        else
+        {
+            SceneNames = Array.Empty<string>();
+        }
+        
+        await base.OnInitializedAsync();
+    }
+
+}
