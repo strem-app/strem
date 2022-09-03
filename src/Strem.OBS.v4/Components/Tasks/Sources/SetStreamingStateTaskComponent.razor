@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Components.Tasks
+@using Strem.Core.State
+@using Strem.OBS.v4.Extensions
+@using Strem.OBS.v4.Flows.Tasks
+@using Strem.OBS.v4.Services.Client
+@using Strem.OBS.v4.Types
+
+@inherits CustomTaskComponent<SetStreamStateTaskData>
+
+<div class="field">
+    <label class="label">Stream Operation</label>
+    <div class="control">
+        <TrueOrFalse @bind-Value="Data.StartStream" TrueText="Start Stream" FalseText="Stop Stream"></TrueOrFalse>
+    </div>
+</div>
+
+
+@code {
+    public override string Title => GetTitle();
+    
+    public string GetTitle()
+    {
+        var starter = Data.StartStream ? "Start" : "Stop";
+        return $"<strong>{starter}</strong> OBS Stream";
+    }
+}

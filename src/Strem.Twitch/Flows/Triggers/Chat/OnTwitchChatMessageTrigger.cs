@@ -21,6 +21,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     public override string Code => OnTwitchChatMessageTriggerData.TriggerCode;
     public override string Version => OnTwitchChatMessageTriggerData.TriggerVersion;
 
+    public static VariableEntry ChatChannelVariable = new("chat.channel", TwitchVars.TwitchContext);
     public static VariableEntry ChatMessageVariable = new("chat.message", TwitchVars.TwitchContext);
     public static VariableEntry RawChatMessageVariable = new("chat.raw-message", TwitchVars.TwitchContext);
     public static VariableEntry BitsSentVariable = new("chat.message.bits-sent", TwitchVars.TwitchContext);
@@ -42,7 +43,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         ChatMessageVariable.ToDescriptor(), BitsSentVariable.ToDescriptor(), BitsValueVariable.ToDescriptor(),
         RewardIdVariable.ToDescriptor(), IsNoisyVariable.ToDescriptor(), SubscriptionLengthVariable.ToDescriptor(),
         IsHighlightedVariable.ToDescriptor(), UserTypeVariable.ToDescriptor(), UsernameVariable.ToDescriptor(),
-        UserIdVariable.ToDescriptor()
+        UserIdVariable.ToDescriptor(), ChatChannelVariable.ToDescriptor()
     };
 
     public IObservableTwitchClient TwitchClient { get; set; }
@@ -57,6 +58,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     public IVariables PopulateVariables(ChatMessage message)
     {
         var flowVars = new Core.Variables.Variables();
+        flowVars.Set(ChatChannelVariable, message.Channel);
         flowVars.Set(ChatMessageVariable, message.Message);
         flowVars.Set(RawChatMessageVariable, message.RawIrcMessage);
         flowVars.Set(BitsSentVariable, message.Bits.ToString());
@@ -79,9 +81,9 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
 
     public bool DoesMessageMeetCriteria(OnTwitchChatMessageTriggerData data, ChatMessage message)
     {
-        // TODO: This check may need to be removed depending on if we support multiple channels supported
-        var userChannel = AppState.GetTwitchUsername();
-        if(!message.Channel.Equals(userChannel)) { return false; }
+        var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
+        var processedChannel = FlowStringProcessor.Process(channel, new Core.Variables.Variables());
+        if(!message.Channel.Equals(processedChannel)) { return false; }
         
         if(!IsUserAboveMinimumRequired(data.MinimumUserType, message.UserType)) { return false; }
         if(data.IsVip && !message.IsVip) { return false; }

@@ -1,0 +1,23 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Components.Tasks
+@using Strem.OBS.v4.Flows.Tasks
+
+@inherits CustomTaskComponent<SetRecordingStateTaskData>
+
+<div class="field">
+    <label class="label">Stream Operation</label>
+    <div class="control">
+        <TrueOrFalse @bind-Value="Data.StartRecording" TrueText="Start Recording" FalseText="Stop Recording"></TrueOrFalse>
+    </div>
+</div>
+
+
+@code {
+    public override string Title => GetTitle();
+    
+    public string GetTitle()
+    {
+        var starter = Data.StartRecording ? "Start" : "Stop";
+        return $"<strong>{starter}</strong> OBS Recording";
+    }
+}

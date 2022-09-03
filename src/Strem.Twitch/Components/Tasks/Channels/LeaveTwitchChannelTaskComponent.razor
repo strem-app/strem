@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits CustomTaskComponent<Strem.Twitch.Flows.Tasks.Channels.LeaveTwitchChannelTaskData>
+
+<div class="field">
+    <label class="label">Channel To Leave</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Channel" Placeholder="i.e some-channel-name"></ProcessedInput>
+    </div>
+    <HelperInfo>You only need to leave channels explicitly if you wish to stop trigger flows from listening to them</HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"Leave {Data.Channel}'s Twitch Channel";
+}

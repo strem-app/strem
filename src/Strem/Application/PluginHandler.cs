@@ -6,7 +6,7 @@ using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Flows.Default.Modules;
 using Strem.Infrastructure.Plugin;
-using Strem.OBS.Plugin;
+using Strem.OBS.v4.Plugin;
 using Strem.Portals.Plugin;
 using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;

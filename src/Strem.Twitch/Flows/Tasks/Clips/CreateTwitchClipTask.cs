@@ -88,8 +88,6 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
             userId = userDetails.Users[0].Id;
         }
         
-        
-        
         var clip = await TwitchApi.Helix.Clips.CreateClipAsync(userId);
         if(clip?.CreatedClips.Length == 0) { return ExecutionResult.Failed("Twitch couldnt create clip for some reason"); }
 

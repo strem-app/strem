@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Strem.OBS\Strem.OBS.csproj" />
+      <ProjectReference Include="..\Strem.OBS.v4\Strem.OBS.v4.csproj" />
       <ProjectReference Include="..\Strem.Twitch\Strem.Twitch.csproj" />
       <ProjectReference Include="..\Strem.Flows.Default\Strem.Flows.Default.csproj" />
     </ItemGroup>

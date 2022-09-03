@@ -13,6 +13,7 @@ public class OnTwitchChatMessageTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
     
+    public string Channel { get; set; }
     public TextMatchType MatchTypeType { get; set; }
     public string MatchText { get; set; } = string.Empty;
 
