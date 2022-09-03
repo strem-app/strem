@@ -2,9 +2,9 @@
 
 namespace Strem.Twitch.Flows.Triggers.Chat;
 
-public class OnTwitchRaidTriggerData : IFlowTriggerData
+public class OnTwitchHostingTriggerData : IFlowTriggerData
 {
-    public static readonly string TriggerCode = "on-twitch-raid";
+    public static readonly string TriggerCode = "on-twitch-hosting";
     public static readonly string TriggerVersion = "1.0.0";
 
     public Guid Id { get; set; } = Guid.NewGuid();

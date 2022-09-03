@@ -53,11 +53,11 @@ public class OnTwitchRaidTrigger : FlowTrigger<OnTwitchRaidTriggerData>
         return flowVars;
     }
 
-    public bool DoesMessageMeetCriteria(OnTwitchRaidTriggerData data, OnRaidNotificationArgs raidArgs)
+    public bool DoesMessageMeetCriteria(OnTwitchRaidTriggerData data, OnRaidNotificationArgs args)
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(raidArgs.Channel, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Channel, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         
