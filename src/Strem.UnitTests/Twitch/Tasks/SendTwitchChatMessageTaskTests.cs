@@ -9,6 +9,7 @@ using Strem.Twitch.Flows.Tasks.Chat;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 
 namespace Strem.UnitTests.Twitch.Tasks;
 
@@ -73,6 +74,10 @@ public class SendTwitchChatMessageTaskTests
         var inputChannel = "my-channel";
         var expectedChannel = "my-processed-channel";
         var expectedString = "this text has been processed";
+        
+        mockTwitchClient.Setup(x => x.JoinedChannels)
+            .Returns(new List<JoinedChannel>());
+        
         mockFlowStringProcessor
             .Setup(x => x.Process(inputString, It.IsAny<IVariables>()))
             .Returns(expectedString);
@@ -105,6 +110,10 @@ public class SendTwitchChatMessageTaskTests
         var inputChannel = "tmy-channel";
         var expectedChannel = "my-processed-channel";
         var expectedMessage = "this text has been processed";
+
+        mockTwitchClient.Setup(x => x.JoinedChannels)
+            .Returns(new List<JoinedChannel>());
+        
         mockFlowStringProcessor
             .Setup(x => x.Process(inputMessage, It.IsAny<IVariables>()))
             .Returns(expectedMessage);
