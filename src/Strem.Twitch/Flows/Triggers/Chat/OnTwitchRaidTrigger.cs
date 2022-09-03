@@ -31,7 +31,7 @@ public class OnTwitchRaidTrigger : FlowTrigger<OnTwitchRaidTriggerData>
 
     public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {
-        RaidChannelVariable.ToDescriptor(), RaidCountVariable.ToDescriptor(), 
+        RaidChannelVariable.ToDescriptor(), RaidUsernameVariable.ToDescriptor(), 
         RaidCountVariable.ToDescriptor()
     };
 
