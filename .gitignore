@@ -350,4 +350,5 @@ MigrationBackup/
 .ionide/
 
 dist/
-**/.idea/*
+.idea/**/*
+.idea/*
