@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RestSharp;
+using Strem.Core.Browsers.Web;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows;
@@ -10,7 +11,6 @@ using Strem.Core.Flows.Tasks;
 using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Variables;
-using Strem.Core.Web;
 
 namespace Strem.Flows.Default.Flows.Tasks.Web;
 
@@ -34,11 +34,11 @@ public class MakeHttpRequestTask : FlowTask<MakeHttpRequestTaskData>
         ResponseContentTypeVariable.ToDescriptor(), ResponseHeadersVariable.ToDescriptor()
     };
 
-    public IBrowserLoader BrowserLoader { get; }
+    public IWebBrowser WebBrowser { get; }
 
-    public MakeHttpRequestTask(ILogger<FlowTask<MakeHttpRequestTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IBrowserLoader browserLoader) : base(logger, flowStringProcessor, appState, eventBus)
+    public MakeHttpRequestTask(ILogger<FlowTask<MakeHttpRequestTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IWebBrowser webBrowser) : base(logger, flowStringProcessor, appState, eventBus)
     {
-        BrowserLoader = browserLoader;
+        WebBrowser = webBrowser;
     }
 
     public override bool CanExecute() => true;

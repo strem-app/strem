@@ -1,0 +1,36 @@
+﻿@using Strem.Core.Browsers.File
+@using Microsoft.AspNetCore.Components
+
+@inherits ValidatedInputBase<string>
+
+@inject IFileBrowser FileBrowser
+
+<div class="file-browser field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
+    <div class="control is-expanded">
+        <InputText class="input" type="text" placeholder="i.e c:/some-file.txt" @bind-Value="ProxyValue" />
+    </div>
+    <div class="control">
+        <button class="button is-link" @onclick="BrowseForFile">
+            <span class="icon is-small">
+                <i class="fas fa-folder-open"></i>
+            </span>
+            <span>Browse</span>
+        </button>
+    </div>
+</div>
+
+@code 
+{
+    public string ProxyValue
+    {
+        get => Value;
+        set => OnValueChanged(value);
+    }
+    
+    public void BrowseForFile()
+    {
+        var path = FileBrowser.BrowseForFile();
+        if (!string.IsNullOrEmpty(path))
+        { ProxyValue = path; }
+    }
+}

@@ -1,14 +1,14 @@
-﻿@using Strem.Core.Web
-@using Strem.Infrastructure.Services.Api
+﻿@using Strem.Infrastructure.Services.Api
 @using Strem.Portals.Data
 @using Microsoft.JSInterop
 @using Microsoft.AspNetCore.Components
+@using Strem.Core.Browsers.Web
 @using Strem.Core.Extensions
 @using Strem.Core.Types
 @using Strem.Portals.Types
 @using Strem.Todos.Data
 
-@inject IBrowserLoader BrowserLoader
+@inject IWebBrowser WebBrowser
 @inject ITodoStore TodoStore 
 
 <div class="box">
@@ -146,7 +146,7 @@
     public void ViewPortalInBrowser()
     {
         var portalUrl = $"http://localhost:{InternalWebHostConfiguration.ApiHostPort}/portals/{Portal.Id}";
-        BrowserLoader.LoadUrl(portalUrl);
+        WebBrowser.LoadUrl(portalUrl);
     }
 
     public IEnumerable<TodoData> GetFilteredTodos()
