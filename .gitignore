@@ -352,3 +352,4 @@ MigrationBackup/
 dist/
 .idea/**/*
 .idea/*
+src/.idea/
