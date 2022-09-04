@@ -1,7 +1,7 @@
-﻿@using Strem.Core.Web
-@using Strem.Todos.Data
+﻿@using Strem.Todos.Data
+@using Strem.Core.Browsers.Web
 
-@inject IBrowserLoader BrowserLoader;
+@inject IWebBrowser WebBrowser;
 
 @{ var progress = GetProgress(Todo); }
 <div class="box mb-3 @(GetBoxStyle(progress))">
@@ -97,7 +97,7 @@
     {
         if (todo.ActionType == TodoActionType.Link)
         {
-            BrowserLoader.LoadUrl(todo.Payload);
+            WebBrowser.LoadUrl(todo.Payload);
         }
     }
 }

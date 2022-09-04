@@ -7,6 +7,8 @@ using Persistity.Encryption;
 using Persistity.Flow.Builders;
 using Persistity.Serializers.Json;
 using Serilog;
+using Strem.Core.Browsers.File;
+using Strem.Core.Browsers.Web;
 using Strem.Core.Components.Elements.Drag;
 using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
@@ -24,7 +26,6 @@ using Strem.Core.Threading;
 using Strem.Core.Utils;
 using Strem.Core.Validation;
 using Strem.Core.Variables;
-using Strem.Core.Web;
 using Strem.Infrastructure.Services;
 using Strem.Infrastructure.Services.Api;
 using Strem.Infrastructure.Services.Persistence;
@@ -60,7 +61,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IThreadHandler, ThreadHandler>();
         services.AddSingleton<IEventBus, EventBus>();
         services.AddSingleton<IRandomizer>(new DefaultRandomizer(new Random()));
-        services.AddSingleton<IBrowserLoader, BrowserLoader>();
+        services.AddSingleton<IWebBrowser, WebBrowser>();
         services.AddSingleton<ICloner, Cloner>();
         services.AddSingleton<IDataValidator, DataValidator>();
         
@@ -101,8 +102,9 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IMenuRegistry, MenuRegistry>();
         services.AddSingleton<IFlowExecutionEngine, IFlowExecutor, FlowExecutionEngine>();
         
-        // Input
+        // OS Specific
         services.AddSingleton<IInputSimulator, InputSimulator>();
+        services.AddSingleton<IFileBrowser, FileBrowser>();
         
         // UI
         services.AddSingleton<DragController>();
