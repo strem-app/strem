@@ -7,7 +7,7 @@
 
 <div class="file-browser field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control is-expanded">
-        <InputText class="input" type="text" placeholder="i.e c:/some-file.txt" @bind-Value="ProxyValue" />
+        <GenericInput Type="text" Placeholder="@Placeholder" @bind-Value="ProxyValue" />
     </div>
     <div class="control">
         <button class="button is-link" @onclick="BrowseForFile">
@@ -21,6 +21,9 @@
 
 @code 
 {
+    [Parameter]
+    public string Placeholder { get; set; }
+    
     public string ProxyValue
     {
         get => Value;

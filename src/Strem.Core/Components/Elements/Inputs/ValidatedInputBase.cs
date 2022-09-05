@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace Strem.Core.Components.Elements;
+namespace Strem.Core.Components.Elements.Inputs;
 
 public abstract class ValidatedInputBase<T> : ComponentBase
 {
@@ -14,9 +14,10 @@ public abstract class ValidatedInputBase<T> : ComponentBase
     
     [Parameter] 
     public Expression<Func<T>>? ValueExpression { get; set; }
+
+    [CascadingParameter] 
+    protected EditContext? EditContext { get; set; } = null;
     
-    [CascadingParameter]
-    protected EditContext? EditContext { get; set; }
     protected FieldIdentifier? _fieldIdentifier { get; set; }
     
     public bool? IsValid

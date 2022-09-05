@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Components
 
-@inherits ValidatedInputBase<string>
+@inherits Strem.Core.Components.Elements.Inputs.ValidatedInputBase<string>
 
 <div class="autocomplete dropdown @(ShowDropdown ? "is-active" : "") @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="dropdown-trigger">
