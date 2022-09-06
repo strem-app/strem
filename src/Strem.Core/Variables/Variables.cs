@@ -8,9 +8,9 @@ public class Variables : IVariables
     public Dictionary<VariableEntry, string> Data { get; }
     
     [JsonIgnore]
-    public Subject<VariableEntry> OnChangedSubject { get; } = new();
+    public Subject<KeyValuePair<VariableEntry, string>> OnChangedSubject { get; } = new();
     [JsonIgnore]
-    public IObservable<VariableEntry> OnVariableChanged => OnChangedSubject;
+    public IObservable<KeyValuePair<VariableEntry, string>> OnVariableChanged => OnChangedSubject;
    
     public Variables(Dictionary<VariableEntry, string> state = null)
     { Data = state ?? new Dictionary<VariableEntry, string>(); }
@@ -52,14 +52,17 @@ public class Variables : IVariables
     
     public void Delete(VariableEntry variableEntry)
     {
+        if (!Data.ContainsKey(variableEntry)) { return; }
+        
+        var value = Data[variableEntry];
         Data.Remove(variableEntry);
-        OnChangedSubject.OnNext(variableEntry);
+        OnChangedSubject.OnNext(new KeyValuePair<VariableEntry, string>(variableEntry, value));
     }
 
     public void Set(VariableEntry variableEntry, string value)
     {
         Data[variableEntry] = value;
-        OnChangedSubject.OnNext(variableEntry);
+        OnChangedSubject.OnNext(new KeyValuePair<VariableEntry, string>(variableEntry, value));
     }
 
     public void Dispose()

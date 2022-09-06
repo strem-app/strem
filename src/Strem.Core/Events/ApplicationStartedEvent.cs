@@ -1,6 +1,3 @@
 ﻿namespace Strem.Core.Events;
 
-public class ApplicationStartedEvent
-{
-    
-}
+public record ApplicationStartedEvent;

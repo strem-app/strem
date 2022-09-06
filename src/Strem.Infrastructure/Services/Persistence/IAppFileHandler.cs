@@ -7,11 +7,4 @@ public interface IAppFileHandler
 {
     Task<AppState> LoadAppState();
     Task<FlowStore> LoadFlowStore();
-    
-    Task SaveAppState(IAppState appState);
-    Task SaveUserState(IAppState appState);
-    Task SaveFlowStore(IFlowStore flowStore);
-
-    Task CreateAppFilesIfMissing();
-    Task BackupFiles();
 }

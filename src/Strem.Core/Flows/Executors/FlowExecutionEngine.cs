@@ -8,6 +8,7 @@ using Strem.Core.Extensions;
 using Strem.Core.Flows.Registries.Tasks;
 using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Flows.Tasks;
+using Strem.Core.Flows.Triggers;
 using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Validation;
@@ -51,7 +52,8 @@ public class FlowExecutionEngine : IFlowExecutionEngine
             .Subscribe(x => RemoveFlow(x.FlowId))
             .AddTo(InternalSubs);
         
-        EventBus.Receive<FlowTriggersChangedEvent>()
+        // TODO: Have this just reset a single trigger not all flow triggers
+        EventBus.Receive<FlowTriggerChangedEvent>()
             .Subscribe(x =>
             {
                 RemoveFlow(x.FlowId);
@@ -72,29 +74,34 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         
         foreach (var triggerData in flow.TriggerData)
         {
-            var trigger = TriggerRegistry.Get(triggerData.Code)?.Trigger;
-            if (trigger == null)
-            {
-                Logger.LogWarning($"Trigger cant be found for trigger code: {triggerData.Code} (v{triggerData.Version})");
-                continue;
-            }
-
-            var validationResults = DataValidator.Validate(triggerData);
-            if (!validationResults.IsValid)
-            {
-                Logger.LogWarning($"Trigger data contains invalid data for {triggerData.Id}|{triggerData.Code}, with errors {string.Join(" | ", validationResults.Errors)}");
-                continue;
-            }
-            
-            var observable = await trigger.Execute(triggerData);
-            observable.Subscribe(vars =>
-                {
-                    EventBus.PublishAsync(new FlowTriggerStarted(flow.Id, triggerData.Id));
-                    ExecuteFlow(flow, vars);
-                    EventBus.PublishAsync(new FlowTriggerFinished(flow.Id, triggerData.Id));
-                })
-                .AddTo(flowSubs);
+            await SetupTrigger(flow, triggerData, flowSubs);
         }
+    }
+
+    public async Task SetupTrigger(Flow flow, IFlowTriggerData triggerData, CompositeDisposable flowSubs)
+    {
+        var trigger = TriggerRegistry.Get(triggerData.Code)?.Trigger;
+        if (trigger == null)
+        {
+            Logger.LogWarning($"Trigger cant be found for trigger code: {triggerData.Code} (v{triggerData.Version})");
+            return;
+        }
+
+        var validationResults = DataValidator.Validate(triggerData);
+        if (!validationResults.IsValid)
+        {
+            Logger.LogWarning($"Trigger data contains invalid data for {triggerData.Id}|{triggerData.Code}, with errors {string.Join(" | ", validationResults.Errors)}");
+            return;
+        }
+            
+        var observable = await trigger.Execute(triggerData);
+        observable.Subscribe(vars =>
+            {
+                EventBus.PublishAsync(new FlowTriggerStarted(flow.Id, triggerData.Id));
+                ExecuteFlow(flow, vars);
+                EventBus.PublishAsync(new FlowTriggerFinished(flow.Id, triggerData.Id));
+            })
+            .AddTo(flowSubs);
     }
 
     public void RemoveFlow(Guid flowId)

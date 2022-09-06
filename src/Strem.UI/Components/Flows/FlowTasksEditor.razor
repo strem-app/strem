@@ -6,6 +6,7 @@
 @using Strem.Core.Events.Flows.Tasks
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
+@using Strem.Core.Events.Flows
 @using Strem.Core.Types
 @using Strem.Core.Utils
 
@@ -26,9 +27,10 @@
 
 @foreach (var data in TaskData)
 {
-    <DraggableListElement Data="data" DropType="@DropTypes.FlowTask" ContainingList="TaskData" SupportedDropTypes="@(new []{ DropTypes.FlowTask, DropTypes.NewTask })" @key="data.Id">
+    <DraggableListElement Data="data" DropType="@DropTypes.FlowTask" ContainingList="TaskData" 
+                          SupportedDropTypes="@(new []{ DropTypes.FlowTask, DropTypes.NewTask })" @key="data.Id">
         <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)" @key="data.Id"
-                               OnRequestedDeletion="RemoveTaskData" Task="GetTaskFor(data)"/>
+                               OnRequestedDeletion="RemoveTaskData" DataChanged="() => TaskDataChanged(data.Id)" Task="GetTaskFor(data)"/>
     </DraggableListElement>
 
     if (data is IHasSubTaskData subTaskData && subTaskData.SubTaskKeys.Length > 0)
@@ -37,7 +39,8 @@
         {
             <ul class="sub-tasks @subKey">
                 <p class="menu-label">@subKey</p>
-                <FlowTasksEditor TaskData="@subTaskData.SubTasks[subKey]" />
+                <FlowTasksEditor TaskData="@subTaskData.SubTasks[subKey]" TaskDeleted="x => TaskDeleted.InvokeAsync(x)"
+                                 TaskAdded="x => TaskAdded.InvokeAsync(x)" TasksMoved="() => TasksMoved.InvokeAsync()" />
             </ul>
         }
     }
@@ -46,6 +49,18 @@
 @code {
     [Parameter]
     public List<IFlowTaskData> TaskData { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TaskDeleted { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TaskAdded { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TasksMoved { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TaskChanged { get; set; }
     
     public Type GetComponentFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).ComponentType;
     public IFlowTask GetTaskFor(IFlowTaskData data) => TaskRegistry.Get(data.Code).Task;
@@ -83,7 +98,10 @@
     }
 
     public void RemoveTaskData(IFlowTaskData data)
-    { TaskData.Remove(data); }
+    {
+        TaskData.Remove(data);
+        TaskDeleted.InvokeAsync(data.Id);
+    }
 
     public void MoveTaskElement(DropData args)
     {
@@ -94,6 +112,8 @@
         else
         { args.DestinationList.Insert(indexToAddAt, args.SourceObject); }
 
+        var taskData = args.SourceObject as IFlowTaskData;
+        TasksMoved.InvokeAsync(taskData.Id);
         InvokeAsync(StateHasChanged);
     }
 
@@ -109,6 +129,7 @@
         else
         { args.DestinationList.Insert(indexToAddAt, newTaskData); }
 
+        TaskAdded.InvokeAsync(newTaskData.Id);
         InvokeAsync(StateHasChanged);
     }
     
@@ -119,8 +140,12 @@
         
         var newTaskData = taskDescriptor.Data();
         TaskData.Add(newTaskData);
+        TaskAdded.InvokeAsync(newTaskData.Id);
         InvokeAsync(StateHasChanged);
     }
+
+    public void TaskDataChanged(Guid taskId)
+    { TaskChanged.InvokeAsync(taskId); }
 
     public void Dispose()
     { _subs?.Dispose(); }

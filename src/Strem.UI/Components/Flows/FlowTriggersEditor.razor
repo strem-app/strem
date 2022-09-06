@@ -28,15 +28,29 @@
 
 @foreach (var data in Flow.TriggerData)
 {
-    <DraggableListElement Data="data" DropType="@DropTypes.FlowTrigger" ContainingList="Flow.TriggerData" SupportedDropTypes="@(new[] { DropTypes.FlowTrigger, DropTypes.NewTrigger })" @key="data.Id">
+    <DraggableListElement Data="data" DropType="@DropTypes.FlowTrigger" ContainingList="Flow.TriggerData" 
+                          SupportedDropTypes="@(new[] { DropTypes.FlowTrigger, DropTypes.NewTrigger })" @key="data.Id">
         <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)" @key="data.Id"
-                                  OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"/>
+                          OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"
+                          DataChanged="() => TriggerDataChanged(data.Id)" />
     </DraggableListElement>
 }
 
 @code {
     [Parameter]
     public Flow Flow { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TriggerDeleted { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TriggerAdded { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TriggersMoved { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TriggerChanged { get; set; }
     
     public Guid ActiveTriggerId { get; set; }
     public string ScopeContext { get; set; }
@@ -81,7 +95,9 @@
         else
         { args.DestinationList.Insert(indexToAddAt, args.SourceObject); }
 
+        var triggerData = args.SourceObject as IFlowTriggerData;
         InvokeAsync(StateHasChanged);
+        TriggersMoved.InvokeAsync(triggerData.Id);
     }
     
     public void AddNewTriggerIntoExisting(DropData args)
@@ -97,6 +113,7 @@
         { args.DestinationList.Insert(indexToAddAt, newTaskData); }
 
         InvokeAsync(StateHasChanged);
+        TriggerAdded.InvokeAsync(newTaskData.Id);
     }
     
     public void AddNewTriggerIntoFresh(DropData args)
@@ -107,20 +124,22 @@
         var newTaskData = taskDescriptor.Data();
         Flow.TriggerData.Add(newTaskData);
         InvokeAsync(StateHasChanged);
+
+        TriggerAdded.InvokeAsync(newTaskData.Id);
     }
     
     public void RemoveTriggerData(IFlowTriggerData data)
     {
         Flow.TriggerData.Remove(data);
-        EventBus.PublishAsync(new FlowTriggersChangedEvent(Flow.Id));
+        TriggerDeleted.InvokeAsync(data.Id);
     }
+
+    public void TriggerDataChanged(Guid triggerId)
+    { TriggerChanged.InvokeAsync(triggerId); }
 
     public void ResetTriggers(IFlowTriggerData data)
-    { EventBus.PublishAsync(new FlowTriggersChangedEvent(Flow.Id)); }
+    { EventBus.PublishAsync(new FlowTriggerChangedEvent(Flow.Id, data.Id)); }
 
     public void Dispose()
-    {
-        _subs?.Dispose();
-    }
-
+    { _subs?.Dispose(); }
 }

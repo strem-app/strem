@@ -101,7 +101,7 @@
         }
 
         AppState.AppVariables.OnVariableChanged
-            .Where(x => x == TwitchVars.Username)
+            .Where(x => x.Key == TwitchVars.Username)
             .Subscribe(x =>
             {
                 Username = AppState.AppVariables.Get(TwitchVars.Username);

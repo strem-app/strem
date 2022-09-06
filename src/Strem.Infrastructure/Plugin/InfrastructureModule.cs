@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using InputSimulatorStandard;
+using LiteDB;
 using Microsoft.AspNetCore.Components.Web;
 using Newtonsoft.Json;
 using Persistity.Core.Serialization;
@@ -26,12 +27,10 @@ using Strem.Core.Threading;
 using Strem.Core.Utils;
 using Strem.Core.Validation;
 using Strem.Core.Variables;
+using Strem.Data.Types;
 using Strem.Infrastructure.Services;
 using Strem.Infrastructure.Services.Api;
 using Strem.Infrastructure.Services.Persistence;
-using Strem.Infrastructure.Services.Persistence.App;
-using Strem.Infrastructure.Services.Persistence.Flows;
-using Strem.Infrastructure.Services.Persistence.User;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 
 namespace Strem.Infrastructure.Plugin;
@@ -79,14 +78,9 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<ISerializer, JsonSerializer>();
         services.AddSingleton<IDeserializer, JsonDeserializer>();
         services.AddSingleton<PipelineBuilder>();
-        
-        // Persistence
-        services.AddSingleton<ISaveAppDataPipeline, SaveAppDataPipeline>();
-        services.AddSingleton<ILoadAppDataPipeline, LoadAppDataPipeline>();
-        services.AddSingleton<ISaveUserDataPipeline, SaveUserDataPipeline>();
-        services.AddSingleton<ILoadUserDataPipeline, LoadUserDataPipeline>();
-        services.AddSingleton<ILoadFlowStorePipeline, LoadFlowStorePipeline>();
-        services.AddSingleton<ISaveFlowStorePipeline, SaveFlowStorePipeline>();
+
+        // DB
+        SetupDatabase(services);
 
         // State/Stores
         services.AddSingleton<IAppFileHandler, AppFileHandler>();
@@ -123,6 +117,19 @@ public class InfrastructureModule : IRequiresApiHostingModule
     {
         var stateFileHandler = services.GetService<IAppFileHandler>();
         return Task.Run(async () => await stateFileHandler.LoadFlowStore()).Result;
+    }
+
+    public void SetupDatabase(IServiceCollection services)
+    {
+        if (!Directory.Exists(PathHelper.StremDataDirectory))
+        { Directory.CreateDirectory(PathHelper.StremDataDirectory); }
+        
+        var profile = "default";
+        var dbPath = $"{PathHelper.StremDataDirectory}/{profile}.db";
+        services.AddSingleton<ILiteDatabase>(x => new LiteDatabase(dbPath));
+        services.AddSingleton<IFlowRepository, FlowRepository>();
+        services.AddSingleton<IAppVariablesRepository, AppVariablesRepository>();
+        services.AddSingleton<IUserVariablesRepository, UserVariablesRepository>();
     }
     
     public Serilog.ILogger SetupLogger()

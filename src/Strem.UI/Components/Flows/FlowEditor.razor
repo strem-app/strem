@@ -61,13 +61,15 @@
     Triggers
   </p>
   <ul class="menu-list triggers">
-    <FlowTriggersEditor Flow="Flow"></FlowTriggersEditor>
+    <FlowTriggersEditor Flow="Flow" TriggerAdded="NotifyTriggerChanged" TriggerDeleted="NotifyTriggerChanged" 
+                        TriggersMoved="NotifyTriggerChanged" TriggerChanged="NotifyTriggerChanged"/>
   </ul>
   <p class="menu-label">
     Tasks
   </p>
   <ul class="menu-list tasks">
-    <FlowTasksEditor TaskData="Flow.TaskData"></FlowTasksEditor>
+    <FlowTasksEditor TaskData="Flow.TaskData" TaskAdded="NotifyTaskChanged" TaskDeleted="NotifyTaskChanged" 
+                     TasksMoved="NotifyTaskChanged" TaskChanged="NotifyTaskChanged"/>
   </ul>
 </aside>
 
@@ -80,6 +82,12 @@
   public Flow Flow { get; set; }
   
   public bool ShowDeleteModal { get; set; }
+
+  public void NotifyTaskChanged(Guid taskId)
+  { EventBus.PublishAsync(new FlowTaskChangedEvent(Flow.Id, taskId)); }
+
+  public void NotifyTriggerChanged(Guid triggerId)
+  { EventBus.PublishAsync(new FlowTriggerChangedEvent(Flow.Id, triggerId)); }
 
   private CompositeDisposable _subs = new();
   
@@ -136,6 +144,7 @@
 
   public void Dispose()
   {
+    _subs.Dispose();
   }
 
   public void ToggleFlowEnablement()

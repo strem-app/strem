@@ -100,7 +100,7 @@
   
   protected override async Task OnInitializedAsync()
   {
-    EventBus.Receive<FlowTriggersChangedEvent>()
+    EventBus.Receive<FlowTriggerChangedEvent>()
         .Subscribe(_ => InvokeAsync(StateHasChanged))
         .AddTo(_subs);
   }
