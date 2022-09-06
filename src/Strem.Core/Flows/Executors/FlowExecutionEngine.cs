@@ -73,9 +73,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         FlowSubscriptions.Add(flow.Id, flowSubs);
         
         foreach (var triggerData in flow.TriggerData)
-        {
-            await SetupTrigger(flow, triggerData, flowSubs);
-        }
+        { await SetupTrigger(flow, triggerData, flowSubs); }
     }
 
     public async Task SetupTrigger(Flow flow, IFlowTriggerData triggerData, CompositeDisposable flowSubs)

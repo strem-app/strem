@@ -31,7 +31,7 @@
     <DraggableListElement Data="data" DropType="@DropTypes.FlowTrigger" ContainingList="Flow.TriggerData" 
                           SupportedDropTypes="@(new[] { DropTypes.FlowTrigger, DropTypes.NewTrigger })" @key="data.Id">
         <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)" @key="data.Id"
-                          OnRequestedDeletion="RemoveTriggerData" OnRequestedReset="ResetTriggers" Trigger="GetTriggerFor(data)"
+                          OnRequestedDeletion="RemoveTriggerData" Trigger="GetTriggerFor(data)"
                           DataChanged="() => TriggerDataChanged(data.Id)" />
     </DraggableListElement>
 }
@@ -136,9 +136,6 @@
 
     public void TriggerDataChanged(Guid triggerId)
     { TriggerChanged.InvokeAsync(triggerId); }
-
-    public void ResetTriggers(IFlowTriggerData data)
-    { EventBus.PublishAsync(new FlowTriggerChangedEvent(Flow.Id, data.Id)); }
 
     public void Dispose()
     { _subs?.Dispose(); }
