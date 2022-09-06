@@ -7,4 +7,5 @@ public interface IRepository<TE, in TK>
     void Create(TK id, TE entity);
     bool Update(TK id, TE entity);
     void Delete(TK id);
+    bool Upsert(TK id, TE entity);
 }

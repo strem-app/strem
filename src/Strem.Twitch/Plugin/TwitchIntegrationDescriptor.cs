@@ -15,7 +15,7 @@ public class TwitchIntegrationDescriptor : IIntegrationDescriptor
     {
         TwitchVars.Username.ToDescriptor(), TwitchVars.UserId.ToDescriptor(),
         TwitchVars.ChannelTitle.ToDescriptor(), TwitchVars.ChannelGame.ToDescriptor(),
-        TwitchVars.StreamViewers.ToDescriptor(), TwitchVars.StreamThumbnailUrl.ToDescriptor(),
+        TwitchVars.StreamViewers.ToDescriptor(false), TwitchVars.StreamThumbnailUrl.ToDescriptor(false),
     };
 
     public Type ComponentType { get; } = typeof(TwitchIntegrationComponent);

@@ -42,11 +42,23 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     public async Task StartPlugin()
     {
         AppState.UserVariables.OnVariableChanged
-            .Subscribe(x => UserVariablesRepository.Update(x.Key, x))
+            .Subscribe(x =>
+            {
+                if (AppState.UserVariables.Has(x.Key))
+                { UserVariablesRepository.Upsert(x.Key, x); }
+                else
+                { UserVariablesRepository.Delete(x.Key); }
+            })
             .AddTo(_subs);
 
         AppState.AppVariables.OnVariableChanged
-            .Subscribe(x => AppVariablesRepository.Update(x.Key, x))
+            .Subscribe(x =>
+            {
+                if (AppState.AppVariables.Has(x.Key))
+                { AppVariablesRepository.Upsert(x.Key, x); }
+                else
+                { AppVariablesRepository.Delete(x.Key); }
+            })
             .AddTo(_subs);
         
         AppState.UserVariables.OnVariableChanged

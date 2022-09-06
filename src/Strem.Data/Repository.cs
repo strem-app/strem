@@ -50,6 +50,12 @@ public abstract class Repository<TE,TK> : IRepository<TE, TK>
         var document = GetDocument(entity);
         return Collection.Update(GetId(id), document);
     }
+    
+    public bool Upsert(TK id, TE entity)
+    {
+        var document = GetDocument(entity);
+        return Collection.Upsert(GetId(id), document);
+    }
 
     public void Delete(TK id) => Collection.Delete(GetId(id));
 }

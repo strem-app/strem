@@ -8,7 +8,7 @@ namespace Strem.Data.Types;
 
 public class UserVariablesRepository : Repository<KeyValuePair<VariableEntry, string>, VariableEntry>, IUserVariablesRepository
 {
-    public UserVariablesRepository(ILiteDatabase connection) : base(connection, "user-variables")
+    public UserVariablesRepository(ILiteDatabase connection) : base(connection, "user_variables")
     {
     }
     

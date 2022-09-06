@@ -45,24 +45,26 @@ public class FlowExecutionEngine : IFlowExecutionEngine
     public async Task StartEngine()
     {
         EventBus.Receive<FlowAddedEvent>()
-            .Subscribe(x => SetupFlow(FlowStore.Get(x.FlowId)))
+            .Subscribe(x => ResetFlow(x.FlowId))
             .AddTo(InternalSubs);
 
         EventBus.Receive<FlowRemovedEvent>()
-            .Subscribe(x => RemoveFlow(x.FlowId))
+            .Subscribe(x => ResetFlow(x.FlowId))
             .AddTo(InternalSubs);
         
         // TODO: Have this just reset a single trigger not all flow triggers
         EventBus.Receive<FlowTriggerChangedEvent>()
-            .Subscribe(x =>
-            {
-                RemoveFlow(x.FlowId);
-                SetupFlow(FlowStore.Get(x.FlowId));
-            })
+            .Subscribe(async x => ResetFlow(x.FlowId))
             .AddTo(InternalSubs);
         
         foreach(var flow in FlowStore.Flows)
         { await SetupFlow(flow); }
+    }
+
+    public async Task ResetFlow(Guid flowId)
+    {
+        RemoveFlow(flowId);
+        await SetupFlow(FlowStore.Get(flowId));
     }
     
     public async Task SetupFlow(Flow flow)

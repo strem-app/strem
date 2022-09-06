@@ -6,7 +6,7 @@ namespace Strem.Data.Types;
 
 public class AppVariablesRepository : Repository<KeyValuePair<VariableEntry, string>, VariableEntry>, IAppVariablesRepository
 {
-    public AppVariablesRepository(ILiteDatabase connection) : base(connection, "app-variables")
+    public AppVariablesRepository(ILiteDatabase connection) : base(connection, "app_variables")
     {
     }
 
