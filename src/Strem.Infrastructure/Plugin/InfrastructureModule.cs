@@ -16,6 +16,7 @@ using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Flows;
 using Strem.Core.Flows.Executors;
+using Strem.Core.Flows.Executors.Logging;
 using Strem.Core.Flows.Processors;
 using Strem.Core.Flows.Registries.Integrations;
 using Strem.Core.Flows.Registries.Menus;
@@ -94,6 +95,11 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<ITriggerRegistry, TriggerRegistry>();
         services.AddSingleton<IIntegrationRegistry, IntegrationRegistry>();
         services.AddSingleton<IMenuRegistry, MenuRegistry>();
+        
+        // Execution
+        services.AddSingleton<ITaskExecutor, TaskExecutor>();
+        services.AddSingleton<ITriggerExecutor, TriggerExecutor>();
+        services.AddSingleton<IFlowExecutionLogger, FlowExecutionLogger>();
         services.AddSingleton<IFlowExecutionEngine, IFlowExecutor, FlowExecutionEngine>();
         
         // OS Specific

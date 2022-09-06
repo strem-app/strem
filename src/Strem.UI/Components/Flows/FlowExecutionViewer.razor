@@ -1,15 +1,16 @@
 ﻿@using Strem.Core.Flows.Executors
+@using Strem.Core.Flows.Executors.Logging
 @using Strem.Core.Types
 
-@inject IFlowExecutionEngine FlowExecutionEngine
+@inject IFlowExecutionLogger FlowExecutionLogger
 
-@if (FlowExecutionEngine.ExecutionLogs.Count == 0)
+@if (FlowExecutionLogger.ExecutionLogs.Count == 0)
 {
     <p class="title is-5 has-text-black">No Logs Available</p>
 }
 else
 {
-    <PagedContent Data="FlowExecutionEngine.ExecutionLogs" Context="executionLog" ElementsPerPage="5" SplitSize="1">
+    <PagedContent Data="FlowExecutionLogger.ExecutionLogs" Context="executionLog" ElementsPerPage="5" SplitSize="1">
             <Accordion Title="@($"{executionLog.FlowName} @ {executionLog.StartTime}")" HeaderClasses="@(executionLog.ExecutionResultType == ExecutionResultType.Success ? "is-success" : "is-danger")">
                 <div class="field">
                     <label class="label">Took @((int)(executionLog.EndTime - executionLog.StartTime).TotalSeconds)s to execute @(executionLog.ExecutionResultType == ExecutionResultType.Success ? "Successfully" : "Unsuccessfully")</label>

@@ -42,4 +42,12 @@ public static class IVariablesExtensions
     
     public static void Delete(this IVariables variables, string key, string context = VariableEntry.DefaultContext)
     { variables.Delete(new VariableEntry(key, context)); }
+
+    public static IVariables Combine(this IVariables source, params IVariables[] additions)
+    {
+        var allVariables = source.GetAll().ToList();
+        foreach (var additionVars in additions)
+        { allVariables.AddRange(additionVars.GetAll()); }
+        return new Variables.Variables(allVariables.ToDictionary(x => x.Key, x => x.Value));
+    }
 }

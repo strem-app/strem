@@ -1,7 +1,7 @@
 ﻿using Strem.Core.Types;
 using Strem.Core.Variables;
 
-namespace Strem.Core.Flows.Executors;
+namespace Strem.Core.Flows.Executors.Logging;
 
 public class FlowExecutionLog
 {
