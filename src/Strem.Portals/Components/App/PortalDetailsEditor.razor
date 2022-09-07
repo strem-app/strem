@@ -33,7 +33,7 @@
     {
         <div class="field">
             <div class="control is-expanded">
-                <TagEditor Tags="Data.TodoTags" OnTagsChanged="StateHasChanged"></TagEditor>
+                <TagEditor Tags="Data.TodoTags" OnTagsChanged="StateHasChanged" TagsExpression="() => Data.TodoTags"></TagEditor>
             </div>
             <HelperInfo>This allow you to filter only specific todos based on their tags</HelperInfo>
         </div>

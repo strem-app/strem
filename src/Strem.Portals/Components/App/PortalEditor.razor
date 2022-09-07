@@ -31,7 +31,7 @@
     </div>
 
     <Accordion Title="Portal Settings" HeaderClasses="is-info">
-        <PortalDetailsEditor Data="Portal" DataChanged="() => InvokeAsync(StateHasChanged)"></PortalDetailsEditor>
+        <PortalDetailsEditor Data="Portal" DataChanged="PortalDetailsChanged"></PortalDetailsEditor>
     </Accordion>
     
 </div>
@@ -132,7 +132,7 @@
         { return TodoStore.Todos; }
 
         return TodoStore.Todos
-            .Where(x => x.Tags.All(tag => Portal.TodoTags.Contains(tag, StringComparer.OrdinalIgnoreCase)));
+            .Where(x => Portal.TodoTags.All(requiredTag => x.Tags.Contains(requiredTag, StringComparer.OrdinalIgnoreCase)));
     }
     
     public string GetButtonStyles(ButtonData buttonData)
@@ -156,6 +156,12 @@
     {
         ShowEditModal = false;
         SelectedButton = null;
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
+    }
+
+    private void PortalDetailsChanged()
+    {
+        InvokeAsync(StateHasChanged);
         EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 

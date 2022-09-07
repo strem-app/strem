@@ -1,4 +1,6 @@
-﻿<div class="field has-addons">
+﻿@using System.Linq.Expressions
+
+<div class="field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control is-expanded">
         <input class="input" type="text" placeholder="tag name to add" @bind="TagInput" @onkeyup="AddTagIfEnterPressed">
     </div>
@@ -25,16 +27,46 @@
 
     [Parameter]
     public List<string> Tags { get; set; }
+    public string TagInput { get; set; }
 
     [Parameter]
     public EventCallback OnTagsChanged { get; set; }
+    
+    [Parameter] 
+    public Expression<Func<List<string>>>? TagsExpression { get; set; }
 
-    public string TagInput { get; set; }
+    [CascadingParameter] 
+    protected EditContext? EditContext { get; set; } = null;
 
+
+    protected FieldIdentifier? _fieldIdentifier { get; set; }
+    
+    public bool? IsValid
+    {
+        get
+        {
+            if (_fieldIdentifier is not { }){ return null; }
+            return !EditContext.GetValidationMessages(_fieldIdentifier.Value).Any();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (EditContext != null)
+        { _fieldIdentifier = FieldIdentifier.Create(TagsExpression); }
+    }
+    
+    public void RefreshValidation()
+    {
+        if(_fieldIdentifier != null)
+        { EditContext?.NotifyFieldChanged(_fieldIdentifier.Value); }
+    }
+    
     private void RemoveTag(string tag)
     {
         Tags.Remove(tag);
         OnTagsChanged.InvokeAsync();
+        RefreshValidation();
     }
 
     private void AddTag()
@@ -44,6 +76,7 @@
         {
             Tags.Add(TagInput.ToLower());
             OnTagsChanged.InvokeAsync();
+            RefreshValidation();
         }
     
         TagInput = string.Empty;
@@ -52,8 +85,6 @@
     private void AddTagIfEnterPressed(KeyboardEventArgs e)
     {
         if (e.Code is "Enter" or "NumpadEnter")
-        {
-            AddTag();
-        }
+        { AddTag(); }
     }
 }
