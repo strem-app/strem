@@ -29,23 +29,7 @@
   </div>
 }
 <div class="box">
-  <div class="field">
-    <label class="label">Flow Name</label>
-    <div class="control">
-      <input type="text" class="input" 
-             placeholder="i.e Name of your flow"
-             @bind="Flow.Name">
-    </div>
-  </div>
-  <div class="field">
-    <label class="label">Flow Category</label>
-    <div class="control">
-      <input type="text" class="input" 
-             placeholder="i.e Name of the category for the flow"
-             @bind="Flow.Category">
-    </div>
-    <HelperInfo>Flow categories help you group flows with similar functionality or context for easier viewing</HelperInfo>
-  </div>
+  <FlowDetailsEditor Data="Flow" DataChanged="NotifyDetailsChanged" />
   <div class="field">
     <div class="control">
       <button @onclick="ToggleFlowEnablement" class="button is-leveled @(Flow.Enabled ? "is-danger" : "is-success")">
@@ -89,46 +73,10 @@
   public void NotifyTriggerChanged(Guid triggerId)
   { EventBus.PublishAsync(new FlowTriggerChangedEvent(Flow.Id, triggerId)); }
 
+  public void NotifyDetailsChanged()
+  { EventBus.PublishAsync(new FlowDetailsChangedEvent(Flow.Id)); }
+
   private CompositeDisposable _subs = new();
-  
-  protected override Task OnInitializedAsync()
-  {
-    // TODO: Look at better way to indicate stuff is running to people
-    /*
-    EventBus.Receive<FlowTaskStarted>()
-      .Subscribe(x =>
-      {
-        ActiveTaskId = x.TaskId;
-        InvokeAsync(StateHasChanged);
-      })
-      .AddTo(_subs);
-    
-    EventBus.Receive<FlowTaskFinished>()
-      .Subscribe(x =>
-      {
-        ActiveTaskId = Guid.Empty;
-        InvokeAsync(StateHasChanged);
-      })
-      .AddTo(_subs);
-    
-    EventBus.Receive<FlowTriggerStarted>()
-      .Subscribe(x =>
-      {
-        ActiveTriggerId = x.TriggerId;
-        InvokeAsync(StateHasChanged);
-      })
-      .AddTo(_subs);
-    
-    EventBus.Receive<FlowTriggerFinished>()
-      .Subscribe(x =>
-      {
-        ActiveTriggerId = Guid.Empty;
-        InvokeAsync(StateHasChanged);
-      })
-      .AddTo(_subs);
-    */
-    return base.OnInitializedAsync();
-  }
   
   public void OnFlowDeleted()
   {
@@ -143,9 +91,7 @@
   }
 
   public void Dispose()
-  {
-    _subs.Dispose();
-  }
+  {_subs.Dispose(); }
 
   public void ToggleFlowEnablement()
   {

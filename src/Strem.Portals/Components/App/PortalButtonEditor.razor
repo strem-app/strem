@@ -3,67 +3,75 @@
 @using Strem.Core.Extensions
 @using Strem.Portals.Types
 
+@inherits ValidatedComponent<Strem.Portals.Data.ButtonData>
+
 <h3 class="title is-3 has-text-black">Edit Button</h3>
+<EditForm EditContext="EditContext" class="block">
 <div class="field">
     <label class="label">Button Name</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e PlaysAMeme" @bind-value="ButtonData.Name"/>
+        <GenericInput Placeholder="i.e PlaysAMeme" @bind-Value="Data.Name" />
     </div>
 </div>
 <div class="field">
     <label class="label">Button Text</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e Play A Meme" @bind-value="ButtonData.DefaultStyles.Text"/>
+        <input class="input" type="text" placeholder="i.e Play A Meme" @bind-value="Data.DefaultStyles.Text"/>
     </div>
 </div>
 <div class="field">
     <label class="label">Button Color</label>
     <div class="control">
-        <input class="input" type="color" @bind-value="ButtonData.DefaultStyles.BackgroundColor" />
+        <input class="input" type="color" @bind-value="Data.DefaultStyles.BackgroundColor" />
     </div>
 </div>
 <div class="field">
     <label class="label">Text Color</label>
     <div class="control">
-        <input class="input" type="color" @bind-value="ButtonData.DefaultStyles.TextColor" />
+        <input class="input" type="color" @bind-value="Data.DefaultStyles.TextColor" />
     </div>
 </div>
 <div class="field">
     <label class="label">Button Type</label>
     <div class="select">
-        <select @bind="ButtonData.DefaultStyles.ButtonType">
+        <select @bind="Data.DefaultStyles.ButtonType">
             <EnumSelectOptions EnumType="typeof(ButtonType)"></EnumSelectOptions>
         </select>
     </div>
 </div>
 
-@if (ButtonData.DefaultStyles.ButtonType == ButtonType.IconButton)
+@if (Data.DefaultStyles.ButtonType == ButtonType.IconButton)
 {
     <label class="label">Icon Style</label>
     <div class="field">
         <div class="control">
-            <IconPicker @bind-Icon="ButtonData.DefaultStyles.IconClass"></IconPicker>
+            <IconPicker @bind-Icon="Data.DefaultStyles.IconClass"></IconPicker>
         </div>
     </div>
 }
-else if (ButtonData.DefaultStyles.ButtonType == ButtonType.ImageButton)
+else if (Data.DefaultStyles.ButtonType == ButtonType.ImageButton)
 {
     <label class="label">Icon Image</label>
     <div class="field">
         <div class="control">
-            <FileInputBrowser @bind-Value="ButtonData.DefaultStyles.ImageUrl" Placeholder="i.e http://some-site.com/some-image.png or c:/some-file.png" />
+            <FileInputBrowser @bind-Value="Data.DefaultStyles.ImageUrl" Placeholder="i.e http://some-site.com/some-image.png or c:/some-file.png" />
         </div>
         <HelperInfo>This can be a url to a file online or a local file, local files need more processing though so the larger they are the longer they will take to load, try to keep sizes below 256x256 pixels</HelperInfo>
     </div>
     <div class="field">
         <div class="control">
             <figure class="image is-128x128">
-                <img alt="@ButtonData.DefaultStyles.Text" src="@ButtonData.DefaultStyles.ImageUrl.GetImageUrl()" class="is-full" />
+                <img alt="@Data.DefaultStyles.Text" src="@Data.DefaultStyles.ImageUrl.GetImageUrl()" class="is-full" />
             </figure>
         </div>
     </div>
 }
 
+@if (!IsValid)
+{
+    <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+}
+</EditForm>
 <div class="field is-grouped">
   <div class="control">
     <button class="button is-primary" @onclick="() => OnClosed.InvokeAsync()">Close</button>
@@ -71,9 +79,6 @@ else if (ButtonData.DefaultStyles.ButtonType == ButtonType.ImageButton)
 </div>
 
 @code {
-    [Parameter] 
-    public ButtonData ButtonData { get; set; }
-
     [Parameter] 
     public EventCallback OnClosed { get; set; }
 }

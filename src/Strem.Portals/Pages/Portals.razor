@@ -12,6 +12,7 @@
         <div class="column">
             @if (CurrentPortal != null)
             {
+                <h1>HELLO</h1>
                 <PortalEditor Portal="CurrentPortal"></PortalEditor>
             }
         </div>
@@ -20,7 +21,7 @@
 
 
 @code {
-    public PortalData CurrentPortal { get; set; }
+    public PortalData CurrentPortal { get; set; } = null;
     
     private void SelectPortal(PortalData newPortal)
     {

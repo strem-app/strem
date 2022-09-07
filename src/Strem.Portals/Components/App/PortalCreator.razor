@@ -1,41 +1,54 @@
 ﻿@using Strem.Core.Flows
 @using Microsoft.AspNetCore.Components
+@using Strem.Portals.Components.App.Models
 @using Strem.Portals.Data
 
+@inherits ValidatedComponent<Strem.Portals.Components.App.Models.PortalCreatorFormData>
+
 <h3 class="title is-3 has-text-black">Create Portal</h3>
-<div class="field">
-    <label class="label">Name</label>
-    <div class="control">
-        <input class="input" type="text" placeholder="i.e Broadcaster Portal" @bind-value="NewPortalName"/>
+<EditForm EditContext="EditContext" class="block">
+    <div class="field">
+        <label class="label">Name</label>
+        <div class="control">
+            <GenericInput Placeholder="i.e Broadcaster Portal" @bind-Value="Data.Name"/>
+        </div>
     </div>
-</div>
-<div class="field is-grouped">
-  <div class="control">
-    <button class="button is-success" @onclick="Create">Create</button>
-  </div>
-  <div class="control">
-    <button class="button is-link is-light" @onclick="Cancel">Cancel</button>
-  </div>
-</div>
+    @if (!IsValid)
+    {
+        <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+    }
+    <div class="field is-grouped">
+        <div class="control">
+            <button class="button is-success" @onclick="Create" disabled="@(!IsValid)">Create</button>
+        </div>
+        <div class="control">
+            <button class="button is-link is-light" @onclick="Cancel">Cancel</button>
+        </div>
+    </div>
+</EditForm>
 
 @code {
     [Parameter] 
     public EventCallback<PortalData> OnPortalCreated { get; set; }
     [Parameter] 
     public EventCallback OnCancelled { get; set; }
-    
-    public string NewPortalName { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Data = new PortalCreatorFormData();
+        return base.OnInitializedAsync();
+    }
 
     public void Create()
     {
-        var newFlow = new PortalData(Guid.NewGuid(), NewPortalName);
-        NewPortalName = string.Empty;
+        var newFlow = new PortalData(Guid.NewGuid(), Data.Name);
+        Data.Name = string.Empty;
         OnPortalCreated.InvokeAsync(newFlow);
     }
 
     public void Cancel()
     {
-        NewPortalName = string.Empty;
+        Data.Name = string.Empty;
         OnCancelled.InvokeAsync();
     }
 }

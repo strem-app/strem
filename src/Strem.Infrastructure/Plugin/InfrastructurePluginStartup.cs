@@ -71,8 +71,10 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
 
         EventBus.Receive<ErrorEvent>().Subscribe(x => Logger.Error($"[{x.Source}]: {x.Message}"));
         
-        EventBus.Receive<FlowTaskChangedEvent>().Select(x => x.FlowId)
+        EventBus
+            .Receive<FlowTaskChangedEvent>().Select(x => x.FlowId)
             .Merge(EventBus.Receive<FlowTriggerChangedEvent>().Select(x => x.FlowId))
+            .Merge(EventBus.Receive<FlowDetailsChangedEvent>().Select(x => x.FlowId))
             .ThrottledByKey(x => x, TimeSpan.FromSeconds(2))
             .Select(x => FlowStore.Get(x))
             .Subscribe(x =>

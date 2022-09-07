@@ -7,33 +7,32 @@
 
 @inherits ValidatedComponent<Strem.UI.Components.Flows.Models.FlowCreatorFormData>
 
-<EditForm EditContext="EditContext">
-    <h3 class="title is-3 has-text-black">Create Flow</h3>
-    <div class="field">
-        <label class="label">Name</label>
-        <div class="control">
-            <GenericInput Placeholder="i.e Play A Meme" @bind-Value="Data.Name"/>
-        </div>
+<h3 class="title is-3 has-text-black">Create Flow</h3>
+<div class="field">
+    <label class="label">Name</label>
+    <div class="control">
+        <GenericInput Placeholder="i.e Play A Meme" @bind-Value="Data.Name"/>
     </div>
-    <div class="field">
-        <label class="label">Category</label>
-        <div class="control">
-            <GenericInput Placeholder="i.e Memes" @bind-Value="Data.Category" />
-        </div>
+</div>
+<div class="field">
+    <label class="label">Category</label>
+    <div class="control">
+        <GenericInput Placeholder="i.e Memes" @bind-Value="Data.Category" />
     </div>
-    @if (!IsValid)
-    {
-        <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
-    }
-    <div class="field is-grouped">
-      <div class="control">
-        <button class="button is-success" @onclick="CreateFlow" disabled="@(!IsValid)">Create</button>
-      </div>
-      <div class="control">
-        <button class="button is-link is-light" @onclick="CancelFlow">Cancel</button>
-      </div>
-    </div>
-</EditForm>
+    <HelperInfo>Flow categories help you group flows with similar functionality or context for easier viewing</HelperInfo>
+</div>
+@if (!IsValid)
+{
+    <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+}
+<div class="field is-grouped">
+  <div class="control">
+    <button class="button is-success" @onclick="CreateFlow" disabled="@(!IsValid)">Create</button>
+  </div>
+  <div class="control">
+    <button class="button is-link is-light" @onclick="CancelFlow">Cancel</button>
+  </div>
+</div>
 
 @code {
     

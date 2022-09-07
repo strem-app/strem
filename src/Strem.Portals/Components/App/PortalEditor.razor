@@ -122,14 +122,17 @@
 
 
 <Modal IsVisible="ShowEditModal">
-    <PortalButtonEditor ButtonData="SelectedButton" OnClosed="EditModalClosed"></PortalButtonEditor>
+    @if (SelectedButton != null)
+    {
+        <PortalButtonEditor Data="SelectedButton" OnClosed="EditModalClosed"></PortalButtonEditor>
+    }
 </Modal>
 
 @code {
     [Parameter]
     public PortalData Portal { get; set; } = new();
 
-    public ButtonData SelectedButton { get; set; } = new ButtonData();
+    public ButtonData SelectedButton { get; set; }
     public bool ShowEditModal { get; set; }
     
     public void AddButton()
@@ -181,6 +184,7 @@
     private void EditModalClosed()
     {
         ShowEditModal = false;
+        SelectedButton = null;
         EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 

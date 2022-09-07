@@ -14,4 +14,12 @@ public static class IObservableExtensions
             .GroupByUntil(keySelector, x => Observable.Timer(throttlePeriod))
             .SelectMany(x => x.LastAsync());
     }
+    
+    public static IObservable<T> ThrottledByKey<T, TK>(this IObservable<T> observable, Func<T, TK> keySelector, TimeSpan throttlePeriod)
+        where T : struct
+    {
+        return observable
+            .GroupByUntil(keySelector, x => Observable.Timer(throttlePeriod))
+            .SelectMany(x => x.LastAsync());
+    }
 }
