@@ -4,7 +4,7 @@
 @using System.Reactive.Linq
 @using Strem.Core.Extensions
 
-@implements IDisposable
+@inherits ValidatedComponent<IFlowTriggerData>
 
 <EditForm EditContext="EditContext">
     <Accordion Title="@Title" HeaderClasses="is-success" ContainerClasses="@(!IsValid ? "has-validation-errors has-danger-pulse" : "")">
@@ -33,12 +33,6 @@
     public Type ComponentType { get; set; }
     
     [Parameter]
-    public IFlowTriggerData Data { get; set; }
-    
-    [Parameter]
-    public EventCallback DataChanged { get; set; }
-    
-    [Parameter]
     public IFlowTrigger Trigger { get; set; }
     
     [Parameter]
@@ -50,51 +44,13 @@
     [Parameter]
     public string Title { get; set; }
     
-    public EditContext EditContext { get; private set; }
-    public bool IsValid { get; private set; }
-    public CompositeDisposable _subs = new();
-    
     public Dictionary<string, object> GetProps() => new() {
         {"Data", Data },
         {"OnTitleChanged", EventCallback.Factory.Create<string>(this, OnTitleChanged)}
     };
     
-    protected override async Task OnInitializedAsync()
-    {
-        EditContext = new EditContext(Data);
-        EditContext.EnableDataAnnotationsValidation().AddTo(_subs);
-        
-        Observable.FromEventPattern<ValidationStateChangedEventArgs>(
-            x => EditContext.OnValidationStateChanged += x,
-            x => EditContext.OnValidationStateChanged -= x)
-            .Subscribe(x => OnValidationStateChanged())
-            .AddTo(_subs);
-
-        Observable.FromEventPattern<FieldChangedEventArgs>(
-            x => EditContext.OnFieldChanged += x,
-            x => EditContext.OnFieldChanged -= x)
-            .Subscribe(x => OnFieldChanged())
-            .AddTo(_subs);
-        
-        IsValid = EditContext.Validate();
-    }
-    
-    private void OnFieldChanged()
-    { DataChanged.InvokeAsync(); }
-
-    public void OnValidationStateChanged()
-    {
-        IsValid = !EditContext.GetValidationMessages().Any();
-        InvokeAsync(StateHasChanged);
-    }
-    
     public void OnTitleChanged(string newTitle)
     {
         Title = newTitle;
-    }
-    
-    public void Dispose()
-    {
-        _subs.Dispose();
     }
 }

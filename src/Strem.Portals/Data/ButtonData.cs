@@ -1,7 +1,4 @@
-﻿
-using Newtonsoft.Json;
-
-namespace Strem.Portals.Data;
+﻿namespace Strem.Portals.Data;
 
 public class ButtonData
 {

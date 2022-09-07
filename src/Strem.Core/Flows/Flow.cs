@@ -1,4 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Flows.Tasks;
 using Strem.Core.Flows.Triggers;
 
 namespace Strem.Core.Flows;
@@ -8,6 +9,8 @@ public class Flow
     public string Version { get; set; } = "1.0.0";
     
     public Guid Id { get; set; }
+    
+    [Required]
     public string Name { get; set; }
     public string Category { get; set; }
     public bool Enabled { get; set; }

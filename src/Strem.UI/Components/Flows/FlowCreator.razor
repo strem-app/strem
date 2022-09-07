@@ -1,48 +1,66 @@
 ﻿@using Strem.Core.Flows
+@using System.ComponentModel.DataAnnotations
+@using System.Reactive.Disposables
+@using Microsoft.AspNetCore.Components
+@using Strem.Core.Extensions
+@using Strem.UI.Components.Flows.Models
 
-<h3 class="title is-3 has-text-black">Create Flow</h3>
-<div class="field">
-    <label class="label">Name</label>
-    <div class="control">
-        <input class="input" type="text" placeholder="i.e Play A Meme" @bind-value="NewFlowName"/>
+@inherits ValidatedComponent<Strem.UI.Components.Flows.Models.FlowCreatorFormData>
+
+<EditForm EditContext="EditContext">
+    <h3 class="title is-3 has-text-black">Create Flow</h3>
+    <div class="field">
+        <label class="label">Name</label>
+        <div class="control">
+            <GenericInput Placeholder="i.e Play A Meme" @bind-Value="Data.Name"/>
+        </div>
     </div>
-</div>
-<div class="field">
-    <label class="label">Category</label>
-    <div class="control">
-        <input class="input" type="text" placeholder="i.e Memes" @bind-value="NewFlowCategory" />
+    <div class="field">
+        <label class="label">Category</label>
+        <div class="control">
+            <GenericInput Placeholder="i.e Memes" @bind-Value="Data.Category" />
+        </div>
     </div>
-</div>
-<div class="field is-grouped">
-  <div class="control">
-    <button class="button is-success" @onclick="CreateFlow">Create</button>
-  </div>
-  <div class="control">
-    <button class="button is-link is-light" @onclick="CancelFlow">Cancel</button>
-  </div>
-</div>
+    @if (!IsValid)
+    {
+        <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+    }
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-success" @onclick="CreateFlow" disabled="@(!IsValid)">Create</button>
+      </div>
+      <div class="control">
+        <button class="button is-link is-light" @onclick="CancelFlow">Cancel</button>
+      </div>
+    </div>
+</EditForm>
 
 @code {
+    
     [Parameter] 
     public EventCallback<Flow> OnFlowCreated { get; set; }
+    
     [Parameter] 
     public EventCallback OnCancelled { get; set; }
-    
-    public string NewFlowName { get; set; }
-    public string NewFlowCategory { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Data = new FlowCreatorFormData();
+        return base.OnInitializedAsync();
+    }
 
     public void CreateFlow()
     {
-        var newFlow = new Flow(Guid.NewGuid(), NewFlowName, NewFlowCategory);
-        NewFlowName = string.Empty;
-        NewFlowCategory = string.Empty;
+        var newFlow = new Flow(Guid.NewGuid(), Data.Name, Data.Category);
+        Data.Name = string.Empty;
+        Data.Category = string.Empty;
         OnFlowCreated.InvokeAsync(newFlow);
     }
 
     public void CancelFlow()
     {
-        NewFlowName = string.Empty;
-        NewFlowCategory = string.Empty;
+        Data.Name = string.Empty;
+        Data.Category = string.Empty;
         OnCancelled.InvokeAsync();
     }
 }
