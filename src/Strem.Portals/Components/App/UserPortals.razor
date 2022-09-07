@@ -3,6 +3,7 @@
 @using Strem.Core.Events.Flows
 @using System.Reactive.Disposables
 @using Strem.Portals.Data
+@using Strem.Portals.Events
 
 @inject IPortalStore PortalStore;
 @inject IEventBus EventBus;
@@ -58,14 +59,16 @@
     PortalStore.Portals.Add(newPortal);
     SelectPortal(newPortal);
     ShowCreateModal = false;
-    EventBus.PublishAsync(new FlowAddedEvent(newPortal.Id));
+    EventBus.PublishAsync(new PortalChangedEvent(newPortal.Id));
   }
 
   public void OnPortalHasBeenRemoved()
   {
+    var deletedPortalId = SelectedPortalId;
     SelectedPortalId = Guid.Empty;
     OnPortalSelected.InvokeAsync(null);
     InvokeAsync(StateHasChanged);
+    EventBus.PublishAsync(new PortalChangedEvent(deletedPortalId));
   }
 
   public void OnPortalCancelled()

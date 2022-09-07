@@ -109,13 +109,7 @@
 
     public void NotifyButtonPressed(ButtonData buttonData)
     {
-        EventBus.PublishAsync(new ButtonPressedEvent
-        {
-            PortalId = Portal.Id,
-            PortalName = Portal.Name,
-            ButtonId = buttonData.Id,
-            ButtonName = buttonData.Name
-        });
+        EventBus.PublishAsync(new ButtonPressedEvent(Portal.Id, Portal.Name, buttonData.Id, buttonData.Name));
     }
     
     private string GetImageSize(ButtonSize portalButtonSize)

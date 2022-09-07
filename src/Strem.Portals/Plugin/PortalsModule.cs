@@ -4,7 +4,7 @@ using Strem.Core.Plugins;
 using Strem.Infrastructure.Services.Api;
 using Strem.Portals.Data;
 using Strem.Portals.Data.Overrides;
-using Strem.Portals.Services.Persistence;
+using Strem.Portals.Data.Repositories;
 
 namespace Strem.Portals.Plugin;
 
@@ -21,9 +21,8 @@ public class PortalsModule : IRequiresApiHostingModule
             PageUrl = "portals"
         });
         
-        // Persistence
-        services.AddSingleton<ILoadPortalStorePipeline, LoadPortalStorePipeline>();
-        services.AddSingleton<ISavePortalStorePipeline, SavePortalStorePipeline>();
+        // Data
+        services.AddSingleton<IPortalRepository, PortalRepository>();
         services.AddSingleton<IPortalStore>(LoadPortalStore);
         services.AddSingleton<ButtonRuntimeStyles>(PopulateRuntimeStyles);
         
@@ -38,12 +37,9 @@ public class PortalsModule : IRequiresApiHostingModule
     
     public IPortalStore LoadPortalStore(IServiceProvider services)
     {
-        var portalStoreLoader = services.GetService<ILoadPortalStorePipeline>();
-        return Task.Run(async () =>
-        {
-            await CreateStoreFileIfNeeded(services);
-            return await portalStoreLoader.Execute();
-        }).Result;
+        var portalRepository = services.GetService<IPortalRepository>();
+        var allPortals = portalRepository.GetAll();
+        return new PortalStore(allPortals);
     }
     
     public ButtonRuntimeStyles PopulateRuntimeStyles(IServiceProvider services)
@@ -57,13 +53,5 @@ public class PortalsModule : IRequiresApiHostingModule
             buttonRuntimeStyles.RuntimeStyles.Add(portal.Id, buttonStyles);
         }
         return buttonRuntimeStyles;
-    }
-    
-    public async Task CreateStoreFileIfNeeded(IServiceProvider services)
-    {
-        var portalStoreSaver = services.GetService<ISavePortalStorePipeline>();
-        var portalStoreFilePath = portalStoreSaver.DataFilePath;
-        if (!File.Exists(portalStoreFilePath))
-        { await portalStoreSaver.Execute(new PortalStore()); }
     }
 }

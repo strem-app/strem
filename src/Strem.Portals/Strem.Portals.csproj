@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <Folder Include="Data\Profiles" />
+      <Folder Include="Services" />
       <Folder Include="Views" />
     </ItemGroup>
 

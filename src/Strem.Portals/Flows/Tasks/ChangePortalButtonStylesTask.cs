@@ -41,13 +41,8 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
         if(data.ChangeBackgroundColor) { runtimeStyles.BackgroundColor = data.NewStyles.BackgroundColor; }
         if(data.ChangeIcon) { runtimeStyles.IconClass = data.NewStyles.IconClass; }
         if(data.ChangeImage) { runtimeStyles.ImageUrl = data.NewStyles.ImageUrl; }
-        
-        EventBus.PublishAsync(new ButtonChangedEvent
-        {
-            PortalId = data.PortalId,
-            ButtonId = data.ButtonId
-        });
-        
+
+        EventBus.PublishAsync(new ButtonChangedEvent(data.PortalId, data.ButtonId));
         return ExecutionResult.Success();
     }
 }

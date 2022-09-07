@@ -1,10 +1,13 @@
-﻿using Strem.Portals.Types;
+﻿using System.ComponentModel.DataAnnotations;
+using Strem.Portals.Types;
 
 namespace Strem.Portals.Data;
 
 public class PortalData
 {
     public Guid Id { get; set; }
+    
+    [Required]
     public string Name { get; set; }
     public ButtonSize ButtonSize { get; set; }
     public bool ShowTodos { get; set; }

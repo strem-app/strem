@@ -3,12 +3,15 @@
 @using Microsoft.JSInterop
 @using Microsoft.AspNetCore.Components
 @using Strem.Core.Browsers.Web
+@using Strem.Core.Events.Bus
 @using Strem.Core.Extensions
 @using Strem.Core.Types
+@using Strem.Portals.Events
 @using Strem.Portals.Types
 @using Strem.Todos.Data
 
 @inject IWebBrowser WebBrowser
+@inject IEventBus EventBus
 @inject ITodoStore TodoStore 
 
 <div class="box">
@@ -119,7 +122,7 @@
 
 
 <Modal IsVisible="ShowEditModal">
-    <PortalButtonEditor ButtonData="SelectedButton" OnClosed="() => ShowEditModal = false"></PortalButtonEditor>
+    <PortalButtonEditor ButtonData="SelectedButton" OnClosed="EditModalClosed"></PortalButtonEditor>
 </Modal>
 
 @code {
@@ -173,6 +176,12 @@
         if(portalButtonSize == ButtonSize.Medium) { return "is-size-7"; }
         if(portalButtonSize == ButtonSize.Large) { return "is-size-6"; }
         return "is-size-7";
+    }
+
+    private void EditModalClosed()
+    {
+        ShowEditModal = false;
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 
 }
