@@ -18,6 +18,7 @@ public class BlazorBootstrapper
     {
         var appLauncher = app.MainWindow
             .SetTitle("Strem")
+            .SetLogVerbosity(0)
             .SetSize(1920, 1080)
             .SetUseOsDefaultSize(false)
             .SetIconFile("strem.ico");
