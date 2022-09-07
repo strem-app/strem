@@ -31,36 +31,7 @@
     </div>
 
     <Accordion Title="Portal Settings" HeaderClasses="is-info">
-        <div class="field">
-                <label class="label">Button Size</label>
-                <div class="control">
-                    <div class="select">
-                        <select @bind="@Portal.ButtonSize">
-                            <EnumSelectOptions EnumType="typeof(ButtonSize)"></EnumSelectOptions>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="field">
-                <div class="control">
-                    <label class="label">Portal Todos</label>
-                    <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" @bind="Portal.ShowTodos">
-                            Show Todos On Portal?
-                        </label>
-                    </div>
-                </div>
-            </div>
-            @if (Portal.ShowTodos)
-            {
-                <div class="field">
-                    <div class="control is-expanded">
-                        <TagEditor Tags="Portal.TodoTags" OnTagsChanged="StateHasChanged"></TagEditor>
-                    </div>
-                </div>
-            }
+        <PortalDetailsEditor Data="Portal" DataChanged="() => InvokeAsync(StateHasChanged)"></PortalDetailsEditor>
     </Accordion>
     
 </div>

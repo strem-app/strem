@@ -1,0 +1,45 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Portals.Types
+
+@inherits ValidatedComponent<Strem.Portals.Data.PortalData>
+
+<EditForm EditContext="EditContext" class="block">
+    <div class="field">
+        <label class="label">Name</label>
+        <div class="control">
+            <GenericInput Placeholder="i.e Play A Meme" @bind-Value="Data.Name"/>
+        </div>
+    </div>
+    <div class="field">
+        <label class="label">Button Size</label>
+        <div class="control">
+            <div class="select">
+                <select @bind="@Data.ButtonSize">
+                    <EnumSelectOptions EnumType="typeof(ButtonSize)"></EnumSelectOptions>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="control">
+            <label class="label">Portal Todos</label>
+            <div class="control">
+                <CheckBox @bind-Value="Data.ShowTodos" Label="Show Todos On Portal?"></CheckBox>
+            </div>
+        </div>
+    </div>
+    @if (Data.ShowTodos)
+    {
+        <div class="field">
+            <div class="control is-expanded">
+                <TagEditor Tags="Data.TodoTags" OnTagsChanged="StateHasChanged"></TagEditor>
+            </div>
+            <HelperInfo>This allow you to filter only specific todos based on their tags</HelperInfo>
+        </div>
+    }
+    @if (!IsValid)
+    {
+        <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+    }
+</EditForm>
