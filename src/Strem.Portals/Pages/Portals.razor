@@ -1,8 +1,11 @@
 ﻿@page "/portals"
 
 @using Strem.Portals.Data
+@using Strem.Core.Events.Bus
+@using Strem.Portals.Events
 
 @inject IPortalStore PortalStore
+@inject IEventBus EventBus
 
 <div class="container is-fluid">
     <div class="columns is-variable is-6">
@@ -12,8 +15,7 @@
         <div class="column">
             @if (CurrentPortal != null)
             {
-                <h1>HELLO</h1>
-                <PortalEditor Portal="CurrentPortal"></PortalEditor>
+                <PortalEditor Portal="CurrentPortal" RequestingDeletion="DeletePortal"></PortalEditor>
             }
         </div>
     </div>
@@ -28,4 +30,16 @@
         CurrentPortal = newPortal;
         InvokeAsync(StateHasChanged);
     }
+
+    private void DeletePortal(Guid portalId)
+    {
+        var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == portalId);
+        if (portal == null) { return; }
+        
+        PortalStore.Portals.Remove(portal);
+        CurrentPortal = null;
+        EventBus.PublishAsync(new PortalChangedEvent(portalId));
+        InvokeAsync(StateHasChanged);
+    }
+
 }

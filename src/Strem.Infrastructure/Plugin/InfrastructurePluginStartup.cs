@@ -85,11 +85,9 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
             .AddTo(_subs);
         
         EventBus.Receive<FlowRemovedEvent>()
-            .Select(x => FlowStore.Get(x.FlowId))
             .Subscribe(x =>
             {
-                if(x == null){ return; }
-                FlowRepository.Delete(x.Id);
+                FlowRepository.Delete(x.FlowId);
             });
         
         EventBus.Receive<FlowAddedEvent>()

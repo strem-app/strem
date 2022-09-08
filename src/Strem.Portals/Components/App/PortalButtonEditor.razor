@@ -73,12 +73,18 @@ else if (Data.DefaultStyles.ButtonType == ButtonType.ImageButton)
 }
 </EditForm>
 <div class="field is-grouped">
-  <div class="control">
-    <button class="button is-primary" @onclick="() => OnClosed.InvokeAsync()">Close</button>
-  </div>
+    <div class="control">
+        <button class="button is-danger" @onclick="() => RequestedDeletion.InvokeAsync(Data.Id)">Delete Button</button>
+    </div>
+    <div class="control">
+        <button class="button is-primary" @onclick="() => OnClosed.InvokeAsync()">Close</button>
+    </div>
 </div>
 
 @code {
     [Parameter] 
     public EventCallback OnClosed { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> RequestedDeletion { get; set; }
 }

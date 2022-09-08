@@ -3,6 +3,7 @@
 @using Strem.Core.Flows
 @using Strem.Core.Events.Bus
 @using Strem.Core.Events.Flows
+@using Strem.Core.Extensions
 @using Strem.Core.Flows.Registries.Tasks
 @using Strem.Core.Flows.Registries.Triggers
 
@@ -23,7 +24,7 @@
         }
         else
         {
-          <FlowEditor Flow="CurrentFlow"></FlowEditor>
+          <FlowEditor Flow="CurrentFlow" RequestingDeletion="OnFlowDeleted"></FlowEditor>
         }
       </div>
       <div class="column is-one-quarter">
@@ -63,4 +64,11 @@
     StateHasChanged();
   }
 
+  public void OnFlowDeleted(Guid flowId)
+  {
+    FlowStore.Remove(flowId);
+    EventBus.PublishAsync(new FlowRemovedEvent(flowId));
+    SelectFlow(null);
+    InvokeAsync(StateHasChanged);
+  }
 }

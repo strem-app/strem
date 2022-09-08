@@ -26,7 +26,6 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Components\Flows\FlowCreator.razor" />
-      <AdditionalFiles Include="Components\Flows\FlowDeletion.razor" />
       <AdditionalFiles Include="Components\Flows\FlowEditor.razor" />
       <AdditionalFiles Include="Components\Flows\FlowElementsMenu.razor" />
       <AdditionalFiles Include="Components\Flows\UserFlows.razor" />

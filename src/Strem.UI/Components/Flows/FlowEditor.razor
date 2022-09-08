@@ -13,8 +13,6 @@
 @inject IEventBus EventBus;
 @inject IFlowStore FlowStore;
 
-@implements IDisposable
-
 <h3 class="title is-3 @(Flow.Enabled ? "" : "has-text-danger")">Editing Details For: @Flow.Name</h3>
 @if (!Flow.Enabled)
 {
@@ -58,12 +56,15 @@
 </aside>
 
 <Modal IsVisible="ShowDeleteModal">
-  <FlowDeletion Flow="Flow" OnFlowDeleted="OnFlowDeleted" OnCancelled="OnFlowCancelled"></FlowDeletion>
+  <ConfirmDeletion DeletingName="@Flow.Name" OnDeletion="OnRequestingDeletion" OnCancelled="OnFlowCancelled"></ConfirmDeletion>
 </Modal>
 
 @code {
   [Parameter]
   public Flow Flow { get; set; }
+  
+  [Parameter]
+  public EventCallback<Guid> RequestingDeletion { get; set; }
   
   public bool ShowDeleteModal { get; set; }
 
@@ -75,23 +76,11 @@
 
   public void NotifyDetailsChanged()
   { EventBus.PublishAsync(new FlowDetailsChangedEvent(Flow.Id)); }
-
-  private CompositeDisposable _subs = new();
   
-  public void OnFlowDeleted()
-  {
-    FlowStore.Remove(Flow);
-    EventBus.PublishAsync(new FlowRemovedEvent(Flow.Id));
-    ShowDeleteModal = false;
-  }
-
   public void OnFlowCancelled()
   {
     ShowDeleteModal = false;
   }
-
-  public void Dispose()
-  {_subs.Dispose(); }
 
   public void ToggleFlowEnablement()
   {
@@ -101,6 +90,12 @@
     { EventBus.PublishAsync(new FlowEnabledEvent(Flow.Id));}
     else
     { EventBus.PublishAsync(new FlowDisabledEvent(Flow.Id));}
+  }
+
+  private void OnRequestingDeletion()
+  {
+    ShowDeleteModal = false;
+    RequestingDeletion.InvokeAsync(Flow.Id);
   }
 
 }
