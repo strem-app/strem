@@ -1,4 +1,5 @@
-﻿@inherits ValidatedInputBase<string>
+﻿@using Strem.Core.Extensions
+@inherits ValidatedInputBase<string>
 
 <div class="gated-input field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control">
@@ -9,8 +10,7 @@
         </button>
     </div>
     <div class="control is-expanded">
-        <input class="input is-expanded" type="@Type" value="@Value" disabled="@(!Enabled)" placeholder="@Placeholder"
-               @onchange="e => OnValueChanged(e.Value.ToString())" />
+        <GenericInput class="is-expanded" @bind-Value="@ProxyValue" disabled="@(!Enabled)" @attributes=@UnmatchedAttributes.Only("placeholder", "type") />
     </div>
 </div>
 
@@ -21,9 +21,9 @@
     [Parameter]
     public EventCallback<bool> EnabledChanged { get; set; } 
     
-    [Parameter]
-    public string Placeholder { get; set; }
-
-    [Parameter]
-    public string Type { get; set; } = "text";
+    public string ProxyValue
+    {
+        get => Value;
+        set => OnValueChanged(value);
+    }
 }

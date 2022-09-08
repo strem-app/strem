@@ -15,6 +15,9 @@ public abstract class ValidatedInputBase<T> : ComponentBase
     [Parameter] 
     public Expression<Func<T>>? ValueExpression { get; set; }
 
+    [Parameter(CaptureUnmatchedValues = true)] 
+    public IReadOnlyDictionary<string, object> UnmatchedAttributes { get; set; }
+    
     [CascadingParameter] 
     protected EditContext? EditContext { get; set; } = null;
     

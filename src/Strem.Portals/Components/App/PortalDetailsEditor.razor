@@ -15,11 +15,7 @@
             <div class="field">
                 <label class="label">Button Size</label>
                 <div class="control">
-                    <div class="select">
-                        <select @bind="@Data.ButtonSize">
-                            <EnumSelectOptions EnumType="typeof(ButtonSize)"></EnumSelectOptions>
-                        </select>
-                    </div>
+                    <EnumSelectInput @bind-Value="Data.ButtonSize"></EnumSelectInput>
                 </div>
             </div>
         </div>

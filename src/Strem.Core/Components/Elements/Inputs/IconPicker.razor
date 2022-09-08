@@ -1,35 +1,24 @@
 ﻿@inject IJSRuntime JS
 
+@inherits ValidatedInputBase<string>
+
 <div class="field has-addons">
     <div class="control">
-        <input class="input is-icon-picker" type="text" value="@Icon" 
-               disabled="@Disabled" @onchange="OnIconChanged"/>
+        <input class="input is-icon-picker" type="text" value="@Value" @onchange="e => OnValueChanged(e.Value.ToString())" @attributes=@UnmatchedAttributes/>
     </div>
     <div class="control">
         <a class="button is-static">
             <span class="icon">
-                <i class="@(Icon) has-text-black-ter"></i>
+                <i class="@(Value) has-text-black-ter"></i>
             </span>
         </a>
     </div>
 </div>
 
-
 @code {
-    [Parameter]
-    public string Icon { get; set; }
-    
-    [Parameter]
-    public EventCallback<string> IconChanged { get; set; }
-
-    [Parameter]
-    public bool Disabled { get; set; } = false;
-
-    private void OnIconChanged(ChangeEventArgs e)
-    { IconChanged.InvokeAsync(e.Value.ToString()); }
-    
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         Task.Run(async () =>
         {
             await Task.Delay(100);

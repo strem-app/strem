@@ -1,0 +1,21 @@
+﻿@typeparam T
+
+@inherits ValidatedInputBase<T>
+
+<div class="select @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
+    <select value="@Value" @onchange="e => OnValueChanged((T)e.Value)" @attributes=@UnmatchedAttributes>
+        <GenericSelectOptions Data="Data" GetName="GetName" GetValue="GetValue"></GenericSelectOptions>
+    </select>
+</div>
+
+@code
+{
+    [Parameter]
+    public IEnumerable<T> Data { get; set; }
+
+    [Parameter]
+    public Func<T, string> GetValue { get; set; } = x => x.ToString();
+    
+    [Parameter]
+    public Func<T, string> GetName { get; set; } = x => x.ToString();
+}
