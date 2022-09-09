@@ -107,7 +107,8 @@
     
     protected override async Task OnInitializedAsync()
     {
-        Observable.Interval(TimeSpan.FromMinutes(1))
+        EventBus.Receive<TodoCreatedEvent>().Select(x => x.TodoId)
+            .Merge(EventBus.Receive<TodoRemovedEvent>().Select(x => x.TodoId))
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
     }

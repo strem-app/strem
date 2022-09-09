@@ -1,11 +1,7 @@
 ﻿using LiteDB;
-using Strem.Core.Flows;
 using Strem.Data;
-using Strem.Data.Types;
-using Strem.Todos.Data;
-using Strem.Todos.Data.Repositories;
 
-namespace Strem.Portals.Data.Repositories;
+namespace Strem.Todos.Data.Repositories;
 
 public class TodoRepository : Repository<TodoData, Guid>, ITodoRepository
 {

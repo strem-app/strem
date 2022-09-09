@@ -4,7 +4,7 @@ using Strem.Core.Flows.Registries.Menus;
 using Strem.Core.Plugins;
 using Strem.Infrastructure.Services.Api;
 using Strem.Todos.Data;
-using Strem.Todos.Services.Persistence;
+using Strem.Todos.Data.Repositories;
 
 namespace Strem.Todos.Plugin;
 
@@ -22,8 +22,7 @@ public class TodoModule : IRequiresApiHostingModule
         });
         
         // Persistence
-        services.AddSingleton<ILoadTodoStorePipeline, LoadTodoStorePipeline>();
-        services.AddSingleton<ISaveTodoStorePipeline, SaveTodoStorePipeline>();
+        services.AddSingleton<ITodoRepository, TodoRepository>();
         services.AddSingleton<ITodoStore>(LoadTodoStore);
         
         // Components/Flows
@@ -37,19 +36,8 @@ public class TodoModule : IRequiresApiHostingModule
     
     public ITodoStore LoadTodoStore(IServiceProvider services)
     {
-        var storeLoader = services.GetService<ILoadTodoStorePipeline>();
-        return Task.Run(async () =>
-        {
-            await CreateStoreFileIfNeeded(services);
-            return await storeLoader.Execute();
-        }).Result;
-    }
-    
-    public async Task CreateStoreFileIfNeeded(IServiceProvider services)
-    {
-        var storeSaver = services.GetService<ISaveTodoStorePipeline>();
-        var portalStoreFilePath = storeSaver.DataFilePath;
-        if (!File.Exists(portalStoreFilePath))
-        { await storeSaver.Execute(new TodoStore()); }
+        var repository = services.GetService<ITodoRepository>();
+        var allTodos = repository.GetAll();
+        return new TodoStore(allTodos);
     }
 }

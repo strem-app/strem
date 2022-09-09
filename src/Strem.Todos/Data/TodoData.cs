@@ -2,7 +2,7 @@
 
 public class TodoData
 {
-    public Guid Id { get; set; } = new Guid();
+    public Guid Id { get; set; } = Guid.NewGuid();
     public DateTime CreatedDate { get; set; }
     public DateTime ExpiryDate { get; set; }
     public string CreatedBy { get; set; }

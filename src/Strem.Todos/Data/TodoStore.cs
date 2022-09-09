@@ -2,7 +2,11 @@
 
 public class TodoStore : ITodoStore
 {
-    public const string DefaultFlowStore = "Default";
-
     public List<TodoData> Todos { get; set; } = new();
+
+    public TodoStore(IEnumerable<TodoData>? todoData = null)
+    {
+        if(todoData != null)
+        { Todos.AddRange(todoData); }
+    }
 }
