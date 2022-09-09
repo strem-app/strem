@@ -6,7 +6,7 @@
 <div class="field">
     <label class="label">Channel To Play Ads For</label>
     <div class="control">
-        <input class="input" type="text" @bind="Data.Channel" placeholder="i.e Leave blank for your own channel">
+        <GenericInput @bind-Value="Data.Channel" placeholder="i.e Leave blank for your own channel" />
     </div>
     <HelperInfo>
         You can leave it blank for your own stream, or put another channel name in for another channel

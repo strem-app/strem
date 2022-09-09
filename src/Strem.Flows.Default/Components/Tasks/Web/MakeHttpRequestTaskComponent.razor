@@ -36,12 +36,13 @@
 @for (var i = 0; i < Data.Headers?.Count; i++)
 {
     var index = i;
+    var header = Data.Headers[index];
     <div class="field has-addons">
         <div class="control">
-            <input class="input" placeholder="Header Name" @bind="Data.Headers[index].Name"/>
+            <GenericInput placeholder="Header Name" @bind-Value="header.Name"/>
         </div>
         <div class="control is-expanded">
-            <ProcessedInput @bind-Value="Data.Headers[index].Value" Placeholder="Header Value"></ProcessedInput>
+            <ProcessedInput @bind-Value="header.Value" Placeholder="Header Value"></ProcessedInput>
         </div>
         <div class="control">
             <button class="button is-danger" @onclick="() => InvokeAsync(() => Data.Headers.RemoveAt(index))">

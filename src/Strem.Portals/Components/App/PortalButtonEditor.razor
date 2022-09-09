@@ -10,25 +10,25 @@
 <div class="field">
     <label class="label">Button Name</label>
     <div class="control">
-        <GenericInput Placeholder="i.e PlaysAMeme" @bind-Value="Data.Name" />
+        <GenericInput placeholder="i.e PlaysAMeme" @bind-Value="Data.Name" />
     </div>
 </div>
 <div class="field">
     <label class="label">Button Text</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e Play A Meme" @bind-value="Data.DefaultStyles.Text"/>
+        <GenericInput placeholder="i.e Play A Meme" @bind-Value="Data.DefaultStyles.Text"/>
     </div>
 </div>
 <div class="field">
     <label class="label">Button Color</label>
     <div class="control">
-        <input class="input" type="color" @bind-value="Data.DefaultStyles.BackgroundColor" />
+        <GenericInput type="color" @bind-Value="Data.DefaultStyles.BackgroundColor" />
     </div>
 </div>
 <div class="field">
     <label class="label">Text Color</label>
     <div class="control">
-        <input class="input" type="color" @bind-value="Data.DefaultStyles.TextColor" />
+        <GenericInput type="color" @bind-Value="Data.DefaultStyles.TextColor" />
     </div>
 </div>
 <div class="field">
