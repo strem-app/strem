@@ -8,8 +8,8 @@ namespace Strem.OBS.v4.Plugin;
 
 public class OBSIntegrationDescriptor : IIntegrationDescriptor
 {
-    public string Title => "OBS Integration";
-    public string Code => "obs-integration";
+    public string Title => "OBS Integration (v4)";
+    public string Code => "obs-integration-v4";
 
     public VariableDescriptor[] VariableOutputs { get; } = new[]
     {

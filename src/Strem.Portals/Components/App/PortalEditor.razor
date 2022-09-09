@@ -28,19 +28,7 @@
             </button>
         </div>
     </div>
-</div>
-
-<div class="box">
-<button class="button is-danger is-leveled" @onclick="() => ShowDeletionModal = true">
-  <span class="icon is-">
-    <i class="fas fa-globe"></i>
-  </span>
-  <span>Delete Flow</span>
-</button>
-</div>
-
-<div class="box">
-    <PortalDetailsEditor Data="Portal" DataChanged="PortalDetailsChanged"></PortalDetailsEditor>
+    <PortalDetailsEditor Data="Portal" DataChanged="PortalDetailsChanged" />
 </div>
 
 <div class="columns">
@@ -103,10 +91,6 @@
     {
         <PortalButtonEditor Data="SelectedButton" OnClosed="EditModalClosed" RequestedDeletion="DeleteButton"></PortalButtonEditor>
     }
-</Modal>
-
-<Modal IsVisible="ShowDeletionModal">
-    <ConfirmDeletion DeletingName="@Portal.Name" OnDeletion="OnPortalDeletion" OnCancelled="DeletionModalClosed"></ConfirmDeletion>
 </Modal>
 
 @code {

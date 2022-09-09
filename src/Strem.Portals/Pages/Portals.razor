@@ -5,10 +5,6 @@
 @using Strem.Core.Services.Notifications
 @using Strem.Portals.Events
 
-@inject IPortalStore PortalStore
-@inject IEventBus EventBus
-@inject INotifier Notifier
-
 <div class="container is-fluid">
     <div class="columns is-variable is-6">
         <div class="column is-one-quarter">
@@ -17,7 +13,7 @@
         <div class="column">
             @if (CurrentPortal != null)
             {
-                <PortalEditor Portal="CurrentPortal" RequestingDeletion="DeletePortal"></PortalEditor>
+                <PortalEditor Portal="CurrentPortal"></PortalEditor>
             }
         </div>
     </div>
@@ -32,17 +28,4 @@
         CurrentPortal = newPortal;
         InvokeAsync(StateHasChanged);
     }
-
-    private void DeletePortal(Guid portalId)
-    {
-        var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == portalId);
-        if (portal == null) { return; }
-        
-        PortalStore.Portals.Remove(portal);
-        CurrentPortal = null;
-        EventBus.PublishAsync(new PortalChangedEvent(portalId));
-        InvokeAsync(StateHasChanged);
-        Notifier.ShowNotification($"Portal {portal.Name} Has Been Deleted", "is-danger");
-    }
-
 }
