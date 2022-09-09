@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using LiteDB;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Events.Flows;
@@ -28,7 +29,7 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     public IUserVariablesRepository UserVariablesRepository { get; }
     public ILogger<InfrastructurePluginStartup> Logger { get; }
 
-    public InfrastructurePluginStartup(IAppState appState, IEventBus eventBus, IFlowStore flowStore, IFlowRepository flowRepository, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository, ILogger<InfrastructurePluginStartup> logger)
+    public InfrastructurePluginStartup(IAppState appState, IEventBus eventBus, IFlowStore flowStore, IFlowRepository flowRepository, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository, ILogger<InfrastructurePluginStartup> logger, ILiteDatabase database)
     {
         AppState = appState;
         EventBus = eventBus;

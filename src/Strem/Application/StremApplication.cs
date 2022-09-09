@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using LiteDB;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
@@ -17,6 +18,7 @@ public class StremApplication
     public IEventBus EventBus { get; private set; }
     public ILogger<StremApplication> Logger { get; private set; }
     public IInternalWebHost WebHost { get; private set; }
+    public ILiteDatabase Database { get; private set; }
     
     public bool HasStarted { get; private set; }
 
@@ -48,6 +50,7 @@ public class StremApplication
         Logger = services.GetService<ILogger<StremApplication>>();
         EventBus = services.GetService<IEventBus>();
         WebHost = services.GetService<IInternalWebHost>();
+        Database = services.GetService<ILiteDatabase>();
 
         HasStarted = true;
         PreStartupLogs.ForEach(Logger.Information);
@@ -75,6 +78,7 @@ public class StremApplication
     public bool ShutdownApp()
     {
         EventBus?.Publish(new ApplicationClosingEvent());
+        Database?.Dispose();
         if(WebHost?.IsRunning ?? false) { WebHost.StopHost(); }
         Logger?.Information("Strem Stopped");
         return false;
