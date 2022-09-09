@@ -6,9 +6,11 @@
 @using Strem.Core.Extensions
 @using Strem.Core.Flows.Registries.Tasks
 @using Strem.Core.Flows.Registries.Triggers
+@using Strem.Core.Services.Notifications
 
 @inject IFlowStore FlowStore
 @inject IEventBus EventBus
+@inject INotifier Notifier
 
 <div class="container is-fluid">
   <ErrorBoundary>
@@ -66,9 +68,13 @@
 
   public void OnFlowDeleted(Guid flowId)
   {
-    FlowStore.Remove(flowId);
+    var flow = FlowStore.Get(flowId);
+    if(flow == null) { return; }
+    
+    FlowStore.Remove(flow);
     EventBus.PublishAsync(new FlowRemovedEvent(flowId));
     SelectFlow(null);
     InvokeAsync(StateHasChanged);
+    Notifier.ShowNotification($"Flow {flow.Name} Has Been Deleted", "is-danger");
   }
 }

@@ -4,6 +4,14 @@
 
 <div class="select @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <select value="@Value" @onchange="e => OnValueChanged((T)Enum.Parse(typeof(T), e.Value.ToString()))" @attributes=@UnmatchedAttributes>
-        <EnumSelectOptions EnumType="typeof(T)"></EnumSelectOptions>
+        @foreach (var enumValue in Enum.GetValues(typeof(T)))
+        {
+            <option value="@enumValue">@(GetName(enumValue))</option>
+        }
     </select>
 </div>
+
+@code {
+    [Parameter]
+    public Func<object, string> GetName { get; set; } = x => x.ToString();
+}

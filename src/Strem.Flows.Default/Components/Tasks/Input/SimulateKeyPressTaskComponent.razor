@@ -14,9 +14,7 @@
             <div class="field has-addons">
                 <div class="control">
                     <div class="select">
-                        <select @bind="@Data.KeyModifiers[index]">
-                            <GenericSelectOptions Data="Modifiers" GetName="MakeKeyCodeNice"></GenericSelectOptions>
-                        </select>
+                        <DataSelectInput @bind-Value="@Data.KeyModifiers[index]" Data="Modifiers" GetName="MakeKeyCodeNice"></DataSelectInput>
                     </div>
                 </div>
                 <div class="control">
@@ -39,11 +37,7 @@
             var index = i;
             <div class="field has-addons">
                 <div class="control">
-                    <div class="select">
-                        <select @bind="@Data.KeysToPress[index]">
-                            <GenericSelectOptions Data="NormalKeys" GetName="MakeKeyCodeNice"></GenericSelectOptions>
-                        </select>
-                    </div>
+                    <DataSelectInput @bind-Value="@Data.KeysToPress[index]" Data="NormalKeys" GetName="MakeKeyCodeNice"></DataSelectInput>
                 </div>
                 <div class="control">
                     <button class="button is-danger" @onclick="() => InvokeAsync(() => Data.KeysToPress.RemoveAt(index))">

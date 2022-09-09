@@ -52,7 +52,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (EditContext != null)
+        if (EditContext != null && TagsExpression != null)
         { _fieldIdentifier = FieldIdentifier.Create(TagsExpression); }
     }
     

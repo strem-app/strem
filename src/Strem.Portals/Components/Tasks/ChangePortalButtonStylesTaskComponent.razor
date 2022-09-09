@@ -8,12 +8,7 @@
     <label class="label">Required Portal</label>
     <div class="control">
         <div class="select">
-            <select @bind="Data.PortalId">
-                @foreach (var portal in PortalStore.Portals)
-                {
-                    <option value="@portal.Id">@(portal.Name)</option>
-                }
-            </select>
+            <DataSelectInput @bind-Value="Data.PortalId" Data="PortalStore.Portals" GetName="x => x.Name" GetValue="x => x.Id" />
         </div>
     </div>
     <HelperInfo>This lets you specify which portal should be used as the trigger</HelperInfo>
@@ -27,12 +22,7 @@
             <label class="label">Portal Button</label>
             <div class="control">
                 <div class="select">
-                    <select @bind="Data.ButtonId">
-                        @foreach (var button in portal.Buttons)
-                        {
-                            <option value="@button.Id">@(button.Name)</option>
-                        }
-                    </select>
+                    <DataSelectInput @bind-Value="Data.ButtonId" Data="portal.Buttons" GetName="x => x.Name" GetValue="x => x.Id" />
                 </div>
             </div>
             <HelperInfo>This lets you specify which button you want to listen for presses on</HelperInfo>

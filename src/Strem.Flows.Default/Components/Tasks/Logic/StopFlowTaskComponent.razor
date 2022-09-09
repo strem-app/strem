@@ -2,10 +2,7 @@
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.StopParentFlowsToo">
-            Stop Parent Flows Too?
-        </label>
+        <CheckBox @bind-Value="Data.StopParentFlowsToo" Label="Stop Parent Flows Too?"></CheckBox>
     </div>
     <HelperInfo>If this is being run within a sub task you can bubble up the failure to stop the entire flow too</HelperInfo>
 </div>

@@ -15,40 +15,33 @@
 <div class="field">
     <label class="label">Minimum Required User Type</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.MinimumUserType">
-                <EnumSelectOptions EnumType="typeof(UserType)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.MinimumUserType"></EnumSelectInput>
     </div>
     <HelperInfo>
         This allows you to restrict triggering to types of users equal to or above the level, i.e <strong>Viewer</strong> will match anyone but <strong>Moderator</strong> would match moderators, twitch staff/mods/admins and the broadcaster.
     </HelperInfo>
 </div>
 
-
 <div class="field">
     <label class="label">Message Content Requirements</label>
     <div class="control">
         <div class="select">
-            <select @bind="Data.MatchTypeType">
-                <EnumSelectOptions EnumType="typeof(TextMatchType)"></EnumSelectOptions>
-            </select>
+            <EnumSelectInput @bind-Value="Data.MatchType"></EnumSelectInput>
         </div>
     </div>
     <HelperInfo>This will only trigger if the text matches your requirements</HelperInfo>
 </div>
 
-@if (Data.MatchTypeType != TextMatchType.None)
+@if (Data.MatchType != TextMatchType.None)
 {
     <div class="field">
-        <label class="label">Message Match @(Data.MatchTypeType == TextMatchType.Pattern ? "Regex Pattern" : "Text")</label>
+        <label class="label">Message Match @(Data.MatchType == TextMatchType.Pattern ? "Regex Pattern" : "Text")</label>
         <div class="control">
-            <ProcessedInput @bind-Value="Data.MatchText" Placeholder="@(Data.MatchTypeType == TextMatchType.Pattern ? "i.e regex pattern to match" : "i.e text to matching")"></ProcessedInput>
+            <ProcessedInput @bind-Value="Data.MatchText" Placeholder="@(Data.MatchType == TextMatchType.Pattern ? "i.e regex pattern to match" : "i.e text to matching")"></ProcessedInput>
         </div>
     </div>
     
-    @if (Data.MatchTypeType == TextMatchType.Pattern)
+    @if (Data.MatchType == TextMatchType.Pattern)
     {
         <Accordion Title="Regex Pattern Tester">
             <RegexTester RegexPattern="@Data.MatchText"></RegexTester>
@@ -58,40 +51,28 @@
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.IsSubscriber">
-            Require Sender To Be Subscriber?
-        </label>
+        <CheckBox @bind-Value="Data.IsSubscriber" Label="Require Sender To Be Subscriber?"></CheckBox>
     </div>
     <HelperInfo>This will only trigger if the sender is a subscriber</HelperInfo>
 </div>
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.IsVip">
-            Require Sender To Be A VIP?
-        </label>
+        <CheckBox @bind-Value="Data.IsVip" Label="Require Sender To Be VIP?"></CheckBox>
     </div>
     <HelperInfo>This will only trigger if the sender is a vip</HelperInfo>
 </div>
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.HasBits">
-            Require Bits?
-        </label>
+        <CheckBox @bind-Value="Data.HasBits" Label="Require Bits?"></CheckBox>
     </div>
     <HelperInfo>This will only trigger if the message contains bits</HelperInfo>
 </div>
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.HasChannelReward">
-            Require Channel Rewards?
-        </label>
+        <CheckBox @bind-Value="Data.HasChannelReward" Label="Require Channel Rewards?"></CheckBox>
     </div>
     <HelperInfo>This will only trigger if the message is associated with a channel reward</HelperInfo>
 </div>
@@ -101,7 +82,7 @@
     
     public string GenerateTitle()
     {
-        var hasTextMatch = Data.MatchTypeType != TextMatchType.None;
+        var hasTextMatch = Data.MatchType != TextMatchType.None;
         var textRequirements =  hasTextMatch ? "With Text Match " : "";
         var joiningWord = hasTextMatch ? "And " : "With ";
         var userRequirements =  Data.MinimumUserType != UserType.Viewer ? $"{joiningWord} At Least <strong>{Data.MinimumUserType}</strong>" : "";

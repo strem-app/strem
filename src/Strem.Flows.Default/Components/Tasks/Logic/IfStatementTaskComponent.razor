@@ -1,10 +1,6 @@
-﻿@using Strem.Core.Flows
-@using Strem.Core.Types
-@using Strem.Flows.Default.Types
+﻿@using Strem.Flows.Default.Types
 
 @inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Logic.IfStatementTaskData>
-
-@inject IFlowStore FlowStore;
 
 <div class="field">
     <label class="label">Variable A</label>
@@ -16,30 +12,18 @@
 <label class="label">Comparison Type</label>
 <div class="field is-grouped">
     <div class="control">
-        <div class="select">
-            <select @bind="Data.ComparisonType">
-                <EnumSelectOptions EnumType="typeof(ComparisonType)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.ComparisonType"></EnumSelectInput>
     </div>
     @if (Data.ComparisonType == ComparisonType.TextComparison)
     {
         <div class="control">
-            <div class="select">
-                <select @bind="Data.TextOperator">
-                    <EnumSelectOptions EnumType="typeof(TextMatchType)"></EnumSelectOptions>
-                </select>
-            </div>
+            <EnumSelectInput @bind-Value="Data.TextOperator"></EnumSelectInput>
         </div>
     }
     else
     {
         <div class="control">
-            <div class="select">
-                <select @bind="Data.NumberOperator">
-                    <EnumSelectOptions EnumType="typeof(OperatorType)"></EnumSelectOptions>
-                </select>
-            </div>
+            <EnumSelectInput @bind-Value="Data.NumberOperator"></EnumSelectInput>
         </div>
     }
 </div>

@@ -35,11 +35,7 @@
 <div class="field">
     <label class="label">Output Variable Scope</label>
     <div class="control">
-        <div class="select has-tooltip-multiline">
-            <select @bind="Data.ScopeType">
-                <EnumSelectOptions EnumType="typeof(VariableScopeType)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.ScopeType"></EnumSelectInput>
     </div>
     <HelperInfo>Persisted are available even after app closes, Application is available until app closes, Flow is only for the rest of this flow</HelperInfo>
 </div>

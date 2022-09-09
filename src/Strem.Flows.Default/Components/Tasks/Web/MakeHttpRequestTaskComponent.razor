@@ -21,11 +21,7 @@
     </div>
     <div class="field">
         <div class="control">
-            <div class="select">
-                <select @bind="Data.DataFormat">
-                    <EnumSelectOptions EnumType="typeof(DataFormat)"></EnumSelectOptions>
-                </select>
-            </div>
+            <EnumSelectInput @bind-Value="Data.DataFormat"></EnumSelectInput>
         </div>
         <HelperInfo>The body is optional and can be any of the supported data formats</HelperInfo>
     </div>

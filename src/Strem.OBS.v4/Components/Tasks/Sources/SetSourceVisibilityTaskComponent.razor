@@ -21,11 +21,7 @@
 <div class="field">
     <label class="label">Visibility</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.Status">
-                <EnumSelectOptions EnumType="typeof(VisibilityStatus)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.Status"></EnumSelectInput>
     </div>
 </div>
 

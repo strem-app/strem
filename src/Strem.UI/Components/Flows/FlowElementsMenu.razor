@@ -24,12 +24,9 @@
     </div>
   </div>
   <div class="field">
-      <div class="control">
-          <label class="checkbox">
-              <input type="checkbox" @bind="ShowDisabled">
-              Show Disabled Elements?
-          </label>
-      </div>
+    <div class="control">
+      <CheckBox @bind-Value="ShowDisabled" Label="Show Disabled Elements?"></CheckBox>
+    </div>
   </div>
 </Accordion>
 

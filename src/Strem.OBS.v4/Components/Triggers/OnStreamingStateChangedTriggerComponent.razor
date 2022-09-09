@@ -7,27 +7,17 @@
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.TriggerOnStarted">
-            Trigger When Streaming?
-        </label>
+        <CheckBox @bind-Value="Data.TriggerOnStarted" Label="Trigger When Streaming?"></CheckBox>
     </div>
 </div>
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.TriggerOnStopped">
-            Trigger When Stopped Streaming?
-        </label>
+        <CheckBox @bind-Value="Data.TriggerOnStopped" Label="Trigger When Stopped Streaming?"></CheckBox>
     </div>
 </div>
-
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.TriggerOnStart">
-            Trigger On Start?
-        </label>
+        <CheckBox @bind-Value="Data.TriggerOnStart" Label="Trigger On Start?"></CheckBox>
     </div>
     <HelperInfo>By default these triggers wait to be told when streaming state changes, but with this you can trigger it with the current state when it starts</HelperInfo>
 </div>

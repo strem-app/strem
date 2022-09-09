@@ -28,7 +28,7 @@
                 <div class="field">
                     <label class="label">Filter By Tags</label>
                     <div class="control is-expanded">
-                        <TagEditor Tags="SearchTags" OnTagsChanged="StateHasChanged"></TagEditor>
+                        <TagEditor Tags="SearchTags" OnTagsChanged="StateHasChanged" TagsExpression="() => SearchTags"></TagEditor>
                     </div>
                 </div>
             </div>
@@ -36,11 +36,7 @@
                 <div class="field">
                     <label class="label">Sort By</label>
                     <div class="control is-expanded">
-                        <div class="select">
-                            <select @bind="SortBy">
-                                <EnumSelectOptions EnumType="typeof(TodoSortBy)"></EnumSelectOptions>
-                            </select>
-                        </div>
+                        <EnumSelectInput @bind-Value="SortBy"></EnumSelectInput>
                     </div>
                 </div>
             </div>

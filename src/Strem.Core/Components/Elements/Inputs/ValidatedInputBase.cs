@@ -34,7 +34,7 @@ public abstract class ValidatedInputBase<T> : ComponentBase
     
     protected override async Task OnInitializedAsync()
     {
-        if (EditContext != null)
+        if (EditContext != null && ValueExpression != null)
         { _fieldIdentifier = FieldIdentifier.Create(ValueExpression); }
     }
     

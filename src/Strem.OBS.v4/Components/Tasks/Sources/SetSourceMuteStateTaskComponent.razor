@@ -20,11 +20,7 @@
 <div class="field">
     <label class="label">Mute State</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.Status">
-                <EnumSelectOptions EnumType="typeof(MuteStatus)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.Status"></EnumSelectInput>
     </div>
 </div>
 

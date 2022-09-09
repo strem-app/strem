@@ -33,11 +33,7 @@
 </div>
 <div class="field">
     <label class="label">Button Type</label>
-    <div class="select">
-        <select @bind="Data.DefaultStyles.ButtonType">
-            <EnumSelectOptions EnumType="typeof(ButtonType)"></EnumSelectOptions>
-        </select>
-    </div>
+    <EnumSelectInput @bind-Value="Data.DefaultStyles.ButtonType"></EnumSelectInput>
 </div>
 
 @if (Data.DefaultStyles.ButtonType == ButtonType.IconButton)
@@ -54,7 +50,7 @@ else if (Data.DefaultStyles.ButtonType == ButtonType.ImageButton)
     <label class="label">Icon Image</label>
     <div class="field">
         <div class="control">
-            <FileInputBrowser @bind-Value="Data.DefaultStyles.ImageUrl" Placeholder="i.e http://some-site.com/some-image.png or c:/some-file.png" />
+            <FileInputBrowser @bind-Value="Data.DefaultStyles.ImageUrl" placeholder="i.e http://some-site.com/some-image.png or c:/some-file.png" />
         </div>
         <HelperInfo>This can be a url to a file online or a local file, local files need more processing though so the larger they are the longer they will take to load, try to keep sizes below 256x256 pixels</HelperInfo>
     </div>

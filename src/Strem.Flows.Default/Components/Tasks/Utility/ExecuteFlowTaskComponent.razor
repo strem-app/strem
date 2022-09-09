@@ -7,23 +7,13 @@
 <div class="field">
     <label class="label">Flow</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.FlowId">
-                @foreach (var flow in FlowStore.Flows)
-                {
-                    <option value="@flow.Id">@(flow.Name)</option>
-                }
-            </select>
-        </div>
+        <DataSelectInput @bind-Value="Data.FlowId" Data="FlowStore.Flows" GetName="x => x.Name" GetValue="x => x.Id"></DataSelectInput>
     </div>
 </div>
 <div class="field">
-  <div class="control">
-    <label class="checkbox">
-      <input type="checkbox" @bind="Data.WaitForCompletion">
-      Wait For Flow To Finish?
-    </label>
-  </div>
+    <div class="control">
+        <CheckBox @bind-Value="Data.WaitForCompletion" Label="Wait For Flow To Finish?"></CheckBox>
+    </div>
 </div>
 
 @code {

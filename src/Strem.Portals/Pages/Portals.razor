@@ -2,10 +2,12 @@
 
 @using Strem.Portals.Data
 @using Strem.Core.Events.Bus
+@using Strem.Core.Services.Notifications
 @using Strem.Portals.Events
 
 @inject IPortalStore PortalStore
 @inject IEventBus EventBus
+@inject INotifier Notifier
 
 <div class="container is-fluid">
     <div class="columns is-variable is-6">
@@ -40,6 +42,7 @@
         CurrentPortal = null;
         EventBus.PublishAsync(new PortalChangedEvent(portalId));
         InvokeAsync(StateHasChanged);
+        Notifier.ShowNotification($"Portal {portal.Name} Has Been Deleted", "is-danger");
     }
 
 }

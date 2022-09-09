@@ -19,18 +19,10 @@
 <label class="label">Voice Details</label>
 <div class="field is-grouped">
     <div class="control">
-        <div class="select">
-            <select @bind="Data.VoiceGender">
-                <EnumSelectOptions EnumType="typeof(VoiceGender)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.VoiceGender"></EnumSelectInput>
     </div>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.VoiceAge">
-                <EnumSelectOptions EnumType="typeof(VoiceAge)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.VoiceAge"></EnumSelectInput>
     </div>
 </div>
 <HelperInfo>The voices available are dependent on what voice packs are installed within windows for text to voice, so you may hear no change with different values</HelperInfo>

@@ -58,9 +58,9 @@ public class OnTwitchWhisperMessageTrigger : FlowTrigger<OnTwitchWhisperMessageT
 
     public bool DoesMessageMeetCriteria(OnTwitchWhisperMessageTriggerData data, WhisperMessage message)
     {
-        if (data.MatchTypeType != TextMatchType.None)
+        if (data.MatchType != TextMatchType.None)
         {
-            if (!message.Message.MatchesText(data.MatchTypeType, data.MatchText))
+            if (!message.Message.MatchesText(data.MatchType, data.MatchText))
             { return false; }
         }
 

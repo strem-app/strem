@@ -90,7 +90,7 @@ public class OnTwitchChatMessageTriggerTests
         var triggerData = new OnTwitchChatMessageTriggerData
         {
             Channel = expectedChannel,
-            MatchTypeType = TextMatchType.None,
+            MatchType = TextMatchType.None,
             MinimumUserType = UserType.Viewer
         };
         var trigger = new OnTwitchChatMessageTrigger(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
@@ -121,7 +121,7 @@ public class OnTwitchChatMessageTriggerTests
 
         var triggerData = new OnTwitchChatMessageTriggerData
         {
-            MatchTypeType = TextMatchType.None,
+            MatchType = TextMatchType.None,
             MinimumUserType = UserType.Viewer
         };
         var trigger = new OnTwitchChatMessageTrigger(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
@@ -147,7 +147,7 @@ public class OnTwitchChatMessageTriggerTests
         var triggerData = new OnTwitchChatMessageTriggerData
         {
             Channel = expectedChannel,
-            MatchTypeType = TextMatchType.None,
+            MatchType = TextMatchType.None,
             MinimumUserType = UserType.Viewer
         };
 
@@ -172,7 +172,7 @@ public class OnTwitchChatMessageTriggerTests
         var expectedChannel = "some-channel";
         var triggerData = new OnTwitchChatMessageTriggerData
         {
-            MatchTypeType = TextMatchType.None,
+            MatchType = TextMatchType.None,
             MinimumUserType = UserType.Viewer
         };
         var trigger = new OnTwitchChatMessageTrigger(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);

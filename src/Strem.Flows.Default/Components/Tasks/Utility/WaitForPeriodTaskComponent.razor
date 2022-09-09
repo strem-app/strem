@@ -3,19 +3,9 @@
 @inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Utility.WaitForPeriodTaskData>
 
 <div class="field">
-    <label class="label">Period Type</label>
+    <label class="label">Period</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.WaitUnitsType">
-                <EnumSelectOptions EnumType="typeof(TimeUnitType)"></EnumSelectOptions>
-            </select>
-        </div>
-    </div>
-</div>
-<div class="field">
-    <label class="label">Interval Value</label>
-    <div class="control">
-        <ProcessedInput @bind-Value="Data.WaitAmount" Placeholder="i.e 5 or dynamic vars"></ProcessedInput>
+        <EnumWithValueInput @bind-Value="Data.WaitAmount" @bind-EnumValue="Data.WaitUnitsType" placeholder="i.e 5 or dynamic vars"></EnumWithValueInput>
     </div>
 </div>
 

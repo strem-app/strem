@@ -23,6 +23,7 @@ using Strem.Core.Flows.Registries.Menus;
 using Strem.Core.Flows.Registries.Tasks;
 using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Notifications;
 using Strem.Core.State;
 using Strem.Core.Threading;
 using Strem.Core.Utils;
@@ -64,6 +65,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IWebBrowser, WebBrowser>();
         services.AddSingleton<ICloner, Cloner>();
         services.AddSingleton<IDataValidator, DataValidator>();
+        services.AddSingleton<INotifier, Notifier>();
         
         // Hosting
         services.AddSingleton<IInternalWebHost, InternalWebHost>();
