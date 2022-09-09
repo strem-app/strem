@@ -2,7 +2,7 @@
 using Photino.Blazor;
 using Strem.UI;
 
-namespace Strem;
+namespace Strem.Application;
 
 public class BlazorBootstrapper
 {

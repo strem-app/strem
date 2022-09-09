@@ -35,28 +35,28 @@
     <div class="field">
         <label class="label">Change Button Color</label>
         <div class="control">
-            <GatedInput @bind-Value="Data.NewStyles.BackgroundColor" @bind-Enabled="Data.ChangeBackgroundColor" type="color"></GatedInput>
+        <GatedTextInput @bind-Value="Data.NewStyles.BackgroundColor" @bind-Enabled="Data.ChangeBackgroundColor" type="color"/>
         </div>
     </div>
 
     <div class="field">
         <label class="label">Change Text Color</label>
         <div class="control">
-            <GatedInput @bind-Value="Data.NewStyles.TextColor" @bind-Enabled="Data.ChangeTextColor" type="color"></GatedInput>
+            <GatedTextInput @bind-Value="Data.NewStyles.TextColor" @bind-Enabled="Data.ChangeTextColor" type="color" />
         </div>
     </div>
 
     <div class="field">
         <label class="label">Change Button Text</label>
         <div class="control">
-            <GatedInput @bind-Value="Data.NewStyles.Text" @bind-Enabled="Data.ChangeText"></GatedInput>
+            <GatedTextInput @bind-Value="Data.NewStyles.Text" @bind-Enabled="Data.ChangeText" />
         </div>
     </div>
 
     <div class="field">
         <label class="label">Change Button Type</label>
         <div class="control">
-            <GatedSelect @bind-Value="Data.NewStyles.ButtonType" @bind-Enabled="Data.ChangeButtonType"></GatedSelect>
+            <GatedSelect @bind-Value="Data.NewStyles.ButtonType" @bind-Enabled="Data.ChangeButtonType" />
         </div>
     </div>
 
@@ -70,7 +70,7 @@
             </button>
         </div>
         <div class="control">
-            <IconPicker @bind-Value="Data.NewStyles.IconClass" disabled="@(!Data.ChangeIcon)"></IconPicker>
+            <IconPicker @bind-Value="Data.NewStyles.IconClass" disabled="@(!Data.ChangeIcon)" />
         </div>
     </div>
 
@@ -84,7 +84,7 @@
             </button>
         </div>
         <div class="control">
-            <FileInputBrowser @bind-Value="Data.NewStyles.ImageUrl" disabled="@(!Data.ChangeImage)"></FileInputBrowser>
+            <FileInputBrowser @bind-Value="Data.NewStyles.ImageUrl" disabled="@(!Data.ChangeImage)" />
         </div>
     </div>
     <HelperInfo>This can be a url to a file online or a local file, local files need more processing though so the larger they are the longer they will take to load, try to keep sizes below 256x256 pixels</HelperInfo>

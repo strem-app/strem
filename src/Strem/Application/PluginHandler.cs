@@ -11,7 +11,7 @@ using Strem.Portals.Plugin;
 using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;
 
-namespace Strem;
+namespace Strem.Application;
 
 public class PluginHandler
 {

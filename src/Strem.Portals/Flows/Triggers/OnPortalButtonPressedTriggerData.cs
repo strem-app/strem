@@ -1,5 +1,5 @@
 ﻿using Strem.Core.Flows.Triggers;
-using Strem.Core.Validation;
+using Strem.Core.Services.Validation.Attributes;
 
 namespace Strem.Portals.Flows.Triggers;
 

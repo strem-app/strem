@@ -14,18 +14,6 @@
 @inject IFlowStore FlowStore;
 
 <h3 class="title is-3 @(Flow.Enabled ? "" : "has-text-danger")">Editing Details For: @Flow.Name</h3>
-@if (!Flow.Enabled)
-{
-  <p class="subtitle has-text-danger has-text-weight-bold">- This flow is currently disabled</p>
-  <div class="box">
-    <button class="button is-danger is-leveled" @onclick="() => ShowDeleteModal = true">
-      <span class="icon is-">
-        <i class="fas fa-code-commit"></i>
-      </span>
-      <span>Delete Flow</span>
-    </button>
-  </div>
-}
 <div class="box">
   <FlowDetailsEditor Data="Flow" DataChanged="NotifyDetailsChanged" />
   <div class="field">
@@ -55,19 +43,10 @@
   </ul>
 </aside>
 
-<Modal IsVisible="ShowDeleteModal">
-  <ConfirmDeletion DeletingName="@Flow.Name" OnDeletion="OnRequestingDeletion" OnCancelled="OnFlowCancelled"></ConfirmDeletion>
-</Modal>
-
 @code {
   [Parameter]
   public Flow Flow { get; set; }
   
-  [Parameter]
-  public EventCallback<Guid> RequestingDeletion { get; set; }
-  
-  public bool ShowDeleteModal { get; set; }
-
   public void NotifyTaskChanged(Guid taskId)
   { EventBus.PublishAsync(new FlowTaskChangedEvent(Flow.Id, taskId)); }
 
@@ -77,11 +56,6 @@
   public void NotifyDetailsChanged()
   { EventBus.PublishAsync(new FlowDetailsChangedEvent(Flow.Id)); }
   
-  public void OnFlowCancelled()
-  {
-    ShowDeleteModal = false;
-  }
-
   public void ToggleFlowEnablement()
   {
     Flow.Enabled = !Flow.Enabled;
@@ -91,11 +65,4 @@
     else
     { EventBus.PublishAsync(new FlowDisabledEvent(Flow.Id));}
   }
-
-  private void OnRequestingDeletion()
-  {
-    ShowDeleteModal = false;
-    RequestingDeletion.InvokeAsync(Flow.Id);
-  }
-
 }

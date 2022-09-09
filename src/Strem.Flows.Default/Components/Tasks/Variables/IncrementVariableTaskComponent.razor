@@ -5,7 +5,7 @@
 <div class="field">
     <label class="label">Variable Name</label>
     <div class="control">
-        <GenericInput placeholder="i.e deaths" @bind-Value="Data.Name" />
+        <TextInput placeholder="i.e deaths" @bind-Value="Data.Name" />
     </div>
 </div>
 <div class="field">
@@ -26,7 +26,7 @@
 <div class="field">
     <label class="label">Increment Amount</label>
     <div class="control">
-        <GenericInput @bind-Value="Data.IncrementAmount" placeholder="i.e 1" />
+        <IntInput @bind-Value="Data.IncrementAmount" placeholder="i.e 1" />
     </div>
     <HelperInfo>This value is what the value will have added to it each time this task is run</HelperInfo>
 </div>

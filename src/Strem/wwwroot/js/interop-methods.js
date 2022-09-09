@@ -24,7 +24,8 @@ function processButtonPicker()
 
 function showNotification(text, type, duration)
 {
-    bulmaToast.toast({ message: text, type: type, duration: duration })
+    console.log("notifying", { text, type, duration });
+    bulmaToast.toast({ message: text, type: type, duration: duration });
 }
 
 const animateCSS = (element, animation, prefix = 'animate__') =>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Strem.Core.Validation;
+namespace Strem.Core.Services.Validation;
 
 public class DataValidator : IDataValidator
 {

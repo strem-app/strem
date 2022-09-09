@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Reflection;
 
-namespace Strem.Core.Validation;
+namespace Strem.Core.Services.Validation.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class RequiredIfAttribute : ValidationAttribute

@@ -6,7 +6,7 @@ using Strem.Core.Extensions;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services.Api;
 
-namespace Strem;
+namespace Strem.Application;
 
 public class StremApplication
 {

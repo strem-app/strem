@@ -11,6 +11,6 @@ public class Notifier : INotifier
         JsRuntime = jsRuntime;
     }
 
-    public async Task ShowNotification(string title, string styles = "is-info", int showForMilliseconds = 2000)
-    { await JsRuntime.InvokeVoidAsync("showNotification", title, styles, showForMilliseconds); }
+    public async Task ShowNotification(string title, string styles = "is-info", int duration = 2000)
+    { await JsRuntime.InvokeVoidAsync("showNotification", title, styles, duration); }
 }

@@ -6,7 +6,7 @@ using Strem.Core.Flows.Registries.Menus;
 using Strem.Core.Flows.Registries.Tasks;
 using Strem.Core.Flows.Registries.Triggers;
 
-namespace Strem;
+namespace Strem.Application;
 
 public class ExecutionEngineHandler
 {

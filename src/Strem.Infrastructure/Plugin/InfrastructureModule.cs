@@ -24,10 +24,10 @@ using Strem.Core.Flows.Registries.Tasks;
 using Strem.Core.Flows.Registries.Triggers;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Notifications;
+using Strem.Core.Services.Validation;
 using Strem.Core.State;
 using Strem.Core.Threading;
 using Strem.Core.Utils;
-using Strem.Core.Validation;
 using Strem.Core.Variables;
 using Strem.Data.Types;
 using Strem.Infrastructure.Services;
@@ -65,7 +65,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IWebBrowser, WebBrowser>();
         services.AddSingleton<ICloner, Cloner>();
         services.AddSingleton<IDataValidator, DataValidator>();
-        services.AddSingleton<INotifier, Notifier>();
+        services.AddTransient<INotifier, Notifier>();
         
         // Hosting
         services.AddSingleton<IInternalWebHost, InternalWebHost>();

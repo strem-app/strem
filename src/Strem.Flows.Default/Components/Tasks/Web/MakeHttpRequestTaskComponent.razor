@@ -39,7 +39,7 @@
     var header = Data.Headers[index];
     <div class="field has-addons">
         <div class="control">
-            <GenericInput placeholder="Header Name" @bind-Value="header.Name"/>
+            <TextInput placeholder="Header Name" @bind-Value="header.Name"/>
         </div>
         <div class="control is-expanded">
             <ProcessedInput @bind-Value="header.Value" Placeholder="Header Value"></ProcessedInput>
