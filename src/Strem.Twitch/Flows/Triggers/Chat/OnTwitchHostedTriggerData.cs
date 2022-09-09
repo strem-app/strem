@@ -1,4 +1,4 @@
-﻿using Strem.Core.Flows.Triggers;
+﻿using Strem.Flows.Data.Triggers;
 
 namespace Strem.Twitch.Flows.Triggers.Chat;
 

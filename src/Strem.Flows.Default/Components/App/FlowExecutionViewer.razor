@@ -1,0 +1,31 @@
+﻿@using Strem.Flows.Executors.Logging
+@using Strem.Flows.Types
+
+@inject IFlowExecutionLogger FlowExecutionLogger
+
+@if (FlowExecutionLogger.ExecutionLogs.Count == 0)
+{
+    <p class="title is-5 has-text-black">No Logs Available</p>
+}
+else
+{
+    <PagedContent Data="FlowExecutionLogger.ExecutionLogs" Context="executionLog" ElementsPerPage="5" SplitSize="1">
+            <Accordion Title="@($"{executionLog.FlowName} @ {executionLog.StartTime}")" HeaderClasses="@(executionLog.ExecutionResultType == ExecutionResultType.Success ? "is-success" : "is-danger")">
+                <div class="field">
+                    <label class="label">Took @((int)(executionLog.EndTime - executionLog.StartTime).TotalSeconds)s to execute @(executionLog.ExecutionResultType == ExecutionResultType.Success ? "Successfully" : "Unsuccessfully")</label>
+                </div>
+                <div class="m-5">
+                    <ol>
+                        @foreach (var taskSummary in executionLog.ElementExecutionSummary)
+                        { <li class="has-text-weight-semibold">@taskSummary</li> }
+                    </ol>
+                </div>
+                <VariablesViewer Title="Variables At Start" Variables="executionLog.StartVariables"/>
+                <VariablesViewer Title="Variables At End" Variables="executionLog.EndVariables"/>
+            </Accordion>
+    </PagedContent>    
+}
+
+@code {
+    
+}

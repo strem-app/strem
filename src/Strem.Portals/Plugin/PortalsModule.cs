@@ -1,6 +1,7 @@
 ﻿using Strem.Core.Extensions;
-using Strem.Core.Flows.Registries.Menus;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Registries.Menus;
+using Strem.Flows.Extensions;
 using Strem.Infrastructure.Services.Api;
 using Strem.Portals.Data;
 using Strem.Portals.Data.Overrides;
@@ -15,6 +16,7 @@ public class PortalsModule : IRequiresApiHostingModule
         // Menus
         services.AddSingleton(new MenuDescriptor
         {
+            Priority = 2,
             Title = "Portals",
             Code = "portals-menu",
             IconClass = "fas fa-globe",

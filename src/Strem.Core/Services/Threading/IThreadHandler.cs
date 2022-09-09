@@ -1,4 +1,4 @@
-namespace Strem.Core.Threading;
+namespace Strem.Core.Services.Threading;
 
 public interface IThreadHandler
 {

@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LiteDB" Version="5.0.12" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+      <PackageReference Include="NativeFileDialogSharp" Version="0.5.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="System.Reactive" Version="5.0.0" />
+      <PackageReference Include="TextCopy" Version="6.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Elements\Accordion.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\ConfirmDeletion.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Drag\DraggableElement.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Drag\DraggableListElement.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\HelperInfo.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\AutoComplete.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\CheckBox.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\DataSelectInput.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\EnumSelectInput.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\EnumWithValueInput.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\FileInputBrowser.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\FloatInput.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\GatedSelect.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\GatedTextInput.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\IconPicker.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\IntInput.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\ProcessedInput.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\TagEditor.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\TextInput.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Inputs\TrueOrFalse.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\Modal.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\PagedContent.razor" />
+      <_ContentIncludedByDefault Remove="Components\Elements\ValidaitonMessageContainer.razor" />
+      <_ContentIncludedByDefault Remove="Components\Integrations\IntegrationComponent.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services\Registries" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Strem.Data\Strem.Data.csproj" />
+    </ItemGroup>
+
+</Project>

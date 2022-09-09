@@ -1,5 +1,4 @@
-﻿using Strem.Core.Flows.Triggers;
-using Strem.Core.Types;
+﻿using Strem.Flows.Data.Triggers;
 
 namespace Strem.Flows.Default.Flows.Triggers.Utility;
 

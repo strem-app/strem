@@ -1,0 +1,64 @@
+﻿@page "/flows"
+
+@using Strem.Core.Events.Bus
+@using Strem.Flows.Data
+@using Strem.Flows.Events
+@using Strem.Flows.Services.Registries.Tasks
+@using Strem.Flows.Services.Registries.Triggers
+
+@inject IEventBus EventBus
+
+<div class="container is-fluid">
+  <ErrorBoundary>
+    <ChildContent>
+    <div class="columns is-variable is-6">
+      <div class="column is-one-quarter">
+        <UserFlows OnFlowSelected="SelectFlow"></UserFlows>
+      </div>
+      <div class="column">
+        @if (CurrentFlow == null)
+        {
+          <h3 class="title is-3">Select A Flow To Edit</h3>
+        }
+        else
+        {
+          <FlowEditor Flow="CurrentFlow"></FlowEditor>
+        }
+      </div>
+      <div class="column is-one-quarter">
+        @if (CurrentFlow != null)
+        {
+          <FlowElementsMenu Flow="CurrentFlow" OnTaskSelected="AddTask" OnTriggerSelected="AddTrigger"></FlowElementsMenu>
+        }
+      </div>
+    </div>
+    </ChildContent>
+    <ErrorContent>
+      <TheSkyIsFalling/>
+    </ErrorContent>
+  </ErrorBoundary>
+</div>
+
+@code {
+  public Flow CurrentFlow { get; set; }
+  
+  public void AddTask(TaskDescriptor descriptor)
+  {
+    var data = descriptor.Data();
+    CurrentFlow.TaskData.Add(data);
+    EventBus.PublishAsync(new FlowTaskChangedEvent(CurrentFlow.Id, data.Id));
+  }
+
+  public void AddTrigger(TriggerDescriptor descriptor)
+  {
+    var data = descriptor.Data();
+    CurrentFlow.TriggerData.Add(data);
+    EventBus.PublishAsync(new FlowTriggerChangedEvent(CurrentFlow.Id, data.Id));
+  }
+
+  private void SelectFlow(Flow newFlow)
+  {
+    CurrentFlow = newFlow;
+    StateHasChanged();
+  }
+}

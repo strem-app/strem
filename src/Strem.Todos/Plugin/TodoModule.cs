@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Strem.Core.Extensions;
-using Strem.Core.Flows.Registries.Menus;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Registries.Menus;
+using Strem.Flows.Extensions;
 using Strem.Infrastructure.Services.Api;
 using Strem.Todos.Data;
 using Strem.Todos.Data.Repositories;
@@ -15,6 +16,7 @@ public class TodoModule : IRequiresApiHostingModule
         // Menus
         services.AddSingleton(new MenuDescriptor
         {
+            Priority = 3,
             Title = "Todos",
             Code = "todos-menu",
             IconClass = "fas fa-clipboard-list",

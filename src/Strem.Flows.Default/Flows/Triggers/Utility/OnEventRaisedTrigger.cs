@@ -2,12 +2,11 @@
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows;
-using Strem.Core.Flows.Processors;
-using Strem.Core.Flows.Triggers;
+using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Events;
+using Strem.Flows.Processors;
 
 namespace Strem.Flows.Default.Flows.Triggers.Utility;
 
@@ -35,7 +34,7 @@ public class OnEventRaisedTrigger : FlowTrigger<OnEventRaisedTriggerData>
             .Where(x => x.EventName == data.EventName)
             .Select(x =>
             {
-                var newVariables = new Variables();
+                var newVariables = new Core.Variables.Variables();
                 newVariables.Set(EventDataVariable, x.Data);
                 return newVariables;
             });

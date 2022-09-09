@@ -1,16 +1,14 @@
 ﻿using System.IO.Compression;
 using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using LiteDB;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
-using Strem.Core.Events.Flows;
 using Strem.Core.Extensions;
-using Strem.Core.Flows;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Registries.Integrations;
+using Strem.Core.Services.Registries.Menus;
 using Strem.Core.State;
 using Strem.Core.Variables;
-using Strem.Data.Extensions;
 using Strem.Data.Types;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services.Persistence;
@@ -23,25 +21,31 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     
     public IAppState AppState { get; }
     public IEventBus EventBus { get; }
-    public IFlowStore FlowStore { get; }
-    public IFlowRepository FlowRepository { get; set; }
     public IAppVariablesRepository AppVariablesRepository { get; }
     public IUserVariablesRepository UserVariablesRepository { get; }
     public ILogger<InfrastructurePluginStartup> Logger { get; }
+    public ILiteDatabase Database { get; }
+    public IIntegrationRegistry IntegrationRegistry { get; }
+    public IMenuRegistry MenuRegistry { get; }
+    public IServiceProvider Services { get; }
 
-    public InfrastructurePluginStartup(IAppState appState, IEventBus eventBus, IFlowStore flowStore, IFlowRepository flowRepository, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository, ILogger<InfrastructurePluginStartup> logger, ILiteDatabase database)
+    public InfrastructurePluginStartup(IAppState appState, IEventBus eventBus, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository, ILogger<InfrastructurePluginStartup> logger, ILiteDatabase database, IIntegrationRegistry integrationRegistry, IMenuRegistry menuRegistry, IServiceProvider services)
     {
         AppState = appState;
         EventBus = eventBus;
-        FlowStore = flowStore;
-        FlowRepository = flowRepository;
         AppVariablesRepository = appVariablesRepository;
         UserVariablesRepository = userVariablesRepository;
         Logger = logger;
+        Database = database;
+        IntegrationRegistry = integrationRegistry;
+        MenuRegistry = menuRegistry;
+        Services = services;
     }
 
     public async Task StartPlugin()
     {
+        await CheckIfBackupIsNeeded();
+        
         AppState.UserVariables.OnVariableChanged
             .Subscribe(x =>
             {
@@ -71,36 +75,12 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
             .AddTo(_subs);
 
         EventBus.Receive<ErrorEvent>().Subscribe(x => Logger.Error($"[{x.Source}]: {x.Message}"));
-        
-        EventBus
-            .Receive<FlowTaskChangedEvent>().Select(x => x.FlowId)
-            .Merge(EventBus.Receive<FlowTriggerChangedEvent>().Select(x => x.FlowId))
-            .Merge(EventBus.Receive<FlowDetailsChangedEvent>().Select(x => x.FlowId))
-            .ThrottledByKey(x => x, TimeSpan.FromSeconds(2))
-            .Select(x => FlowStore.Get(x))
-            .Subscribe(x =>
-            {
-                if(x == null){ return; }
-                FlowRepository.Update(x.Id, x);
-            })
-            .AddTo(_subs);
-        
-        EventBus.Receive<FlowRemovedEvent>()
-            .Subscribe(x =>
-            {
-                FlowRepository.Delete(x.FlowId);
-            });
-        
-        EventBus.Receive<FlowAddedEvent>()
-            .Select(x => FlowStore.Get(x.FlowId))
-            .Subscribe(x =>
-            {
-                if(x == null){ return; }
-                FlowRepository.Create(x.Id, x);
-            });
 
+        Logger.Information("Setting Up Integration Registries");
+        SetupRegistries();
+        Logger.Information("Setup Integration Registries");
+        
         SetDefaultSettingsIfNotSet();
-        CheckIfBackupIsNeeded();
     }
     
     public void SetDefaultSettingsIfNotSet()
@@ -112,7 +92,7 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         { AppState.AppVariables.Set(UIVariables.ZoomVariable, 100); }
     }
 
-    public void CheckIfBackupIsNeeded()
+    public async Task CheckIfBackupIsNeeded()
     {
         var lastBackupDate = DateTime.MinValue;
         if (AppState.AppVariables.Has(UIVariables.LastBackupDate))
@@ -130,14 +110,13 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         if(timeSinceLastBackup.TotalDays < backupIntervalInDays) { return; }
 
         Logger.Information("Making a backup of app related data");
-        BackupFiles();
+        await BackupFiles();
         AppState.AppVariables.Set(UIVariables.LastBackupDate, DateTime.Now.ToString("u"));
         Logger.Information($"Finished making a backup of app related data, will try again in {backupIntervalInDays} days");
     }
 
-    public void BackupFiles()
+    public async Task BackupFiles()
     {
-        // TODO: Need to now figure out how to backup litedb as you cant copy while its running
         var backupDir = $"{PathHelper.StremDataDirectory}/backups";
         if (!Directory.Exists(backupDir))
         { Directory.CreateDirectory(backupDir); }
@@ -146,12 +125,21 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         var backupFile = $"{backupDir}/data-backup-{dateFormat}.zip";
         if (File.Exists(backupFile)) { return; }
         
+        Database.Checkpoint();
+        
         using var zip = ZipFile.Open(backupFile, ZipArchiveMode.Create);
-        { zip.CreateEntryFromGlob(PathHelper.StremDataDirectory, "*.dat"); }
+        { zip.CreateEntryFromGlob(PathHelper.StremDataDirectory, "*.db"); }
+    }
+
+    public void SetupRegistries()
+    {
+        var integrationDescriptors = Services.GetServices<IIntegrationDescriptor>();
+        IntegrationRegistry?.AddMany(integrationDescriptors);
+        
+        var menuDescriptors = Services.GetServices<MenuDescriptor>();
+        MenuRegistry?.AddMany(menuDescriptors);
     }
     
     public void Dispose()
-    {
-        _subs?.Dispose();
-    }
+    { _subs?.Dispose(); }
 }

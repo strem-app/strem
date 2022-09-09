@@ -13,7 +13,6 @@ public class StremApplication
 {
     public List<string> PreStartupLogs { get; } = new();
     public PluginHandler PluginHandler { get; } = new();
-    public ExecutionEngineHandler ExecutionEngineHandler { get; } = new();
     
     public IEventBus EventBus { get; private set; }
     public ILogger<StremApplication> Logger { get; private set; }
@@ -66,10 +65,6 @@ public class StremApplication
         Logger.Information("Starting Internal Host");
         WebHost.StartHost();
         Logger.Information($"Started Internal Host: http://localhost:{InternalWebHostConfiguration.ApiHostPort}");
-        
-        Logger.Information("Starting Flow Execution Engine");
-        await ExecutionEngineHandler.StartExecutionEngine(services);
-        Logger.Information("Started Flow Execution Engine");
         
         Logger.Information("Strem Initialized");
         EventBus.PublishAsync(new ApplicationStartedEvent());

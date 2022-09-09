@@ -16,4 +16,9 @@
       <PackageReference Include="TextCopy" Version="6.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Tasks\TaskComponent.razor" />
+      <_ContentIncludedByDefault Remove="Components\Triggers\TriggerComponent.razor" />
+    </ItemGroup>
+
 </Project>

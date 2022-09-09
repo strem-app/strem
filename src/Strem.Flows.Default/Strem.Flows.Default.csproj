@@ -28,4 +28,8 @@
       <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\Flows.razor" />
+    </ItemGroup>
+
 </Project>

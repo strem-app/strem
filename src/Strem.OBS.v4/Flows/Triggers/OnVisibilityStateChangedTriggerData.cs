@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Strem.Core.Flows.Triggers;
+using Strem.Flows.Data.Triggers;
 
 namespace Strem.OBS.v4.Flows.Triggers;
 

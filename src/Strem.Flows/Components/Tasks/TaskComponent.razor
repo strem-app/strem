@@ -1,0 +1,54 @@
+﻿@using Strem.Flows.Data.Tasks
+
+@inherits ValidatedComponent<Strem.Flows.Data.Tasks.IFlowTaskData>
+
+<EditForm EditContext="EditContext">
+    <Accordion Title="@Title" HeaderClasses="is-info" ContainerClasses="@(!IsValid ? "has-validation-errors has-danger-pulse" : "")">
+        <div draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">
+            <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
+            @if (Task.VariableOutputs.Length > 0)
+            {
+                <Accordion Title="Output Variables" HeaderClasses="is-info">
+                    <VariableDescriptorList VariableDescriptors="Task.VariableOutputs"/>
+                </Accordion>
+            }
+            @if (!IsValid)
+            {
+                <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+            }
+            <div class="field is-grouped is-grouped-right">
+                <div class="control">
+                    <button type="button" class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Task</button>
+                </div>
+            </div>
+        </div>
+    </Accordion>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public Type ComponentType { get; set; }
+    
+    [Parameter]
+    public IFlowTask Task { get; set; }
+
+    [Parameter]
+    public bool IsRunning { get; set; }
+    
+    [Parameter] 
+    public EventCallback<IFlowTaskData> OnRequestedDeletion { get; set; }
+    
+    [Parameter]
+    public string Title { get; set; }
+    
+    public Dictionary<string, object> GetProps() => new() {
+        {"Data", Data },
+        {"OnTitleChanged", EventCallback.Factory.Create<string>(this, OnTitleChanged)},
+    };
+
+    public void OnTitleChanged(string newTitle)
+    {
+        Title = newTitle;
+    }
+}
