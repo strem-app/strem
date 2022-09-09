@@ -7,15 +7,12 @@ public struct VariableEntry : IEquatable<VariableEntry>
     public readonly string Name;
     public readonly string Context;
 
-    public VariableEntry(string name, string context = DefaultContext)
+    public VariableEntry(string name, string? context = DefaultContext)
     {
         Name = name;
-        Context = context;
+        Context = context ?? string.Empty;
     }
 
-    public bool IsEmpty => string.IsNullOrEmpty(Name);
-    public bool HasContext => !string.IsNullOrEmpty(Context);
-    
     public bool Equals(VariableEntry other)
     {
         return Name == other.Name && Context == other.Context;

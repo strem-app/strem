@@ -2,6 +2,7 @@
 @using Strem.Core.Variables
 @using Strem.Core.Events.Bus
 @using Strem.Core.Events
+@using Strem.Core.Extensions
 @using Strem.Core.Services.Notifications
 @using TextCopy
 
@@ -28,7 +29,7 @@
 
     private async Task CopyVariableToClipboard(VariableEntry variableEntry)
     {
-        var variableText = $"V({variableEntry.Name}{(variableEntry.HasContext ? $",{variableEntry.Context}" : "")})";
+        var variableText = $"V({variableEntry.Name}{(variableEntry.HasContext() ? $",{variableEntry.Context}" : "")})";
         await ClipboardService.SetTextAsync(variableText);
         await Notifier.ShowNotification("Copied Variable To Clipboard");
     }

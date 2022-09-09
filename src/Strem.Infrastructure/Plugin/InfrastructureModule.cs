@@ -46,7 +46,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         {
             Converters = new List<JsonConverter>
             {
-                new VariableDictionaryConvertor(), 
+                new VariableEntryConvertor(), 
                 new FlowTaskDataConvertor(), new FlowTriggerDataConvertor()
             },
             //TypeNameHandling = TypeNameHandling.Auto,

@@ -1,5 +1,6 @@
 using System.Reactive.Subjects;
 using Newtonsoft.Json;
+using Strem.Core.Extensions;
 
 namespace Strem.Core.Variables;
 
@@ -29,11 +30,11 @@ public class Variables : IVariables
         var matches = Data.ContainsKey(variableEntry);
         if(matches) { return true; }
 
-        if (variableEntry.HasContext)
+        if (variableEntry.HasContext())
         { return false; }
         
         var qualifiedEntry = FindFullyQualifiedEntry(variableEntry.Name);
-        return !qualifiedEntry.IsEmpty;
+        return !qualifiedEntry.IsEmpty();
     }
 
     public string Get(VariableEntry variableEntry)
@@ -41,11 +42,11 @@ public class Variables : IVariables
         if(Data.ContainsKey(variableEntry))
         { return Data[variableEntry]; }
         
-        if(variableEntry.HasContext)
+        if(variableEntry.HasContext())
         { return string.Empty; }
         
         var qualifiedEntry = FindFullyQualifiedEntry(variableEntry.Name);
-        return qualifiedEntry.IsEmpty ? string.Empty : Data[qualifiedEntry];
+        return qualifiedEntry.IsEmpty() ? string.Empty : Data[qualifiedEntry];
     }
     
     public IEnumerable<KeyValuePair<VariableEntry, string>> GetAll() => Data;
