@@ -9,11 +9,14 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
+      <ProjectReference Include="..\Strem.Data\Strem.Data.csproj" />
+      <ProjectReference Include="..\Strem.Flows\Strem.Flows.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Glob" Version="1.1.9" />
       <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
+      <PackageReference Include="LiteDB" Version="5.0.12" />
       <PackageReference Include="Persistity.Flow" Version="2.0.47" />
       <PackageReference Include="Persistity.Serializers.Json" Version="2.0.47" />
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
@@ -24,10 +27,6 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Components\PortalView.razor" />
       <_ContentIncludedByDefault Remove="Views\Portals\View.cshtml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Services\Files" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿@using Strem.Core.Flows
-
+﻿@using Strem.Flows.Services.Stores
 @inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Utility.ExecuteFlowTaskData>
 
 @inject IFlowStore FlowStore;
@@ -7,23 +6,13 @@
 <div class="field">
     <label class="label">Flow</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.FlowId">
-                @foreach (var flow in FlowStore.Flows)
-                {
-                    <option value="@flow.Id">@(flow.Name)</option>
-                }
-            </select>
-        </div>
+        <DataSelectInput @bind-Value="Data.FlowId" Data="FlowStore.Data" GetName="x => x.Name" GetValue="x => x.Id"></DataSelectInput>
     </div>
 </div>
 <div class="field">
-  <div class="control">
-    <label class="checkbox">
-      <input type="checkbox" @bind="Data.WaitForCompletion">
-      Wait For Flow To Finish?
-    </label>
-  </div>
+    <div class="control">
+        <CheckBox @bind-Value="Data.WaitForCompletion" Label="Wait For Flow To Finish?"></CheckBox>
+    </div>
 </div>
 
 @code {
@@ -31,8 +20,7 @@
 
     public string GetTitle()
     {
-        var targettedFlow = FlowStore.Flows.SingleOrDefault(x => x.Id == Data.FlowId);
-        if(targettedFlow == null) { return "Execute Flow"; }
-        return $"Execute <strong>{targettedFlow.Name}</strong> Flow";
+        var targetedFlow = FlowStore.Get(Data.FlowId);
+        return $"Execute <strong>{targetedFlow?.Name ?? ""}</strong> Flow";
     }
 }

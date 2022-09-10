@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
-using Strem.Core.Browsers.Web;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Services.Browsers.Web;
+using Strem.Core.Services.Utils;
 using Strem.Core.State;
-using Strem.Core.Utils;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Events;

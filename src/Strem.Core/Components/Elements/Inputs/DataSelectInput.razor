@@ -1,0 +1,25 @@
+﻿@typeparam T
+@typeparam TData
+
+@inherits ValidatedInputBase<T>
+
+<div class="select @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
+    <select value="@Value" @onchange="e => OnValueChanged((T)e.Value)" @attributes=@UnmatchedAttributes>
+        @foreach (var element in Data)
+        {
+            <option value="@GetValue(element)">@(GetName(element))</option>
+        }
+    </select>
+</div>
+
+@code
+{
+    [Parameter]
+    public IEnumerable<TData> Data { get; set; }
+
+    [Parameter]
+    public Func<TData, object> GetValue { get; set; } = x => x;
+    
+    [Parameter]
+    public Func<TData, string> GetName { get; set; } = x => x.ToString();
+}

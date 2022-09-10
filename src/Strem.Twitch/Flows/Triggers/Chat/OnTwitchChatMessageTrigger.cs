@@ -1,9 +1,8 @@
 ﻿using System.Reactive.Linq;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows;
-using Strem.Core.Flows.Processors;
-using Strem.Core.Flows.Triggers;
+using Strem.Flows.Processors;
+using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Variables;
@@ -90,7 +89,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         if(data.IsSubscriber && !message.IsSubscriber) { return false; }
         if(data.HasBits && message.Bits <= 0) { return false; }
         if(data.HasChannelReward && string.IsNullOrEmpty(message.CustomRewardId)) { return false; }
-        if (!DoesMessageTextMeetRequirements(data.MatchTypeType, data.MatchText, message.Message)) { return false; }
+        if (!DoesMessageTextMeetRequirements(data.MatchType, data.MatchText, message.Message)) { return false; }
 
         return true;
     }

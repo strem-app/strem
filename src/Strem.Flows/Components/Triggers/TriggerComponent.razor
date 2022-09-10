@@ -1,0 +1,55 @@
+﻿@using System.Reactive.Disposables
+@using System.Reactive.Linq
+@using Strem.Core.Extensions
+@using Strem.Flows.Data.Triggers
+
+@inherits ValidatedComponent<Strem.Flows.Data.Triggers.IFlowTriggerData>
+
+<EditForm EditContext="EditContext">
+    <Accordion Title="@Title" HeaderClasses="is-success" ContainerClasses="@(!IsValid ? "has-validation-errors has-danger-pulse" : "")">
+        <div draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">
+            <DynamicComponent Type="ComponentType" Parameters="GetProps()"></DynamicComponent>
+            @if (Trigger.VariableOutputs.Length > 0)
+            {
+                <Accordion Title="Output Variables" HeaderClasses="is-info">
+                    <VariableDescriptorList VariableDescriptors="Trigger.VariableOutputs"/>
+                </Accordion>
+            }
+            @if (!IsValid)
+            {
+                <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+            }
+            <div class="field is-grouped is-grouped-right">
+                <div class="control">
+                    <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Trigger</button>
+                </div>
+            </div>
+        </div>
+    </Accordion>
+</EditForm>
+@code {
+    [Parameter]
+    public Type ComponentType { get; set; }
+    
+    [Parameter]
+    public IFlowTrigger Trigger { get; set; }
+    
+    [Parameter]
+    public bool IsRunning { get; set; }
+    
+    [Parameter] 
+    public EventCallback<IFlowTriggerData> OnRequestedDeletion { get; set; }
+    
+    [Parameter]
+    public string Title { get; set; }
+    
+    public Dictionary<string, object> GetProps() => new() {
+        {"Data", Data },
+        {"OnTitleChanged", EventCallback.Factory.Create<string>(this, OnTitleChanged)}
+    };
+    
+    public void OnTitleChanged(string newTitle)
+    {
+        Title = newTitle;
+    }
+}

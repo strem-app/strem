@@ -1,12 +1,17 @@
-﻿using System.Reactive.Disposables;
-using System.Reactive.Linq;
+﻿using System.IO.Compression;
+using System.Reactive.Disposables;
+using LiteDB;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Registries.Integrations;
+using Strem.Core.Services.Registries.Menus;
 using Strem.Core.State;
 using Strem.Core.Variables;
+using Strem.Data.Types;
+using Strem.Infrastructure.Extensions;
+using Strem.Infrastructure.Services;
 using Strem.Infrastructure.Services.Persistence;
 
 namespace Strem.Infrastructure.Plugin;
@@ -15,61 +20,68 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
 {
     private readonly CompositeDisposable _subs = new();
     
-    public IAppFileHandler AppFileHandler { get; }
-    public IEventBus EventBus { get; }
     public IAppState AppState { get; }
-    public IFlowStore FlowStore { get; }
+    public IEventBus EventBus { get; }
+    public IAppVariablesRepository AppVariablesRepository { get; }
+    public IUserVariablesRepository UserVariablesRepository { get; }
     public ILogger<InfrastructurePluginStartup> Logger { get; }
+    public ILiteDatabase Database { get; }
+    public IIntegrationRegistry IntegrationRegistry { get; }
+    public IMenuRegistry MenuRegistry { get; }
+    public IServiceProvider Services { get; }
 
-    public InfrastructurePluginStartup(IAppFileHandler appFileHandler, IEventBus eventBus, IAppState appState, IFlowStore flowStore, ILogger<InfrastructurePluginStartup> logger)
+    public InfrastructurePluginStartup(IAppState appState, IEventBus eventBus, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository, ILogger<InfrastructurePluginStartup> logger, ILiteDatabase database, IIntegrationRegistry integrationRegistry, IMenuRegistry menuRegistry, IServiceProvider services)
     {
-        AppFileHandler = appFileHandler;
-        EventBus = eventBus;
         AppState = appState;
-        FlowStore = flowStore;
+        EventBus = eventBus;
+        AppVariablesRepository = appVariablesRepository;
+        UserVariablesRepository = userVariablesRepository;
         Logger = logger;
+        Database = database;
+        IntegrationRegistry = integrationRegistry;
+        MenuRegistry = menuRegistry;
+        Services = services;
     }
 
     public async Task StartPlugin()
     {
+        await CheckIfBackupIsNeeded();
+        
         AppState.UserVariables.OnVariableChanged
-            .Throttle(TimeSpan.FromSeconds(5))
-            .Subscribe(_ =>
+            .Subscribe(x =>
             {
-                Logger.Information("Saving User Vars");
-                AppFileHandler.SaveUserState(AppState);
+                if (AppState.UserVariables.Has(x.Key))
+                { UserVariablesRepository.Upsert(x.Key, x); }
+                else
+                { UserVariablesRepository.Delete(x.Key); }
             })
             .AddTo(_subs);
 
         AppState.AppVariables.OnVariableChanged
-            .Throttle(TimeSpan.FromSeconds(5))
-            .Subscribe(_ =>
+            .Subscribe(x =>
             {
-                Logger.Information("Saving App Vars");
-                AppFileHandler.SaveAppState(AppState);
+                if (AppState.AppVariables.Has(x.Key))
+                { AppVariablesRepository.Upsert(x.Key, x); }
+                else
+                { AppVariablesRepository.Delete(x.Key); }
             })
             .AddTo(_subs);
         
         AppState.UserVariables.OnVariableChanged
-            .Subscribe(x => Logger.Information($"User Variables [{x.Name}|{x.Context}] Changed"))
+            .Subscribe(x => Logger.Information($"User Variables [{x.Key.Name}|{x.Key.Context}] Changed"))
             .AddTo(_subs);
 
         AppState.AppVariables.OnVariableChanged
-            .Subscribe(x => Logger.Information($"App Variables [{x.Name}|{x.Context}] Changed"))
+            .Subscribe(x => Logger.Information($"App Variables [{x.Key.Name}|{x.Key.Context}] Changed"))
             .AddTo(_subs);
 
         EventBus.Receive<ErrorEvent>().Subscribe(x => Logger.Error($"[{x.Source}]: {x.Message}"));
-        
-        Observable.Interval(TimeSpan.FromMinutes(5))
-            .Subscribe(x =>
-            {
-                Logger.Information("Saving Flows");
-                AppFileHandler.SaveFlowStore(FlowStore);
-            })
-            .AddTo(_subs);
 
+        Logger.Information("Setting Up Integration Registries");
+        SetupRegistries();
+        Logger.Information("Setup Integration Registries");
+        
         SetDefaultSettingsIfNotSet();
-        CheckIfBackupIsNeeded();
     }
     
     public void SetDefaultSettingsIfNotSet()
@@ -81,7 +93,7 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         { AppState.AppVariables.Set(UIVariables.ZoomVariable, 100); }
     }
 
-    public void CheckIfBackupIsNeeded()
+    public async Task CheckIfBackupIsNeeded()
     {
         var lastBackupDate = DateTime.MinValue;
         if (AppState.AppVariables.Has(UIVariables.LastBackupDate))
@@ -99,13 +111,36 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         if(timeSinceLastBackup.TotalDays < backupIntervalInDays) { return; }
 
         Logger.Information("Making a backup of app related data");
-        AppFileHandler.BackupFiles();
+        await BackupFiles();
         AppState.AppVariables.Set(UIVariables.LastBackupDate, DateTime.Now.ToString("u"));
         Logger.Information($"Finished making a backup of app related data, will try again in {backupIntervalInDays} days");
     }
 
-    public void Dispose()
+    public async Task BackupFiles()
     {
-        _subs?.Dispose();
+        var backupDir = $"{PathHelper.StremDataDirectory}/backups";
+        if (!Directory.Exists(backupDir))
+        { Directory.CreateDirectory(backupDir); }
+        
+        var dateFormat = DateTime.Now.ToString("yyMMdd");
+        var backupFile = $"{backupDir}/data-backup-{dateFormat}.zip";
+        if (File.Exists(backupFile)) { return; }
+        
+        Database.Checkpoint();
+        
+        using var zip = ZipFile.Open(backupFile, ZipArchiveMode.Create);
+        { zip.CreateEntryFromGlob(PathHelper.StremDataDirectory, "*.db"); }
     }
+
+    public void SetupRegistries()
+    {
+        var integrationDescriptors = Services.GetServices<IIntegrationDescriptor>();
+        IntegrationRegistry?.AddMany(integrationDescriptors);
+        
+        var menuDescriptors = Services.GetServices<MenuDescriptor>();
+        MenuRegistry?.AddMany(menuDescriptors);
+    }
+    
+    public void Dispose()
+    { _subs?.Dispose(); }
 }

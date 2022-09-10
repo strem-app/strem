@@ -1,0 +1,39 @@
+﻿<h3 class="title is-3 has-text-danger">Deleting @(DeletingName)</h3>
+<p class="subtitle has-text-danger">This Is A Destructive Action And Cannot Be Undone</p>
+<div class="field">
+    <label class="label">Are you sure you wish to do this?</label>
+    <div class="control">
+        <CheckBox @bind-Value="TheyKnowWhatTheyAreAbout" Label="I Know What I'm About Son"></CheckBox>
+    </div>
+</div>
+<div class="field is-grouped">
+    <div class="control">
+        <button class="button is-danger" disabled="@(!TheyKnowWhatTheyAreAbout)" @onclick="Delete">Delete It!</button>
+    </div>
+    <div class="control">
+        <button class="button is-link is-light" @onclick="Cancel">Cancel</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string DeletingName { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnDeletion { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnCancelled { get; set; }
+    
+    public bool TheyKnowWhatTheyAreAbout { get; set; }
+    
+    public void Delete()
+    {
+        OnDeletion.InvokeAsync();
+    }
+
+    public void Cancel()
+    {
+        OnCancelled.InvokeAsync();
+    }
+}

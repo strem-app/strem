@@ -1,0 +1,20 @@
+﻿@using Strem.Core.Extensions
+@inherits ValidatedInputBase<float>
+
+<input type="number" class="input @UnmatchedAttributes.ValueFor("class") @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")"
+       value="@Value" @onchange="e => HandleValueChanged(e.Value)"
+       @attributes=@UnmatchedAttributes.AllBut("class", "type") />
+       
+@code {
+    private void HandleValueChanged(object? value)
+    {
+        var valueString = value?.ToString();
+        if (string.IsNullOrEmpty(valueString))
+        { OnValueChanged(0); }
+        
+        if (float.TryParse(valueString, out var floatValue))
+        { OnValueChanged(floatValue); }
+        else
+        { OnValueChanged(0);}
+    }
+}

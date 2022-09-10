@@ -2,17 +2,20 @@
 @using Strem.Portals.Data
 @using Microsoft.JSInterop
 @using Microsoft.AspNetCore.Components
-@using Strem.Core.Browsers.Web
+@using Strem.Core.Events.Bus
 @using Strem.Core.Extensions
+@using Strem.Core.Services.Browsers.Web
 @using Strem.Core.Types
+@using Strem.Portals.Events
 @using Strem.Portals.Types
 @using Strem.Todos.Data
+@using Strem.Todos.Services.Stores
 
 @inject IWebBrowser WebBrowser
+@inject IEventBus EventBus
 @inject ITodoStore TodoStore 
 
 <div class="box">
-    
     <div class="field is-grouped">
         <div class="control">
             <h3 class="title is-3 has-text-black">Editing @Portal.Name</h3>
@@ -26,40 +29,7 @@
             </button>
         </div>
     </div>
-
-    <Accordion Title="Portal Settings" HeaderClasses="is-info">
-        <div class="field">
-                <label class="label">Button Size</label>
-                <div class="control">
-                    <div class="select">
-                        <select @bind="@Portal.ButtonSize">
-                            <EnumSelectOptions EnumType="typeof(ButtonSize)"></EnumSelectOptions>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="field">
-                <div class="control">
-                    <label class="label">Portal Todos</label>
-                    <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" @bind="Portal.ShowTodos">
-                            Show Todos On Portal?
-                        </label>
-                    </div>
-                </div>
-            </div>
-            @if (Portal.ShowTodos)
-            {
-                <div class="field">
-                    <div class="control is-expanded">
-                        <TagEditor Tags="Portal.TodoTags" OnTagsChanged="StateHasChanged"></TagEditor>
-                    </div>
-                </div>
-            }
-    </Accordion>
-    
+    <PortalDetailsEditor Data="Portal" DataChanged="PortalDetailsChanged" />
 </div>
 
 <div class="columns">
@@ -113,21 +83,27 @@
                 </div>
             </div>
         }
-        
     }
 </div>
 
 
 <Modal IsVisible="ShowEditModal">
-    <PortalButtonEditor ButtonData="SelectedButton" OnClosed="() => ShowEditModal = false"></PortalButtonEditor>
+    @if (SelectedButton != null)
+    {
+        <PortalButtonEditor Data="SelectedButton" OnClosed="EditModalClosed" RequestedDeletion="DeleteButton"></PortalButtonEditor>
+    }
 </Modal>
 
 @code {
     [Parameter]
     public PortalData Portal { get; set; } = new();
+    
+    [Parameter]
+    public EventCallback<Guid> RequestingDeletion { get; set; }
 
-    public ButtonData SelectedButton { get; set; } = new ButtonData();
+    public ButtonData SelectedButton { get; set; }
     public bool ShowEditModal { get; set; }
+    public bool ShowDeletionModal { get; set; }
     
     public void AddButton()
     {
@@ -152,10 +128,10 @@
     public IEnumerable<TodoData> GetFilteredTodos()
     {
         if (Portal.TodoTags.Count == 0)
-        { return TodoStore.Todos; }
+        { return TodoStore.Data; }
 
-        return TodoStore.Todos
-            .Where(x => x.Tags.All(tag => Portal.TodoTags.Contains(tag, StringComparer.OrdinalIgnoreCase)));
+        return TodoStore.Data
+            .Where(x => Portal.TodoTags.All(requiredTag => x.Tags.Contains(requiredTag, StringComparer.OrdinalIgnoreCase)));
     }
     
     public string GetButtonStyles(ButtonData buttonData)
@@ -174,5 +150,32 @@
         if(portalButtonSize == ButtonSize.Large) { return "is-size-6"; }
         return "is-size-7";
     }
+
+    private void EditModalClosed()
+    {
+        ShowEditModal = false;
+        SelectedButton = null;
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
+    }
+
+    private void PortalDetailsChanged()
+    {
+        InvokeAsync(StateHasChanged);
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
+    }
+
+    private void DeleteButton(Guid obj)
+    {
+        ShowEditModal = false;
+        Portal.Buttons.Remove(SelectedButton);
+        SelectedButton = null;
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
+    }
+
+    private void DeletionModalClosed()
+    { ShowDeletionModal = false; }
+
+    private void OnPortalDeletion()
+    { RequestingDeletion.InvokeAsync(Portal.Id); }
 
 }

@@ -1,4 +1,4 @@
-﻿using Strem.Core.Flows.Triggers;
+﻿using Strem.Flows.Data.Triggers;
 using Strem.Core.Types;
 
 namespace Strem.Twitch.Flows.Triggers.Chat;
@@ -12,6 +12,6 @@ public class OnTwitchWhisperMessageTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
     
-    public TextMatchType MatchTypeType { get; set; }
+    public TextMatchType MatchType { get; set; }
     public string MatchText { get; set; } = string.Empty;
 }

@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows.Executors;
-using Strem.Core.Flows.Processors;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Executors;
+using Strem.Flows.Processors;
+using Strem.Flows.Data.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
+using Strem.Flows.Extensions;
 using Strem.Todos.Data;
-using Strem.Todos.Events;
+using Strem.Todos.Services.Stores;
 
 namespace Strem.Todos.Flows.Tasks;
 
@@ -54,8 +55,7 @@ public class CreateTodoTask : FlowTask<CreateTodoTaskData>
     public override async Task<ExecutionResult> Execute(CreateTodoTaskData data, IVariables flowVars)
     {
         var newTodoItem = CreateTodoItem(data, flowVars);
-        TodoStore.Todos.Add(newTodoItem);
-        EventBus.PublishAsync(new TodoCreatedEvent { TodoId = newTodoItem.Id });
+        TodoStore.Add(newTodoItem);
         return ExecutionResult.Success();
     }
 }

@@ -1,0 +1,137 @@
+﻿@using Strem.Core.Events.Bus
+@using Strem.Core.Extensions
+@using System.Reactive.Disposables
+@using Strem.Core.Types
+@using Strem.Flows.Data
+@using Strem.Flows.Data.Tasks
+@using Strem.Flows.Data.Triggers
+@using Strem.Flows.Events
+@using Strem.Flows.Events.Triggers
+@using Strem.Flows.Services.Registries.Tasks
+@using Strem.Flows.Services.Registries.Triggers
+
+@inject IEventBus EventBus;
+@inject ITaskRegistry TaskRegistry;
+@inject ITriggerRegistry TriggerRegistry;
+
+@implements IDisposable
+
+<Accordion Title="Task & Trigger Filter" HeaderClasses="is-primary">
+  <div class="field">
+    <label class="label">Filter Tasks & Triggers By Name</label>
+    <div class="control">
+      <input class="input" type="text" placeholder="Put in the partial name of a trigger/task" @bind="SearchCriteria"/>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <CheckBox @bind-Value="ShowDisabled" Label="Show Disabled Elements?"></CheckBox>
+    </div>
+  </div>
+</Accordion>
+
+<Accordion Title="Available Triggers" HeaderClasses="is-success" IsExpanded="true">
+  <aside class="menu trigger-menu">
+    @foreach (var triggerGroup in GetFilteredTriggers())
+    {
+      <p class="menu-label category-@triggerGroup.Key.Replace(" ", "")">
+        @triggerGroup.Key
+      </p>
+      <ul class="menu-list">
+        @foreach (var trigger in triggerGroup)
+        {
+          <DraggableListElement Data="trigger" DropType="@DropTypes.NewTrigger">
+            <a class="is-trigger has-tooltip-left has-tooltip-multiline @(IsTriggerEnabled(trigger.Trigger) ? "enabled" : "disabled")"
+               data-tooltip="@trigger.Trigger.Description" @onclick="@(() => OnTriggerSelected.InvokeAsync(trigger))">
+              <span class="icon is-small">
+                <i class="fa fa-plus"></i>
+              </span>
+              <span class="ml-2 menu-text">@trigger.Trigger.Name</span>
+            </a>
+          </DraggableListElement>
+        }
+      </ul>
+    }
+  </aside>
+</Accordion>
+
+<Accordion Title="Available Tasks" HeaderClasses="is-info" IsExpanded="true">
+<aside class="menu task-menu">
+  @foreach (var taskGroup in GetFilteredTasks())
+  {
+    <p class="menu-label category-@taskGroup.Key.Replace(" ", "")">
+      @taskGroup.Key
+    </p>
+    <ul class="menu-list">
+      @foreach (var task in taskGroup)
+      {
+        <DraggableListElement Data="task" DropType="@DropTypes.NewTask">
+            <a class="is-task has-tooltip-left has-tooltip-multiline @(IsTaskEnabled(task.Task) ? "enabled" : "disabled")"
+               data-tooltip="@task.Task.Description">
+              <span class="icon is-small">
+                <i class="fa fa-plus"></i>
+              </span>
+              <span class="ml-2 menu-text">@task.Task.Name</span>
+            </a>
+        </DraggableListElement>
+      }
+    </ul>
+  }
+</aside>
+</Accordion>
+
+@code {
+  [Parameter]
+  public Flow Flow { get; set; }
+  
+  [Parameter] 
+  public EventCallback<TaskDescriptor> OnTaskSelected { get; set; }
+  
+  [Parameter] 
+  public EventCallback<TriggerDescriptor> OnTriggerSelected { get; set; }
+  
+  public string SearchCriteria { get; set; }
+  public bool ShowDisabled { get; set; } = false;
+
+  private CompositeDisposable _subs = new ();
+  
+  protected override async Task OnInitializedAsync()
+  {
+    EventBus.Receive<FlowTriggerChangedEvent>()
+        .Subscribe(_ => InvokeAsync(StateHasChanged))
+        .AddTo(_subs);
+  }
+
+  public IEnumerable<IGrouping<string, TriggerDescriptor>> GetFilteredTriggers()
+  {
+    return TriggerRegistry.GetAll()
+      .Where(x =>
+      {
+        if (!ShowDisabled && !IsTriggerEnabled(x.Trigger)){ return false; }
+        if(string.IsNullOrEmpty(SearchCriteria)) { return true; }
+        return x.Trigger.Name.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase);
+      })
+      .GroupBy(x => x.Trigger.Category);
+  }
+
+  public IEnumerable<IGrouping<string, TaskDescriptor>> GetFilteredTasks()
+  {
+    return TaskRegistry.GetAll()
+      .Where(x =>
+      {
+        if (!ShowDisabled && !IsTaskEnabled(x.Task)){ return false; }
+        if(string.IsNullOrEmpty(SearchCriteria)) { return true; }
+        return x.Task.Name.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase);
+      })
+      .GroupBy(x => x.Task.Category);
+  }
+
+  public bool IsTriggerEnabled(IFlowTrigger trigger)
+  { return trigger.CanExecute(); }
+
+  public bool IsTaskEnabled(IFlowTask task)
+  { return task.CanExecute(); }
+  
+  public void Dispose()
+  { _subs?.Dispose(); }
+}

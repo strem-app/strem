@@ -111,6 +111,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         {
             var channelData = channelInformation.Data[0];
             AppState.TransientVariables.Set(TwitchVars.Username, channelData.BroadcasterName);
+            AppState.TransientVariables.Set(TwitchVars.UserId, channelData.BroadcasterId);
             AppState.TransientVariables.Set(TwitchVars.ChannelTitle, channelData.Title);
             AppState.TransientVariables.Set(TwitchVars.ChannelGame, channelData.GameName);
         }

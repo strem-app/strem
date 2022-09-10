@@ -11,11 +11,7 @@
         </button>
     </div>
     <div class="control is-expanded">
-        <div class="select">
-            <select value="@Value" disabled="@(!Enabled)" @onchange="args => OnValueChanged((TEnum)Enum.Parse(typeof(TEnum), args.Value.ToString()))">
-                <EnumSelectOptions EnumType="typeof(TEnum)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="@ProxyValue" disabled="@(!Enabled)"></EnumSelectInput>
     </div>
 </div>
 
@@ -31,4 +27,10 @@
 
     [Parameter]
     public string Type { get; set; } = "text";
+    
+    public TEnum ProxyValue
+    {
+        get => Value;
+        set => OnValueChanged(value);
+    }
 }

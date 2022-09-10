@@ -1,0 +1,6 @@
+﻿@using Strem.Core.Extensions
+@inherits ValidatedInputBase<string>
+
+<input class="input @UnmatchedAttributes.ValueFor("class") @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")"
+       value="@Value" @onchange="e => OnValueChanged(e.Value.ToString())"
+       @attributes=@UnmatchedAttributes.AllBut("class")/>

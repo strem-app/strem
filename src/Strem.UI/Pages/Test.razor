@@ -44,8 +44,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await ObsClient.GetSourcesList();
-        result.Select(x => x.Name).Distinct();
+        if (ObsClient.IsConnected)
+        {
+            var result = await ObsClient.GetSourcesList();
+            result.Select(x => x.Name).Distinct();
+        }
     }
 
 }

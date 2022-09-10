@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Strem.Core.Components.Triggers;
+@using Strem.Flows.Components.Triggers;
 @using Strem.Core.Types
 @using TwitchLib.Client.Enums
 @using System.Text.RegularExpressions
@@ -9,25 +9,21 @@
 <div class="field">
     <label class="label">Message Content Requirements</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.MatchTypeType">
-                <EnumSelectOptions EnumType="typeof(TextMatchType)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.MatchType"></EnumSelectInput>
     </div>
     <HelperInfo>This will only trigger if the text matches your requirements</HelperInfo>
 </div>
 
-@if (Data.MatchTypeType != TextMatchType.None)
+@if (Data.MatchType != TextMatchType.None)
 {
     <div class="field">
-        <label class="label">Message Match @(Data.MatchTypeType == TextMatchType.Pattern ? "Regex Pattern" : "Text")</label>
+        <label class="label">Message Match @(Data.MatchType == TextMatchType.Pattern ? "Regex Pattern" : "Text")</label>
         <div class="control">
-            <ProcessedInput @bind-Value="Data.MatchText" Placeholder="@(Data.MatchTypeType == TextMatchType.Pattern ? "i.e regex pattern to match" : "i.e text to matching")"></ProcessedInput>
+            <ProcessedInput @bind-Value="Data.MatchText" Placeholder="@(Data.MatchType == TextMatchType.Pattern ? "i.e regex pattern to match" : "i.e text to matching")"></ProcessedInput>
         </div>
     </div>
     
-    @if (Data.MatchTypeType == TextMatchType.Pattern)
+    @if (Data.MatchType == TextMatchType.Pattern)
     {
         <Accordion Title="Regex Pattern Tester">
             <RegexTester RegexPattern="@Data.MatchText"></RegexTester>
@@ -40,7 +36,7 @@
     
     public string GenerateTitle()
     {
-        var hasTextMatch = Data.MatchTypeType != TextMatchType.None;
+        var hasTextMatch = Data.MatchType != TextMatchType.None;
         var textRequirements =  hasTextMatch ? "With Text Match" : "";
         return $"Trigger On Twitch Whisper Received {textRequirements}";
     }

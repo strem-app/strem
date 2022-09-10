@@ -1,4 +1,4 @@
-﻿using Strem.Core.Utils;
+﻿using Strem.Core.Services.Utils;
 
 namespace Strem.Core.Extensions;
 

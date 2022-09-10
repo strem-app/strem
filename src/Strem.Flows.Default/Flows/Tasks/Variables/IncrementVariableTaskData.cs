@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Data.Tasks;
 using Strem.Core.Types;
 
 namespace Strem.Flows.Default.Flows.Tasks.Variables;
@@ -18,6 +18,8 @@ public class IncrementVariableTaskData : IFlowTaskData
     public string Context { get; set; } = string.Empty;
     [Required]
     public VariableScopeType ScopeType { get; set; }
+
     [Required]
+    [Range(1, int.MaxValue, ErrorMessage = "{0} Must Be A Positive Number")]
     public int IncrementAmount { get; set; } = 1;
 }

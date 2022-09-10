@@ -2,14 +2,6 @@
 <article class="message is-info">
     <div class="message-header">
         <span>@Title</span>
-        @if (OnRequestSave.HasDelegate)
-        {
-            <a @onclick="OnRequestSave">
-                <span class="icon is-small">
-                    <i class="fas fa-floppy-disk"></i>
-                </span>
-            </a>
-        }
     </div>
     <div class="message-body">
         <table class="table is-leveled">
@@ -35,9 +27,6 @@
 </article>
 
 @code {
-    [Parameter]
-    public EventCallback OnRequestSave { get; set; }
-    
     [Parameter]
     public string Title { get; set; }
     

@@ -5,7 +5,7 @@
 <div class="field">
     <label class="label">Channel To Clip From</label>
     <div class="control">
-        <input class="input" type="text" @bind="Data.Channel" placeholder="i.e Leave blank for your own channel">
+        <TextInput @bind-Value="Data.Channel" placeholder="i.e Leave blank for your own channel" />
     </div>
     <HelperInfo>
         You can leave it blank for your own stream, or put another channel name in for another channel
@@ -14,10 +14,7 @@
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.CreateTodo">
-            Raise A Todo For Clip?
-        </label>
+        <CheckBox @bind-Value="Data.CreateTodo" Label="Raise A Todo For Clip?"></CheckBox>
     </div>
     <HelperInfo>This will add a todo entry to your todo list with the clip edit url for you to action later</HelperInfo>
 </div>
@@ -27,7 +24,7 @@
     <div class="field">
         <label class="label">Tags</label>
         <div class="control">
-            <TagEditor Tags="Data.Tags"/>
+            <TagEditor Tags="Data.Tags" TagsExpression="() => Data.Tags"/>
         </div>
         <HelperInfo>Add any custom tags you want to this auto created todo element</HelperInfo>
     </div>

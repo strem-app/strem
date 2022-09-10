@@ -3,7 +3,7 @@
 @using Strem.OBS.v4.Extensions
 @using Strem.OBS.v4.Services.Client
 
-@inherits Strem.Core.Components.Triggers.CustomTriggerComponent<v4.Flows.Triggers.OnVisibilityStateChangedTriggerData>
+@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<v4.Flows.Triggers.OnVisibilityStateChangedTriggerData>
 
 @inject IAppState AppState;
 @inject IObservableOBSClient ObsClient;
@@ -16,27 +16,18 @@
 </div>
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.TriggerOnVisible">
-            Trigger When Visible?
-        </label>
+        <CheckBox @bind-Value="Data.TriggerOnVisible" Label="Trigger When Visible?"></CheckBox>
     </div>
 </div>
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.TriggerOnInvisible">
-            Trigger When Invisible?
-        </label>
+        <CheckBox @bind-Value="Data.TriggerOnInvisible" Label="Trigger When Invisible?"></CheckBox>
     </div>
 </div>
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.TriggerOnStart">
-            Trigger On Start?
-        </label>
+        <CheckBox @bind-Value="Data.TriggerOnStart" Label="Trigger On Start?"></CheckBox>
     </div>
     <HelperInfo>By default these triggers wait to be told when visibility state changes, but with this you can trigger it with the current state when it starts</HelperInfo>
 </div>

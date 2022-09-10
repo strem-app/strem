@@ -6,7 +6,7 @@
 <div class="field">
     <label class="label">Channel To Play Ads For</label>
     <div class="control">
-        <input class="input" type="text" @bind="Data.Channel" placeholder="i.e Leave blank for your own channel">
+        <TextInput @bind-Value="Data.Channel" placeholder="i.e Leave blank for your own channel" />
     </div>
     <HelperInfo>
         You can leave it blank for your own stream, or put another channel name in for another channel
@@ -16,11 +16,7 @@
 <div class="field">
     <label class="label">Commercial Length</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.CommercialLength">
-                <EnumSelectOptions EnumType="typeof(CommercialLength)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.CommercialLength"></EnumSelectInput>
     </div>
     <HelperInfo>
         This is how long you want the commercial to play for on the stream.

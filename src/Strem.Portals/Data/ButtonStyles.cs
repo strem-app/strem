@@ -4,9 +4,9 @@ namespace Strem.Portals.Data;
 
 public class ButtonStyles
 {
-    public string Text { get; set; }
+    public string Text { get; set; } = string.Empty;
     public string IconClass { get; set; } = "fas fa-circle-play";
-    public string ImageUrl { get; set; }
+    public string ImageUrl { get; set; } = string.Empty;
     public string BackgroundColor { get; set; } = "#4a4a4a";
     public string TextColor { get; set; } = "#ffffff";
     public ButtonType ButtonType { get; set; } = ButtonType.IconButton;

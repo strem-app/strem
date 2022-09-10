@@ -5,7 +5,7 @@
 <div class="field">
     <label class="label">Variable Name</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e deaths" @bind="Data.Name">
+        <TextInput placeholder="i.e deaths" @bind-Value="Data.Name" />
     </div>
 </div>
 <div class="field">
@@ -18,11 +18,7 @@
 <div class="field">
     <label class="label">Variable Scope</label>
     <div class="control">
-        <div class="select">
-            <select @bind="Data.ScopeType">
-                <EnumSelectOptions EnumType="typeof(VariableScopeType)"></EnumSelectOptions>
-            </select>
-        </div>
+        <EnumSelectInput @bind-Value="Data.ScopeType"></EnumSelectInput>
     </div>
     <HelperInfo>Persisted vars are saved and available even after app closes, Application vars are available until app closes, Flow vars are only available for the rest of the flow</HelperInfo>
 </div>

@@ -15,6 +15,9 @@ public abstract class ValidatedInputBase<T> : ComponentBase
     [Parameter] 
     public Expression<Func<T>>? ValueExpression { get; set; }
 
+    [Parameter(CaptureUnmatchedValues = true)] 
+    public IReadOnlyDictionary<string, object> UnmatchedAttributes { get; set; }
+    
     [CascadingParameter] 
     protected EditContext? EditContext { get; set; } = null;
     
@@ -31,7 +34,7 @@ public abstract class ValidatedInputBase<T> : ComponentBase
     
     protected override async Task OnInitializedAsync()
     {
-        if (EditContext != null)
+        if (EditContext != null && ValueExpression != null)
         { _fieldIdentifier = FieldIdentifier.Create(ValueExpression); }
     }
     

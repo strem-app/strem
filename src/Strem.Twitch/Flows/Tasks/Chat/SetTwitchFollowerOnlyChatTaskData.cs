@@ -1,4 +1,4 @@
-﻿using Strem.Core.Flows.Tasks;
+﻿using Strem.Flows.Data.Tasks;
 using Strem.Core.Types;
 
 namespace Strem.Twitch.Flows.Tasks.Chat;

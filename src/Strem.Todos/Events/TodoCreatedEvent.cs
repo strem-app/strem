@@ -1,6 +1,5 @@
-﻿namespace Strem.Todos.Events;
+﻿using Strem.Todos.Events.Base;
 
-public class TodoCreatedEvent
-{
-    public Guid TodoId { get; set; }
-}
+namespace Strem.Todos.Events;
+
+public record TodoCreatedEvent(Guid TodoId) : TodoEvent(TodoId);

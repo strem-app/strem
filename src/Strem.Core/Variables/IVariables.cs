@@ -2,7 +2,7 @@ namespace Strem.Core.Variables;
 
 public interface IVariables : IDisposable
 {
-    IObservable<VariableEntry> OnVariableChanged { get; }
+    IObservable<KeyValuePair<VariableEntry, string>> OnVariableChanged { get; }
     
     bool Has(VariableEntry variableEntry);
     string Get(VariableEntry variableEntry);

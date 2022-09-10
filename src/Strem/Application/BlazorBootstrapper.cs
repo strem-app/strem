@@ -2,7 +2,7 @@
 using Photino.Blazor;
 using Strem.UI;
 
-namespace Strem;
+namespace Strem.Application;
 
 public class BlazorBootstrapper
 {
@@ -18,6 +18,12 @@ public class BlazorBootstrapper
     {
         var appLauncher = app.MainWindow
             .SetTitle("Strem")
+#if DEBUG
+            .SetLogVerbosity(3)
+#else
+            .SetLogVerbosity(0)
+#endif
+            
             .SetSize(1920, 1080)
             .SetUseOsDefaultSize(false)
             .SetIconFile("strem.ico");

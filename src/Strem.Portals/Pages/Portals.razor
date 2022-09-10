@@ -1,40 +1,36 @@
 ﻿@page "/portals"
 
 @using Strem.Portals.Data
-@using Strem.Portals.Services.Persistence
-
-@inject IPortalStore PortalStore
-@inject ISavePortalStorePipeline PortalSaver
 
 <div class="container is-fluid">
-    <div class="columns is-variable is-6">
-        <div class="column is-one-quarter">
-            <UserPortals OnPortalSelected="SelectPortal"></UserPortals>
-            <div class="block">
-                <button class="button is-info is-leveled" @onclick="SavePortals">Manual Save Portals</button>
+    <ErrorBoundary>
+        <ChildContent>
+            <div class="columns is-variable is-6">
+                <div class="column is-one-quarter">
+                    <UserPortals OnPortalSelected="SelectPortal"></UserPortals>
+                </div>
+                <div class="column">
+                    @if (CurrentPortal != null)
+                    {
+                        <PortalEditor Portal="CurrentPortal"></PortalEditor>
+                    }
+                </div>
             </div>
-        </div>
-        <div class="column">
-            @if (CurrentPortal != null)
-            {
-                <PortalEditor Portal="CurrentPortal"></PortalEditor>
-            }
-        </div>
-    </div>
+        </ChildContent>
+        <ErrorContent>
+            <TheSkyIsFalling/>
+        </ErrorContent>
+    </ErrorBoundary>
 </div>
 
 
 @code {
-    public PortalData CurrentPortal { get; set; }
-
-    public void SavePortals()
-    {
-        PortalSaver.Execute(PortalStore);
-    }
+    public PortalData CurrentPortal { get; set; } = null;
 
     private void SelectPortal(PortalData newPortal)
     {
         CurrentPortal = newPortal;
         InvokeAsync(StateHasChanged);
     }
+
 }

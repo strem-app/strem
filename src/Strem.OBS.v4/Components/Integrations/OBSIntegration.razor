@@ -18,13 +18,13 @@
         <label class="label">OBS Host/IP & Port</label>
         <div class="field has-addons">
             <div class="control is-expanded">
-                <input class="input" type="text" placeholder="i.e localhost or 127.0.0.1" @bind="Host"/>
+                <TextInput placeholder="i.e localhost or 127.0.0.1" @bind-Value="Host"/>
             </div>
             <div class="control">
                 <label class="label m-2">:</label>
             </div>
             <div class="control">
-                <input class="input" type="text" placeholder="i.e 4444" @bind="Port"/>
+                <TextInput placeholder="i.e 4444" @bind-Value="Port"/>
             </div>
         </div>
          <div class="field">
@@ -55,7 +55,7 @@
         <div class="field">
             <label class="label">OBS Server Password</label>
             <div class="control">
-                <input class="input" type="password" @bind="Password"/>
+                <TextInput type="password" @bind-Value="Password"/>
             </div>
             <HelperInfo>You can leave the password empty if there is no password set on the server</HelperInfo>
         </div>

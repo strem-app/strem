@@ -1,4 +1,4 @@
-﻿@inherits CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Utility.OnIntervalTriggerData>
+﻿@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Utility.OnIntervalTriggerData>
 
 <div class="field">
     <label class="label">Interval Type</label>
@@ -8,10 +8,7 @@
 </div>
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.StartImmediately"/>
-            Should It Trigger On Start Too?
-        </label>
+        <CheckBox @bind-Value="Data.StartImmediately" Label="Should It Trigger On Start Too?"></CheckBox>
     </div>
 </div>
 

@@ -1,9 +1,9 @@
-﻿@inherits CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Utility.OnEventRaisedTriggerData>
+﻿@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Utility.OnEventRaisedTriggerData>
 
 <div class="field">
     <label class="label">Interval Value</label>
     <div class="control">
-        <input class="input" type="text" placeholder="i.e user-redeemed-points" @bind="Data.EventName">
+        <TextInput placeholder="i.e user-redeemed-points" @bind-Value="Data.EventName" />
     </div>
 </div>
 

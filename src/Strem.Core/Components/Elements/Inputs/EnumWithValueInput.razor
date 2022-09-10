@@ -1,17 +1,16 @@
 ﻿@typeparam TEnum
 
+@using Strem.Core.Extensions
 @inherits ValidatedInputBase<string>
 
 <div class="enum-with-value field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control">
         <div class="select">
-            <select value="@EnumValue" @onchange="OnEnumChanged">
-                <EnumSelectOptions EnumType="typeof(TEnum)"></EnumSelectOptions>
-            </select>
+            <EnumSelectInput @bind-Value="ProxyEnumValue" />
         </div>
     </div>
     <div class="control is-expanded">
-        <ProcessedInput @bind-Value="ProxyValue" Placeholder="@Placeholder"></ProcessedInput>
+        <ProcessedInput @bind-Value="ProxyValue" @attributes=@UnmatchedAttributes.AllBut("class") />
     </div>
 </div>
 
@@ -26,14 +25,17 @@
     {
         get => Value;
         set => OnValueChanged(value);
-    }
+    }    
     
-    [Parameter]
-    public string Placeholder { get; set; }
-
-    public void OnEnumChanged(ChangeEventArgs args)
+    public TEnum ProxyEnumValue
     {
-        EnumValueChanged.InvokeAsync((TEnum)Enum.Parse(typeof(TEnum), args.Value.ToString()));
+        get => EnumValue;
+        set => OnEnumChanged(value);
+    }
+
+    public void OnEnumChanged(TEnum value)
+    {
+        EnumValueChanged.InvokeAsync(value);
         OnValueChanged(Value);
     }
 }

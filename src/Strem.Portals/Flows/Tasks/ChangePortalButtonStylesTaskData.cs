@@ -1,5 +1,5 @@
-﻿using Strem.Core.Flows.Tasks;
-using Strem.Core.Validation;
+﻿using Strem.Flows.Data.Tasks;
+using Strem.Core.Services.Validation.Attributes;
 using Strem.Portals.Data;
 
 namespace Strem.Portals.Flows.Tasks;

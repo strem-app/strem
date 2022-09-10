@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using LiteDB;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
@@ -6,17 +7,17 @@ using Strem.Core.Extensions;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services.Api;
 
-namespace Strem;
+namespace Strem.Application;
 
 public class StremApplication
 {
     public List<string> PreStartupLogs { get; } = new();
     public PluginHandler PluginHandler { get; } = new();
-    public ExecutionEngineHandler ExecutionEngineHandler { get; } = new();
     
     public IEventBus EventBus { get; private set; }
     public ILogger<StremApplication> Logger { get; private set; }
     public IInternalWebHost WebHost { get; private set; }
+    public ILiteDatabase Database { get; private set; }
     
     public bool HasStarted { get; private set; }
 
@@ -48,6 +49,7 @@ public class StremApplication
         Logger = services.GetService<ILogger<StremApplication>>();
         EventBus = services.GetService<IEventBus>();
         WebHost = services.GetService<IInternalWebHost>();
+        Database = services.GetService<ILiteDatabase>();
 
         HasStarted = true;
         PreStartupLogs.ForEach(Logger.Information);
@@ -64,10 +66,6 @@ public class StremApplication
         WebHost.StartHost();
         Logger.Information($"Started Internal Host: http://localhost:{InternalWebHostConfiguration.ApiHostPort}");
         
-        Logger.Information("Starting Flow Execution Engine");
-        await ExecutionEngineHandler.StartExecutionEngine(services);
-        Logger.Information("Started Flow Execution Engine");
-        
         Logger.Information("Strem Initialized");
         EventBus.PublishAsync(new ApplicationStartedEvent());
     }
@@ -75,6 +73,7 @@ public class StremApplication
     public bool ShutdownApp()
     {
         EventBus?.Publish(new ApplicationClosingEvent());
+        Database?.Dispose();
         if(WebHost?.IsRunning ?? false) { WebHost.StopHost(); }
         Logger?.Information("Strem Stopped");
         return false;

@@ -1,11 +1,13 @@
 ﻿@using System.Text.RegularExpressions
 @using System.Linq.Expressions
+@using Strem.Core.Extensions
 @inherits ValidatedInputBase<string>
 
 <div class="processed-input control has-icons-left @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     
-    <input class="input @(InputVisible ? "" : "is-hidden")" type="text" placeholder="@Placeholder" value="@Value" 
-           @onblur="HideInput" @onchange="e => OnValueChanged(e.Value.ToString())" @ref="_inputElement"/>
+    <input class="input @(InputVisible ? "" : "is-hidden")" type="text" value="@Value" 
+           @onblur="HideInput" @onchange="e => OnValueChanged(e.Value.ToString())" @ref="_inputElement"
+           @attributes=@UnmatchedAttributes.AllBut("class")/>
 
     <span class="input processed-output @(InputVisible ? "is-hidden" : "") @(string.IsNullOrEmpty(Value) ? "is-placeholder" : "")"
           @onclick="ShowInput">@((MarkupString)ProcessedContent)</span>
@@ -17,9 +19,6 @@
 
 @code {
     public static Regex Pattern = new(@"(V\(([\w\s\.,\-_\:\|]*)\))");
-    
-    [Parameter]
-    public string Placeholder { get; set; }
     
     public bool InputVisible { get; set; }
     public string ProcessedContent { get; set; }
@@ -43,7 +42,7 @@
     public void ProcessContent()
     {
         if(string.IsNullOrEmpty(Value)) 
-        { ProcessedContent = Placeholder; }
+        { ProcessedContent = UnmatchedAttributes.ValueFor("placeholder")?.ToString(); }
         else
         { ProcessedContent = Pattern.Replace(Value, VariableMatchEvaluator); }
         StateHasChanged();

@@ -6,11 +6,7 @@
             <div class="field">
                 <label class="label">Chat Permissions</label>
                 <div class="control">
-                    <div class="select">
-                        <select value="@ChatAccess" @onchange="x => { ChatAccess = Enum.Parse<ScopeAccess>(x.Value.ToString()); RequestScopeChange(); }">
-                            <EnumSelectOptions EnumType="typeof(ScopeAccess)"></EnumSelectOptions>
-                        </select>
-                    </div>
+                    <EnumSelectInput Value="@ChatAccess" ValueChanged="(ScopeAccess v) => { ChatAccess = v; RequestScopeChange(); }"/>
                 </div>
                  <HelperInfo>Chat permissions cover being able to read/manage chat messages and whispers</HelperInfo>
             </div>
@@ -19,11 +15,7 @@
             <div class="field">
                 <label class="label">Channel Permissions</label>
                 <div class="control">
-                    <div class="select">
-                        <select value="@ChannelAccess" @onchange="x => { ChannelAccess = Enum.Parse<ScopeAccess>(x.Value.ToString()); RequestScopeChange(); }">
-                            <EnumSelectOptions EnumType="typeof(ScopeAccess)"></EnumSelectOptions>
-                        </select>
-                    </div>
+                    <EnumSelectInput Value="@ChannelAccess" ValueChanged="(ScopeAccess v) => { ChannelAccess = v; RequestScopeChange(); }"/>
                 </div>
                 <HelperInfo>Channel permissions cover being able to read/manage channel titles, games, clips, redemptions etc</HelperInfo>
             </div>
@@ -34,11 +26,7 @@
             <div class="field">
                 <label class="label">Moderation Permissions</label>
                 <div class="control">
-                    <div class="select">
-                        <select value="@ModerationAccess" @onchange="x => { ModerationAccess = Enum.Parse<ScopeAccess>(x.Value.ToString()); RequestScopeChange(); }">
-                            <EnumSelectOptions EnumType="typeof(ScopeAccess)"></EnumSelectOptions>
-                        </select>
-                    </div>
+                    <EnumSelectInput Value="@ModerationAccess" ValueChanged="(ScopeAccess v) => { ModerationAccess = v; RequestScopeChange(); }"/>
                 </div>
                 <HelperInfo>Moderation permissions cover being able to manage banned users, blocked terms, chat room settings etc</HelperInfo>
             </div>
@@ -47,11 +35,7 @@
             <div class="field">
                 <label class="label">User Permissions</label>
                 <div class="control">
-                    <div class="select">
-                        <select value="@UserAccess" @onchange="x => { UserAccess = Enum.Parse<ScopeAccess>(x.Value.ToString()); RequestScopeChange(); }">
-                            <EnumSelectOptions EnumType="typeof(ScopeAccess)"></EnumSelectOptions>
-                        </select>
-                    </div>
+                    <EnumSelectInput Value="@UserAccess" ValueChanged="(ScopeAccess v) => { UserAccess = v; RequestScopeChange(); }"/>
                 </div>
                 <HelperInfo>User permissions cover being able to read/manage followers, blocked users, user settings etc</HelperInfo>
             </div>
@@ -61,52 +45,6 @@
 
 @code {
 
-    public string[] ReadChatScopes = new[] { ChatScopes.ReadChat, ChatScopes.ReadWhispers };
-    
-    public string[] ManageChatScopes = new[] { ChatScopes.SendChat, ChatScopes.SendWhisper, ChatScopes.ModerateChannel };
-    
-    public string[] ReadChannelScopes = new[]
-    {
-        ApiScopes.ReadChannelGoals, ApiScopes.ReadBits, ApiScopes.ReadChannelPolls, ApiScopes.ReadChannelPredictions, 
-        ApiScopes.ReadChannelRedemptions, ApiScopes.ReadChannelSubscriptions, ApiScopes.ReadChannelVips,
-        ApiScopes.ReadChannelHypeTrain
-    };
-    
-    public string[] ManageChannelScopes = new[]
-    {
-        ApiScopes.ManageChannelBroadcast, ApiScopes.ManageChannelEditors, ApiScopes.ManageChannelExtensions,
-        ApiScopes.ManageChannelModerators, ApiScopes.ManageChannelPolls, ApiScopes.ManageChannelPredications,
-        ApiScopes.ManageChannelRaids, ApiScopes.ManageChannelRedemptions, ApiScopes.ManageChannelSchedule,
-        ApiScopes.ManageChannelVideos, ApiScopes.ManageChannelVips, ApiScopes.RunChannelCommercials,
-        ApiScopes.ManageClips
-    };
-
-    public string[] ReadModerationScopes = new[]
-    {
-        ApiScopes.ReadModeration, ApiScopes.ReadModerationAutomodSettings,
-        ApiScopes.ReadModerationBlockedTerms, ApiScopes.ReadModerationChatSettings
-    };
-
-    public string[] ManageModerationScopes = new[]
-    {
-        ApiScopes.ManageModerationAnnouncements, ApiScopes.ManageModerationAutomod,
-        ApiScopes.ManageModerationAutomodSettings, ApiScopes.ManageModerationBannedUsers,
-        ApiScopes.ManageModerationBlockedTerms, ApiScopes.ManageModerationChatMessages,
-        ApiScopes.ManageModerationChatSettings
-    };
-
-    public string[] ReadUserScopes = new[]
-    {
-        ApiScopes.ReadUsersBroadcast, ApiScopes.ReadUsersEmail, ApiScopes.ReadUsersFollows,
-        ApiScopes.ReadUsersSubscriptions, ApiScopes.ReadUsersBlockedUsers
-    };
-
-    public string[] ManageUserScopes = new[]
-    {
-        ApiScopes.ManageUser, ApiScopes.ManageUserFollows, ApiScopes.ManageUsersWhispers,
-        ApiScopes.ManageUsersBlockedUsers, ApiScopes.ManageUsersChatColours
-    };
-    
     public ScopeAccess ChatAccess { get; set; }
     public ScopeAccess ChannelAccess { get; set; }
     public ScopeAccess ModerationAccess { get; set; }
@@ -125,20 +63,20 @@
     
     protected override async Task OnInitializedAsync()
     {
-        if (HasScopesFor(ManageChatScopes)){ ChatAccess = ScopeAccess.Full; }
-        else if(HasScopesFor(ReadChatScopes)) { ChatAccess = ScopeAccess.ReadOnly; }
+        if (HasScopesFor(ScopeCollections.ManageChatScopes)){ ChatAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ScopeCollections.ReadChatScopes)) { ChatAccess = ScopeAccess.ReadOnly; }
         else { ChatAccess = ScopeAccess.None; }
         
-        if (HasScopesFor(ManageChannelScopes)){ ChannelAccess = ScopeAccess.Full; }
-        else if(HasScopesFor(ReadChannelScopes)) { ChannelAccess = ScopeAccess.ReadOnly; }
+        if (HasScopesFor(ScopeCollections.ManageChannelScopes)){ ChannelAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ScopeCollections.ReadChannelScopes)) { ChannelAccess = ScopeAccess.ReadOnly; }
         else { ChannelAccess = ScopeAccess.None; }
         
-        if (HasScopesFor(ManageUserScopes)){ UserAccess = ScopeAccess.Full; }
-        else if(HasScopesFor(ReadUserScopes)) { UserAccess = ScopeAccess.ReadOnly; }
+        if (HasScopesFor(ScopeCollections.ManageUserScopes)){ UserAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ScopeCollections.ReadUserScopes)) { UserAccess = ScopeAccess.ReadOnly; }
         else { UserAccess = ScopeAccess.None; }
         
-        if (HasScopesFor(ManageModerationScopes)){ ModerationAccess = ScopeAccess.Full; }
-        else if(HasScopesFor(ReadModerationScopes)) { ModerationAccess = ScopeAccess.ReadOnly; }
+        if (HasScopesFor(ScopeCollections.ManageModerationScopes)){ ModerationAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ScopeCollections.ReadModerationScopes)) { ModerationAccess = ScopeAccess.ReadOnly; }
         else { ModerationAccess = ScopeAccess.None; }
     }
 
@@ -148,44 +86,44 @@
         switch (ChatAccess)
         {
             case ScopeAccess.Full:
-                newScopes.AddRange(ReadChatScopes);
-                newScopes.AddRange(ManageChatScopes);
+                newScopes.AddRange(ScopeCollections.ReadChatScopes);
+                newScopes.AddRange(ScopeCollections.ManageChatScopes);
                 break;
             case ScopeAccess.ReadOnly:
-                newScopes.AddRange(ReadChatScopes);
+                newScopes.AddRange(ScopeCollections.ReadChatScopes);
                 break;
         }
         
         switch (ChannelAccess)
         {
             case ScopeAccess.Full:
-                newScopes.AddRange(ReadChannelScopes);
-                newScopes.AddRange(ManageChannelScopes);
+                newScopes.AddRange(ScopeCollections.ReadChannelScopes);
+                newScopes.AddRange(ScopeCollections.ManageChannelScopes);
                 break;
             case ScopeAccess.ReadOnly:
-                newScopes.AddRange(ReadChannelScopes);
+                newScopes.AddRange(ScopeCollections.ReadChannelScopes);
                 break;
         }
 
         switch (ModerationAccess)
         {
             case ScopeAccess.Full:
-                newScopes.AddRange(ReadModerationScopes);
-                newScopes.AddRange(ManageModerationScopes);
+                newScopes.AddRange(ScopeCollections.ReadModerationScopes);
+                newScopes.AddRange(ScopeCollections.ManageModerationScopes);
                 break;
             case ScopeAccess.ReadOnly:
-                newScopes.AddRange(ReadChannelScopes);
+                newScopes.AddRange(ScopeCollections.ReadChannelScopes);
                 break;
         }
 
         switch (UserAccess)
         {
             case ScopeAccess.Full:
-                newScopes.AddRange(ReadUserScopes);
-                newScopes.AddRange(ManageUserScopes);
+                newScopes.AddRange(ScopeCollections.ReadUserScopes);
+                newScopes.AddRange(ScopeCollections.ManageUserScopes);
                 break;
             case ScopeAccess.ReadOnly:
-                newScopes.AddRange(ReadUserScopes);
+                newScopes.AddRange(ScopeCollections.ReadUserScopes);
                 break;
         }
 

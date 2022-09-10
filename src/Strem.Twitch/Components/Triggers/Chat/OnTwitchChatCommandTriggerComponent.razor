@@ -8,9 +8,7 @@
     <label class="label">Minimum Required User Type</label>
     <div class="control">
         <div class="select">
-            <select @bind="Data.MinimumUserType">
-                <EnumSelectOptions EnumType="typeof(UserType)"></EnumSelectOptions>
-            </select>
+            <EnumSelectInput @bind-Value="Data.MinimumUserType"></EnumSelectInput>
         </div>
     </div>
     <HelperInfo>
@@ -21,7 +19,7 @@
 <div class="field">
     <label class="label">Command Name</label>
     <div class="control has-icons-left has-icons-right">
-        <InputText class="input" type="text" placeholder="i.e clip or play-meme" @bind-Value="Data.CommandName" />
+        <TextInput placeholder="i.e clip or play-meme" @bind-Value="Data.CommandName" />
         <span class="icon is-small is-left">
             <i class="fas fa-exclamation"></i>
         </span>
@@ -31,39 +29,27 @@
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.RequiresArg">
-            Command Requires And Argument Too?
-        </label>
+        <CheckBox @bind-Value="Data.RequiresArg" Label="Require Argument With Command?"></CheckBox>
     </div>
     <HelperInfo>This will only trigger if the command also contains an argument <i>i.e !clip</i> would fail but <i>!clip super funny clip name</i> would pass</HelperInfo>
 </div>
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.IsSubscriber">
-            Require Sender To Be Subscriber?
-        </label>
+        <CheckBox @bind-Value="Data.IsSubscriber" Label="Require Sender To Be Subscriber?"></CheckBox>
     </div>
     <HelperInfo>This will only trigger if the sender is a subscriber</HelperInfo>
 </div>
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.IsVip">
-            Require Sender To Be A VIP?
-        </label>
+        <CheckBox @bind-Value="Data.IsVip" Label="Require Sender To Be A VIP?"></CheckBox>
     </div>
     <HelperInfo>This will only trigger if the sender is a vip</HelperInfo>
 </div>
 
 <div class="field">
     <div class="control">
-        <label class="checkbox">
-            <input type="checkbox" @bind="Data.HasBits">
-            Require Bits?
-        </label>
+        <CheckBox @bind-Value="Data.HasBits" Label="Require Bits?"></CheckBox>
     </div>
     <HelperInfo>This will only trigger if the message contains bits</HelperInfo>
 </div>

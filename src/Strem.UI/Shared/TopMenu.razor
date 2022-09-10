@@ -1,17 +1,10 @@
-﻿@using Strem.Core.Flows.Registries.Menus
-
+﻿@using Strem.Core.Services.Registries.Menus
 @inject IMenuRegistry MenuRegistry
 
 <div class="tabs is-centered is-boxed">
   <ul class="pt-4">
-    <li>
-      <NavLink href="flows" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
-        <span class="icon is-small"><i class="fas fa-code-commit" aria-hidden="true"></i></span>
-        <span>Flows</span>
-      </NavLink>
-    </li>
     
-    @foreach (var menuDescriptor in MenuRegistry.GetAll())
+    @foreach (var menuDescriptor in MenuRegistry.GetAll().OrderBy(x => x.Priority))
     {
       <li>
         <NavLink href="@menuDescriptor.PageUrl" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
@@ -20,17 +13,11 @@
         </NavLink>
       </li>
     }
-    
+
     <li>
       <NavLink href="integrations" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
         <span class="icon is-small"><i class="fas fa-cubes" aria-hidden="true"></i></span>
         <span>Integrations</span>
-      </NavLink>
-    </li>
-    <li>
-      <NavLink href="logs" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
-        <span class="icon is-small"><i class="fas fa-file-lines" aria-hidden="true"></i></span>
-        <span>Logs</span>
       </NavLink>
     </li>
     <li>
@@ -39,8 +26,14 @@
         <span>Settings</span>
       </NavLink>
     </li>
+    <li>
+      <NavLink href="logs" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
+        <span class="icon is-small"><i class="fas fa-file-lines" aria-hidden="true"></i></span>
+        <span>Logs</span>
+      </NavLink>
+    </li>
     @{
-      #if DEBUG 
+      #if DEBUG
     }
     <li>
       <NavLink href="test" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">

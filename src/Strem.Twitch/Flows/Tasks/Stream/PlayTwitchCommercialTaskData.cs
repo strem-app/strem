@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Data.Tasks;
 using TwitchLib.Client.Enums;
 
 namespace Strem.Twitch.Flows.Tasks.Stream;

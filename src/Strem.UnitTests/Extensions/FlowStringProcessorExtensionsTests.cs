@@ -1,7 +1,8 @@
 ﻿using Moq;
 using Strem.Core.Extensions;
-using Strem.Core.Flows.Processors;
+using Strem.Flows.Processors;
 using Strem.Core.Variables;
+using Strem.Flows.Extensions;
 
 namespace Strem.UnitTests.Extensions;
 

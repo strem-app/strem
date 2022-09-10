@@ -1,0 +1,29 @@
+﻿@using Strem.Core.Extensions
+@inherits ValidatedInputBase<string>
+
+<div class="gated-input field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
+    <div class="control">
+        <button class="button @(Enabled ? "is-success" : "is-danger")" @onclick="() => EnabledChanged.InvokeAsync(!Enabled)">
+            <span class="icon is-small">
+                <i class="fas @(Enabled ? "fa-check" : "fa-xmark")"></i>
+            </span>
+        </button>
+    </div>
+    <div class="control is-expanded">
+        <TextInput class="is-expanded" @bind-Value="@ProxyValue" disabled="@(!Enabled)" @attributes=@UnmatchedAttributes.Only("placeholder", "type") />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public bool Enabled { get; set; }
+    
+    [Parameter]
+    public EventCallback<bool> EnabledChanged { get; set; } 
+    
+    public string ProxyValue
+    {
+        get => Value;
+        set => OnValueChanged(value);
+    }
+}

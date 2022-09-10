@@ -1,5 +1,6 @@
-﻿@using Strem.Core.Browsers.File
-@using Microsoft.AspNetCore.Components
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Extensions
+@using Strem.Core.Services.Browsers.File
 
 @inherits ValidatedInputBase<string>
 
@@ -7,10 +8,10 @@
 
 <div class="file-browser field has-addons @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
     <div class="control is-expanded">
-        <GenericInput Type="text" Placeholder="@Placeholder" @bind-Value="ProxyValue" />
+        <TextInput @bind-Value="ProxyValue" @attributes=@UnmatchedAttributes.Only("disabled", "placeholder") />
     </div>
     <div class="control">
-        <button class="button is-link" @onclick="BrowseForFile">
+        <button class="button is-link" @onclick="BrowseForFile" @attributes=@UnmatchedAttributes.Only("disabled")>
             <span class="icon is-small">
                 <i class="fas fa-folder-open"></i>
             </span>
@@ -21,9 +22,6 @@
 
 @code 
 {
-    [Parameter]
-    public string Placeholder { get; set; }
-    
     public string ProxyValue
     {
         get => Value;

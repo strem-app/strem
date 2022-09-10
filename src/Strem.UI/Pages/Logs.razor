@@ -1,13 +1,7 @@
 ﻿@page "/logs"
 @using System.IO
 @using Strem.Core.State
-@using Strem.Infrastructure.Services.Persistence.App
-@using Strem.Infrastructure.Services.Persistence.User
 
-@inject ILoadAppDataPipeline LoadUserPipeline;
-@inject ILoadUserDataPipeline LoadAppPipeline;
-@inject ISaveAppDataPipeline SaveAppPipeline;
-@inject ISaveUserDataPipeline SaveUserPipeline;
 @inject IAppState AppState;
 
 <div class="container is-fluid">
@@ -19,9 +13,9 @@
             </Accordion>
 
             <Accordion Title="Application Variables" HeaderClasses="is-warning" IsExpanded="true">
-                <VariablesViewer Title="@($"UserData: {LoadUserPipeline.DataFilePath}")" Variables="@AppState.UserVariables" OnRequestSave="SaveUserData"/>
-                <VariablesViewer Title="@($"AppData: {LoadAppPipeline.DataFilePath}")" Variables="@AppState.AppVariables" OnRequestSave="SaveAppData"/>
-                <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables"/>
+                <VariablesViewer Title="User Variables" Variables="@AppState.UserVariables" />
+                <VariablesViewer Title="App Variables" Variables="@AppState.AppVariables" />
+                <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables" />
             </Accordion>
 
             <Accordion Title="Flow Executions" HeaderClasses="is-warning" IsExpanded="true">
@@ -38,8 +32,6 @@
     const string LogPath = "./logs";
 
     public string LatestLogFile { get; set; }
-    public void SaveAppData() => SaveAppPipeline.Execute(AppState.AppVariables);
-    public void SaveUserData() => SaveUserPipeline.Execute(AppState.UserVariables);
 
     protected override async Task OnInitializedAsync()
     {

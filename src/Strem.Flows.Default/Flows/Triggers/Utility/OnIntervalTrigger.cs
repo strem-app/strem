@@ -2,10 +2,11 @@
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows.Processors;
-using Strem.Core.Flows.Triggers;
+using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
 using Strem.Core.Variables;
+using Strem.Flows.Extensions;
+using Strem.Flows.Processors;
 
 namespace Strem.Flows.Default.Flows.Triggers.Utility;
 
@@ -26,7 +27,7 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
 
     public override async Task<IObservable<IVariables>> Execute(OnIntervalTriggerData data)
     {
-        var variables = new Variables();
+        var variables = new Core.Variables.Variables();
 
         if (!FlowStringProcessor.TryProcessInt(data.IntervalValue, variables, out var intValue))
         {

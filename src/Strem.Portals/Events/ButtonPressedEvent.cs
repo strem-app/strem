@@ -1,9 +1,5 @@
-﻿namespace Strem.Portals.Events;
+﻿using Strem.Portals.Events.Base;
 
-public class ButtonPressedEvent
-{
-    public Guid PortalId { get; set; }
-    public string PortalName { get; set; }
-    public Guid ButtonId { get; set; }
-    public string ButtonName { get; set; }
-}
+namespace Strem.Portals.Events;
+
+public record ButtonPressedEvent(Guid PortalId, string PortalName, Guid ButtonId, string ButtonName) : PortalButtonEvent(PortalId, ButtonId);

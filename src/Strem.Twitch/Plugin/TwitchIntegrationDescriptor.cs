@@ -1,6 +1,6 @@
 ﻿using Strem.Core.Extensions;
-using Strem.Core.Flows;
-using Strem.Core.Flows.Registries.Integrations;
+using Strem.Core.Services.Registries.Integrations;
+using Strem.Core.Variables;
 using Strem.Twitch.Components.Integrations;
 using Strem.Twitch.Variables;
 
@@ -15,7 +15,7 @@ public class TwitchIntegrationDescriptor : IIntegrationDescriptor
     {
         TwitchVars.Username.ToDescriptor(), TwitchVars.UserId.ToDescriptor(),
         TwitchVars.ChannelTitle.ToDescriptor(), TwitchVars.ChannelGame.ToDescriptor(),
-        TwitchVars.StreamViewers.ToDescriptor(), TwitchVars.StreamThumbnailUrl.ToDescriptor(),
+        TwitchVars.StreamViewers.ToDescriptor(false), TwitchVars.StreamThumbnailUrl.ToDescriptor(false),
     };
 
     public Type ComponentType { get; } = typeof(TwitchIntegrationComponent);

@@ -1,9 +1,8 @@
 ﻿using System.Reactive.Linq;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows;
-using Strem.Core.Flows.Processors;
-using Strem.Core.Flows.Triggers;
+using Strem.Flows.Processors;
+using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Variables;
@@ -58,9 +57,9 @@ public class OnTwitchWhisperMessageTrigger : FlowTrigger<OnTwitchWhisperMessageT
 
     public bool DoesMessageMeetCriteria(OnTwitchWhisperMessageTriggerData data, WhisperMessage message)
     {
-        if (data.MatchTypeType != TextMatchType.None)
+        if (data.MatchType != TextMatchType.None)
         {
-            if (!message.Message.MatchesText(data.MatchTypeType, data.MatchText))
+            if (!message.Message.MatchesText(data.MatchType, data.MatchText))
             { return false; }
         }
 

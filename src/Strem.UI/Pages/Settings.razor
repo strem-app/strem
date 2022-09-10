@@ -18,10 +18,7 @@
             <div class="field">
                 <label class="label">Helpers</label>
                 <div class="control">
-                    <label class="checkbox">
-                        <input type="checkbox" @bind="ShowHelpers">
-                        Show Helper Text On UI?
-                    </label>
+                     <CheckBox @bind-Value="ShowHelpers" Label="Show Helper Text On UI?"></CheckBox>
                 </div>
                 <HelperInfo>This is an example of a helper, if you turn this off you wont see them throughout the system</HelperInfo>
             </div>

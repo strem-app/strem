@@ -1,43 +1,25 @@
 ﻿namespace Strem.Core.Variables;
 
-public struct VariableEntry : IEquatable<VariableEntry>
+public record VariableEntry
 {
     public const string DefaultContext = "";
 
-    public readonly string Name;
-    public readonly string Context;
+    public string Name { get; }
+    public string Context { get; }
 
-    public VariableEntry(string name, string context = DefaultContext)
+    public VariableEntry(string name, string? context = DefaultContext)
     {
         Name = name;
-        Context = context;
+        Context = context ?? DefaultContext;
     }
-
-    public bool IsEmpty => string.IsNullOrEmpty(Name);
-    public bool HasContext => !string.IsNullOrEmpty(Context);
     
-    public bool Equals(VariableEntry other)
+    public virtual bool Equals(VariableEntry? other)
     {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
         return Name == other.Name && Context == other.Context;
     }
 
-    public override bool Equals(object? obj)
-    {
-        return obj is VariableEntry other && Equals(other);
-    }
-
     public override int GetHashCode()
-    {
-        return HashCode.Combine(Name, Context);
-    }
-
-    public static bool operator ==(VariableEntry left, VariableEntry right)
-    {
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(VariableEntry left, VariableEntry right)
-    {
-        return !left.Equals(right);
-    }
+    { return HashCode.Combine(Name, Context); }
 }

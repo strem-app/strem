@@ -5,23 +5,25 @@ using Strem.Core.DI;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Flows.Default.Modules;
+using Strem.Flows.Plugins;
 using Strem.Infrastructure.Plugin;
 using Strem.OBS.v4.Plugin;
 using Strem.Portals.Plugin;
 using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;
 
-namespace Strem;
+namespace Strem.Application;
 
 public class PluginHandler
 {
     public void PreLoadLocalPlugins()
     {
         Assembly _;
+        _ = typeof(FlowsModule).Assembly;
+        _ = typeof(DefaultFlowsModule).Assembly;
         _ = typeof(InfrastructureModule).Assembly;
         _ = typeof(PortalsModule).Assembly;
         _ = typeof(TodoModule).Assembly;
-        _ = typeof(DefaultFlowsModule).Assembly;
         _ = typeof(TwitchModule).Assembly;
         _ = typeof(OBSModule).Assembly;
     }
@@ -59,7 +61,7 @@ public class PluginHandler
             var pluginName = startupService.GetType().Name;
             logger.Information($"Starting {pluginName}");
             await startupService.StartPlugin();
-            logger.Information($"Started {pluginName}");
+            logger.Information($"Finished {pluginName}");
         }
     }
 }
