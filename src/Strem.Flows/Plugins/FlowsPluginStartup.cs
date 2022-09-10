@@ -4,6 +4,9 @@ using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Flows.Events;
+using Strem.Flows.Events.Base;
+using Strem.Flows.Events.Tasks;
+using Strem.Flows.Events.Triggers;
 using Strem.Flows.Executors;
 using Strem.Flows.Services.Registries.Tasks;
 using Strem.Flows.Services.Registries.Triggers;
@@ -40,11 +43,9 @@ public class FlowsPluginStartup : IPluginStartup, IDisposable
     public async Task StartPlugin()
     {
         EventBus
-            .Receive<FlowTaskChangedEvent>().Select(x => x.FlowId)
-            .Merge(EventBus.Receive<FlowTriggerChangedEvent>().Select(x => x.FlowId))
-            .Merge(EventBus.Receive<FlowDetailsChangedEvent>().Select(x => x.FlowId))
+            .ReceiveAs<FlowEvent, FlowTaskChangedEvent, FlowTriggerChangedEvent, FlowDetailsChangedEvent, FlowEnabledEvent, FlowDisabledEvent>()
             .ThrottledByKey(x => x, TimeSpan.FromSeconds(2))
-            .Select(x => FlowStore.Get(x))
+            .Select(x => FlowStore.Get(x.FlowId))
             .Subscribe(x =>
             {
                 if(x == null){ return; }

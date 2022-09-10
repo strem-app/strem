@@ -6,6 +6,8 @@
 @using Strem.Core.Extensions
 @using Strem.Todos.Data
 @using Strem.Todos.Events
+@using Strem.Todos.Events.Base
+@using Strem.Todos.Services.Stores
 
 @inject ITodoStore TodoStore;
 @inject IEventBus EventBus;
@@ -45,7 +47,7 @@
                 </div>
             </Accordion>
 
-            @if (TodoStore.Todos.Count == 0)
+            @if (TodoStore.Data.Count == 0)
             {
                 <p class="title is-5">Nothing to action yet, it will refresh as data comes in</p>
             }
@@ -106,7 +108,7 @@
 
     public IReadOnlyCollection<TodoData> GetFilteredTodos()
     {
-        return TodoStore.Todos
+        return TodoStore.Data
             .Where(DoesTodoMatchFilters)
             .OrderBy(GetOrderBy())
             .ToArray();
@@ -114,21 +116,18 @@
 
     protected override async Task OnInitializedAsync()
     {
-        EventBus.Receive<TodoCreatedEvent>().Select(x => x.TodoId)
-            .Merge(EventBus.Receive<TodoRemovedEvent>().Select(x => x.TodoId))
-            .Subscribe(x => InvokeAsync(StateHasChanged))
+        EventBus.ReceiveAs<TodoEvent, TodoCreatedEvent, TodoRemovedEvent>()
+            .Subscribe(x => TodosChanged())
             .AddTo(_subs);
     }
 
     public void Dispose()
-    {
-        _subs?.Dispose();
-    }
+    { _subs?.Dispose(); }
+
+    private void TodosChanged()
+    { InvokeAsync(StateHasChanged); }
 
     private void OnTodoComplete(TodoData todo)
-    {
-        TodoStore.Todos.Remove(todo);
-        EventBus.PublishAsync(new TodoRemovedEvent { TodoId = todo.Id });
-    }
+    { TodoStore.Remove(todo.Id); }
 
 }

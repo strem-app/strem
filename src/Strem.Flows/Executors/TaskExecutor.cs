@@ -43,7 +43,7 @@ public class TaskExecutor : ITaskExecutor
             return ExecutionResult.Failed("Task Data Failed Validation, See Log");
         }
             
-        EventBus.PublishAsync(new FlowTaskStarted(flow.Id, taskData.Id));
+        EventBus.PublishAsync(new FlowTaskStartedEvent(flow.Id, taskData.Id));
         try
         {
             var executionResult = await task.Execute(taskData, flowVariables);
@@ -51,7 +51,7 @@ public class TaskExecutor : ITaskExecutor
             if (executionResult.ResultType is ExecutionResultType.Failed or ExecutionResultType.CascadingFailure)
             {
                 Logger.Warning($"Failed Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}]");
-                EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
+                EventBus.PublishAsync(new FlowTaskFinishedEvent(flow.Id, taskData.Id));
                 return executionResult;
             }
 
@@ -71,14 +71,14 @@ public class TaskExecutor : ITaskExecutor
                 }
             }
 
-            EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
+            EventBus.PublishAsync(new FlowTaskFinishedEvent(flow.Id, taskData.Id));
             executionLog.ElementExecutionSummary.Add($"{taskData.Code} - {executionResult}");
             return executionResult;
         }
         catch (Exception ex)
         {
             Logger.Error($"Error Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}] | Error: {ex.Message}");
-            EventBus.PublishAsync(new FlowTaskFinished(flow.Id, taskData.Id));
+            EventBus.PublishAsync(new FlowTaskFinishedEvent(flow.Id, taskData.Id));
             return ExecutionResult.Failed($"Task Failed With Exception: {ex.Message}");
         }
     }

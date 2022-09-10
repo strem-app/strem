@@ -1,7 +1,8 @@
 ﻿using LiteDB;
 using Strem.Data;
+using Strem.Todos.Data;
 
-namespace Strem.Todos.Data.Repositories;
+namespace Strem.Todos.Services.Repositories;
 
 public class TodoRepository : Repository<TodoData, Guid>, ITodoRepository
 {

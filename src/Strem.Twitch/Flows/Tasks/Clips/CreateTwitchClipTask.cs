@@ -7,6 +7,7 @@ using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Todos.Data;
 using Strem.Todos.Events;
+using Strem.Todos.Services.Stores;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
@@ -68,8 +69,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
             CreatedBy = "Twitch Clip Task",
             Tags = data.Tags
         };
-        TodoStore.Todos.Add(todoElement);
-        EventBus.PublishAsync(new TodoCreatedEvent { TodoId = todoElement.Id });
+        TodoStore.Add(todoElement);
     }
     
     public override async Task<ExecutionResult> Execute(CreateTwitchClipTaskData data, IVariables flowVars)

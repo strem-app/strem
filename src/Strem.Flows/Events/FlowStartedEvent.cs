@@ -1,3 +1,5 @@
-﻿namespace Strem.Flows.Events;
+﻿using Strem.Flows.Events.Base;
 
-public record FlowStartedEvent(Guid FlowId);
+namespace Strem.Flows.Events;
+
+public record FlowStartedEvent(Guid FlowId) : FlowEvent(FlowId);

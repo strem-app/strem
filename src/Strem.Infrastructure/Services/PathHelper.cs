@@ -1,4 +1,4 @@
-﻿namespace Strem.Infrastructure.Services.Persistence;
+﻿namespace Strem.Infrastructure.Services;
 
 public class PathHelper
 {

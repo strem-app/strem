@@ -1,3 +1,5 @@
-﻿namespace Strem.Portals.Events;
+﻿using Strem.Portals.Events.Base;
 
-public record PortalRemovedEvent(Guid PortalId);
+namespace Strem.Portals.Events;
+
+public record PortalRemovedEvent(Guid PortalId) : PortalEvent(PortalId);

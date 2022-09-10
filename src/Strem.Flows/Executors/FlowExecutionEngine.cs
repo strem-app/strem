@@ -67,9 +67,9 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         foreach (var triggerData in flow.TriggerData)
         { 
             await TriggerExecutor.SetupTrigger(flow, triggerData, flowSubs, vars => {
-                EventBus.PublishAsync(new FlowTriggerStarted(flow.Id, triggerData.Id));
+                EventBus.PublishAsync(new FlowTriggerStartedEvent(flow.Id, triggerData.Id));
                 ExecuteFlow(flow, vars);
-                EventBus.PublishAsync(new FlowTriggerFinished(flow.Id, triggerData.Id));
+                EventBus.PublishAsync(new FlowTriggerFinishedEvent(flow.Id, triggerData.Id));
             }); 
         }
     }

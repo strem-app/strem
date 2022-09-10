@@ -9,6 +9,7 @@
 @using Strem.Portals.Events
 @using Strem.Portals.Types
 @using Strem.Todos.Data
+@using Strem.Todos.Services.Stores
 
 @inject IWebBrowser WebBrowser
 @inject IEventBus EventBus
@@ -127,9 +128,9 @@
     public IEnumerable<TodoData> GetFilteredTodos()
     {
         if (Portal.TodoTags.Count == 0)
-        { return TodoStore.Todos; }
+        { return TodoStore.Data; }
 
-        return TodoStore.Todos
+        return TodoStore.Data
             .Where(x => Portal.TodoTags.All(requiredTag => x.Tags.Contains(requiredTag, StringComparer.OrdinalIgnoreCase)));
     }
     
