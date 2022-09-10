@@ -1,5 +1,6 @@
 ﻿using Strem.Core.DI;
 using Strem.Core.Extensions;
+using Strem.Core.Plugins;
 using Strem.Data;
 using Strem.Flows.Data;
 using Strem.Flows.Data.Repositories;
@@ -16,6 +17,9 @@ public class FlowsModule : IDependencyModule
 {
     public void Setup(IServiceCollection services)
     {
+        // Plugin
+        services.AddSingleton<IPluginStartup, FlowsPluginStartup>();
+        
         // Processors
         services.AddSingleton<IFlowStringProcessor, FlowStringProcessor>();
         services.AddSingleton<ICommandStringProcessor, CommandStringProcessor>();
