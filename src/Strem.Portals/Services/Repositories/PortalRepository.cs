@@ -1,8 +1,8 @@
 ﻿using LiteDB;
 using Strem.Data;
-using Strem.Data.Types;
+using Strem.Portals.Data;
 
-namespace Strem.Portals.Data.Repositories;
+namespace Strem.Portals.Services.Repositories;
 
 public class PortalRepository : Repository<PortalData, Guid>, IPortalRepository
 {

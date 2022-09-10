@@ -8,6 +8,7 @@
 @using Strem.Portals.Types
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
+@using Strem.Portals.Services.Stores
 @using Strem.Todos.Data
 @using Strem.Todos.Events
 
@@ -76,15 +77,17 @@
     
     protected override async Task OnInitializedAsync()
     {
-        EventBus = WebHostHackExtensions.ServiceLocator.GetService<IEventBus>();
-        ButtonRuntimeStyles = WebHostHackExtensions.ServiceLocator.GetService<ButtonRuntimeStyles>();
+        EventBus = WebHostHackExtensions.ServiceLocator.GetService<IEventBus>()!;
+        ButtonRuntimeStyles = WebHostHackExtensions.ServiceLocator.GetService<ButtonRuntimeStyles>()!;
         
         var portalStore = WebHostHackExtensions.ServiceLocator.GetService<IPortalStore>();
         TodoStore = WebHostHackExtensions.ServiceLocator.GetService<ITodoStore>();
-        Portal = portalStore.Portals.SingleOrDefault(x => x.Id == PortalId);
+        Portal = portalStore.Get(PortalId);
 
-        EventBus.Receive<PortalChangedEvent>()
-            .Where(x => x.PortalId == PortalId)
+        EventBus.Receive<PortalChangedEvent>().Select(x => x.PortalId)
+            .Merge(EventBus.Receive<PortalCreatedEvent>().Select(x => x.PortalId))
+            .Merge(EventBus.Receive<PortalRemovedEvent>().Select(x => x.PortalId))
+            .Where(x => x == PortalId)
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
         

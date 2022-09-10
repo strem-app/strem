@@ -1,7 +1,8 @@
 ﻿using LiteDB;
 using Strem.Data;
+using Strem.Flows.Data;
 
-namespace Strem.Flows.Data.Repositories;
+namespace Strem.Flows.Services.Repositories;
 
 public class FlowRepository : Repository<Flow, Guid>, IFlowRepository
 {

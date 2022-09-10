@@ -1,5 +1,5 @@
-﻿@using Strem.Portals.Data
-@using Strem.Core.Extensions
+﻿@using Strem.Core.Extensions
+@using Strem.Portals.Services.Stores
 @inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.Portals.Flows.Tasks.ChangePortalButtonStylesTaskData>
 
 @inject IPortalStore PortalStore
@@ -8,14 +8,14 @@
     <label class="label">Required Portal</label>
     <div class="control">
         <div class="select">
-            <DataSelectInput @bind-Value="Data.PortalId" Data="PortalStore.Portals" GetName="x => x.Name" GetValue="x => x.Id" />
+            <DataSelectInput @bind-Value="Data.PortalId" Data="PortalStore.Data" GetName="x => x.Name" GetValue="x => x.Id" />
         </div>
     </div>
     <HelperInfo>This lets you specify which portal should be used as the trigger</HelperInfo>
 </div>
 @if (Data.PortalId != Guid.Empty)
 {
-    var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == Data.PortalId);
+    var portal = PortalStore.Get(Data.PortalId);
     if (portal != null)
     {
         <div class="field">
@@ -110,10 +110,8 @@
         if(Data.PortalId == Guid.Empty && Data.ButtonId == Guid.Empty)
         { return $"Change Button Style"; }
 
-        var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == Data.PortalId);
-        if (portal == null){ return "Change Button Style"; }
-
-        var button = portal.Buttons.SingleOrDefault(x => x.Id == Data.ButtonId);
+        var portal = PortalStore.Get(Data.PortalId);
+        var button = portal?.Buttons.SingleOrDefault(x => x.Id == Data.ButtonId);
         if(button == null) { return "Change Button Style"; }
 
         return $"Change {button.Name} Styles In {portal.Name}";

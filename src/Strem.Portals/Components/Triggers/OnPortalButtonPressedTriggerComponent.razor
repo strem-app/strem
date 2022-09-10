@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Strem.Portals.Data
+@using Strem.Portals.Services.Stores
 @inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Portals.Flows.Triggers.OnPortalButtonPressedTriggerData>
 
 @inject IPortalStore PortalStore
@@ -7,13 +7,13 @@
 <div class="field">
     <label class="label">Required Portal</label>
     <div class="control">
-        <DataSelectInput @bind-Value="Data.RequiredPortalId" Data="PortalStore.Portals" GetName="x => x.Name" GetValue="x => x.Id" />
+        <DataSelectInput @bind-Value="Data.RequiredPortalId" Data="PortalStore.Data" GetName="x => x.Name" GetValue="x => x.Id" />
     </div>
     <HelperInfo>This lets you specify which portal should be used as the trigger</HelperInfo>
 </div>
 @if (Data.RequiredPortalId != Guid.Empty)
 {
-    var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == Data.RequiredPortalId);
+    var portal = PortalStore.Data.SingleOrDefault(x => x.Id == Data.RequiredPortalId);
     if (portal != null)
     {
         <div class="field">
@@ -34,10 +34,8 @@
         if(Data.RequiredPortalId == Guid.Empty && Data.RequiredButtonId == Guid.Empty)
         { return $"On Portal Button Pressed"; }
 
-        var portal = PortalStore.Portals.SingleOrDefault(x => x.Id == Data.RequiredPortalId);
-        if (portal == null){ return "On Portal Button Pressed"; }
-
-        var button = portal.Buttons.SingleOrDefault(x => x.Id == Data.RequiredButtonId);
+        var portal = PortalStore.Get(Data.RequiredPortalId);
+        var button = portal?.Buttons.SingleOrDefault(x => x.Id == Data.RequiredButtonId);
         if(button == null) { return "On Portal Button Pressed"; }
 
         return $"On {button.Name} Pressed In {portal.Name}";
