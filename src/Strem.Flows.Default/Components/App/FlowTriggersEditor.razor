@@ -1,0 +1,141 @@
+﻿@using Strem.Core.Events.Bus
+@using Strem.Core.Extensions
+@using System.Reactive.Disposables
+@using System.Reactive.Linq
+@using Strem.Core.Components.Elements.Drag
+@using Strem.Core.Services.Utils
+@using Strem.Core.Types
+@using Strem.Flows.Data
+@using Strem.Flows.Data.Triggers
+@using Strem.Flows.Services.Registries.Triggers
+
+@inject ITriggerRegistry TriggerRegistry;
+@inject IEventBus EventBus;
+@inject DragController DragController
+@inject IRandomizer Randomizer
+
+@implements IDisposable
+
+@if (Flow.TriggerData.Count == 0)
+{
+    <DraggableElement Data="@ScopeContext" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTrigger }" 
+                      CanDrag="false" Classes="notification has-text-centered">
+        <p class="title is-5 has-text-black-ter">Drag triggers in here to have them start your flows</p>
+    </DraggableElement>
+}
+
+
+@foreach (var data in Flow.TriggerData)
+{
+    <DraggableListElement Data="data" DropType="@DropTypes.FlowTrigger" ContainingList="Flow.TriggerData" 
+                          SupportedDropTypes="@(new[] { DropTypes.FlowTrigger, DropTypes.NewTrigger })" @key="data.Id">
+        <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)" @key="data.Id"
+                          OnRequestedDeletion="RemoveTriggerData" Trigger="GetTriggerFor(data)"
+                          DataChanged="() => TriggerDataChanged(data.Id)" />
+    </DraggableListElement>
+}
+
+@code {
+    [Parameter]
+    public Flow Flow { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TriggerDeleted { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TriggerAdded { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TriggersMoved { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> TriggerChanged { get; set; }
+    
+    public Guid ActiveTriggerId { get; set; }
+    public string ScopeContext { get; set; }
+    
+    public Type GetComponentFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).ComponentType;
+    public IFlowTrigger GetTriggerFor(IFlowTriggerData data) => TriggerRegistry.Get(data.Code).Trigger;
+  
+    private CompositeDisposable _subs = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        ScopeContext = Randomizer.RandomString(30);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.FlowTrigger && 
+                        x.DestinationDropType == DropTypes.FlowTrigger && 
+                        Equals(x.DestinationList, Flow.TriggerData))
+            .Subscribe(MoveTriggerElement)
+            .AddTo(_subs);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.NewTrigger && 
+                        x.DestinationDropType == DropTypes.FlowTrigger &&
+                        Equals(x.DestinationList, Flow.TriggerData))
+            .Subscribe(AddNewTriggerIntoExisting)
+            .AddTo(_subs);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.NewTrigger && 
+                        x.DestinationDropType == DropTypes.None &&
+                        ScopeContext.Equals(x.DestinationObject))
+            .Subscribe(AddNewTriggerIntoFresh)
+            .AddTo(_subs);
+    }
+    
+    public void MoveTriggerElement(DropData args)
+    {
+        args.SourceList.Remove(args.SourceObject);
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject) + 1;
+        if (indexToAddAt == args.DestinationList.Count)
+        { args.DestinationList.Add(args.SourceObject); }
+        else
+        { args.DestinationList.Insert(indexToAddAt, args.SourceObject); }
+
+        var triggerData = args.SourceObject as IFlowTriggerData;
+        InvokeAsync(StateHasChanged);
+        TriggersMoved.InvokeAsync(triggerData.Id);
+    }
+    
+    public void AddNewTriggerIntoExisting(DropData args)
+    {
+        var triggerDescriptor = args.SourceObject as TriggerDescriptor;
+        if(triggerDescriptor == null) { return; }
+        var newTaskData = triggerDescriptor.Data();
+        
+        var indexToAddAt = args.DestinationList.IndexOf(args.DestinationObject) + 1;
+        if (indexToAddAt == args.DestinationList.Count)
+        { args.DestinationList.Add(newTaskData); }
+        else
+        { args.DestinationList.Insert(indexToAddAt, newTaskData); }
+
+        InvokeAsync(StateHasChanged);
+        TriggerAdded.InvokeAsync(newTaskData.Id);
+    }
+    
+    public void AddNewTriggerIntoFresh(DropData args)
+    {
+        var taskDescriptor = args.SourceObject as TriggerDescriptor;
+        if(taskDescriptor == null) { return; }
+        
+        var newTaskData = taskDescriptor.Data();
+        Flow.TriggerData.Add(newTaskData);
+        InvokeAsync(StateHasChanged);
+
+        TriggerAdded.InvokeAsync(newTaskData.Id);
+    }
+    
+    public void RemoveTriggerData(IFlowTriggerData data)
+    {
+        Flow.TriggerData.Remove(data);
+        TriggerDeleted.InvokeAsync(data.Id);
+    }
+
+    public void TriggerDataChanged(Guid triggerId)
+    { TriggerChanged.InvokeAsync(triggerId); }
+
+    public void Dispose()
+    { _subs?.Dispose(); }
+}

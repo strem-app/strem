@@ -1,4 +1,4 @@
-﻿using Strem.Core.Flows.Triggers;
+﻿using Strem.Flows.Data.Triggers;
 using Strem.Core.Services.Validation.Attributes;
 
 namespace Strem.Portals.Flows.Triggers;

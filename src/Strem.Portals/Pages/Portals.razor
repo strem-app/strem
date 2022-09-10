@@ -1,31 +1,36 @@
 ﻿@page "/portals"
 
 @using Strem.Portals.Data
-@using Strem.Core.Events.Bus
-@using Strem.Core.Services.Notifications
-@using Strem.Portals.Events
 
 <div class="container is-fluid">
-    <div class="columns is-variable is-6">
-        <div class="column is-one-quarter">
-            <UserPortals OnPortalSelected="SelectPortal"></UserPortals>
-        </div>
-        <div class="column">
-            @if (CurrentPortal != null)
-            {
-                <PortalEditor Portal="CurrentPortal"></PortalEditor>
-            }
-        </div>
-    </div>
+    <ErrorBoundary>
+        <ChildContent>
+            <div class="columns is-variable is-6">
+                <div class="column is-one-quarter">
+                    <UserPortals OnPortalSelected="SelectPortal"></UserPortals>
+                </div>
+                <div class="column">
+                    @if (CurrentPortal != null)
+                    {
+                        <PortalEditor Portal="CurrentPortal"></PortalEditor>
+                    }
+                </div>
+            </div>
+        </ChildContent>
+        <ErrorContent>
+            <TheSkyIsFalling/>
+        </ErrorContent>
+    </ErrorBoundary>
 </div>
 
 
 @code {
     public PortalData CurrentPortal { get; set; } = null;
-    
+
     private void SelectPortal(PortalData newPortal)
     {
         CurrentPortal = newPortal;
         InvokeAsync(StateHasChanged);
     }
+
 }

@@ -1,3 +1,5 @@
-﻿namespace Strem.Portals.Events;
+﻿using Strem.Portals.Events.Base;
 
-public record ButtonChangedEvent(Guid PortalId, Guid ButtonId);
+namespace Strem.Portals.Events;
+
+public record ButtonChangedEvent(Guid PortalId, Guid ButtonId) : PortalButtonEvent(PortalId, ButtonId);

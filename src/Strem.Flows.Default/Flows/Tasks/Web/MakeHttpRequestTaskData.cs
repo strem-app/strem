@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RestSharp;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Data.Tasks;
 using Strem.Flows.Default.Models;
 
 namespace Strem.Flows.Default.Flows.Tasks.Web;

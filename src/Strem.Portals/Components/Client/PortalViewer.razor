@@ -8,8 +8,11 @@
 @using Strem.Portals.Types
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
+@using Strem.Portals.Events.Base
+@using Strem.Portals.Services.Stores
 @using Strem.Todos.Data
 @using Strem.Todos.Events
+@using Strem.Todos.Services.Stores
 
 @implements IDisposable
 
@@ -76,19 +79,14 @@
     
     protected override async Task OnInitializedAsync()
     {
-        EventBus = WebHostHackExtensions.ServiceLocator.GetService<IEventBus>();
-        ButtonRuntimeStyles = WebHostHackExtensions.ServiceLocator.GetService<ButtonRuntimeStyles>();
+        EventBus = WebHostHackExtensions.ServiceLocator.GetService<IEventBus>()!;
+        ButtonRuntimeStyles = WebHostHackExtensions.ServiceLocator.GetService<ButtonRuntimeStyles>()!;
         
         var portalStore = WebHostHackExtensions.ServiceLocator.GetService<IPortalStore>();
         TodoStore = WebHostHackExtensions.ServiceLocator.GetService<ITodoStore>();
-        Portal = portalStore.Portals.SingleOrDefault(x => x.Id == PortalId);
+        Portal = portalStore.Get(PortalId);
 
-        EventBus.Receive<PortalChangedEvent>()
-            .Where(x => x.PortalId == PortalId)
-            .Subscribe(x => InvokeAsync(StateHasChanged))
-            .AddTo(_subs);
-        
-        EventBus.Receive<ButtonChangedEvent>()
+        EventBus.ReceiveAs<PortalEvent, PortalChangedEvent, PortalCreatedEvent, PortalRemovedEvent, ButtonChangedEvent>()
             .Where(x => x.PortalId == PortalId)
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
@@ -101,16 +99,14 @@
     public IEnumerable<TodoData> GetFilteredTodos()
     {
         if (Portal.TodoTags.Count == 0)
-        { return TodoStore.Todos; }
+        { return TodoStore.Data; }
 
-        return TodoStore.Todos
+        return TodoStore.Data
             .Where(x => x.Tags.All(tag => Portal.TodoTags.Contains(tag, StringComparer.OrdinalIgnoreCase)));
     }
 
     public void NotifyButtonPressed(ButtonData buttonData)
-    {
-        EventBus.PublishAsync(new ButtonPressedEvent(Portal.Id, Portal.Name, buttonData.Id, buttonData.Name));
-    }
+    { EventBus.PublishAsync(new ButtonPressedEvent(Portal.Id, Portal.Name, buttonData.Id, buttonData.Name)); }
     
     private string GetImageSize(ButtonSize portalButtonSize)
     {
@@ -133,8 +129,7 @@
 
     private void OnTodoCompleted(TodoData todoData)
     {
-        TodoStore.Todos.Remove(todoData);
-        EventBus.Publish(new TodoRemovedEvent { TodoId = todoData.Id });
+        TodoStore.Remove(todoData.Id);
         StateHasChanged();
     }
 

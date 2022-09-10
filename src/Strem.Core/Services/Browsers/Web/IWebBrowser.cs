@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Browsers.Web;
+﻿namespace Strem.Core.Services.Browsers.Web;
 
 public interface IWebBrowser
 {

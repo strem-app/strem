@@ -6,6 +6,8 @@
 @using Strem.Core.Extensions
 @using Strem.Todos.Data
 @using Strem.Todos.Events
+@using Strem.Todos.Events.Base
+@using Strem.Todos.Services.Stores
 
 @inject ITodoStore TodoStore;
 @inject IEventBus EventBus;
@@ -13,46 +15,53 @@
 @implements IDisposable
 
 <div class="container is-fluid">
-    <h3 class="title is-3">Todos</h3>
-    <Accordion Title="Todo Sort/Filter" HeaderClasses="is-primary">
-        <div class="columns">
-            <div class="column">
-                <div class="field">
-                    <label class="label">Filter By Name</label>
-                    <div class="control">
-                        <input class="input" type="text" placeholder="Put in the partial name of a todo" @bind="SearchCriteria"/>
+    <ErrorBoundary>
+        <ChildContent>
+            <h3 class="title is-3">Todos</h3>
+            <Accordion Title="Todo Sort/Filter" HeaderClasses="is-primary">
+                <div class="columns">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Filter By Name</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="Put in the partial name of a todo" @bind="SearchCriteria"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Filter By Tags</label>
+                            <div class="control is-expanded">
+                                <TagEditor Tags="SearchTags" OnTagsChanged="StateHasChanged" TagsExpression="() => SearchTags"></TagEditor>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Sort By</label>
+                            <div class="control is-expanded">
+                                <EnumSelectInput @bind-Value="SortBy"></EnumSelectInput>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="column">
-                <div class="field">
-                    <label class="label">Filter By Tags</label>
-                    <div class="control is-expanded">
-                        <TagEditor Tags="SearchTags" OnTagsChanged="StateHasChanged" TagsExpression="() => SearchTags"></TagEditor>
-                    </div>
-                </div>
-            </div>
-            <div class="column">
-                <div class="field">
-                    <label class="label">Sort By</label>
-                    <div class="control is-expanded">
-                        <EnumSelectInput @bind-Value="SortBy"></EnumSelectInput>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </Accordion>
-    
-    @if (TodoStore.Todos.Count == 0)
-    {
-        <p class="title is-5">Nothing to action yet, it will refresh as data comes in</p>
-    }
-    else
-    {
-        <PagedContent Data="GetFilteredTodos()" ElementsPerPage="10" Context="Todo" SplitSize="2" OrderBy="GetOrderBy()">
-            <TodoEntry Todo="Todo" OnTodoComplete="OnTodoComplete"/> 
-        </PagedContent>
-    }
+            </Accordion>
+
+            @if (TodoStore.Data.Count == 0)
+            {
+                <p class="title is-5">Nothing to action yet, it will refresh as data comes in</p>
+            }
+            else
+            {
+                <PagedContent Data="GetFilteredTodos()" ElementsPerPage="10" Context="Todo" SplitSize="2" OrderBy="GetOrderBy()">
+                    <TodoEntry Todo="Todo" OnTodoComplete="OnTodoComplete"/>
+                </PagedContent>
+            }
+        </ChildContent>
+        <ErrorContent>
+            <TheSkyIsFalling/>
+        </ErrorContent>
+    </ErrorBoundary>
 </div>
 
 @code {
@@ -77,49 +86,48 @@
             TodoSortBy.CreatedDate => x => x.CreatedDate,
             TodoSortBy.ActionType => x => x.ActionType,
             _ => x => x.ExpiryDate
-        };
+            };
     }
 
     public bool DoesTodoMatchFilters(TodoData todo)
     {
         if (!string.IsNullOrEmpty(SearchCriteria))
         {
-            if(!todo.Title.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase))
+            if (!todo.Title.Contains(SearchCriteria, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
 
         if (SearchTags.Count > 0)
         {
-            if(!SearchTags.All(tag => todo.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase)))
-            { return false; }
+            if (!SearchTags.All(tag => todo.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase)))
+            {return false;}
         }
 
         return true;
     }
-    
+
     public IReadOnlyCollection<TodoData> GetFilteredTodos()
     {
-        return TodoStore.Todos
+        return TodoStore.Data
             .Where(DoesTodoMatchFilters)
             .OrderBy(GetOrderBy())
             .ToArray();
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
-        EventBus.Receive<TodoCreatedEvent>().Select(x => x.TodoId)
-            .Merge(EventBus.Receive<TodoRemovedEvent>().Select(x => x.TodoId))
-            .Subscribe(x => InvokeAsync(StateHasChanged))
+        EventBus.ReceiveAs<TodoEvent, TodoCreatedEvent, TodoRemovedEvent>()
+            .Subscribe(x => TodosChanged())
             .AddTo(_subs);
     }
 
     public void Dispose()
     { _subs?.Dispose(); }
 
+    private void TodosChanged()
+    { InvokeAsync(StateHasChanged); }
+
     private void OnTodoComplete(TodoData todo)
-    {
-        TodoStore.Todos.Remove(todo);
-        EventBus.PublishAsync(new TodoRemovedEvent{ TodoId = todo.Id});
-    }
+    { TodoStore.Remove(todo.Id); }
 
 }

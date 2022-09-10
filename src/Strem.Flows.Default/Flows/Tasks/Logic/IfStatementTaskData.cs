@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
-using Strem.Core.Flows;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Data.Tasks;
 using Strem.Core.Types;
+using Strem.Flows.Data;
 using Strem.Flows.Default.Types;
 
 namespace Strem.Flows.Default.Flows.Tasks.Logic;

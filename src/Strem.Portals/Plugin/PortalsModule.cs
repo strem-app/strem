@@ -1,10 +1,13 @@
 ﻿using Strem.Core.Extensions;
-using Strem.Core.Flows.Registries.Menus;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Registries.Menus;
+using Strem.Data;
+using Strem.Flows.Extensions;
 using Strem.Infrastructure.Services.Api;
 using Strem.Portals.Data;
 using Strem.Portals.Data.Overrides;
-using Strem.Portals.Data.Repositories;
+using Strem.Portals.Services.Repositories;
+using Strem.Portals.Services.Stores;
 
 namespace Strem.Portals.Plugin;
 
@@ -15,6 +18,7 @@ public class PortalsModule : IRequiresApiHostingModule
         // Menus
         services.AddSingleton(new MenuDescriptor
         {
+            Priority = 2,
             Title = "Portals",
             Code = "portals-menu",
             IconClass = "fas fa-globe",
@@ -22,8 +26,8 @@ public class PortalsModule : IRequiresApiHostingModule
         });
         
         // Data
-        services.AddSingleton<IPortalRepository, PortalRepository>();
-        services.AddSingleton<IPortalStore>(LoadPortalStore);
+        services.AddSingleton<IPortalRepository, IRepository<PortalData, Guid>, PortalRepository>();
+        services.AddSingleton<IPortalStore, PortalStore>();
         services.AddSingleton<ButtonRuntimeStyles>(PopulateRuntimeStyles);
         
         // Components/Flows
@@ -35,18 +39,11 @@ public class PortalsModule : IRequiresApiHostingModule
         services.AddSingleton<IPluginStartup, PortalsPluginStartup>();
     }
     
-    public IPortalStore LoadPortalStore(IServiceProvider services)
-    {
-        var portalRepository = services.GetService<IPortalRepository>();
-        var allPortals = portalRepository.GetAll();
-        return new PortalStore(allPortals);
-    }
-    
     public ButtonRuntimeStyles PopulateRuntimeStyles(IServiceProvider services)
     {
         var portalStore = services.GetService<IPortalStore>();
         var buttonRuntimeStyles = new ButtonRuntimeStyles();
-        foreach (var portal in portalStore.Portals)
+        foreach (var portal in portalStore.Data)
         {
             var buttonStyles = portal.Buttons
                 .ToDictionary(x => x.Id, x => new ButtonStyles(x.DefaultStyles));

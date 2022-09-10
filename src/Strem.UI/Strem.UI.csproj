@@ -20,15 +20,4 @@
       <ProjectReference Include="..\Strem.Flows.Default\Strem.Flows.Default.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Variables" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Components\Flows\FlowCreator.razor" />
-      <AdditionalFiles Include="Components\Flows\FlowEditor.razor" />
-      <AdditionalFiles Include="Components\Flows\FlowElementsMenu.razor" />
-      <AdditionalFiles Include="Components\Flows\UserFlows.razor" />
-    </ItemGroup>
-
 </Project>

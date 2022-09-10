@@ -1,5 +1,5 @@
 ﻿using Strem.Core.Events.Broker;
-using Strem.Core.Threading;
+using Strem.Core.Services.Threading;
 
 namespace Strem.Core.Events.Bus;
 

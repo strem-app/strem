@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Data.Tasks;
 using Strem.OBS.v4.Types;
 
 namespace Strem.OBS.v4.Flows.Tasks;

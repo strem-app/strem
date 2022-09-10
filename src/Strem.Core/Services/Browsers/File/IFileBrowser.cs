@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Browsers.File;
+﻿namespace Strem.Core.Services.Browsers.File;
 
 public interface IFileBrowser
 {

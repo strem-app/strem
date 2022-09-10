@@ -2,11 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
-using Strem.Core.Extensions;
-using Strem.Core.Flows.Processors;
-using Strem.Core.Flows.Triggers;
+using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
 using Strem.Core.Variables;
+using Strem.Flows.Processors;
 
 namespace Strem.Flows.Default.Flows.Triggers.Utility;
 
@@ -28,6 +27,6 @@ public class OnAppStartedTrigger : FlowTrigger<OnAppStartedTriggerData>
     public override async Task<IObservable<IVariables>> Execute(OnAppStartedTriggerData data)
     {
         return EventBus.Receive<ApplicationStartedEvent>()
-            .Select(x => new Variables());
+            .Select(x => new Core.Variables.Variables());
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Strem.Core.Events.Bus;
-using Strem.Core.Flows.Processors;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Processors;
+using Strem.Flows.Data.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Flows.Tasks.Utility;

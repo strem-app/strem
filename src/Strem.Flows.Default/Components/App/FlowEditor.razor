@@ -1,0 +1,61 @@
+﻿@using Strem.Core.Events.Bus
+@using Strem.Flows.Data
+@using Strem.Flows.Events
+@using Strem.Flows.Events.Tasks
+@using Strem.Flows.Events.Triggers
+
+@inject IEventBus EventBus;
+
+<h3 class="title is-3 @(Flow.Enabled ? "" : "has-text-danger")">Editing Details For: @Flow.Name</h3>
+<div class="box">
+  <FlowDetailsEditor Data="Flow" DataChanged="NotifyDetailsChanged" />
+  <div class="field">
+    <div class="control">
+      <button @onclick="ToggleFlowEnablement" class="button is-leveled @(Flow.Enabled ? "is-danger" : "is-success")">
+        @(Flow.Enabled ? "Disable Flow" : "Enable Flow")
+      </button>
+    </div>
+    <HelperInfo>When a flow is disabled it will not be invoked from any triggers or tasks, it can also be deleted</HelperInfo>
+  </div>
+</div>
+
+<aside class="menu box">
+  <p class="menu-label">
+    Triggers
+  </p>
+  <ul class="menu-list triggers">
+    <FlowTriggersEditor Flow="Flow" TriggerAdded="NotifyTriggerChanged" TriggerDeleted="NotifyTriggerChanged" 
+                        TriggersMoved="NotifyTriggerChanged" TriggerChanged="NotifyTriggerChanged"/>
+  </ul>
+  <p class="menu-label">
+    Tasks
+  </p>
+  <ul class="menu-list tasks">
+    <FlowTasksEditor TaskData="Flow.TaskData" TaskAdded="NotifyTaskChanged" TaskDeleted="NotifyTaskChanged" 
+                     TasksMoved="NotifyTaskChanged" TaskChanged="NotifyTaskChanged"/>
+  </ul>
+</aside>
+
+@code {
+  [Parameter]
+  public Flow Flow { get; set; }
+  
+  public void NotifyTaskChanged(Guid taskId)
+  { EventBus.PublishAsync(new FlowTaskChangedEvent(Flow.Id, taskId)); }
+
+  public void NotifyTriggerChanged(Guid triggerId)
+  { EventBus.PublishAsync(new FlowTriggerChangedEvent(Flow.Id, triggerId)); }
+
+  public void NotifyDetailsChanged()
+  { EventBus.PublishAsync(new FlowDetailsChangedEvent(Flow.Id)); }
+  
+  public void ToggleFlowEnablement()
+  {
+    Flow.Enabled = !Flow.Enabled;
+    
+    if (Flow.Enabled)
+    { EventBus.PublishAsync(new FlowEnabledEvent(Flow.Id));}
+    else
+    { EventBus.PublishAsync(new FlowDisabledEvent(Flow.Id));}
+  }
+}

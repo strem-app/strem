@@ -1,5 +1,4 @@
 ﻿using System.IO.Compression;
-using Strem.Core.Flows;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Data.Types;
@@ -9,13 +8,11 @@ namespace Strem.Infrastructure.Services.Persistence;
 
 public class AppFileHandler : IAppFileHandler
 {
-    public IFlowRepository FlowRepository { get; }
     public IAppVariablesRepository AppVariablesRepository { get; }
     public IUserVariablesRepository UserVariablesRepository { get; }
 
-    public AppFileHandler(IFlowRepository flowRepository, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository)
+    public AppFileHandler(IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository)
     {
-        FlowRepository = flowRepository;
         AppVariablesRepository = appVariablesRepository;
         UserVariablesRepository = userVariablesRepository;
     }
@@ -29,11 +26,5 @@ public class AppFileHandler : IAppFileHandler
         var userVariables = new Variables(new Dictionary<VariableEntry, string>(userVariableData));
 
         return new AppState(userVariables, appVariables, new Variables());
-    }
-
-    public async Task<FlowStore> LoadFlowStore()
-    {
-        var flows = FlowRepository.GetAll();
-        return new FlowStore(flows);
     }
 }

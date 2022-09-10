@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Data.Tasks;
 using Strem.Core.Services.Validation.Attributes;
 using Strem.Core.Types;
 using Strem.Todos.Data;

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Strem.Core.Utils;
+namespace Strem.Core.Services.Utils;
 
 public class Cloner : ICloner
 {

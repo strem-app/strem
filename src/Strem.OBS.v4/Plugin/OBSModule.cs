@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Strem.Core.DI;
 using Strem.Core.Extensions;
-using Strem.Core.Flows.Registries.Integrations;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Registries.Integrations;
+using Strem.Flows.Extensions;
 using Strem.OBS.v4.Services.Client;
 
 namespace Strem.OBS.v4.Plugin;

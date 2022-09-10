@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Core.Flows.Executors;
-using Strem.Core.Flows.Processors;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Executors;
+using Strem.Flows.Processors;
+using Strem.Flows.Data.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Types;

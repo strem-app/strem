@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using InputSimulatorStandard.Native;
-using Strem.Core.Flows.Tasks;
+using Strem.Flows.Data.Tasks;
 
 namespace Strem.Flows.Default.Flows.Tasks.Input;
 

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Strem.Core.Browsers.Web;
+namespace Strem.Core.Services.Browsers.Web;
 
 public class WebBrowser : IWebBrowser
 {

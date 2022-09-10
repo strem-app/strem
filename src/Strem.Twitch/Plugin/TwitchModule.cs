@@ -1,6 +1,7 @@
 ﻿using Strem.Core.Extensions;
-using Strem.Core.Flows.Registries.Integrations;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Registries.Integrations;
+using Strem.Flows.Extensions;
 using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Services.OAuth;
