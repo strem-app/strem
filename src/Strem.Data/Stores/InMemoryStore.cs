@@ -29,6 +29,9 @@ public abstract class InMemoryStore<T, TK> : IInMemoryStore<T, TK>
     public T? Get(TK id)
     { return !Cache.ContainsKey(id) ? default : Cache[id]; }
 
+    public bool Has(TK id)
+    { return Cache.ContainsKey(id); }
+
     public bool Remove(TK id)
     {
         if(!Cache.ContainsKey(id)) { return false; }

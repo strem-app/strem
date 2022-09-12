@@ -30,7 +30,7 @@
     
     public void BrowseForFile()
     {
-        var path = FileBrowser.BrowseForFile();
+        var path = FileBrowser.BrowseToOpenFile();
         if (!string.IsNullOrEmpty(path))
         { ProxyValue = path; }
     }

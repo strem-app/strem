@@ -1,0 +1,51 @@
+﻿@using Strem.Flows.Data
+@using Strem.Flows.Default.Components.App.Models
+
+@inherits ValidatedComponent<Strem.Flows.Default.Components.App.Models.FlowCreatorFormData>
+
+<EditForm EditContext="EditContext">
+    <h3 class="title is-3 has-text-black">Import Flows</h3>
+   
+</EditForm>
+@if (!IsValid)
+{
+    <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+}
+<div class="field is-grouped">
+    <div class="control">
+        <button class="button is-success" @onclick="CreateFlow" disabled="@(!IsValid)">Create</button>
+    </div>
+    <div class="control">
+        <button class="button is-link is-light" @onclick="CancelFlow">Cancel</button>
+    </div>
+</div>
+
+@code {
+    
+    [Parameter] 
+    public EventCallback<IEnumerable<Flow>> OnFlowsImported { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnCancelled { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Data = new FlowCreatorFormData();
+        return base.OnInitializedAsync();
+    }
+
+    public void CreateFlow()
+    {
+        var newFlow = new Flow(Guid.NewGuid(), Data.Name, Data.Category);
+        Data.Name = string.Empty;
+        Data.Category = string.Empty;
+        OnFlowsImported.InvokeAsync();
+    }
+
+    public void CancelFlow()
+    {
+        Data.Name = string.Empty;
+        Data.Category = string.Empty;
+        OnCancelled.InvokeAsync();
+    }
+}

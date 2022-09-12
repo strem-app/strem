@@ -1,14 +1,19 @@
 ﻿@using Strem.Core.Extensions
 @using Strem.Core.Events.Bus
 @using System.Reactive.Disposables
+@using Strem.Core.Services.Browsers.File
 @using Strem.Core.Services.Notifications
 @using Strem.Flows.Data
 @using Strem.Flows.Events
+@using Strem.Flows.Services.Data
 @using Strem.Flows.Services.Stores
 
 @inject IFlowStore FlowStore;
 @inject IEventBus EventBus;
 @inject INotifier Notifier;
+@inject IFlowImporter FlowImporter;
+@inject IFlowExporter FlowExporter;
+@inject IFileBrowser FileBrowser;
 
 @implements IDisposable
 
@@ -20,10 +25,12 @@
     </div>
   </div>
 </Accordion>
+
 <div class="box">
+  
   <div class="field">
     <div class="control">
-      <button class="button is-success is-leveled" @onclick="() => ShowCreateModal = true">
+      <button class="button is-primary is-leveled" @onclick="() => ShowCreateModal = true">
         <span class="icon is-small">
           <i class="fas fa-code-commit"></i>
         </span>
@@ -31,19 +38,45 @@
       </button>
     </div>
   </div>
-  @if (SelectedFlow != null)
-  {
+  
+  <Accordion Title="More Actions" HeaderClasses="is-info">
     <div class="field">
-      <div class="control">
-        <button class="button is-danger is-leveled" @onclick="() => ShowDeleteModal = true">
-          <span class="icon is-">
-            <i class="fas fa-code-commit"></i>
-          </span>
-          <span>Delete Current Flow</span>
-        </button>
+        <div class="control">
+          <button class="button is-primary is-leveled" @onclick="ImportFlows">
+            <span class="icon is-small">
+              <i class="fas fa-file-import"></i>
+            </span>
+            <span>Import Flows</span>
+          </button>
+        </div>
       </div>
-    </div>
-  }
+      
+        <div class="field">
+          <div class="control">
+            <button class="button is-primary is-leveled" @onclick="() => ShowExportModal = true">
+              <span class="icon is-small">
+                <i class="fas fa-file-export"></i>
+              </span>
+              <span>Export Flows</span>
+            </button>
+          </div>
+        </div>
+      
+      @if (SelectedFlow != null)
+      {
+        <div class="field">
+          <div class="control">
+            <button class="button is-danger is-leveled" @onclick="() => ShowDeleteModal = true">
+              <span class="icon is-">
+                <i class="fas fa-code-commit"></i>
+              </span>
+              <span>Delete Current Flow</span>
+            </button>
+          </div>
+        </div>
+      }
+  </Accordion>
+  
   <aside class="menu flow-menu">
     @foreach (var flowGroup in GetFilteredFlows())
     {
@@ -64,7 +97,11 @@
 </div>
 
 <Modal IsVisible="ShowCreateModal">
-  <FlowCreator OnFlowCreated="OnFlowCreated" OnCancelled="OnModalCancelled"></FlowCreator>
+  <FlowCreatorModal OnFlowCreated="OnFlowCreated" OnCancelled="OnModalCancelled"></FlowCreatorModal>
+</Modal>
+
+<Modal IsVisible="ShowExportModal">
+  <FlowExportModal OnRequestFlowExports="OnRequestedFlowsExport" OnCancelled="OnModalCancelled"></FlowExportModal>
 </Modal>
 
 <Modal IsVisible="ShowDeleteModal">
@@ -80,6 +117,7 @@
 
   public bool ShowCreateModal { get; set; }
   public bool ShowDeleteModal { get; set; }
+  public bool ShowExportModal { get; set; }
   
   public Flow? SelectedFlow { get; set; }
   public string SearchCriteria { get; set; }
@@ -126,6 +164,7 @@
   {
     ShowCreateModal = false;
     ShowDeleteModal = false;
+    ShowExportModal = false;
   }
 
   public void SelectFlow(Flow selectedFlow)
@@ -148,4 +187,40 @@
     InvokeAsync(StateHasChanged);
     OnModalCancelled();
   }
+
+  private async Task OnRequestedFlowsExport(IEnumerable<Guid> flowIds)
+  {
+    var filePath = FileBrowser.BrowseToSaveJsonFile();
+    if(string.IsNullOrEmpty(filePath)) { return; }
+    
+    var flowData = FlowExporter.Export(flowIds);
+    if (string.IsNullOrEmpty(flowData))
+    {
+      await Notifier.ShowNotification("Failed Exporting Flows, Check Logs", "is-danger");
+      return;
+    }
+    
+    await File.WriteAllTextAsync(filePath, flowData);
+    await Notifier.ShowNotification("Exported Flows Successfully");
+    
+    OnModalCancelled();
+  }
+
+  private async Task ImportFlows()
+  {
+    var filePath = FileBrowser.BrowseToOpenJsonFile();
+    if(string.IsNullOrEmpty(filePath)) { return; }
+
+    var content = await File.ReadAllTextAsync(filePath);
+    var flowsImported = FlowImporter.Import(content);
+    
+    if (flowsImported == 0)
+    {
+      await Notifier.ShowNotification("No Flows Imported, Check Logs", "is-danger");
+      return;
+    }
+    
+    await Notifier.ShowNotification($"Imported {flowsImported} Flows Successfully");
+  }
+
 }

@@ -6,5 +6,6 @@ public interface IInMemoryStore<T, in TK>
 
     T Add(T data);
     T? Get(TK id);
+    bool Has(TK id);
     bool Remove(TK id);
 }
