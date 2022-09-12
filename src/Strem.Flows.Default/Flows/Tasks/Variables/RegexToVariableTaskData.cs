@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Services.Validation.Attributes;
 using Strem.Flows.Data.Tasks;
 using Strem.Core.Types;
 
@@ -20,7 +21,9 @@ public class RegexToVariableTaskData : IFlowTaskData
     public string Pattern { get; set; } = string.Empty;
     
     [Required]
+    [IsVariablePattern]
     public string Name { get; set; } = string.Empty;
+    [IsVariablePattern]
     public string Context { get; set; } = string.Empty;
     [Required]
     public VariableScopeType ScopeType { get; set; }

@@ -1,49 +1,53 @@
 ﻿@using Strem.Core.Services.Registries.Menus
 @inject IMenuRegistry MenuRegistry
 
-<div class="tabs is-centered is-boxed">
-  <ul class="pt-4">
-    
-    @foreach (var menuDescriptor in MenuRegistry.GetAll().OrderBy(x => x.Priority))
-    {
-      <li>
-        <NavLink href="@menuDescriptor.PageUrl" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
-          <span class="icon is-small"><i class="@menuDescriptor.IconClass" aria-hidden="true"></i></span>
+<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+  <div class="navbar-menu">
+    <div class="navbar-start ml-auto">
+      
+      @foreach (var menuDescriptor in MenuRegistry.GetAll().OrderBy(x => x.Priority))
+      {
+        <NavLink href="@menuDescriptor.PageUrl" ActiveClass="is-active" class="navbar-item" Match="NavLinkMatch.All">
+          <span class="icon mr-1"><i class="@menuDescriptor.IconClass" aria-hidden="true"></i></span>
           <span>@menuDescriptor.Title</span>
         </NavLink>
-      </li>
-    }
+      }
+      
+      <hr class="navbar-divider">
+      <div class="navbar-item has-dropdown is-hoverable">
+        <NavLink href="settings" ActiveClass="is-active" class="navbar-link" Match="NavLinkMatch.All">
+          <span class="icon mr-1"><i class="fas fa-gears" aria-hidden="true"></i></span>
+          <span>Settings</span>
+        </NavLink>
 
-    <li>
-      <NavLink href="integrations" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
-        <span class="icon is-small"><i class="fas fa-cubes" aria-hidden="true"></i></span>
-        <span>Integrations</span>
-      </NavLink>
-    </li>
-    <li>
-      <NavLink href="settings" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
-        <span class="icon is-small"><i class="fas fa-gears" aria-hidden="true"></i></span>
-        <span>Settings</span>
-      </NavLink>
-    </li>
-    <li>
-      <NavLink href="logs" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
-        <span class="icon is-small"><i class="fas fa-file-lines" aria-hidden="true"></i></span>
-        <span>Logs</span>
-      </NavLink>
-    </li>
-    @{
-      #if DEBUG
-    }
-    <li>
-      <NavLink href="test" ActiveClass="has-background-info-light has-text-black-bis" Match="NavLinkMatch.All">
-        <span class="icon is-small"><i class="fas fa-gears" aria-hidden="true"></i></span>
-        <span>TEST AREA</span>
-      </NavLink>
-    </li>
-    @{
-      #endif
-    }
+        <div class="navbar-dropdown has-background-grey-dark">
+          <NavLink href="integrations" ActiveClass="is-active" class="navbar-item" Match="NavLinkMatch.All">
+            <span class="icon mr-1"><i class="fas fa-plug" aria-hidden="true"></i></span>
+            <span>Integrations</span>
+          </NavLink>
 
-  </ul>
-</div>
+          <NavLink href="settings" ActiveClass="is-active" class="navbar-item" Match="NavLinkMatch.All">
+            <span class="icon mr-1"><i class="fas fa-gears" aria-hidden="true"></i></span>
+            <span>Settings</span>
+          </NavLink>
+
+          <NavLink href="logs" ActiveClass="is-active" class="navbar-item" Match="NavLinkMatch.All">
+            <span class="icon mr-1"><i class="fas fa-file-lines" aria-hidden="true"></i></span>
+            <span>Logs & Data</span>
+          </NavLink>
+        </div>
+      </div>
+
+      @{
+        #if DEBUG
+      }
+      <NavLink href="test" ActiveClass="is-active" class="navbar-item" Match="NavLinkMatch.All">
+        <span class="icon mr-1"><i class="fas fa-gears" aria-hidden="true"></i></span>
+        <span>Debug Area</span>
+      </NavLink>
+      @{
+        #endif
+      }
+    </div>
+  </div>
+</nav>

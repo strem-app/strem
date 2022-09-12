@@ -6,6 +6,7 @@ using Strem.Flows.Data;
 using Strem.Flows.Executors;
 using Strem.Flows.Executors.Logging;
 using Strem.Flows.Processors;
+using Strem.Flows.Services.Data;
 using Strem.Flows.Services.Registries.Tasks;
 using Strem.Flows.Services.Registries.Triggers;
 using Strem.Flows.Services.Repositories;
@@ -37,5 +38,7 @@ public class FlowsModule : IDependencyModule
         // Data
         services.AddSingleton<IFlowRepository, IRepository<Flow, Guid>, FlowRepository>();
         services.AddSingleton<IFlowStore, FlowStore>();
+        services.AddSingleton<IFlowImporter, FlowImporter>();
+        services.AddSingleton<IFlowExporter, FlowExporter>();
     }
 }

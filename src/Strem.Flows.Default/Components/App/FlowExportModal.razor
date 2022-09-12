@@ -1,0 +1,70 @@
+﻿@using Strem.Flows.Services.Stores
+
+@inject IFlowStore FlowStore
+
+<h3 class="title is-3 has-text-black">Export Flows</h3>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Export</th>
+        <th>Flow Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var flow in FlowStore.Data)
+    {
+        <tr>
+            <td>
+                <CheckBox ValueChanged="x => UpdateExports(flow.Id, x)"></CheckBox>
+            </td>
+            <td>@(flow.Name)</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<div class="field">
+    <div class="control">
+    </div>
+</div>
+
+<div class="field is-grouped">
+    <div class="control">
+        <button class="button is-primary is-expanded" @onclick="RequestExport">Export @(ActiveExports.Count) Flows</button>
+    </div>
+    <div class="control">
+        <button class="button is-link is-light" @onclick="CancelModal">Cancel</button>
+    </div>
+</div>
+
+@code {
+    
+    [Parameter] 
+    public EventCallback<IEnumerable<Guid>> OnRequestFlowExports { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnCancelled { get; set; }
+
+    public HashSet<Guid> ActiveExports { get; set; } = new();
+    
+
+    public void CancelModal()
+    {
+        ActiveExports.Clear();
+        OnCancelled.InvokeAsync();
+    }
+
+    private void UpdateExports(Guid flowId, bool isSelected)
+    {
+        if (isSelected)
+        { ActiveExports.Add(flowId); }
+        else
+        { ActiveExports.Remove(flowId); }
+    }
+
+    private void RequestExport()
+    {
+        OnRequestFlowExports.InvokeAsync(ActiveExports.ToArray());
+        ActiveExports.Clear();
+    }
+
+}

@@ -1,0 +1,61 @@
+﻿@using Strem.UI.Components.Models
+@inherits ValidatedComponent<Strem.UI.Components.Models.AddVariableFormData>
+
+<EditForm EditContext="EditContext" class="block">
+    <div class="field is-horizontal">
+        <div class="field-label is-normal">
+            <label class="label">Add Variable</label>
+        </div>
+        <div class="field-body">
+            <div class="field">
+                <div class="control">
+                    <TextInput @bind-Value="Data.Name" placeholder="Variable Name" />
+                </div>
+            </div>
+        
+            <div class="field">
+                <div class="control">
+                    <TextInput @bind-Value="Data.Context" placeholder="Optional Context" />
+                </div>
+            </div>
+        
+            <div class="field">
+                <div class="control">
+                    <TextInput @bind-Value="Data.Value" placeholder="Value" />
+                </div>
+            </div>
+        
+            <div class="field">
+                <div class="control">
+                    <button class="button" disabled="@(!IsValid)" @onclick="OnRequestCreate">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (!IsValid)
+    {
+        <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+    }
+</EditForm>
+
+@code 
+{
+    [Parameter]
+    public EventCallback<AddVariableFormData> RequestCreate { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Data = new AddVariableFormData();
+        
+        return base.OnInitializedAsync();
+    }
+
+    protected void OnRequestCreate()
+    {
+        if (!IsValid){ return; }
+        RequestCreate.InvokeAsync(Data);
+        Data.Name = string.Empty;
+        Data.Context = string.Empty;
+        Data.Value = string.Empty;
+    }
+}
