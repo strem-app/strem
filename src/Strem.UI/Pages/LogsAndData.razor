@@ -1,16 +1,17 @@
-﻿@page "/data"
+﻿@page "/logs"
 
+@using System.IO
+@using Strem.Core.Extensions
 @using Strem.Core.State
 @using Strem.Core.Variables
 @using Strem.UI.Components.Models
-@using Strem.Core.Extensions
 
 @inject IAppState AppState
 
 <div class="container is-fluid">
     <ErrorBoundary>
         <ChildContent>
-            <h3 class="title is-3">Variables & Data</h3>
+            <h3 class="title is-3">Logs & Data</h3>
             <Accordion Title="User Variables" HeaderClasses="is-info" IsExpanded="true">
                 <Accordion Title="Create Variable" IsExpanded="false" HeaderClasses="is-primary">
                     <AddVariableForm RequestCreate="OnRequestCreateUserVariable"/>
@@ -22,6 +23,13 @@
                 <VariablesViewer Title="App Variables" Variables="@AppState.AppVariables" />
                 <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables" />
             </Accordion>
+            
+            <Accordion Title="Latest App Logs" HeaderClasses="is-info" IsExpanded="true">
+                <LogViewer LogPath="@LatestLogFile"/>
+            </Accordion>
+            <Accordion Title="Flow Executions" HeaderClasses="is-info" IsExpanded="true">
+                <FlowExecutionViewer />
+            </Accordion>
         </ChildContent>
         <ErrorContent>
             <TheSkyIsFalling />
@@ -29,8 +37,25 @@
     </ErrorBoundary>
 </div>
 
-@code 
-{
+@code {
+    const string LogPath = "./logs";
+
+    public string LatestLogFile { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        LatestLogFile = GetLatestLogFile();
+    }
+
+    public string GetLatestLogFile()
+    {
+        var file = new DirectoryInfo(LogPath)
+            .GetFileSystemInfos()
+            .MaxBy(o => o.LastWriteTime);
+
+        return file?.FullName ?? string.Empty;
+    }
+    
     private void OnRequestUserVariableDeleted(VariableEntry entry)
     { AppState.UserVariables.Delete(entry); }
 
