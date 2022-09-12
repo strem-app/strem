@@ -6,6 +6,7 @@ using Strem.Flows.Extensions;
 using Strem.Infrastructure.Services.Api;
 using Strem.Portals.Data;
 using Strem.Portals.Data.Overrides;
+using Strem.Portals.Services.Data;
 using Strem.Portals.Services.Repositories;
 using Strem.Portals.Services.Stores;
 
@@ -28,6 +29,8 @@ public class PortalsModule : IRequiresApiHostingModule
         // Data
         services.AddSingleton<IPortalRepository, IRepository<PortalData, Guid>, PortalRepository>();
         services.AddSingleton<IPortalStore, PortalStore>();
+        services.AddSingleton<IPortalImporter, PortalImporter>();
+        services.AddSingleton<IPortalExporter, PortalExporter>();
         services.AddSingleton<ButtonRuntimeStyles>(PopulateRuntimeStyles);
         
         // Components/Flows
