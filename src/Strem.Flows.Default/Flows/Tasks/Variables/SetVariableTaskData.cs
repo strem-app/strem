@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Strem.Core.Services.Validation.Attributes;
 using Strem.Flows.Data.Tasks;
 using Strem.Core.Types;
 
@@ -14,7 +15,9 @@ public class SetVariableTaskData : IFlowTaskData
     public string Version { get; set; } = TaskVersion;
 
     [Required]
+    [IsVariablePattern]
     public string Name { get; set; } = string.Empty;
+    [IsVariablePattern]
     public string Context { get; set; } = string.Empty;
     [Required]
     public string Value { get; set; } = string.Empty;

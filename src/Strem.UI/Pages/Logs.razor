@@ -1,8 +1,6 @@
 ﻿@page "/logs"
-@using System.IO
-@using Strem.Core.State
 
-@inject IAppState AppState;
+@using System.IO
 
 <div class="container is-fluid">
     <ErrorBoundary>
@@ -11,15 +9,8 @@
             <Accordion Title="Latest App Logs" HeaderClasses="is-warning" IsExpanded="true">
                 <LogViewer LogPath="@LatestLogFile"/>
             </Accordion>
-
-            <Accordion Title="Application Variables" HeaderClasses="is-warning" IsExpanded="true">
-                <VariablesViewer Title="User Variables" Variables="@AppState.UserVariables" />
-                <VariablesViewer Title="App Variables" Variables="@AppState.AppVariables" />
-                <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables" />
-            </Accordion>
-
             <Accordion Title="Flow Executions" HeaderClasses="is-warning" IsExpanded="true">
-                <FlowExecutionViewer/>
+                <FlowExecutionViewer />
             </Accordion>
         </ChildContent>
         <ErrorContent>

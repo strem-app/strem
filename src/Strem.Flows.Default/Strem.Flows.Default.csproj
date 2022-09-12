@@ -13,7 +13,7 @@
 
     <ItemGroup>
         <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
         <PackageReference Include="RestSharp" Version="108.0.1" />
         <PackageReference Include="System.Speech" Version="6.0.0" />
     </ItemGroup>

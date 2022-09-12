@@ -10,22 +10,27 @@
 else
 {
     <PagedContent Data="FlowExecutionLogger.ExecutionLogs" Context="executionLog" ElementsPerPage="5" SplitSize="1">
-            <Accordion Title="@($"{executionLog.FlowName} @ {executionLog.StartTime}")" HeaderClasses="@(executionLog.ExecutionResultType == ExecutionResultType.Success ? "is-success" : "is-danger")">
-                <div class="field">
-                    <label class="label">Took @((int)(executionLog.EndTime - executionLog.StartTime).TotalSeconds)s to execute @(executionLog.ExecutionResultType == ExecutionResultType.Success ? "Successfully" : "Unsuccessfully")</label>
-                </div>
-                <div class="m-5">
-                    <ol>
-                        @foreach (var taskSummary in executionLog.ElementExecutionSummary)
-                        { <li class="has-text-weight-semibold">@taskSummary</li> }
-                    </ol>
-                </div>
-                <VariablesViewer Title="Variables At Start" Variables="executionLog.StartVariables"/>
-                <VariablesViewer Title="Variables At End" Variables="executionLog.EndVariables"/>
-            </Accordion>
+        <Accordion Title="@($"{executionLog.FlowName} @ {executionLog.StartTime}")" HeaderClasses="@(executionLog.ExecutionResultType == ExecutionResultType.Success ? "m-2 is-success" : "m-2 is-danger")">
+            <div class="field">
+                <label class="label">Took @(GetTimeTaken(executionLog)) to execute @(executionLog.ExecutionResultType == ExecutionResultType.Success ? "Successfully" : "Unsuccessfully")</label>
+            </div>
+            <div class="m-5">
+                <ol>
+                    @foreach (var taskSummary in executionLog.ElementExecutionSummary)
+                    { <li class="has-text-weight-semibold">@taskSummary</li> }
+                </ol>
+            </div>
+            <VariablesViewer Title="Variables At Start" Variables="executionLog.StartVariables" />
+            <VariablesViewer Title="Variables At End" Variables="executionLog.EndVariables" />
+        </Accordion>
     </PagedContent>    
 }
 
 @code {
-    
+
+    public string GetTimeTaken(FlowExecutionLog executionLog)
+    {
+        var timespan = (executionLog.EndTime - executionLog.StartTime);
+        return timespan.TotalSeconds > 1 ? $"{timespan.TotalSeconds}s" : $"{timespan.TotalMilliseconds}ms";
+    }
 }

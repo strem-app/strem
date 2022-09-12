@@ -1,0 +1,33 @@
+﻿@page "/data"
+
+@using Strem.Core.State
+@using Strem.Core.Variables
+
+@inject IAppState AppState
+
+<div class="container is-fluid">
+    <ErrorBoundary>
+        <ChildContent>
+            <h3 class="title is-3">Variables & Data</h3>
+            <Accordion Title="User Variables" HeaderClasses="is-info" IsExpanded="true">
+                <VariablesViewer Title="User Variables" Variables="@AppState.UserVariables" AllowDeletion="true" RequestDeletion="OnRequestUserVariableDeleted"/>
+            </Accordion>
+            
+            <Accordion Title="Application Variables" HeaderClasses="is-warning" IsExpanded="false">
+                <VariablesViewer Title="App Variables" Variables="@AppState.AppVariables" />
+                <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables" />
+            </Accordion>
+        </ChildContent>
+        <ErrorContent>
+            <TheSkyIsFalling />
+        </ErrorContent>
+    </ErrorBoundary>
+</div>
+
+@code {
+
+    private void OnRequestUserVariableDeleted(VariableEntry entry)
+    {
+        AppState.UserVariables.Delete(entry);   
+    }
+}

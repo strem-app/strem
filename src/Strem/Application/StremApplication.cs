@@ -26,7 +26,7 @@ public class StremApplication
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {
             var message = error?.ExceptionObject?.ToString() ?? "Unknown Error";
-            if(HasStarted) { Logger.Error(message); }
+            if(HasStarted) { Logger?.Error(message); }
             else { PreStartupLogs.Add(message);}
         };
     }
@@ -46,10 +46,10 @@ public class StremApplication
     
     public async Task StartApplication(IServiceProvider services)
     {
-        Logger = services.GetService<ILogger<StremApplication>>();
-        EventBus = services.GetService<IEventBus>();
-        WebHost = services.GetService<IInternalWebHost>();
-        Database = services.GetService<ILiteDatabase>();
+        Logger = services.GetService<ILogger<StremApplication>>()!;
+        EventBus = services.GetService<IEventBus>()!;
+        WebHost = services.GetService<IInternalWebHost>()!;
+        Database = services.GetService<ILiteDatabase>()!;
 
         HasStarted = true;
         PreStartupLogs.ForEach(Logger.Information);
