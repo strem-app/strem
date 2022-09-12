@@ -8,7 +8,7 @@ namespace Strem.Core.Services.Validation.Attributes;
 public class IsVariablePatternAttribute : ValidationAttribute
 {
     public const string DefaultErrorMessage = "The {0} field can only contain alphanumeric and . - _ | : characters";
-    public static Regex ContextPattern = new Regex($@"[{CommonVariables.VariableNamingPattern}]");
+    public static Regex ContextPattern = new($@"[{CommonVariables.VariableNamingPattern}]");
     
     public IsVariablePatternAttribute() : base(DefaultErrorMessage) { }
 
