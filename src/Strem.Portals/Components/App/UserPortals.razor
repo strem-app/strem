@@ -1,13 +1,19 @@
 ﻿@using Strem.Core.Extensions
 @using Strem.Core.Events.Bus
 @using System.Reactive.Disposables
+@using Strem.Core.Services.Browsers.File
 @using Strem.Core.Services.Notifications
+@using Strem.Flows.Services.Data
 @using Strem.Portals.Data
 @using Strem.Portals.Events
+@using Strem.Portals.Services.Data
 @using Strem.Portals.Services.Stores
 
 @inject IPortalStore PortalStore;
 @inject INotifier Notifier;
+@inject IFileBrowser FileBrowser;
+@inject IPortalImporter PortalImporter;
+@inject IPortalExporter PortalExporter;
 
 @implements IDisposable
 
@@ -24,20 +30,45 @@
     </div>
   </div>
   
-  @if (SelectedPortal != null)
-  {
-    <div class="field">
-      <div class="control">
-          <button class="button is-danger is-leveled" @onclick="() => ShowDeletionModal = true">
-            <span class="icon is-">
-              <i class="fas fa-globe"></i>
-            </span>
-            <span>Delete Current Flow</span>
-          </button>
-      </div>
-    </div>
-  }
   
+  <Accordion Title="More Actions" HeaderClasses="is-info">
+    <div class="field">
+        <div class="control">
+          <button class="button is-primary is-leveled" @onclick="ImportPortals">
+            <span class="icon is-small">
+              <i class="fas fa-file-import"></i>
+            </span>
+            <span>Import Portals</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="field">
+        <div class="control">
+          <button class="button is-primary is-leveled" @onclick="() => ShowExportModal = true">
+            <span class="icon is-small">
+              <i class="fas fa-file-export"></i>
+            </span>
+            <span>Export Portals</span>
+          </button>
+        </div>
+      </div>
+      
+      @if (SelectedPortal != null)
+      {
+        <div class="field">
+          <div class="control">
+              <button class="button is-danger is-leveled" @onclick="() => ShowDeletionModal = true">
+                <span class="icon is-">
+                  <i class="fas fa-globe"></i>
+                </span>
+                <span>Delete Current Flow</span>
+              </button>
+          </div>
+        </div>
+      }
+  </Accordion>
+
   <aside class="menu portal-menu">
     <p class="menu-label">
       <span>Portals</span>
@@ -58,6 +89,11 @@
   <PortalCreator OnPortalCreated="OnPortalCreated" OnCancelled="OnModalCancelled"></PortalCreator>
 </Modal>
 
+<Modal IsVisible="ShowExportModal">
+  <PortalExportModal OnRequestExports="OnRequestedFlowsExport" OnCancelled="OnModalCancelled"></PortalExportModal>
+</Modal>
+
+
 <Modal IsVisible="ShowDeletionModal">
   @if (SelectedPortal != null)
   {
@@ -72,6 +108,7 @@
 
   public bool ShowCreateModal { get; set; }
   public bool ShowDeletionModal { get; set; }
+  public bool ShowExportModal { get; set; }
   
   public PortalData? SelectedPortal { get; set; }
 
@@ -88,6 +125,7 @@
   {
     ShowCreateModal = false;
     ShowDeletionModal = false;
+    ShowExportModal = false;
   }
 
   public void SelectPortal(PortalData? selectedPortal)
@@ -107,4 +145,40 @@
   
   public void Dispose()
   { _subs?.Dispose(); }
+
+  private async Task OnRequestedFlowsExport(IEnumerable<Guid> flowIds)
+  {
+    var filePath = FileBrowser.BrowseToSaveJsonFile();
+    if(string.IsNullOrEmpty(filePath)) { return; }
+    
+    var flowData = PortalExporter.Export(flowIds);
+    if (string.IsNullOrEmpty(flowData))
+    {
+      await Notifier.ShowNotification("Failed Exporting Portals, Check Logs", "is-danger");
+      return;
+    }
+    
+    await File.WriteAllTextAsync(filePath, flowData);
+    await Notifier.ShowNotification("Exported Portals Successfully");
+    
+    OnModalCancelled();
+  }
+
+  private async Task ImportPortals()
+  {
+    var filePath = FileBrowser.BrowseToOpenJsonFile();
+    if(string.IsNullOrEmpty(filePath)) { return; }
+
+    var content = await File.ReadAllTextAsync(filePath);
+    var flowsImported = PortalImporter.Import(content);
+    
+    if (flowsImported == 0)
+    {
+      await Notifier.ShowNotification("No Portals Imported, Check Logs", "is-danger");
+      return;
+    }
+    
+    await Notifier.ShowNotification($"Imported {flowsImported} Portals Successfully");
+  }
+
 }

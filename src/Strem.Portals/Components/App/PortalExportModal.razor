@@ -1,6 +1,6 @@
-﻿@using Strem.Flows.Services.Stores
+﻿@using Strem.Portals.Services.Stores
 
-@inject IFlowStore FlowStore
+@inject IPortalStore PortalStore
 
 <h3 class="title is-3 has-text-black">Export Flows</h3>
 <table class="table">
@@ -11,13 +11,13 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var flow in FlowStore.Data)
+    @foreach (var portal in PortalStore.Data)
     {
         <tr>
             <td>
-                <CheckBox ValueChanged="x => UpdateExports(flow.Id, x)"></CheckBox>
+                <CheckBox ValueChanged="x => UpdateExports(portal.Id, x)"></CheckBox>
             </td>
-            <td>@(flow.Name)</td>
+            <td>@(portal.Name)</td>
         </tr>
     }
     </tbody>

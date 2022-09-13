@@ -31,8 +31,14 @@ public class FlowImporter : IFlowImporter
             Logger.Error($"Could not import flows, error: {ex.Message}");
             return 0;
         }
+        
+        if (dataWrapper?.Flows == null || dataWrapper.Flows.Count == 0)
+        {
+            Logger.Warning($"Imported Flows Data is empty");
+            return 0;
+        }
 
-        var flowsImported = 0;
+        var numberImporter = 0;
         foreach (var flow in dataWrapper.Flows)
         {
             if (FlowStore.Has(flow.Id))
@@ -42,9 +48,9 @@ public class FlowImporter : IFlowImporter
             }
 
             FlowStore.Add(flow);
-            flowsImported++;
+            numberImporter++;
             Logger.Information($"Imported Flow - {flow.Name}");
         }
-        return flowsImported;
+        return numberImporter;
     }
 }
