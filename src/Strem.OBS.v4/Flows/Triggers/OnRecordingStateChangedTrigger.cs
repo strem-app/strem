@@ -1,14 +1,14 @@
 ﻿using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using OBSWebsocketDotNet;
-using OBSWebsocketDotNet.Types;
+using Obs.v4.WebSocket;
+using Obs.v4.WebSocket.Reactive;
+using Obs.v4.WebSocket.Types;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Flows.Processors;
 using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
 using Strem.Core.Variables;
-using Strem.OBS.v4.Services.Client;
 using Strem.OBS.v4.Variables;
 using Strem.OBS.v4.Extensions;
 
@@ -31,9 +31,9 @@ public class OnRecordingStateChangedTrigger : FlowTrigger<OnRecordingStateChange
         ObsIsRecordingVariable.ToDescriptor(), ObsRecordingStateVariable.ToDescriptor()
     };
 
-    public IObservableOBSClient ObsClient { get; }
+    public IObservableOBSWebSocket ObsClient { get; }
 
-    public OnRecordingStateChangedTrigger(ILogger<FlowTrigger<OnRecordingStateChangedTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableOBSClient obsClient) : base(logger, flowStringProcessor, appState, eventBus)
+    public OnRecordingStateChangedTrigger(ILogger<FlowTrigger<OnRecordingStateChangedTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableOBSWebSocket obsClient) : base(logger, flowStringProcessor, appState, eventBus)
     {
         ObsClient = obsClient;
     }

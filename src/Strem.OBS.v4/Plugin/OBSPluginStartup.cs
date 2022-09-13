@@ -1,12 +1,12 @@
 ﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
+using Obs.v4.WebSocket.Reactive;
 using Persistity.Encryption;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.State;
-using Strem.OBS.v4.Services.Client;
 using Strem.OBS.v4.Extensions;
 
 namespace Strem.OBS.v4.Plugin;
@@ -18,10 +18,10 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
     public IEncryptor Encryptor { get; }
-    public IObservableOBSClient OBSClient { get; }
+    public IObservableOBSWebSocket OBSClient { get; }
     public ILogger<OBSPluginStartup> Logger { get; }
 
-    public OBSPluginStartup(IEventBus eventBus, IAppState appState, ILogger<OBSPluginStartup> logger, IObservableOBSClient obsClient, IEncryptor encryptor)
+    public OBSPluginStartup(IEventBus eventBus, IAppState appState, ILogger<OBSPluginStartup> logger, IObservableOBSWebSocket obsClient, IEncryptor encryptor)
     {
         EventBus = eventBus;
         AppState = appState;

@@ -1,16 +1,16 @@
-﻿using OBSWebsocketDotNet;
-using OBSWebsocketDotNet.Types;
+﻿using Obs.v4.WebSocket;
+using Obs.v4.WebSocket.Reactive;
+using Obs.v4.WebSocket.Types;
 using Persistity.Encryption;
 using Persistity.Extensions;
 using Strem.Core.State;
-using Strem.OBS.v4.Services.Client;
 using Strem.OBS.v4.Variables;
 
 namespace Strem.OBS.v4.Extensions;
 
-public static class IObservableOBSClientExtensions
+public static class IObservableOBSWebSocketExtensions
 {
-    public static async Task<(bool success, string message)> AttemptConnect(this IObservableOBSClient obsClient, string host, string port, string password)
+    public static async Task<(bool success, string message)> AttemptConnect(this IObservableOBSWebSocket obsClient, string host, string port, string password)
     {
         var websocketAddress = $"ws://{host}:{port}/api/websocket";
         var message = string.Empty;
@@ -32,7 +32,7 @@ public static class IObservableOBSClientExtensions
         return (success, message);
     }
     
-    public static async Task<(bool success, string message)> AttemptConnect(this IObservableOBSClient client, IAppState appState, IEncryptor encryptor)
+    public static async Task<(bool success, string message)> AttemptConnect(this IObservableOBSWebSocket client, IAppState appState, IEncryptor encryptor)
     {
         var host = appState.AppVariables.Get(OBSVars.Host);
         var port = appState.AppVariables.Get(OBSVars.Port);
@@ -47,7 +47,7 @@ public static class IObservableOBSClientExtensions
         return await client.AttemptConnect(host, port, password);
     }
     
-    public static async Task PopulateSourceListData(this IObservableOBSClient client, IAppState appState)
+    public static async Task PopulateSourceListData(this IObservableOBSWebSocket client, IAppState appState)
     {
         if(!client.IsConnected) { return; }
         var sources = await client.GetSourcesList();

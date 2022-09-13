@@ -1,4 +1,5 @@
-﻿using OBSWebsocketDotNet.Types;
+﻿
+using Obs.v4.WebSocket.Types;
 using Strem.Core.Extensions;
 
 namespace Strem.OBS.v4.Extensions;

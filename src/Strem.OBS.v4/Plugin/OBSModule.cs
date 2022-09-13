@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Obs.v4.WebSocket.Reactive;
 using Strem.Core.DI;
-using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Flows.Extensions;
-using Strem.OBS.v4.Services.Client;
 
 namespace Strem.OBS.v4.Plugin;
 
@@ -16,7 +15,7 @@ public class OBSModule : IDependencyModule
         services.AddSingleton<IPluginStartup, OBSPluginStartup>();
         
         // OBS Client
-        services.AddSingleton<IObservableOBSClient, ObservableOBSClient>();
+        services.AddSingleton<IObservableOBSWebSocket, ObservableOBSWebSocket>();
         
         // Register Components
         var thisAssembly = GetType().Assembly;

@@ -1,15 +1,13 @@
 ﻿@using Microsoft.AspNetCore.Components
+@using Obs.v4.WebSocket.Reactive
 @using Strem.Flows.Components.Tasks
 @using Strem.Core.State
-@using Strem.OBS.v4.Extensions
 @using Strem.OBS.v4.Flows.Tasks
-@using Strem.OBS.v4.Services.Client
-@using Strem.OBS.v4.Types
 
 @inherits CustomTaskComponent<ChangeSceneTaskData>
 
 @inject IAppState AppState;
-@inject IObservableOBSClient ObsClient;
+@inject IObservableOBSWebSocket ObsClient;
 
 <div class="field">
     <label class="label">Scene Name</label>

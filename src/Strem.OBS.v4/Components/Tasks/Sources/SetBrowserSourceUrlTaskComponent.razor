@@ -1,14 +1,13 @@
 ﻿@using Microsoft.AspNetCore.Components
+@using Obs.v4.WebSocket.Reactive
 @using Strem.Flows.Components.Tasks
 @using Strem.Core.State
 @using Strem.OBS.v4.Extensions
 @using Strem.OBS.v4.Flows.Tasks
-@using Strem.OBS.v4.Services.Client
-@using Strem.OBS.v4.Types
 
 @inherits CustomTaskComponent<SetBrowserSourceUrlTaskData>
 
-@inject IObservableOBSClient ObsClient;
+@inject IObservableOBSWebSocket ObsClient;
 @inject IAppState AppState;
 
 <div class="field">

@@ -5,7 +5,7 @@ using Strem.Flows.Processors;
 using Strem.Flows.Data.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
-using Strem.OBS.v4.Services.Client;
+using Obs.v4.WebSocket.Reactive;
 
 namespace Strem.OBS.v4.Flows.Tasks;
 
@@ -18,9 +18,9 @@ public class SetBrowserSourceUrlTask : FlowTask<SetBrowserSourceUrlTaskData>
     public override string Category => "OBS v4";
     public override string Description => "Changes the url for a browser source";
 
-    public IObservableOBSClient ObsClient { get; }
+    public IObservableOBSWebSocket ObsClient { get; }
 
-    public SetBrowserSourceUrlTask(ILogger<FlowTask<SetBrowserSourceUrlTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableOBSClient obsClient) : base(logger, flowStringProcessor, appState, eventBus)
+    public SetBrowserSourceUrlTask(ILogger<FlowTask<SetBrowserSourceUrlTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableOBSWebSocket obsClient) : base(logger, flowStringProcessor, appState, eventBus)
     {
         ObsClient = obsClient;
     }

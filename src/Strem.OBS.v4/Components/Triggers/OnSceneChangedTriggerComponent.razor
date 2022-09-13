@@ -1,9 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Strem.OBS.v4.Services.Client
+@using Obs.v4.WebSocket.Reactive
 
 @inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<v4.Flows.Triggers.OnSceneChangedTriggerData>
 
-@inject IObservableOBSClient ObsClient;
+@inject IObservableOBSWebSocket ObsClient;
 
 <div class="field">
     <label class="label">Matching Scene Name</label>

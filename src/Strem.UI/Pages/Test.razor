@@ -1,8 +1,8 @@
 ﻿@page "/test"
 @using Strem.Core.Types
-@using Strem.OBS.v4.Services.Client
+@using Obs.v4.WebSocket.Reactive
 
-@inject IObservableOBSClient ObsClient;
+@inject IObservableOBSWebSocket ObsClient;
 
 <div class="container is-fullwidth">
     <div class="box">
@@ -11,9 +11,7 @@
                     <TrueOrFalse @bind-Value="IsActive"/>
                 </div>
             </div>
-        
-        
-            <span class="tag">@IsActive</span>
+        <span class="tag">@IsActive</span>
     </div>
 
     <div class="box">

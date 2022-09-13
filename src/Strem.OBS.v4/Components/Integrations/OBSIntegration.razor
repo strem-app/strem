@@ -1,13 +1,12 @@
 ﻿@using System.Reactive.Disposables
+@using Obs.v4.WebSocket.Reactive
 @using Persistity.Encryption
 @using Persistity.Extensions
-@using Strem.Core.Events.Bus
 @using Strem.Core.State
 @using Strem.OBS.v4.Extensions
-@using Strem.OBS.v4.Services.Client
 @using Strem.OBS.v4.Variables
 
-@inject IObservableOBSClient ObsClient
+@inject IObservableOBSWebSocket ObsClient
 @inject IAppState AppState
 @inject IEncryptor Encryptor
 
@@ -27,7 +26,7 @@
                 <TextInput placeholder="i.e 4444" @bind-Value="Port"/>
             </div>
         </div>
-         <div class="field">
+        <div class="field">
             <div class="control">
                 @if (IsConnected)
                 {
@@ -61,9 +60,11 @@
         </div>
     </div>
 </div>
+<div class="field">
+    <HelperInfo StyleType="has-text-danger">With Obs Websocket v4 being phased out, it is recommended you use the v5 integration (assuming your OBS WebSocket plugin is v5)</HelperInfo>
+</div>
 
 @code {
-    
     private CompositeDisposable _subs = new();
     
     public string Host { get; set; }

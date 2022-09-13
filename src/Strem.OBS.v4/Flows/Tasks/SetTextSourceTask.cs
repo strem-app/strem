@@ -5,7 +5,7 @@ using Strem.Flows.Processors;
 using Strem.Flows.Data.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
-using Strem.OBS.v4.Services.Client;
+using Obs.v4.WebSocket.Reactive;
 using Strem.OBS.v4.Extensions;
 
 namespace Strem.OBS.v4.Flows.Tasks;
@@ -19,9 +19,9 @@ public class SetTextSourceTask : FlowTask<SetTextSourceTaskData>
     public override string Category => "OBS v4";
     public override string Description => "Changes the text within a text source";
 
-    public IObservableOBSClient ObsClient { get; }
+    public IObservableOBSWebSocket ObsClient { get; }
 
-    public SetTextSourceTask(ILogger<FlowTask<SetTextSourceTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableOBSClient obsClient) : base(logger, flowStringProcessor, appState, eventBus)
+    public SetTextSourceTask(ILogger<FlowTask<SetTextSourceTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableOBSWebSocket obsClient) : base(logger, flowStringProcessor, appState, eventBus)
     {
         ObsClient = obsClient;
     }

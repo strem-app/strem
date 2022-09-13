@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using OBSWebsocketDotNet.Types;
 using Strem.Core.Events.Bus;
 using Strem.Flows.Executors;
 using Strem.Flows.Processors;
@@ -7,7 +6,7 @@ using Strem.Flows.Data.Tasks;
 using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Variables;
-using Strem.OBS.v4.Services.Client;
+using Obs.v4.WebSocket.Reactive;
 using Strem.OBS.v4.Types;
 using Strem.OBS.v4.Extensions;
 
@@ -22,9 +21,9 @@ public class SetSourceMuteStateTask : FlowTask<SetSourceMuteStateTaskData>
     public override string Category => "OBS v4";
     public override string Description => "Sets if a given source should be muted or not";
 
-    public IObservableOBSClient ObsClient { get; }
+    public IObservableOBSWebSocket ObsClient { get; }
 
-    public SetSourceMuteStateTask(ILogger<FlowTask<SetSourceMuteStateTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableOBSClient obsClient) : base(logger, flowStringProcessor, appState, eventBus)
+    public SetSourceMuteStateTask(ILogger<FlowTask<SetSourceMuteStateTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableOBSWebSocket obsClient) : base(logger, flowStringProcessor, appState, eventBus)
     {
         ObsClient = obsClient;
     }
