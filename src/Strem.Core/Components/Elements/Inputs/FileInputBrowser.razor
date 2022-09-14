@@ -22,6 +22,9 @@
 
 @code 
 {
+    [Parameter]
+    public string FileFilter { get; set; }
+    
     public string ProxyValue
     {
         get => Value;
@@ -30,7 +33,7 @@
     
     public void BrowseForFile()
     {
-        var path = FileBrowser.BrowseToOpenFile();
+        var path = FileBrowser.BrowseToOpenFile(filterList: FileFilter);
         if (!string.IsNullOrEmpty(path))
         { ProxyValue = path; }
     }

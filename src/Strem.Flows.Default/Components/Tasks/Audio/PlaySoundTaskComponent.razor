@@ -1,0 +1,41 @@
+﻿@using Strem.Core.Services.Audio
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Audio.PlaySoundTaskData>
+
+@inject IAudioHandler AudioHandler 
+
+<div class="field">
+    <label class="label">Flow</label>
+    <div class="control">
+        <FileInputBrowser @bind-Value="Data.SoundFile" FileFilter="wav,mp3,ogg,midi,aac"></FileInputBrowser>
+    </div>
+</div>
+<div class="field">
+    <div class="control">
+        <IntInput @bind-Value="Data.Volume" placeholder="i.e number between 1-100"></IntInput>
+    </div>
+</div>
+
+<div class="field">
+    <div class="control">
+        <button class="button is-info" disabled="@(string.IsNullOrEmpty(Data.SoundFile))" @onclick="TestSound">Test Sound</button>
+    </div>
+    <HelperInfo>This is handy to make sure you are happy with the volume and file chosen</HelperInfo>
+</div>
+
+@code {
+    public override string Title => GetTitle();
+
+    public string GetTitle()
+    {
+        var fileName = Path.GetFileName(Data.SoundFile);
+        return $"Play Sound <strong>{fileName}</strong>";
+    }
+
+    private async Task TestSound()
+    {
+        if (File.Exists(Data.SoundFile))
+        {
+            await AudioHandler.PlayFile(Data.SoundFile, Data.Volume);
+        }
+    }
+}

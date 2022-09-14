@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Strem.Core.DI;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Registries.Integrations;

@@ -1,6 +1,7 @@
 ﻿using NativeFileDialogSharp;
+using Strem.Core.Services.Browsers.File;
 
-namespace Strem.Core.Services.Browsers.File;
+namespace Strem.Platforms.Windows.Services.Browsers;
 
 public class FileBrowser : IFileBrowser
 {

@@ -2,10 +2,11 @@
 @using Strem.Core.Events.Bus
 @using Strem.Core.Events
 @using Strem.Core.Extensions
+@using Strem.Core.Services.Clipboard
 @using Strem.Core.Services.Notifications
-@using TextCopy
 
 @inject INotifier Notifier;
+@inject IClipboardHandler Clipboard;
 
 <div class="field is-grouped is-grouped-multiline">
     @foreach (var descriptor in VariableDescriptors)
@@ -29,7 +30,7 @@
     private async Task CopyVariableToClipboard(VariableEntry variableEntry)
     {
         var variableText = $"V({variableEntry.Name}{(variableEntry.HasContext() ? $",{variableEntry.Context}" : "")})";
-        await ClipboardService.SetTextAsync(variableText);
+        await Clipboard.CopyText(variableText);
         await Notifier.ShowNotification("Copied Variable To Clipboard");
     }
 

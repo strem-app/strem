@@ -1,4 +1,5 @@
-﻿@using InputSimulatorStandard.Native
+﻿@using Strem.Core.Types
+@using Strem.Core.Types.Input
 
 @inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Input.SimulateKeyPressTaskData>
 
@@ -6,7 +7,7 @@
     <div class="column">
         <label class="label is-5">Modifiers</label>
         <div class="block">
-            <button class="button is-info" @onclick="() => Data.KeyModifiers.Add(VirtualKeyCode.SHIFT)">Add Modifier Key</button>
+            <button class="button is-info" @onclick="() => Data.KeyModifiers.Add(InputKeyCodes.SHIFT)">Add Modifier Key</button>
         </div>
         @for (var i = 0; i < Data.KeyModifiers.Count; i++)
         {
@@ -30,7 +31,7 @@
     <div class="column">
         <label class="label is-5">Keys</label>
         <div class="block">
-            <button class="button is-info" @onclick="() => Data.KeysToPress.Add(VirtualKeyCode.VK_A)">Add Key</button>
+            <button class="button is-info" @onclick="() => Data.KeysToPress.Add(InputKeyCodes.VK_A)">Add Key</button>
         </div>
         @for (var i = 0; i < Data.KeysToPress.Count; i++)
         {
@@ -52,25 +53,25 @@
 </div>
 
 @code {
-    public static readonly VirtualKeyCode[] Modifiers = new[]{
-        VirtualKeyCode.SHIFT,
-        VirtualKeyCode.LSHIFT,
-        VirtualKeyCode.RSHIFT,
-        VirtualKeyCode.CONTROL,
-        VirtualKeyCode.LCONTROL,
-        VirtualKeyCode.RCONTROL,
-        VirtualKeyCode.LWIN,
-        VirtualKeyCode.RWIN,
-        VirtualKeyCode.MENU,
-        VirtualKeyCode.LMENU,
-        VirtualKeyCode.RMENU
+    public static readonly InputKeyCodes[] Modifiers = new[]{
+        InputKeyCodes.SHIFT,
+        InputKeyCodes.LSHIFT,
+        InputKeyCodes.RSHIFT,
+        InputKeyCodes.CONTROL,
+        InputKeyCodes.LCONTROL,
+        InputKeyCodes.RCONTROL,
+        InputKeyCodes.LWIN,
+        InputKeyCodes.RWIN,
+        InputKeyCodes.MENU,
+        InputKeyCodes.LMENU,
+        InputKeyCodes.RMENU
     };
 
-    public static readonly VirtualKeyCode[] NormalKeys = Enum.GetValues<VirtualKeyCode>()
+    public static readonly InputKeyCodes[] NormalKeys = Enum.GetValues<InputKeyCodes>()
         .Where(x => !Modifiers.Contains(x))
         .ToArray();
 
-    public string MakeKeyCodeNice(VirtualKeyCode keycode)
+    public string MakeKeyCodeNice(InputKeyCodes keycode)
     { return keycode.ToString().Replace("VK_", "").Replace("MENU", "ALT"); }
     
     public override string Title => GenerateTitle();

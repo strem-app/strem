@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using InputSimulatorStandard;
 using LiteDB;
 using Microsoft.AspNetCore.Components.Web;
 using Newtonsoft.Json;
@@ -12,7 +11,6 @@ using Strem.Core.Components.Elements.Drag;
 using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
 using Strem.Core.Plugins;
-using Strem.Core.Services.Browsers.File;
 using Strem.Core.Services.Browsers.Web;
 using Strem.Core.Services.Notifications;
 using Strem.Core.Services.Registries.Integrations;
@@ -86,12 +84,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         // Registries
         services.AddSingleton<IIntegrationRegistry, IntegrationRegistry>();
         services.AddSingleton<IMenuRegistry, MenuRegistry>();
-        
-       
-        // OS Specific
-        services.AddSingleton<IInputSimulator, InputSimulator>();
-        services.AddSingleton<IFileBrowser, FileBrowser>();
-        
+
         // UI
         services.AddSingleton<DragController>();
         

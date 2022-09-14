@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Speech.Synthesis;
+using Strem.Core.Types.TTS;
 using Strem.Flows.Data.Tasks;
 
 namespace Strem.Flows.Default.Flows.Tasks.Utility;
@@ -17,6 +17,6 @@ public class TextToSpeechTaskData : IFlowTaskData
     public string TextToPlay { get; set; }
     [Required]
     public string Volume { get; set; }
-    public VoiceGender VoiceGender { get; set; }
-    public VoiceAge VoiceAge { get; set; }
+    public TTSVoiceGender VoiceGender { get; set; }
+    public TTSVoiceAge VoiceAge { get; set; }
 }

@@ -1,13 +1,13 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Strem.Core.DI;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Flows.Default.Modules;
 using Strem.Flows.Plugins;
 using Strem.Infrastructure.Plugin;
 using Strem.OBS.v4.Plugin;
+using Strem.Platforms.Windows.Plugin;
 using Strem.Portals.Plugin;
 using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;
@@ -21,6 +21,7 @@ public class PluginHandler
         Assembly _;
         _ = typeof(FlowsModule).Assembly;
         _ = typeof(DefaultFlowsModule).Assembly;
+        _ = typeof(WindowsPlatformModule).Assembly;
         _ = typeof(InfrastructureModule).Assembly;
         _ = typeof(PortalsModule).Assembly;
         _ = typeof(TodoModule).Assembly;

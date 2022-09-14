@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.DI;
+﻿namespace Strem.Core.Plugins;
 
 public interface IDependencyModule
 {
