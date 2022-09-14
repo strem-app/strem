@@ -1,4 +1,4 @@
-﻿using Strem.Core.DI;
+﻿using Strem.Core.Plugins;
 
 namespace Strem.Infrastructure.Services.Api;
 
