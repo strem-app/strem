@@ -18,6 +18,7 @@ public class BlazorBootstrapper
     {
         var appLauncher = app.MainWindow
             .SetTitle("Strem")
+            
 #if DEBUG
             .SetLogVerbosity(3)
 #else
@@ -32,7 +33,7 @@ public class BlazorBootstrapper
 #else
         appLauncher = appLauncher.SetContextMenuEnabled(false);
 #endif
-        appLauncher.Load("./wwwroot/index.html");
+        appLauncher.Load("_content/Strem/wwwroot/index.html");
 
     }
 

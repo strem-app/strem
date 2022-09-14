@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using Strem.Application;
-using Strem.UI;
 
 namespace Strem;
 
