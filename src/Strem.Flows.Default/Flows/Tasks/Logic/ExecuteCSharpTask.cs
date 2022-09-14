@@ -4,7 +4,6 @@ using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Data.Tasks;
-using Strem.Flows.Default.Execution;
 using Strem.Flows.Default.Extensions;
 using Strem.Flows.Executors;
 using Strem.Flows.Processors;
@@ -22,7 +21,7 @@ public class ExecuteCSharpTask : FlowTask<ExecuteCSharpTaskData>
     public override string Category => "Logic";
     public override string Description => "Allows you to execute your own C# logic";
     
-    public ExecuteCSharpTask(ILogger<FlowTask<ExecuteCSharpTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutor flowExecutor) : base(logger, flowStringProcessor, appState, eventBus)
+    public ExecuteCSharpTask(ILogger<FlowTask<ExecuteCSharpTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
     {}
 
     public override bool CanExecute() => true;

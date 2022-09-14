@@ -1,16 +1,16 @@
-using Strem.Flows.Data.Tasks;
+﻿using Strem.Flows.Data.Tasks;
 using Strem.Flows.Default.Execution;
 
 namespace Strem.Flows.Default.Flows.Tasks.Logic;
 
-public class ExecuteCSharpTaskData : IFlowTaskData
+public class ExecutePythonTaskData : IFlowTaskData
 {
-    public static readonly string TaskCode = "execute-csharp";
+    public static readonly string TaskCode = "execute-python";
     public static readonly string TaskVersion = "1.0.0";
     
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
 
-    public string CSharpCode { get; set; } = DefaultCodeGen.DefaultCSharpCodegen;
+    public string PythonCode { get; set; } = DefaultCodeGen.DefaultPythonCodegen;
 }
