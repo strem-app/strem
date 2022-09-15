@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Reactive.Subjects;
 using Newtonsoft.Json;
 using Strem.Core.Extensions;
@@ -49,8 +50,6 @@ public class Variables : IVariables
         return qualifiedEntry.IsEmpty() ? string.Empty : Data[qualifiedEntry];
     }
     
-    public IEnumerable<KeyValuePair<VariableEntry, string>> GetAll() => Data;
-    
     public void Delete(VariableEntry variableEntry)
     {
         if (!Data.ContainsKey(variableEntry)) { return; }
@@ -66,6 +65,9 @@ public class Variables : IVariables
         OnChangedSubject.OnNext(new KeyValuePair<VariableEntry, string>(variableEntry, value));
     }
 
+    public IEnumerator<KeyValuePair<VariableEntry, string>> GetEnumerator() => ((IDictionary<VariableEntry, string>)Data).GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    
     public void Dispose()
     { OnChangedSubject.Dispose(); }
 }
