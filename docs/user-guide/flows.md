@@ -95,3 +95,25 @@ The system tries to keep out or your way and let you do whatever crazy stuff you
 There are a myriad of out the box triggers and tasks which will be available to you based on what you have setup. For example if you have not integrated with `twitch` you will not be able to use any twitch related triggers or tasks.
 
 > With this in mind you can go to the filter at the top right and check `Show Disabled Elements` which will show you all available triggers and tasks even if they are not usable.
+
+As with user flows the triggers and tasks are categorised and you can mix and match them however you want by just dragging them into the relevant section.
+
+> The flows are automatically saved whenever changes are detected so you do not need to worry about manually saving anything it is all handled for you.
+
+### Importing & Exporting Flows
+
+Your flows are saved against your active user profile in windows however if you want to back up or share your flows with other people all you need to do is click the `Export Flows` button and then pick which flows you want to export and a file where you want to export them to, as shown below.
+
+![export-flows](../images/export-flows.png)
+
+Once you export them you will have a `json` file which contains all your exported flows and this can be given to someone else to import into their app, which makes it super easy to share content with others.
+
+To `Import Flows` you click the import button and provide it the `json` file you have been given and it will attempt to import any flows it can find, any errors will be reported in the logs.
+
+#### What About Variables?
+
+When importing and exporting you only really need the flow, as variables will be created on the fly when needed for any assignment related events, so in most cases the variables will be created when your imported flows run for the first time.
+
+If however you have a scenario where you need to set user variables you can manually go to the `Data` section in `Settings` and manually add/remove variables there.
+
+> As noted variables dont always need to be created ahead of time, if you have a death counter and you are incrementing a variable, if that variable doesnt exist it is created as part of the operation so you rarely need to manually go and create variables outside of flow tasks.
