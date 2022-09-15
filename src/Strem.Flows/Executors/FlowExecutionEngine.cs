@@ -118,7 +118,12 @@ public class FlowExecutionEngine : IFlowExecutionEngine
     public async Task ExecuteFlow(Guid flowId, IVariables flowVariables = null)
     {
         if(flowId == Guid.Empty) { return; }
-        var matchingFlow = FlowStore.Data.SingleOrDefault(x => x.Id == flowId);
+        var matchingFlow = FlowStore.Get(flowId);
+        if (matchingFlow == null)
+        {
+            Logger.Error($"No flow found for {flowId}");
+            return;
+        }
         await ExecuteFlow(matchingFlow, flowVariables);
     }
 

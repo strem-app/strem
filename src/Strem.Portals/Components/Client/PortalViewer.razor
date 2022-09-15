@@ -12,6 +12,7 @@
 @using Strem.Portals.Services.Stores
 @using Strem.Todos.Data
 @using Strem.Todos.Events
+@using Strem.Todos.Events.Base
 @using Strem.Todos.Services.Stores
 
 @implements IDisposable
@@ -81,17 +82,23 @@
     {
         EventBus = WebHostHackExtensions.ServiceLocator.GetService<IEventBus>()!;
         ButtonRuntimeStyles = WebHostHackExtensions.ServiceLocator.GetService<ButtonRuntimeStyles>()!;
-        
-        var portalStore = WebHostHackExtensions.ServiceLocator.GetService<IPortalStore>();
-        TodoStore = WebHostHackExtensions.ServiceLocator.GetService<ITodoStore>();
+        var portalStore = WebHostHackExtensions.ServiceLocator.GetService<IPortalStore>()!;
+        TodoStore = WebHostHackExtensions.ServiceLocator.GetService<ITodoStore>()!;
+        var logger = WebHostHackExtensions.ServiceLocator.GetService<ILogger<PortalViewer>>()!;
         Portal = portalStore.Get(PortalId);
 
-        EventBus.ReceiveAs<PortalEvent, PortalChangedEvent, PortalCreatedEvent, PortalRemovedEvent, ButtonChangedEvent>()
+        if (Portal == null)
+        {
+            logger.Error($"Unable to find portal for {PortalId}");
+            return;
+        }
+
+        EventBus.ReceiveAs<PortalEvent, PortalChangedEvent, PortalCreatedEvent, PortalRemovedEvent, PortalButtonChangedEvent>()
             .Where(x => x.PortalId == PortalId)
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
         
-        EventBus.Receive<TodoCreatedEvent>()
+        EventBus.ReceiveAs<TodoEvent, TodoCreatedEvent, TodoRemovedEvent>()
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
     }
@@ -106,7 +113,7 @@
     }
 
     public void NotifyButtonPressed(ButtonData buttonData)
-    { EventBus.PublishAsync(new ButtonPressedEvent(Portal.Id, Portal.Name, buttonData.Id, buttonData.Name)); }
+    { EventBus.PublishAsync(new PortalButtonPressedEvent(Portal.Id, Portal.Name, buttonData.Id, buttonData.Name)); }
     
     private string GetImageSize(ButtonSize portalButtonSize)
     {
