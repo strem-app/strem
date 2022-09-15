@@ -90,7 +90,7 @@ The system tries to keep out or your way and let you do whatever crazy stuff you
 
 > The system wont stop you continuing with validation errors but when executing if the system finds any triggers or tasks failing validation checks it will stop processing.
 
-### Triggers & Tasks Section
+## Triggers & Tasks Section
 
 There are a myriad of out the box triggers and tasks which will be available to you based on what you have setup. For example if you have not integrated with `twitch` you will not be able to use any twitch related triggers or tasks.
 
@@ -100,7 +100,11 @@ As with user flows the triggers and tasks are categorised and you can mix and ma
 
 > The flows are automatically saved whenever changes are detected so you do not need to worry about manually saving anything it is all handled for you.
 
-### Importing & Exporting Flows
+## Other Useful Information
+
+While that about covers the high level UI there are some other things to discuss which may be helpful in getting up and running.
+
+### Importing & Exporting Flows?
 
 Your flows are saved against your active user profile in windows however if you want to back up or share your flows with other people all you need to do is click the `Export Flows` button and then pick which flows you want to export and a file where you want to export them to, as shown below.
 
@@ -117,3 +121,15 @@ When importing and exporting you only really need the flow, as variables will be
 If however you have a scenario where you need to set user variables you can manually go to the `Data` section in `Settings` and manually add/remove variables there.
 
 > As noted variables dont always need to be created ahead of time, if you have a death counter and you are incrementing a variable, if that variable doesnt exist it is created as part of the operation so you rarely need to manually go and create variables outside of flow tasks.
+
+### Debugging Failing Flows
+
+If you have a made a flow and it doesnt work as you expect in most cases the things you can try to assist debugging is:
+
+- Verify none of your triggers/tasks have validation errors
+- Verify any variables contain values you expect
+- Go to the `Logs` page and check the `Execution Log` to see what happened
+- Check the main `App Logs` to see if any errors are being output there
+- Raise a query on the github issues with as much information as you can
+
+In most cases its apparent why something is broken and its easy to fix, however in some cases there may legitimately be a bug with a task/trigger or there could be some other issue at fault.

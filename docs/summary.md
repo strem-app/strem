@@ -6,6 +6,7 @@
 * Users - How To Use The App
     * [Overview](user-guide/readme.md)
     * [Flows](user-guide/flows.md)
+    * [Portals](user-guide/portals.md)
 * Developers - How To Extend The App
     * [Pre Requisites](development-guide/pre-requisite-tech.md)
     * [Plugin Setup](development-guide/plugin-setup.md)
