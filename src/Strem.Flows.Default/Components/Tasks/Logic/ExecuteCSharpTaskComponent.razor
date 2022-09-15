@@ -6,7 +6,7 @@
     <div class="control" style="min-height: 20em;">
         <MonacoEditor Id="@Data.Id.ToString()" CssClass="block is-info" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="OnContentChanged" @ref="_editor"/>
     </div>
-    <HelperInfo>Running custom scripts is a more advanced feature, see the docs for more information on the context object and use cases</HelperInfo>
+    <HelperInfo>The script supports C# 10 and is run against .net 6, see the docs for more information on the context object and use cases</HelperInfo>
 </div>
 
 @if (!string.IsNullOrEmpty(CompilationResult))
