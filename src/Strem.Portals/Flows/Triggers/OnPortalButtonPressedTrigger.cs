@@ -34,7 +34,7 @@ public class OnPortalButtonPressedTrigger : FlowTrigger<OnPortalButtonPressedTri
 
     public override bool CanExecute() => true;
 
-    public bool EventMatchesData(OnPortalButtonPressedTriggerData data, ButtonPressedEvent eventData)
+    public bool EventMatchesData(OnPortalButtonPressedTriggerData data, PortalButtonPressedEvent eventData)
     {
         if (data.RequiredPortalId != Guid.Empty && data.RequiredPortalId != eventData.PortalId)
         { return false; }
@@ -47,7 +47,7 @@ public class OnPortalButtonPressedTrigger : FlowTrigger<OnPortalButtonPressedTri
     
     public override async Task<IObservable<IVariables>> Execute(OnPortalButtonPressedTriggerData data)
     {
-        return EventBus.Receive<ButtonPressedEvent>()
+        return EventBus.Receive<PortalButtonPressedEvent>()
             .Where(x => EventMatchesData(data, x))
             .Select(x =>
             {

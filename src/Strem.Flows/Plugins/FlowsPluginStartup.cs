@@ -52,8 +52,7 @@ public class FlowsPluginStartup : IPluginStartup, IDisposable
                 FlowRepository.Update(x.Id, x);
             })
             .AddTo(_subs);
-        
-        
+
         Logger.Information("Setting Up Flow Registries");
         StartRegistries();
         Logger.Information("Finished Setting Up Flow Registries");

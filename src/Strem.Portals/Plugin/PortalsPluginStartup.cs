@@ -5,6 +5,7 @@ using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Portals.Data;
 using Strem.Portals.Events;
+using Strem.Portals.Events.Base;
 using Strem.Portals.Services.Repositories;
 using Strem.Portals.Services.Stores;
 
@@ -29,7 +30,16 @@ public class PortalsPluginStartup : IPluginStartup, IDisposable
 
     public async Task StartPlugin()
     {
-
+        EventBus
+            .ReceiveAs<PortalEvent, PortalChangedEvent, PortalButtonChangedEvent>()
+            .ThrottledByKey(x => x, TimeSpan.FromSeconds(2))
+            .Select(x => PortalStore.Get(x.PortalId))
+            .Subscribe(x =>
+            {
+                if(x == null){ return; }
+                PortalRepository.Update(x.Id, x);
+            })
+            .AddTo(_subs);
     }
 
     public void Dispose()

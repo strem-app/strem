@@ -13,7 +13,7 @@
 </div>
 @if (Data.RequiredPortalId != Guid.Empty)
 {
-    var portal = PortalStore.Data.SingleOrDefault(x => x.Id == Data.RequiredPortalId);
+    var portal = PortalStore.Get(Data.RequiredPortalId);
     if (portal != null)
     {
         <div class="field">

@@ -6,7 +6,9 @@
 @using Strem.Core.Extensions
 @using Strem.Core.Services.Browsers.Web
 @using Strem.Core.Types
+@using Strem.Portals.Data.Overrides
 @using Strem.Portals.Events
+@using Strem.Portals.Extensions
 @using Strem.Portals.Types
 @using Strem.Todos.Data
 @using Strem.Todos.Services.Stores
@@ -14,6 +16,7 @@
 @inject IWebBrowser WebBrowser
 @inject IEventBus EventBus
 @inject ITodoStore TodoStore 
+@inject ButtonRuntimeStyles ButtonRuntimeStyles 
 
 <div class="box">
     <div class="field is-grouped">
@@ -87,10 +90,10 @@
 </div>
 
 
-<Modal IsVisible="ShowEditModal">
+<Modal IsVisible="ShowButtonEditModal">
     @if (SelectedButton != null)
     {
-        <PortalButtonEditor Data="SelectedButton" OnClosed="EditModalClosed" RequestedDeletion="DeleteButton"></PortalButtonEditor>
+        <PortalButtonEditor Data="SelectedButton" OnClosed="ButtonEditModalClosed" RequestedDeletion="DeleteButton"></PortalButtonEditor>
     }
 </Modal>
 
@@ -102,7 +105,7 @@
     public EventCallback<Guid> RequestingDeletion { get; set; }
 
     public ButtonData SelectedButton { get; set; }
-    public bool ShowEditModal { get; set; }
+    public bool ShowButtonEditModal { get; set; }
     public bool ShowDeletionModal { get; set; }
     
     public void AddButton()
@@ -116,7 +119,7 @@
     public void EditButton(ButtonData buttonData)
     {
         SelectedButton = buttonData;
-        ShowEditModal = true;
+        ShowButtonEditModal = true;
     }
 
     public void ViewPortalInBrowser()
@@ -151,11 +154,12 @@
         return "is-size-7";
     }
 
-    private void EditModalClosed()
+    private void ButtonEditModalClosed()
     {
-        ShowEditModal = false;
+        ShowButtonEditModal = false;
+        EventBus.PublishAsync(new PortalButtonChangedEvent(Portal.Id, SelectedButton.Id));
+        ButtonRuntimeStyles.RefreshStylesFor(Portal.Id, SelectedButton);
         SelectedButton = null;
-        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 
     private void PortalDetailsChanged()
@@ -166,7 +170,7 @@
 
     private void DeleteButton(Guid obj)
     {
-        ShowEditModal = false;
+        ShowButtonEditModal = false;
         Portal.Buttons.Remove(SelectedButton);
         SelectedButton = null;
         EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
