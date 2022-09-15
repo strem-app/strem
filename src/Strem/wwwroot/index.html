@@ -13,6 +13,7 @@
         <link href="css/all.css" rel="stylesheet" />
         <link href="css/animate.css" rel="stylesheet" />
         <link href="css/app-styles.less" type="text/css" rel="stylesheet/less" />
+        <link href="/_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.css" rel="stylesheet" />
     </head>    
     <body>
         <div id="app" class="has-background-dark"></div>
@@ -23,6 +24,12 @@
         <script src="js/fontawesome-iconpicker.js" ></script>
         <script src="js/bulma-toast.min.js" ></script>
         <script src="js/interop-methods.js" ></script>
-        <script src="_framework/blazor.webview.js"></script>
+
+        <script src="/_content/BlazorMonaco/lib/monaco-editor/min/vs/loader.js"></script>
+        <script>require.config({ paths: { 'vs': '/_content/BlazorMonaco/lib/monaco-editor/min/vs' } });</script>
+        <script src="/_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+        <script src="/_content/BlazorMonaco/jsInterop.js"></script>
+        
+        <script src="/_framework/blazor.webview.js"></script>
     </body>
 </html>

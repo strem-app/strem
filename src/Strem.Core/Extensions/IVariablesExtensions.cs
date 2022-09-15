@@ -45,9 +45,9 @@ public static class IVariablesExtensions
 
     public static IVariables Combine(this IVariables source, params IVariables[] additions)
     {
-        var allVariables = source.GetAll().ToList();
+        var allVariables = source.ToList();
         foreach (var additionVars in additions)
-        { allVariables.AddRange(additionVars.GetAll()); }
+        { allVariables.AddRange(additionVars); }
         return new Variables.Variables(allVariables.ToDictionary(x => x.Key, x => x.Value));
     }
 }

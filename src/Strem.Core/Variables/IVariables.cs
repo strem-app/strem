@@ -1,6 +1,6 @@
 namespace Strem.Core.Variables;
 
-public interface IVariables : IDisposable
+public interface IVariables : IEnumerable<KeyValuePair<VariableEntry, string>>
 {
     IObservable<KeyValuePair<VariableEntry, string>> OnVariableChanged { get; }
     
@@ -8,5 +8,4 @@ public interface IVariables : IDisposable
     string Get(VariableEntry variableEntry);
     void Set(VariableEntry variableEntry, string value);
     void Delete(VariableEntry variableEntry);
-    IEnumerable<KeyValuePair<VariableEntry, string>> GetAll();
 }

@@ -1,10 +1,8 @@
-﻿namespace Strem.Flows.Services.Registries.Tasks;
+﻿using Strem.Core.Services.Registries;
 
-public class TaskRegistry : ITaskRegistry
+namespace Strem.Flows.Services.Registries.Tasks;
+
+public class TaskRegistry : Registry<TaskDescriptor>, ITaskRegistry
 {
-    public Dictionary<string, TaskDescriptor> Tasks { get; } = new();
-    public void Add(TaskDescriptor task) => Tasks.Add(task.Task.Code, task);
-    public void Remove(TaskDescriptor task) => Tasks.Remove(task.Task.Code);
-    public TaskDescriptor Get(string taskCode) => Tasks.ContainsKey(taskCode) ? Tasks[taskCode] : null;
-    public IEnumerable<TaskDescriptor> GetAll() => Tasks.Values;
+    public override string GetId(TaskDescriptor data) => data.Task.Code;
 }
