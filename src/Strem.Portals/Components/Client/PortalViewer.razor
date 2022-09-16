@@ -7,6 +7,7 @@
 @using Strem.Portals.Extensions
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
+@using Strem.Core.Services.UI.Animation
 @using Strem.Portals.Events.Base
 @using Strem.Portals.Services.Stores
 @using Strem.Todos.Data
@@ -34,7 +35,7 @@
                                 else
                                 {
                                     <PortalButton ButtonId="possibleButton.Id" ButtonStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)" 
-                                                  ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ButtonSize"/>
+                                                  ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ButtonSize" AnimatePress="true"/>
                                 }
                             }
                         </div>
