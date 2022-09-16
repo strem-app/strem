@@ -35,6 +35,13 @@
         
         <div class="column">
             <div class="field">
+                <label class="label">Optional Portal Password</label>
+                <div class="control">
+                    <TextInput type="password" @bind-Value="Data.Password"/>
+                </div>
+                <HelperInfo>You can leave the password empty if you do not want to restrict the portal</HelperInfo>
+            </div>
+            <div class="field">
                 <div class="control">
                     <label class="label">Portal Todos</label>
                     <div class="control">

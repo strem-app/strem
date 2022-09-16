@@ -42,7 +42,6 @@ public class InfrastructureModule : IRequiresApiHostingModule
                 new VariableEntryConvertor(), 
                 new FlowTaskDataConvertor(), new FlowTriggerDataConvertor()
             },
-            //TypeNameHandling = TypeNameHandling.Auto,
             Formatting = Formatting.Indented
         };
         
@@ -62,6 +61,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         // UI
         services.AddTransient<INotifier, Notifier>();
         services.AddTransient<IAnimator, Animator>();
+        services.AddSingleton<DragController>();
         
         // Hosting
         services.AddSingleton<IInternalWebHost, InternalWebHost>();
@@ -89,9 +89,6 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IIntegrationRegistry, IntegrationRegistry>();
         services.AddSingleton<IMenuRegistry, MenuRegistry>();
 
-        // UI
-        services.AddSingleton<DragController>();
-        
         // Plugin (this isnt technically a plugin I know)
         services.AddSingleton<IPluginStartup, InfrastructurePluginStartup>();
     }

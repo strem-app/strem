@@ -35,8 +35,8 @@ public class InternalWebHost : IInternalWebHost
         });
 
         var pluginModules = GetAllApiHostingPlugins();
-        foreach (var pluginModule in pluginModules)
-        { builder.Services.AddModule(pluginModule.module); }
+        //foreach (var pluginModule in pluginModules)
+        //{ builder.Services.AddModule(pluginModule.module); }
         
         var mvcBuilder = builder.Services.AddMvcCore();
         mvcBuilder.AddApplicationPart(GetType().Assembly);
