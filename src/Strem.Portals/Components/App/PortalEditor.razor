@@ -12,11 +12,16 @@
 @using Strem.Portals.Types
 @using Strem.Todos.Data
 @using Strem.Todos.Services.Stores
+@using System.Reactive.Linq
+@using System.Reactive.Disposables
 
 @inject IWebBrowser WebBrowser
 @inject IEventBus EventBus
 @inject ITodoStore TodoStore 
 @inject ButtonRuntimeStyles ButtonRuntimeStyles 
+@inject DragController DragController
+
+@implements IDisposable
 
 <div class="box">
     <div class="field is-grouped">
@@ -45,16 +50,21 @@
                         var possibleButton = GetButtonAt(i);
                         if (possibleButton == null)
                         {
-                            <PlaceholderButton ButtonSize="Portal.ButtonSize" GridIndex="i" ButtonPressed="AddButton">
-                                <span class="icon fa-3x m-auto">
-                                    <i class="fas fa-plus has-text-white"></i>
-                                </span>
-                                <label class="label has-text-white">Add Button</label>
-                            </PlaceholderButton>
+                            <DraggableElement Data="@i" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.PortalButton }" 
+                                              CanDrag="false" Classes="is-flex is-flex-direction-column">
+                                <PlaceholderButton ButtonSize="Portal.ButtonSize" GridIndex="i" ButtonPressed="AddButton">
+                                    <span class="icon fa-3x m-auto">
+                                        <i class="fas fa-plus has-text-white"></i>
+                                    </span>
+                                    <label class="label has-text-white">Add Button</label>
+                                </PlaceholderButton>
+                            </DraggableElement>
                         }
                         else
                         {
-                            <PortalButton ButtonId="possibleButton.Id" ButtonStyles="possibleButton.DefaultStyles" ButtonPressed="EditButton" ButtonSize="Portal.ButtonSize"/>
+                            <DraggableElement Data="possibleButton" DropType="@DropTypes.PortalButton" SupportedDropTypes="@(new []{ DropTypes.PortalButton })" @key="possibleButton.Id">
+                                <PortalButton ButtonId="possibleButton.Id" ButtonStyles="possibleButton.DefaultStyles" ButtonPressed="EditButton" ButtonSize="Portal.ButtonSize"/>
+                            </DraggableElement>
                         }
                     }
                 </div>
@@ -91,11 +101,46 @@
     
     [Parameter]
     public EventCallback<Guid> RequestingDeletion { get; set; }
-
+    
     public ButtonData SelectedButton { get; set; }
     public bool ShowButtonEditModal { get; set; }
     public bool ShowDeletionModal { get; set; }
+
+    private CompositeDisposable _subs = new();
     
+    protected override async Task OnInitializedAsync()
+    {
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.PortalButton && 
+                        x.DestinationDropType == DropTypes.PortalButton)
+            .Subscribe(SwapButtons)
+            .AddTo(_subs);
+        
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.PortalButton && 
+                        x.DestinationDropType == DropTypes.None)
+            .Subscribe(MoveButton)
+            .AddTo(_subs);
+    }
+
+    public void SwapButtons(DropData data)
+    {
+        var destinationButton = data.DestinationObject as ButtonData;
+        var sourceButton = data.SourceObject as ButtonData;
+        var destinationGridIndex = destinationButton.GridIndex;
+        destinationButton.GridIndex = sourceButton.GridIndex;
+        sourceButton.GridIndex = destinationGridIndex;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void MoveButton(DropData data)
+    {
+        var sourceButton = data.SourceObject as ButtonData;
+        var newIndex = (int)data.DestinationObject;
+        sourceButton.GridIndex = newIndex;
+        InvokeAsync(StateHasChanged);
+    }
+
     public void AddButton(int gridIndex)
     {
         var button = new ButtonData { GridIndex = gridIndex };
@@ -157,5 +202,8 @@
 
     private ButtonData? GetButtonAt(int gridIndex)
     {return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex);}
+
+    public void Dispose()
+    { _subs.Dispose(); }
 
 }

@@ -9,20 +9,13 @@
 @implements IDisposable
 
 <div draggable="@(CanDrag.ToString())"
-    class="@(Classes) @(DragController.IsSourceObject(Data) ? "drag-source" : "")"
+    class="@(Classes) @(DragController.IsSourceObject(Data) ? "drag-source" : "") @(IsCurrentDropTarget ? OnTargetClasses : "")"
     ondragover="event.preventDefault()"
     @ondragstart="@(() => DragController.OnDragStart(Data, ContainingList, DropType))"
     @ondragenter="@(() => { DragController.OnDragEnterElement(Data, ContainingList, DropType); CheckForDragTarget(); })"
     @ondragend="DragController.OnDragEnd">
     @ChildContent
 </div>
-
-@if (IsCurrentDropTarget)
-{
-    <div class="block drag-enter-target">
-        <button class="button is-leveled" disabled></button>
-    </div>
-}
 
 @code {
     [Parameter]
@@ -42,6 +35,9 @@
     
     [Parameter]
     public string Classes { get; set; }
+
+    [Parameter]
+    public string OnTargetClasses { get; set; } = " drag-enter-target";
 
     [Parameter]
     public bool CanDrag { get; set; } = true;
