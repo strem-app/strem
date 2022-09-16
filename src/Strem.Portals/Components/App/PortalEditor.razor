@@ -50,24 +50,17 @@
             </div>
             <div class="portal-page @(Enum.GetName(Portal.ButtonSize).ToLower())">
                 <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-                    @foreach (var buttonData in Portal.Buttons)
+                    @for (var i = 0; i < Portal.ButtonGridSize; i++)
                     {
-                        <a class="button portal-button m-3 is-flex is-flex-direction-column"
-                           @onclick="() => EditButton(buttonData)" style="@GetButtonStyles(buttonData)">
-                            @if (buttonData.DefaultStyles.ButtonType == ButtonType.IconButton)
-                            {
-                                <span class="icon fa-3x m-auto">
-                                    <i class="fas @(buttonData.DefaultStyles.IconClass)"></i>
-                                </span>
-                            }
-                            else if (buttonData.DefaultStyles.ButtonType == ButtonType.ImageButton)
-                            {
-                                <figure class="image @GetImageSize(Portal.ButtonSize)">
-                                    <img alt="@buttonData.DefaultStyles.Text" src="@buttonData.DefaultStyles.ImageUrl.GetImageUrl()" class="is-full"/>
-                                </figure>
-                            }
-                            <label class="label @GetTextSize(Portal.ButtonSize)" style="white-space: break-spaces; color: @(buttonData.DefaultStyles.TextColor)">@buttonData.DefaultStyles.Text</label>
-                        </a>
+                        var possibleButton = GetButtonAt(i);
+                        if (possibleButton == null)
+                        {
+                            <PlaceholderlButton />
+                        }
+                        else
+                        {
+                            <PortalButton ButtonId="possibleButton.Id" ButtonStyles="possibleButton.DefaultStyles" ButtonPressed="EditButton" ButtonSize="Portal.ButtonSize"/>
+                        }
                     }
                 </div>
             </div>
@@ -113,12 +106,15 @@
         var button = new ButtonData();
         
         Portal.Buttons.Add(button);
-        EditButton(button);
+        EditButton(button.Id);
     }
 
-    public void EditButton(ButtonData buttonData)
+    public void EditButton(Guid buttonId)
     {
-        SelectedButton = buttonData;
+        var button = Portal.Buttons.SingleOrDefault(x => x.Id == buttonId);
+        if(button == null) { return; }
+        
+        SelectedButton = button;
         ShowButtonEditModal = true;
     }
 
@@ -137,23 +133,6 @@
             .Where(x => Portal.TodoTags.All(requiredTag => x.Tags.Contains(requiredTag, StringComparer.OrdinalIgnoreCase)));
     }
     
-    public string GetButtonStyles(ButtonData buttonData)
-    { return $"background-color: {buttonData.DefaultStyles.BackgroundColor}; color: {buttonData.DefaultStyles.TextColor}"; }
-
-    private string GetImageSize(ButtonSize portalButtonSize)
-    {
-        if(portalButtonSize == ButtonSize.Medium) { return "is-128x128"; }
-        if(portalButtonSize == ButtonSize.Large) { return "is-160x160"; }
-        return "is-96x96";
-    }
-    
-    private string GetTextSize(ButtonSize portalButtonSize)
-    {
-        if(portalButtonSize == ButtonSize.Medium) { return "is-size-7"; }
-        if(portalButtonSize == ButtonSize.Large) { return "is-size-6"; }
-        return "is-size-7";
-    }
-
     private void ButtonEditModalClosed()
     {
         ShowButtonEditModal = false;
@@ -181,5 +160,8 @@
 
     private void OnPortalDeletion()
     { RequestingDeletion.InvokeAsync(Portal.Id); }
+
+    private ButtonData? GetButtonAt(int gridIndex)
+    {return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex);}
 
 }

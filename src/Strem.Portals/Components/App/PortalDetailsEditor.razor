@@ -18,6 +18,13 @@
                     <EnumSelectInput @bind-Value="Data.ButtonSize"></EnumSelectInput>
                 </div>
             </div>
+            <div class="field">
+                <label class="label">Grid Size</label>
+                <div class="control">
+                    <IntInput Placeholder="i.e 25" @bind-Value="Data.ButtonGridSize"/>
+                </div>
+                <HelperInfo>The grid size is how many buttons you want to be available for the user</HelperInfo>
+            </div>
         </div>
         
         <div class="column">

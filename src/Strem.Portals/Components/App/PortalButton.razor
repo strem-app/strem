@@ -1,0 +1,51 @@
+﻿@using Strem.Portals.Data
+@using Strem.Portals.Types
+@using Strem.Core.Extensions
+
+<a class="button portal-button m-3 is-flex is-flex-direction-column"
+   @onclick="() => ButtonPressed.InvokeAsync(ButtonId)" style="@GetButtonStyles()">
+    @if (ButtonStyles.ButtonType == ButtonType.IconButton)
+    {
+        <span class="icon fa-3x m-auto">
+            <i class="fas @(ButtonStyles.IconClass)"></i>
+        </span>
+    }
+    else if (ButtonStyles.ButtonType == ButtonType.ImageButton)
+    {
+        <figure class="image @GetImageSize()">
+            <img alt="@ButtonStyles.Text" src="@ButtonStyles.ImageUrl.GetImageUrl()" class="is-full"/>
+        </figure>
+    }
+    <label class="label @GetTextSize()" style="color: @(ButtonStyles.TextColor)">@ButtonStyles.Text</label>
+</a>
+
+@code {
+    [Parameter]
+    public Guid ButtonId { get; set; }
+    
+    [Parameter]
+    public ButtonStyles ButtonStyles { get; set; }
+    
+    [Parameter]
+    public ButtonSize ButtonSize { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> ButtonPressed { get; set; }
+    
+    public string GetButtonStyles()
+    { return $"background-color: {ButtonStyles.BackgroundColor}; color: {ButtonStyles.TextColor}"; }
+
+    private string GetImageSize()
+    {
+        if(ButtonSize == ButtonSize.Medium) { return "is-128x128"; }
+        if(ButtonSize == ButtonSize.Large) { return "is-160x160"; }
+        return "is-96x96";
+    }
+    
+    private string GetTextSize()
+    {
+        if(ButtonSize == ButtonSize.Medium) { return "is-size-7"; }
+        if(ButtonSize == ButtonSize.Large) { return "is-size-6"; }
+        return "is-size-7";
+    }
+}
