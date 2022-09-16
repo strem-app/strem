@@ -47,12 +47,13 @@
                 <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
                     @for (var i = 0; i < Portal.ButtonGridSize; i++)
                     {
+                        var cachedIndex = i;
                         var possibleButton = GetButtonAt(i);
                         if (possibleButton == null)
                         {
-                            <DraggableElement Data="@i" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.PortalButton }" 
+                            <DraggableElement Data="@cachedIndex" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.PortalButton }" 
                                               CanDrag="false" Classes="is-flex is-flex-direction-column">
-                                <PlaceholderButton ButtonSize="Portal.ButtonSize" GridIndex="i" ButtonPressed="AddButton">
+                                <PlaceholderButton ButtonSize="Portal.ButtonSize" GridIndex="@cachedIndex" ButtonPressed="AddButton">
                                     <span class="icon fa-3x m-auto">
                                         <i class="fas fa-plus has-text-white"></i>
                                     </span>
@@ -70,6 +71,24 @@
                 </div>
             </div>
         </div>
+        @{
+            var orphanedButtons = Portal.Buttons
+                .Where(x => x.GridIndex < 0 || x.GridIndex >= Portal.ButtonGridSize).ToArray();
+        }
+        @if (orphanedButtons.Length > 0)
+        {
+            <div class="box">
+                <h3 class="title is-3 has-text-black">Orphaned Buttons</h3>
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                    @foreach (var button in orphanedButtons)
+                    {
+                        <DraggableElement Data="button" DropType="@DropTypes.PortalButton" SupportedDropTypes="@(new[] { DropTypes.None })" @key="button.Id">
+                            <PortalButton ButtonId="button.Id" ButtonStyles="button.DefaultStyles" ButtonSize="Portal.ButtonSize"/>
+                        </DraggableElement>
+                    }
+                </div>
+            </div>
+        }
     </div>
     @if (Portal.ShowTodos)
     {
@@ -117,7 +136,7 @@
             .AddTo(_subs);
         
         DragController.OnDroppedItem
-            .Where(x => x.SourceDropType == DropTypes.PortalButton && 
+            .Where(x => (x.SourceDropType == DropTypes.PortalButton) && 
                         x.DestinationDropType == DropTypes.None)
             .Subscribe(MoveButton)
             .AddTo(_subs);
@@ -131,6 +150,7 @@
         destinationButton.GridIndex = sourceButton.GridIndex;
         sourceButton.GridIndex = destinationGridIndex;
         InvokeAsync(StateHasChanged);
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 
     public void MoveButton(DropData data)
@@ -139,6 +159,7 @@
         var newIndex = (int)data.DestinationObject;
         sourceButton.GridIndex = newIndex;
         InvokeAsync(StateHasChanged);
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 
     public void AddButton(int gridIndex)
