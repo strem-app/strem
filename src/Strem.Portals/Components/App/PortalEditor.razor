@@ -38,24 +38,19 @@
 <div class="columns">
     <div class="column">
         <div class="box">
-            <div class="field is-grouped">
-                <div class="control">
-                    <button class="button is-info" @onclick="AddButton">
-                        <span class="icon is-small">
-                            <i class="fas fa-plus"></i>
-                        </span>
-                        <span>Add New Button</span>
-                    </button>
-                </div>
-            </div>
-            <div class="portal-page @(Enum.GetName(Portal.ButtonSize).ToLower())">
+            <div class="portal-page portal-editor">
                 <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
                     @for (var i = 0; i < Portal.ButtonGridSize; i++)
                     {
                         var possibleButton = GetButtonAt(i);
                         if (possibleButton == null)
                         {
-                            <PlaceholderlButton />
+                            <PlaceholderButton ButtonSize="Portal.ButtonSize" GridIndex="i" ButtonPressed="AddButton">
+                                <span class="icon fa-3x m-auto">
+                                    <i class="fas fa-plus has-text-white"></i>
+                                </span>
+                                <label class="label has-text-white">Add Button</label>
+                            </PlaceholderButton>
                         }
                         else
                         {
@@ -101,10 +96,9 @@
     public bool ShowButtonEditModal { get; set; }
     public bool ShowDeletionModal { get; set; }
     
-    public void AddButton()
+    public void AddButton(int gridIndex)
     {
-        var button = new ButtonData();
-        
+        var button = new ButtonData { GridIndex = gridIndex };
         Portal.Buttons.Add(button);
         EditButton(button.Id);
     }
