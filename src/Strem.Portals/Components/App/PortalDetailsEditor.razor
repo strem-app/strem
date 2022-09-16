@@ -12,13 +12,26 @@
                     <TextInput Placeholder="i.e Play A Meme" @bind-Value="Data.Name"/>
                 </div>
             </div>
-            <div class="field">
-                <label class="label">Button Size</label>
-                <div class="control">
-                    <EnumSelectInput @bind-Value="Data.ButtonSize"></EnumSelectInput>
+            
+            <div class="field is-horizontal">
+                <div class="field-body">
+                    <div class="field">
+                        <label class="label">Button Size</label>
+                        <div class="control">
+                            <EnumSelectInput @bind-Value="Data.ButtonSize"></EnumSelectInput>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Grid Size</label>
+                        <div class="control">
+                            <IntInput Placeholder="i.e 25" @bind-Value="Data.ButtonGridSize"/>
+                        </div>
+                        <HelperInfo>The grid size is how many buttons you want to be available for the user</HelperInfo>
+                    </div>
                 </div>
             </div>
-        </div>
+                
+            </div>
         
         <div class="column">
             <div class="field">

@@ -5,9 +5,9 @@
 @using Strem.Portals.Data.Overrides
 @using Strem.Portals.Events
 @using Strem.Portals.Extensions
-@using Strem.Portals.Types
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
+@using Strem.Core.Services.UI.Animation
 @using Strem.Portals.Events.Base
 @using Strem.Portals.Services.Stores
 @using Strem.Todos.Data
@@ -23,27 +23,20 @@
             <p class="title">@Portal.Name</p>
             <div class="columns">
                 <div class="column">
-                    <div class="portal-page box @(Enum.GetName(Portal.ButtonSize).ToLower())">
+                    <div class="portal-page portal-viewer box">
                         <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-                            @foreach (var buttonData in Portal.Buttons)
+                            @for (var i = 0; i < Portal.ButtonGridSize; i++)
                             {
-                                var buttonStyles = ButtonRuntimeStyles.GetButtonStyles(PortalId, buttonData.Id) ?? buttonData.DefaultStyles;
-                                <a data-button-id="@buttonData.Id" data-button-name="@buttonData.Name" class="button portal-button m-3 is-flex is-flex-direction-column"
-                                   style="background-color: @buttonStyles.BackgroundColor; color: @buttonStyles.TextColor" @onclick="() => NotifyButtonPressed(buttonData)">
-                                    @if (buttonStyles.ButtonType == ButtonType.IconButton)
-                                    {
-                                        <span class="icon fa-3x m-auto">
-                                            <i class="fas @buttonStyles.IconClass"></i>
-                                        </span>
-                                    }
-                                    else if (buttonStyles.ButtonType == ButtonType.ImageButton)
-                                    {
-                                        <figure class="image @GetImageSize(Portal.ButtonSize)">
-                                            <img alt="@buttonStyles.Text" src="@buttonStyles.ImageUrl.GetImageUrl()" class="is-full" />
-                                        </figure>
-                                    }
-                                    <label class="label @GetTextSize(Portal.ButtonSize)" style="white-space: break-spaces; color: @(@buttonStyles.TextColor)">@buttonStyles.Text</label>
-                                </a>
+                                var possibleButton = GetButtonAt(i);
+                                if (possibleButton == null)
+                                {
+                                    <PlaceholderButton ButtonSize="Portal.ButtonSize" />
+                                }
+                                else
+                                {
+                                    <PortalButton ButtonId="possibleButton.Id" ButtonStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)" 
+                                                  ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ButtonSize" AnimatePress="true"/>
+                                }
                             }
                         </div>
                     </div>
@@ -115,20 +108,6 @@
     public void NotifyButtonPressed(ButtonData buttonData)
     { EventBus.PublishAsync(new PortalButtonPressedEvent(Portal.Id, Portal.Name, buttonData.Id, buttonData.Name)); }
     
-    private string GetImageSize(ButtonSize portalButtonSize)
-    {
-        if(portalButtonSize == ButtonSize.Medium) { return "is-128x128"; }
-        if(portalButtonSize == ButtonSize.Large) { return "is-160x160"; }
-        return "is-96x96";
-    }
-    
-    private string GetTextSize(ButtonSize portalButtonSize)
-    {
-        if(portalButtonSize == ButtonSize.Medium) { return "is-size-7"; }
-        if(portalButtonSize == ButtonSize.Large) { return "is-size-6"; }
-        return "is-size-7";
-    }
-
     public void Dispose()
     {
         _subs.Dispose();
@@ -139,5 +118,8 @@
         TodoStore.Remove(todoData.Id);
         StateHasChanged();
     }
+    
+    private ButtonData? GetButtonAt(int gridIndex)
+    {return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex);}
 
 }

@@ -1,6 +1,6 @@
 using Microsoft.JSInterop;
 
-namespace Strem.Core.Services.Notifications;
+namespace Strem.Core.Services.UI.Notifications;
 
 public class Notifier : INotifier
 {

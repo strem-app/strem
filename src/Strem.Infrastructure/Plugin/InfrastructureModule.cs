@@ -12,10 +12,11 @@ using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Browsers.Web;
-using Strem.Core.Services.Notifications;
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Core.Services.Registries.Menus;
 using Strem.Core.Services.Threading;
+using Strem.Core.Services.UI.Animation;
+using Strem.Core.Services.UI.Notifications;
 using Strem.Core.Services.Utils;
 using Strem.Core.Services.Validation;
 using Strem.Core.State;
@@ -57,7 +58,10 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IWebBrowser, WebBrowser>();
         services.AddSingleton<ICloner, Cloner>();
         services.AddSingleton<IDataValidator, DataValidator>();
+        
+        // UI
         services.AddTransient<INotifier, Notifier>();
+        services.AddTransient<IAnimator, Animator>();
         
         // Hosting
         services.AddSingleton<IInternalWebHost, InternalWebHost>();

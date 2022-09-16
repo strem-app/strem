@@ -1,4 +1,4 @@
-﻿namespace Strem.Core.Services.Notifications;
+﻿namespace Strem.Core.Services.UI.Notifications;
 
 public interface INotifier
 {
