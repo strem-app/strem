@@ -7,7 +7,8 @@
 @using Strem.Portals.Extensions
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
-@using Strem.Core.Services.UI.Animation
+@using Microsoft.JSInterop
+@using Strem.Core.Services.UI.Notifications
 @using Strem.Portals.Events.Base
 @using Strem.Portals.Services.Stores
 @using Strem.Todos.Data
@@ -17,48 +18,58 @@
 
 @implements IDisposable
 
-<section class="hero is-dark is-fullheight">
-    <div class="hero-body is-align-items-stretch">
-        <div class="container is-fluid">
-            <p class="title">@Portal.Name</p>
-            <div class="columns">
-                <div class="column">
-                    <div class="portal-page portal-viewer box">
-                        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-                            @for (var i = 0; i < Portal.ButtonGridSize; i++)
-                            {
-                                var possibleButton = GetButtonAt(i);
-                                if (possibleButton == null)
+@inject IJSRuntime Js
+
+@if (!ShowPasswordModal)
+{
+    <section class="hero is-dark is-fullheight">
+        <div class="hero-body is-align-items-stretch">
+            <div class="container is-fluid">
+                <p class="title">@Portal.Name</p>
+                <div class="columns">
+                    <div class="column">
+                        <div class="portal-page portal-viewer box">
+                            <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                                @for (var i = 0; i < Portal.ButtonGridSize; i++)
                                 {
-                                    <PlaceholderButton ButtonSize="Portal.ButtonSize" />
+                                    var possibleButton = GetButtonAt(i);
+                                    if (possibleButton == null)
+                                    {
+                                        <PlaceholderButton ButtonSize="Portal.ButtonSize"/>
+                                    }
+                                    else
+                                    {
+                                        <PortalViewerButton ButtonId="possibleButton.Id" ButtonStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
+                                                      ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ButtonSize" />
+                                    }
                                 }
-                                else
-                                {
-                                    <PortalButton ButtonId="possibleButton.Id" ButtonStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)" 
-                                                  ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ButtonSize" AnimatePress="true"/>
-                                }
-                            }
-                        </div>
-                    </div>
-                </div>
-                @if (Portal.ShowTodos)
-                {
-                    var filteredTodos = GetFilteredTodos().ToArray();
-                    if (filteredTodos.Length > 0)
-                    {
-                        <div class="column is-one-third todo-section">
-                            <div class="box">
-                                <PagedContent Data="filteredTodos" ElementsPerPage="5" Context="Todo" OrderBy="x => x.ExpiryDate">
-                                    <TodoEntry Todo="Todo" OnTodoComplete="OnTodoCompleted"></TodoEntry>
-                                </PagedContent>
                             </div>
                         </div>
+                    </div>
+                    @if (Portal.ShowTodos)
+                    {
+                        var filteredTodos = GetFilteredTodos().ToArray();
+                        if (filteredTodos.Length > 0)
+                        {
+                            <div class="column is-one-third todo-section">
+                                <div class="box">
+                                    <PagedContent Data="filteredTodos" ElementsPerPage="5" Context="Todo" OrderBy="x => x.ExpiryDate">
+                                        <TodoEntry Todo="Todo" OnTodoComplete="OnTodoCompleted"></TodoEntry>
+                                    </PagedContent>
+                                </div>
+                            </div>
+                        }
                     }
-                }
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+}
+
+<Modal IsVisible="ShowPasswordModal" ShowCloseButton="false">
+  <PortalPasswordModal RequestAccess="OnRequestedAccess"></PortalPasswordModal>
+</Modal>
+
 
 @code {
     [Parameter]
@@ -68,21 +79,26 @@
     public ButtonRuntimeStyles ButtonRuntimeStyles { get; set; }
     public IEventBus EventBus { get; set; }
     public ITodoStore TodoStore { get; set; }
+    public INotifier Notifier { get; set; }
+    public ILogger Logger { get; set; }
+
+    public bool ShowPasswordModal { get; set; }
 
     private CompositeDisposable _subs = new();
     
     protected override async Task OnInitializedAsync()
     {
-        EventBus = WebHostHackExtensions.ServiceLocator.GetService<IEventBus>()!;
-        ButtonRuntimeStyles = WebHostHackExtensions.ServiceLocator.GetService<ButtonRuntimeStyles>()!;
-        var portalStore = WebHostHackExtensions.ServiceLocator.GetService<IPortalStore>()!;
-        TodoStore = WebHostHackExtensions.ServiceLocator.GetService<ITodoStore>()!;
-        var logger = WebHostHackExtensions.ServiceLocator.GetService<ILogger<PortalViewer>>()!;
+        EventBus = this.GetService<IEventBus>()!;
+        ButtonRuntimeStyles = this.GetService<ButtonRuntimeStyles>()!;
+        var portalStore = this.GetService<IPortalStore>()!;
+        TodoStore = this.GetService<ITodoStore>()!;
+        Logger = this.GetService<ILogger<PortalViewer>>()!;
+        Notifier = this.GetService<INotifier>()!;
         Portal = portalStore.Get(PortalId);
 
         if (Portal == null)
         {
-            logger.Error($"Unable to find portal for {PortalId}");
+            Logger.Error($"Unable to find portal for {PortalId}");
             return;
         }
 
@@ -94,6 +110,23 @@
         EventBus.ReceiveAs<TodoEvent, TodoCreatedEvent, TodoRemovedEvent>()
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
+
+        if (!string.IsNullOrEmpty(Portal.Password))
+        { ShowPasswordModal = true; }
+    }
+
+    public async Task OnRequestedAccess(string password)
+    {
+        if(Portal.Password.Equals(password))
+        {
+            ShowPasswordModal = false;
+            await Js.InvokeVoidAsync("showNotification", "Login Successful", "is-success", 2000);
+            Logger.Information($"Login Succeeded for {Portal.Name}");
+            return;
+        }
+        
+        await Js.InvokeVoidAsync("showNotification", "Login Failed", "is-danger", 2000);
+        Logger.Error($"Failed login for {Portal.Name}");
     }
     
     public IEnumerable<TodoData> GetFilteredTodos()
@@ -120,6 +153,5 @@
     }
     
     private ButtonData? GetButtonAt(int gridIndex)
-    {return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex);}
-
+    { return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex); }
 }
