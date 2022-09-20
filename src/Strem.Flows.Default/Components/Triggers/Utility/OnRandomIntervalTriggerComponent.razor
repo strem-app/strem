@@ -1,0 +1,20 @@
+﻿@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Utility.OnRandomIntervalTriggerData>
+
+<div class="field">
+    <label class="label">Minimum Interval</label>
+    <div class="control">
+        <EnumWithValueInput @bind-EnumValue="Data.MinIntervalUnitsType" @bind-Value="Data.MinIntervalValue" Placeholder="i.e 5 or dynamic vars" />
+    </div>
+    <HelperInfo>This is the minimum threshold before a trigger, i.e 5 minutes would mean it would wait at least 5 minutes before triggering</HelperInfo>
+</div>
+<div class="field">
+    <label class="label">Maximum Interval</label>
+    <div class="control">
+        <EnumWithValueInput @bind-EnumValue="Data.MaxIntervalUnitsType" @bind-Value="Data.MaxIntervalValue" Placeholder="i.e 5 or dynamic vars" />
+    </div>
+    <HelperInfo>This is the maximum threshold for an interval to trigger, i.e 10 minutes would mean it would trigger before 10 minutes had elapsed</HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"Trigger Randomly Between <strong>{Data.MinIntervalValue} {Data.MinIntervalUnitsType} & {Data.MaxIntervalValue} {Data.MaxIntervalUnitsType}</strong>";
+}
