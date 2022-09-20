@@ -64,11 +64,19 @@ public class FlowsPluginStartup : IPluginStartup, IDisposable
 
     public void StartRegistries()
     {
-        var taskDescriptors = Services.GetServices<TaskDescriptor>();
-        TaskRegistry?.AddMany(taskDescriptors);
-        
-        var triggerDescriptors = Services.GetServices<TriggerDescriptor>();
-        TriggerRegistry?.AddMany(triggerDescriptors);
+        try
+        {
+            var taskDescriptors = Services.GetServices<TaskDescriptor>();
+            TaskRegistry?.AddMany(taskDescriptors);
+            
+            var triggerDescriptors = Services.GetServices<TriggerDescriptor>();
+            TriggerRegistry?.AddMany(triggerDescriptors);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message);
+            throw;
+        }
     }
     
     public void Dispose()

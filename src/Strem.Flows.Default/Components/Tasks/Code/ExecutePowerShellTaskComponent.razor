@@ -1,10 +1,10 @@
-﻿@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Code.ExecutePythonTaskData>
+﻿@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Code.ExecutePowerShellTaskData>
 
 <div class="field">
     <div class="control" style="min-height: 20em;">
         <MonacoEditor Id="@Data.Id.ToString()" CssClass="block is-info" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="OnContentChanged" @ref="_editor"/>
     </div>
-    <HelperInfo>Only python 2 is supported currently, see the docs for more information on the context object and use cases</HelperInfo>
+    <HelperInfo>Your variables are exposed in the format of <strong>GetVariable name.context</strong> (context is optional as always) i.e GetVariable username.twitch</HelperInfo>
 </div>
 
 @code 
@@ -15,7 +15,7 @@
 
     public string GetTitle()
     {
-        return $"Execute Python Code";
+        return $"Execute Powershell Script";
     }
     
     private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
@@ -23,9 +23,9 @@
         return new StandaloneEditorConstructionOptions
         {
             AutomaticLayout = true,
-            Language = "python",
+            Language = "powershell",
             Contextmenu = false,
-            Value = Data.PythonCode,
+            Value = Data.PSCode,
             Minimap = new EditorMinimapOptions { Enabled = false },
             Theme = "vs-dark"
         };
@@ -33,7 +33,7 @@
 
     private async Task OnContentChanged()
     {
-        Data.PythonCode = await _editor.GetValue();
-        NotifyPropertyChanged(nameof(Data.PythonCode));
+        Data.PSCode = await _editor.GetValue();
+        NotifyPropertyChanged(nameof(Data.PSCode));
     }
 }

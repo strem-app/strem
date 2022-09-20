@@ -19,10 +19,14 @@ public class ExecutePythonTask : FlowTask<ExecutePythonTaskData>
     public override string Category => "Code";
     public override string Description => "Allows you to execute your own python logic (via IronPython)";
     
+    public IFlowExecutor FlowExecutor { get; }
+    
     public ExecutePythonTask(ILogger<FlowTask<ExecutePythonTaskData>> logger, IFlowStringProcessor flowStringProcessor,
-        IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor,
+        IAppState appState, IEventBus eventBus, IFlowExecutor flowExecutor) : base(logger, flowStringProcessor,
         appState, eventBus)
-    {}
+    {
+        FlowExecutor = flowExecutor;
+    }
 
     public override bool CanExecute() => true;
 
@@ -33,7 +37,7 @@ public class ExecutePythonTask : FlowTask<ExecutePythonTaskData>
         engine.Execute(data.PythonCode, scope);
         var executor = scope.GetVariable("execute");
         
-        var context = new ExecutionContext(Logger, AppState.UserVariables, AppState.TransientVariables, flowVars, EventBus);
+        var context = new ExecutionContext(Logger, AppState.UserVariables, AppState.TransientVariables, flowVars, EventBus, FlowExecutor);
         executor(context);
         
         return ExecutionResult.Success();

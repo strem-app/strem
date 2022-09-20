@@ -36,10 +36,6 @@
 
 @code {
     public override string Title => $"Pick From {Data.SubFlowNames.Count} Random Sub Flows";
-
-    [CascadingParameter]
-    public EditContext? EditContext { get; set; }
-    private FieldIdentifier FieldIdentifier { get; set; }
     
     public string ErrorMessage { get; set; } = string.Empty;
 
@@ -47,9 +43,6 @@
     {
         if (Data.SubTasks.HasDuplicate(out var duplicate))
         { ErrorMessage = $"All sub flow names MUST be unique, '{duplicate}' already exists"; }
-
-        if (EditContext != null)
-        { FieldIdentifier = new FieldIdentifier(Data, nameof(Data.SubFlowNames)); }
         
         return base.OnInitializedAsync();
     }
@@ -96,6 +89,6 @@
     public void UpdateView()
     {
         InvokeAsync(StateHasChanged);
-        EditContext?.NotifyFieldChanged(FieldIdentifier);
+        NotifyPropertyChanged(nameof(Data.SubFlowNames));
     }
 }

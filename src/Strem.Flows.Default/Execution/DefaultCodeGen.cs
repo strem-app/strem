@@ -26,4 +26,6 @@ clr.ImportExtensions(Extensions)
 def execute(context):
     # Your Code Goes Here";
     
+    public static string DefaultPowershellCodegen = $@"# Your code goes here";
+    
 }

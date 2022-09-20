@@ -62,6 +62,7 @@
     private async Task OnContentChanged()
     {
         Data.CSharpCode = await _editor.GetValue();
+        NotifyPropertyChanged(nameof(Data.CSharpCode));
     }
 
 }
