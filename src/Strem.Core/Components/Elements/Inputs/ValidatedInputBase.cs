@@ -12,6 +12,9 @@ public abstract class ValidatedInputBase<T> : ComponentBase
     [Parameter]
     public EventCallback<T> ValueChanged { get; set; }
     
+    [Parameter]
+    public EventCallback<ValueWithPrevious<T>> ValueChangedWithPrevious { get; set; }
+    
     [Parameter] 
     public Expression<Func<T>>? ValueExpression { get; set; }
 
@@ -40,8 +43,10 @@ public abstract class ValidatedInputBase<T> : ComponentBase
     
     public void OnValueChanged(T value)
     {
+        var previousValue = Value;
         ValueChanged.InvokeAsync(value);
         if(_fieldIdentifier != null)
         { EditContext?.NotifyFieldChanged(_fieldIdentifier.Value); }
+        ValueChangedWithPrevious.InvokeAsync(new ValueWithPrevious<T>(previousValue, value));
     }
 }

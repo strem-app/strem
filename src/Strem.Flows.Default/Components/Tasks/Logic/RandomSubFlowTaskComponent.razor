@@ -1,0 +1,101 @@
+﻿@using Strem.Flows.Data.Tasks
+@using Strem.Core.Extensions
+@using Strem.Core.Services.Utils
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Logic.RandomSubFlowTaskData>
+
+@inject IRandomizer Randomizer
+
+<div class="field">
+    <div class="control">
+        <button class="button is-primary" @onclick="AddSubFlow">Add Sub Flow</button>
+    </div>
+</div>
+
+@for (var i = 0; i < Data.SubFlowNames?.Count; i++)
+{
+    var index = i;
+    var subFlowName = Data.SubFlowNames[index];
+    <div class="field has-addons">
+        <div class="control">
+            <input class="input" placeholder="Unique Sub Flow Name" value="@subFlowName" @onchange="e => OnKeyChanged(index, e.Value.ToString())"/>
+        </div>
+        <div class="control">
+            <button class="button is-danger" @onclick="() => InvokeAsync(() => RemoveSubFlow(index))">
+                <span class="icon is-small">
+                  <i class="fas fa-times"></i>
+                </span>
+              </button>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <ValidaitonMessageContainer Messages="new [] { ErrorMessage }"/>
+}
+
+@code {
+    public override string Title => $"Pick From {Data.SubFlowNames.Count} Random Sub Flows";
+
+    [CascadingParameter]
+    public EditContext? EditContext { get; set; }
+    private FieldIdentifier FieldIdentifier { get; set; }
+    
+    public string ErrorMessage { get; set; } = string.Empty;
+
+    protected override Task OnInitializedAsync()
+    {
+        if (Data.SubTasks.HasDuplicate(out var duplicate))
+        { ErrorMessage = $"All sub flow names MUST be unique, '{duplicate}' already exists"; }
+
+        if (EditContext != null)
+        { FieldIdentifier = new FieldIdentifier(Data, nameof(Data.SubFlowNames)); }
+        
+        return base.OnInitializedAsync();
+    }
+
+    public void AddSubFlow()
+    {
+        var subName = $"Sub Flow {Data.SubFlowNames.Count}";
+        if (Data.SubFlowNames.Contains(subName, StringComparer.OrdinalIgnoreCase))
+        {subName = $"{subName}{Randomizer.RandomString(3)}"; }
+        
+        
+        Data.SubFlowNames.Add(subName);
+        Data.SubTasks.Add(subName, new List<IFlowTaskData>());
+        UpdateView();
+    }
+    
+    public void RemoveSubFlow(int index)
+    {
+        var subFlowKey = Data.SubFlowNames[index];
+        Data.SubFlowNames.RemoveAt(index);
+        Data.SubTasks.Remove(subFlowKey);
+        UpdateView();
+    }
+
+    private void OnKeyChanged(int index, string newValue)
+    {
+        var doesContainKey = Data.SubFlowNames.Contains(newValue, StringComparer.OrdinalIgnoreCase);
+        if (doesContainKey)
+        {
+            ErrorMessage = $"All sub flow names MUST be unique, '{newValue}' already exists";
+            return;
+        }
+        
+        ErrorMessage = string.Empty;
+        var currentKey = Data.SubFlowNames[index];
+        var previousTasks = Data.SubTasks[currentKey];
+        Data.SubTasks.Remove(currentKey);
+        Data.SubFlowNames.Remove(currentKey);
+        Data.SubFlowNames.Insert(index, newValue);
+        Data.SubTasks.Add(newValue, previousTasks);
+        UpdateView();
+    }
+
+    public void UpdateView()
+    {
+        InvokeAsync(StateHasChanged);
+        EditContext?.NotifyFieldChanged(FieldIdentifier);
+    }
+}

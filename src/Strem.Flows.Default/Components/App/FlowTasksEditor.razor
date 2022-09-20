@@ -29,18 +29,21 @@
     <DraggableListElement Data="data" DropType="@DropTypes.FlowTask" ContainingList="TaskData" 
                           SupportedDropTypes="@(new []{ DropTypes.FlowTask, DropTypes.NewTask })" @key="data.Id">
         <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)" @key="data.Id"
-                               OnRequestedDeletion="RemoveTaskData" DataChanged="() => TaskDataChanged(data.Id)" Task="GetTaskFor(data)"/>
+                       OnRequestedDeletion="RemoveTaskData" DataChanged="() => TaskDataChanged(data.Id)" Task="GetTaskFor(data)" />
     </DraggableListElement>
 
     if (data is IHasSubTaskData subTaskData && subTaskData.SubTaskKeys.Length > 0)
     {
         foreach (var subKey in subTaskData.SubTaskKeys)
         {
-            <ul class="sub-tasks @subKey">
-                <p class="menu-label">@subKey</p>
-                <FlowTasksEditor TaskData="@subTaskData.SubTasks[subKey]" TaskDeleted="x => TaskDeleted.InvokeAsync(x)"
-                                 TaskAdded="x => TaskAdded.InvokeAsync(x)" TasksMoved="() => TasksMoved.InvokeAsync()" />
-            </ul>
+            @if (subTaskData.SubTasks.ContainsKey(subKey))
+            {
+                <ul class="sub-tasks @subKey">
+                    <p class="menu-label">@subKey</p>
+                    <FlowTasksEditor TaskData="@subTaskData.SubTasks[subKey]" TaskDeleted="x => TaskDeleted.InvokeAsync(x)"
+                                     TaskAdded="x => TaskAdded.InvokeAsync(x)" TasksMoved="() => TasksMoved.InvokeAsync()" />
+                </ul>
+            }
         }
     }
 }

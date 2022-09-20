@@ -12,7 +12,6 @@ using Strem.Core.Variables;
 using Strem.Data.Types;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services;
-using Strem.Infrastructure.Services.Persistence;
 
 namespace Strem.Infrastructure.Plugin;
 
@@ -110,10 +109,11 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         var timeSinceLastBackup = DateTime.Now - lastBackupDate ;
         if(timeSinceLastBackup.TotalDays < backupIntervalInDays) { return; }
 
-        Logger.Information("Making a backup of app related data");
-        await BackupFiles();
-        AppState.AppVariables.Set(UIVariables.LastBackupDate, DateTime.Now.ToString("u"));
-        Logger.Information($"Finished making a backup of app related data, will try again in {backupIntervalInDays} days");
+        // TODO: Find way to get backups working again
+        //Logger.Information("Making a backup of app related data");
+        //await BackupFiles();
+        //AppState.AppVariables.Set(UIVariables.LastBackupDate, DateTime.Now.ToString("u"));
+        //Logger.Information($"Finished making a backup of app related data, will try again in {backupIntervalInDays} days");
     }
 
     public async Task BackupFiles()

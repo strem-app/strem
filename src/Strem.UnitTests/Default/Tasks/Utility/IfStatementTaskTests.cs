@@ -8,7 +8,6 @@ using Strem.Core.State;
 using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Flows.Default.Flows.Tasks.Logic;
-using Strem.Flows.Default.Flows.Tasks.Utility;
 
 namespace Strem.UnitTests.Default.Tasks.Utility;
 
@@ -37,8 +36,7 @@ public class IfStatementTaskTests
             .Setup(x => x.Process(dummyB, dummyFlowVars))
             .Returns(valueB);
         
-        var task = new IfStatementTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, 
-            mockEventBus.Object, mockFlowExecutor.Object);
+        var task = new IfStatementTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object);
 
         var data = new IfStatementTaskData
         {

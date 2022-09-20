@@ -20,12 +20,9 @@ public class IfStatementTask : FlowTask<IfStatementTaskData>
     public override string Category => "Logic";
     public override string Description => "Compares two values";
     
-    public IFlowExecutor FlowExecutor { get; }
 
-    public IfStatementTask(ILogger<FlowTask<IfStatementTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutor flowExecutor) : base(logger, flowStringProcessor, appState, eventBus)
-    {
-        FlowExecutor = flowExecutor;
-    }
+    public IfStatementTask(ILogger<FlowTask<IfStatementTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
+    {}
 
     public override bool CanExecute() => true;
     
