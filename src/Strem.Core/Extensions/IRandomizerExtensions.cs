@@ -13,4 +13,10 @@ public static class IRandomizerExtensions
 
         return string.Join("", randomChars);
     }
+
+    public static T PickRandomFrom<T>(this IRandomizer randomizer, IReadOnlyCollection<T> data)
+    {
+        var randomIndex = randomizer.Random(0, data.Count-1);
+        return data.ElementAt(randomIndex);
+    }
 }

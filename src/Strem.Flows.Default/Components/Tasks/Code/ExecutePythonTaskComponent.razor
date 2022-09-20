@@ -1,4 +1,4 @@
-﻿@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Logic.ExecutePythonTaskData>
+﻿@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Code.ExecutePythonTaskData>
 
 <div class="field">
     <div class="control" style="min-height: 20em;">
@@ -34,5 +34,6 @@
     private async Task OnContentChanged()
     {
         Data.PythonCode = await _editor.GetValue();
+        NotifyPropertyChanged(nameof(Data.PythonCode));
     }
 }

@@ -1,7 +1,7 @@
 using Strem.Flows.Data.Tasks;
 using Strem.Flows.Default.Execution;
 
-namespace Strem.Flows.Default.Flows.Tasks.Logic;
+namespace Strem.Flows.Default.Flows.Tasks.Code;
 
 public class ExecuteCSharpTaskData : IFlowTaskData
 {
