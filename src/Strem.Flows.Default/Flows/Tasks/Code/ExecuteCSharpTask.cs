@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
-using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Data.Tasks;
@@ -10,7 +9,7 @@ using Strem.Flows.Processors;
 using Westwind.Scripting;
 using ExecutionContext = Strem.Flows.Default.Execution.ExecutionContext;
 
-namespace Strem.Flows.Default.Flows.Tasks.Logic;
+namespace Strem.Flows.Default.Flows.Tasks.Code;
 
 public class ExecuteCSharpTask : FlowTask<ExecuteCSharpTaskData>
 {
@@ -18,7 +17,7 @@ public class ExecuteCSharpTask : FlowTask<ExecuteCSharpTaskData>
     public override string Version => ExecuteCSharpTaskData.TaskVersion;
     
     public override string Name => "Execute C# Script";
-    public override string Category => "Logic";
+    public override string Category => "Code";
     public override string Description => "Allows you to execute your own C# logic";
     
     public ExecuteCSharpTask(ILogger<FlowTask<ExecuteCSharpTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)

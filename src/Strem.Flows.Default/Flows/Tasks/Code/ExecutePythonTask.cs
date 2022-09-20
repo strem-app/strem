@@ -8,7 +8,7 @@ using Strem.Flows.Executors;
 using Strem.Flows.Processors;
 using ExecutionContext = Strem.Flows.Default.Execution.ExecutionContext;
 
-namespace Strem.Flows.Default.Flows.Tasks.Logic;
+namespace Strem.Flows.Default.Flows.Tasks.Code;
 
 public class ExecutePythonTask : FlowTask<ExecutePythonTaskData>
 {
@@ -16,7 +16,7 @@ public class ExecutePythonTask : FlowTask<ExecutePythonTaskData>
     public override string Version => ExecutePythonTaskData.TaskVersion;
     
     public override string Name => "Execute Python Script";
-    public override string Category => "Logic";
+    public override string Category => "Code";
     public override string Description => "Allows you to execute your own python logic (via IronPython)";
     
     public ExecutePythonTask(ILogger<FlowTask<ExecutePythonTaskData>> logger, IFlowStringProcessor flowStringProcessor,
