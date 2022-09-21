@@ -4,7 +4,7 @@
 @inherits ValidatedInputBase<T>
 
 <div class="select @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
-    <select value="@Value" @onchange="e => OnValueChanged((T)e.Value)" @attributes=@UnmatchedAttributes>
+    <select value="@Value" @onchange="e => OnValueChanged(MapValue(e.Value))" @attributes=@UnmatchedAttributes>
         @foreach (var element in Data)
         {
             <option value="@GetValue(element)">@(GetName(element))</option>
@@ -19,6 +19,9 @@
 
     [Parameter]
     public Func<TData, object> GetValue { get; set; } = x => x;
+
+    [Parameter]
+    public Func<object, T> MapValue { get; set; } = x => (T)x;
     
     [Parameter]
     public Func<TData, string> GetName { get; set; } = x => x.ToString();
