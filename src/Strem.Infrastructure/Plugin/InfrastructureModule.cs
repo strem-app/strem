@@ -101,11 +101,11 @@ public class InfrastructureModule : IRequiresApiHostingModule
 
     public void SetupDatabase(IServiceCollection services)
     {
-        if (!Directory.Exists(PathHelper.StremDataDirectory))
-        { Directory.CreateDirectory(PathHelper.StremDataDirectory); }
+        if (!Directory.Exists(StremPathHelper.StremDataDirectory))
+        { Directory.CreateDirectory(StremPathHelper.StremDataDirectory); }
         
         var profile = "default";
-        var dbPath = $"{PathHelper.StremDataDirectory}/{profile}.db";
+        var dbPath = $"{StremPathHelper.StremDataDirectory}/{profile}.db";
         services.AddSingleton<ILiteDatabase>(x => new LiteDatabase(dbPath));
         services.AddSingleton<IAppVariablesRepository, AppVariablesRepository>();
         services.AddSingleton<IUserVariablesRepository, UserVariablesRepository>();
