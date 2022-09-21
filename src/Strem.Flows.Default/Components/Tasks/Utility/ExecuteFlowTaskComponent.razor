@@ -6,7 +6,7 @@
 <div class="field">
     <label class="label">Flow</label>
     <div class="control">
-        <DataSelectInput @bind-Value="Data.FlowId" Data="FlowStore.Data" GetName="x => x.Name" GetValue="x => x.Id"></DataSelectInput>
+        <DataSelectInput @bind-Value="Data.FlowId" Data="FlowStore.Data" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"></DataSelectInput>
     </div>
 </div>
 <div class="field">

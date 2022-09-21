@@ -57,3 +57,23 @@ As you can see you will be able to see all the buttons/todos that you have confi
 ### Password Protection
 
 Given you can share portals with anyone (i.e mods or staff) you can password protect portals which will require a correct password before the portal will be usable by anyone.
+
+## Using Portals With Flows
+
+With creating portals covered we now need to look at how we hook our portals into our `flows` which is really easy to do.
+
+### Triggering Flows From Buttons
+
+There is a `trigger` which can be used that lets you specify a `portal` and a `button` that will be used to drive the flows.
+
+![trigger-flow-from-button](../images/button-trigger.png)
+
+As you can see in the above image we select our required `portal` and `button` which will then automatically be flagged when the button is pressed within the `portal viewer`.
+
+### Updating Buttons From Flows
+
+The other part to this is updating button state from flows, which again is easy enough to do with the change button styles task as shown below.
+
+![change-button-task](../images/change-button-task.png)
+
+You can see that you are able to alter any aspect of the button to reflect what is currently happening. You only need to change the bits you care about, and in most cases you would probably want to pair this with an `if statement task` which lets you alter the state based on conditions.
