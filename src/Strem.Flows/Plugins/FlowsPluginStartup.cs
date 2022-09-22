@@ -52,8 +52,7 @@ public class FlowsPluginStartup : IPluginStartup, IDisposable
                 FlowRepository.Update(x.Id, x);
             })
             .AddTo(_subs);
-        
-        
+
         Logger.Information("Setting Up Flow Registries");
         StartRegistries();
         Logger.Information("Finished Setting Up Flow Registries");
@@ -65,11 +64,19 @@ public class FlowsPluginStartup : IPluginStartup, IDisposable
 
     public void StartRegistries()
     {
-        var taskDescriptors = Services.GetServices<TaskDescriptor>();
-        TaskRegistry?.AddMany(taskDescriptors);
-        
-        var triggerDescriptors = Services.GetServices<TriggerDescriptor>();
-        TriggerRegistry?.AddMany(triggerDescriptors);
+        try
+        {
+            var taskDescriptors = Services.GetServices<TaskDescriptor>();
+            TaskRegistry?.AddMany(taskDescriptors);
+            
+            var triggerDescriptors = Services.GetServices<TriggerDescriptor>();
+            TriggerRegistry?.AddMany(triggerDescriptors);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message);
+            throw;
+        }
     }
     
     public void Dispose()

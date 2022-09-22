@@ -1,4 +1,4 @@
-﻿@using InputSimulatorStandard.Native
+﻿@using Strem.Core.Types.Input
 
 @inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Input.SimulateKeyPressTaskData>
 
@@ -6,19 +6,22 @@
     <div class="column">
         <label class="label is-5">Modifiers</label>
         <div class="block">
-            <button class="button is-info" @onclick="() => Data.KeyModifiers.Add(VirtualKeyCode.SHIFT)">Add Modifier Key</button>
+            <button class="button is-info" @onclick="AddModifier">Add Modifier Key</button>
         </div>
         @for (var i = 0; i < Data.KeyModifiers.Count; i++)
         {
             var index = i;
             <div class="field has-addons">
                 <div class="control">
-                    <div class="select">
-                        <DataSelectInput @bind-Value="@Data.KeyModifiers[index]" Data="Modifiers" GetName="MakeKeyCodeNice"></DataSelectInput>
-                    </div>
+                    <select class="input" value="@Data.KeyModifiers[index]" @onchange="x => ModifierChanged(index, Enum.Parse<InputKeyCodes>(x.Value.ToString()))">
+                        @foreach (var modifierKeys in Modifiers)
+                        {
+                            <option value="@modifierKeys">@MakeKeyCodeNice(modifierKeys)</option>
+                        }
+                    </select>
                 </div>
                 <div class="control">
-                    <button class="button is-danger" @onclick="() => InvokeAsync(() => Data.KeyModifiers.RemoveAt(index))">
+                    <button class="button is-danger" @onclick="() => RemoveModifier(index)">
                         <span class="icon is-small">
                           <i class="fas fa-times"></i>
                         </span>
@@ -30,17 +33,22 @@
     <div class="column">
         <label class="label is-5">Keys</label>
         <div class="block">
-            <button class="button is-info" @onclick="() => Data.KeysToPress.Add(VirtualKeyCode.VK_A)">Add Key</button>
+            <button class="button is-info" @onclick="AddKeysToPress">Add Key</button>
         </div>
         @for (var i = 0; i < Data.KeysToPress.Count; i++)
         {
             var index = i;
             <div class="field has-addons">
                 <div class="control">
-                    <DataSelectInput @bind-Value="@Data.KeysToPress[index]" Data="NormalKeys" GetName="MakeKeyCodeNice"></DataSelectInput>
+                    <select class="input" value="@Data.KeysToPress[index]" @onchange="x => KeysChanged(index, Enum.Parse<InputKeyCodes>(x.Value.ToString()))">
+                        @foreach (var normalKeys in NormalKeys)
+                        {
+                            <option value="@normalKeys">@MakeKeyCodeNice(normalKeys)</option>
+                        }
+                    </select>
                 </div>
                 <div class="control">
-                    <button class="button is-danger" @onclick="() => InvokeAsync(() => Data.KeysToPress.RemoveAt(index))">
+                    <button class="button is-danger" @onclick="() => RemoveKeysToPress(index)">
                         <span class="icon is-small">
                           <i class="fas fa-times"></i>
                         </span>
@@ -52,25 +60,25 @@
 </div>
 
 @code {
-    public static readonly VirtualKeyCode[] Modifiers = new[]{
-        VirtualKeyCode.SHIFT,
-        VirtualKeyCode.LSHIFT,
-        VirtualKeyCode.RSHIFT,
-        VirtualKeyCode.CONTROL,
-        VirtualKeyCode.LCONTROL,
-        VirtualKeyCode.RCONTROL,
-        VirtualKeyCode.LWIN,
-        VirtualKeyCode.RWIN,
-        VirtualKeyCode.MENU,
-        VirtualKeyCode.LMENU,
-        VirtualKeyCode.RMENU
+    public static readonly InputKeyCodes[] Modifiers = new[]{
+        InputKeyCodes.SHIFT,
+        InputKeyCodes.LSHIFT,
+        InputKeyCodes.RSHIFT,
+        InputKeyCodes.CONTROL,
+        InputKeyCodes.LCONTROL,
+        InputKeyCodes.RCONTROL,
+        InputKeyCodes.LWIN,
+        InputKeyCodes.RWIN,
+        InputKeyCodes.MENU,
+        InputKeyCodes.LMENU,
+        InputKeyCodes.RMENU
     };
 
-    public static readonly VirtualKeyCode[] NormalKeys = Enum.GetValues<VirtualKeyCode>()
+    public static readonly InputKeyCodes[] NormalKeys = Enum.GetValues<InputKeyCodes>()
         .Where(x => !Modifiers.Contains(x))
         .ToArray();
 
-    public string MakeKeyCodeNice(VirtualKeyCode keycode)
+    public string MakeKeyCodeNice(InputKeyCodes keycode)
     { return keycode.ToString().Replace("VK_", "").Replace("MENU", "ALT"); }
     
     public override string Title => GenerateTitle();
@@ -82,5 +90,41 @@
         var starter = modifierKeys.Length > 0 ? "Holding " : "Pressing ";
         var follower = modifierKeys.Length > 0 ? " Then " : "";
         return $"Simulate {starter} <strong>{modifierKeys}</strong>{follower}<strong>{normalKeys}</strong>";
+    }
+
+    private void AddModifier()
+    {
+        Data.KeyModifiers.Add(InputKeyCodes.SHIFT);
+        NotifyPropertyChanged(nameof(Data.KeyModifiers));
+    }
+    
+    private void AddKeysToPress()
+    {
+        Data.KeysToPress.Add(InputKeyCodes.VK_A);
+        NotifyPropertyChanged(nameof(Data.KeysToPress));
+    }
+
+    private void ModifierChanged(int index, InputKeyCodes newModifier)
+    {
+        Data.KeyModifiers[index] = newModifier;
+        NotifyPropertyChanged(nameof(Data.KeyModifiers));
+    }
+    
+    private void KeysChanged(int index, InputKeyCodes newKey)
+    {
+        Data.KeysToPress[index] = newKey;
+        NotifyPropertyChanged(nameof(Data.KeysToPress));
+    }
+
+    private void RemoveModifier(int index)
+    {
+        Data.KeyModifiers.RemoveAt(index);
+        NotifyPropertyChanged(nameof(Data.KeyModifiers));
+    }
+
+    private void RemoveKeysToPress(int index)
+    {
+        Data.KeysToPress.RemoveAt(index);
+        NotifyPropertyChanged(nameof(Data.KeysToPress));
     }
 }

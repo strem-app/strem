@@ -8,10 +8,10 @@
     <label class="label">Required Portal</label>
     <div class="control">
         <div class="select">
-            <DataSelectInput @bind-Value="Data.PortalId" Data="PortalStore.Data" GetName="x => x.Name" GetValue="x => x.Id" />
+            <DataSelectInput @bind-Value="Data.PortalId" Data="PortalStore.Data" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"/>
         </div>
     </div>
-    <HelperInfo>This lets you specify which portal should be used as the trigger</HelperInfo>
+    <HelperInfo>This lets you specify which portal contains the button</HelperInfo>
 </div>
 @if (Data.PortalId != Guid.Empty)
 {
@@ -22,10 +22,10 @@
             <label class="label">Portal Button</label>
             <div class="control">
                 <div class="select">
-                    <DataSelectInput @bind-Value="Data.ButtonId" Data="portal.Buttons" GetName="x => x.Name" GetValue="x => x.Id" />
+                    <DataSelectInput @bind-Value="Data.ButtonId" Data="portal.Buttons" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"/>
                 </div>
             </div>
-            <HelperInfo>This lets you specify which button you want to listen for presses on</HelperInfo>
+            <HelperInfo>This lets you specify which button you want to alter</HelperInfo>
         </div>
     }
 }

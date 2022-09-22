@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Strem.Flows.Components;
 
@@ -9,6 +10,9 @@ public abstract class CustomFlowElementComponent : ComponentBase
     
     [Parameter]
     public EventCallback<string> OnTitleChanged { get; set; }
+    
+    [CascadingParameter]
+    public EditContext? EditContext { get; set; }
 
     protected override Task OnInitializedAsync()
     {

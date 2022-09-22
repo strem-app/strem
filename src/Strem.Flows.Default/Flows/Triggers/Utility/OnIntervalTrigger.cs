@@ -25,11 +25,11 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
 
     public override bool CanExecute() => true;
 
+    public IVariables SetupVariables() => new Core.Variables.Variables();
+    
     public override async Task<IObservable<IVariables>> Execute(OnIntervalTriggerData data)
     {
-        var variables = new Core.Variables.Variables();
-
-        if (!FlowStringProcessor.TryProcessInt(data.IntervalValue, variables, out var intValue))
+        if (!FlowStringProcessor.TryProcessInt(data.IntervalValue, new Core.Variables.Variables(), out var intValue))
         {
             Logger.LogWarning($"Unable to process {data.IntervalValue} into a number, verify it is a number or variables exist");
             return Observable.Empty<IVariables>();
@@ -38,8 +38,8 @@ public class OnIntervalTrigger : FlowTrigger<OnIntervalTriggerData>
         var timespan = data.IntervalUnitsType.ToTimeSpan(intValue);
 
         if (data.StartImmediately)
-        { return Observable.Timer(TimeSpan.Zero, timespan).Select(x => variables); }
+        { return Observable.Timer(TimeSpan.Zero, timespan).Select(x => SetupVariables()); }
 
-        return Observable.Interval(timespan).Select(x => variables);
+        return Observable.Interval(timespan).Select(x => SetupVariables());
     }
 }

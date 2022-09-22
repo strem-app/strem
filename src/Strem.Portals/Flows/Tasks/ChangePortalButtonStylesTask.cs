@@ -42,7 +42,7 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
         if(data.ChangeIcon) { runtimeStyles.IconClass = data.NewStyles.IconClass; }
         if(data.ChangeImage) { runtimeStyles.ImageUrl = data.NewStyles.ImageUrl; }
 
-        EventBus.PublishAsync(new ButtonChangedEvent(data.PortalId, data.ButtonId));
+        EventBus.PublishAsync(new PortalButtonChangedEvent(data.PortalId, data.ButtonId));
         return ExecutionResult.Success();
     }
 }

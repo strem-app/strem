@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using InputSimulatorStandard;
 using LiteDB;
 using Microsoft.AspNetCore.Components.Web;
 using Newtonsoft.Json;
@@ -12,12 +11,12 @@ using Strem.Core.Components.Elements.Drag;
 using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
 using Strem.Core.Plugins;
-using Strem.Core.Services.Browsers.File;
 using Strem.Core.Services.Browsers.Web;
-using Strem.Core.Services.Notifications;
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Core.Services.Registries.Menus;
 using Strem.Core.Services.Threading;
+using Strem.Core.Services.UI.Animation;
+using Strem.Core.Services.UI.Notifications;
 using Strem.Core.Services.Utils;
 using Strem.Core.Services.Validation;
 using Strem.Core.State;
@@ -43,7 +42,6 @@ public class InfrastructureModule : IRequiresApiHostingModule
                 new VariableEntryConvertor(), 
                 new FlowTaskDataConvertor(), new FlowTriggerDataConvertor()
             },
-            //TypeNameHandling = TypeNameHandling.Auto,
             Formatting = Formatting.Indented
         };
         
@@ -59,7 +57,11 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IWebBrowser, WebBrowser>();
         services.AddSingleton<ICloner, Cloner>();
         services.AddSingleton<IDataValidator, DataValidator>();
+        
+        // UI
         services.AddTransient<INotifier, Notifier>();
+        services.AddTransient<IAnimator, Animator>();
+        services.AddSingleton<DragController>();
         
         // Hosting
         services.AddSingleton<IInternalWebHost, InternalWebHost>();
@@ -86,15 +88,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         // Registries
         services.AddSingleton<IIntegrationRegistry, IntegrationRegistry>();
         services.AddSingleton<IMenuRegistry, MenuRegistry>();
-        
-       
-        // OS Specific
-        services.AddSingleton<IInputSimulator, InputSimulator>();
-        services.AddSingleton<IFileBrowser, FileBrowser>();
-        
-        // UI
-        services.AddSingleton<DragController>();
-        
+
         // Plugin (this isnt technically a plugin I know)
         services.AddSingleton<IPluginStartup, InfrastructurePluginStartup>();
     }
@@ -107,11 +101,11 @@ public class InfrastructureModule : IRequiresApiHostingModule
 
     public void SetupDatabase(IServiceCollection services)
     {
-        if (!Directory.Exists(PathHelper.StremDataDirectory))
-        { Directory.CreateDirectory(PathHelper.StremDataDirectory); }
+        if (!Directory.Exists(StremPathHelper.StremDataDirectory))
+        { Directory.CreateDirectory(StremPathHelper.StremDataDirectory); }
         
         var profile = "default";
-        var dbPath = $"{PathHelper.StremDataDirectory}/{profile}.db";
+        var dbPath = $"{StremPathHelper.StremDataDirectory}/{profile}.db";
         services.AddSingleton<ILiteDatabase>(x => new LiteDatabase(dbPath));
         services.AddSingleton<IAppVariablesRepository, AppVariablesRepository>();
         services.AddSingleton<IUserVariablesRepository, UserVariablesRepository>();

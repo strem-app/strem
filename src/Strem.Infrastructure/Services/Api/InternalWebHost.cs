@@ -23,6 +23,11 @@ public class InternalWebHost : IInternalWebHost
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddRouting();
         builder.Services.AddRazorPages();
+#if DEBUG
+        builder.Services.AddServerSideBlazor().AddCircuitOptions(x => x.DetailedErrors = true);
+#else
+        builder.Services.AddServerSideBlazor();
+#endif
         builder.Services.AddServerSideBlazor();
         builder.Services.AddControllersWithViews(x =>
         {
@@ -30,8 +35,8 @@ public class InternalWebHost : IInternalWebHost
         });
 
         var pluginModules = GetAllApiHostingPlugins();
-        foreach (var pluginModule in pluginModules)
-        { builder.Services.AddModule(pluginModule.module); }
+        //foreach (var pluginModule in pluginModules)
+        //{ builder.Services.AddModule(pluginModule.module); }
         
         var mvcBuilder = builder.Services.AddMvcCore();
         mvcBuilder.AddApplicationPart(GetType().Assembly);

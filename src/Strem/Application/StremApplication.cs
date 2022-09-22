@@ -13,6 +13,7 @@ public class StremApplication
 {
     public List<string> PreStartupLogs { get; } = new();
     public PluginHandler PluginHandler { get; } = new();
+    public BackupHandler BackupHandler { get; } = new();
     
     public IEventBus EventBus { get; private set; }
     public ILogger<StremApplication> Logger { get; private set; }
@@ -23,6 +24,8 @@ public class StremApplication
 
     public StremApplication()
     {
+        BackupHandler.CheckAndBackupIfNeeded(PreStartupLogs);
+        
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {
             var message = error?.ExceptionObject?.ToString() ?? "Unknown Error";

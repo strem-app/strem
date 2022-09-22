@@ -1,0 +1,68 @@
+﻿@using Westwind.Scripting
+@using Strem.Flows.Default.Extensions
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Code.ExecuteCSharpTaskData>
+
+<div class="field">
+    <div class="control" style="min-height: 20em;">
+        <MonacoEditor Id="@Data.Id.ToString()" CssClass="block is-info" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="OnContentChanged" @ref="_editor"/>
+    </div>
+    <HelperInfo>The script supports C# 10 and is run against .net 6, see the docs for more information on the context object and use cases</HelperInfo>
+</div>
+
+@if (!string.IsNullOrEmpty(CompilationResult))
+{
+    <div class="notification @(IsErrored ? "is-danger" : "is-success")">
+        @foreach (var line in @CompilationResult.Split("\n"))
+        {
+            <p>@line</p>
+        }
+    </div>
+}
+
+<div class="field">
+    <div class="control">
+        <button class="button is-info" @onclick="CompileCode">Compile</button>
+    </div>
+</div>
+
+@code {
+    private MonacoEditor _editor { get; set; }
+    public string CompilationResult { get; set; }
+    public bool IsErrored { get; set; }
+
+    public override string Title => GetTitle();
+
+    public string GetTitle()
+    {
+        return $"Execute C# Code";
+    }
+    
+    private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "csharp",
+            Contextmenu = false,
+            Value = Data.CSharpCode,
+            Minimap = new EditorMinimapOptions { Enabled = false },
+            Theme = "vs-dark"
+        };
+    }
+
+    private void CompileCode()
+    {
+        var scriptExecutor = new CSharpScriptExecution { AllowReferencesInCode = true };
+        scriptExecutor.CompileMethodExecutor(Data.CSharpCode);
+        
+        IsErrored = scriptExecutor.Error;
+        CompilationResult = scriptExecutor.ErrorMessage ?? "Compiled Successfully";
+    }
+
+    private async Task OnContentChanged()
+    {
+        Data.CSharpCode = await _editor.GetValue();
+        NotifyPropertyChanged(nameof(Data.CSharpCode));
+    }
+
+}

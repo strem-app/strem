@@ -9,9 +9,15 @@ public class PortalData
     
     [Required]
     public string Name { get; set; }
-    public ButtonSize ButtonSize { get; set; }
+    public string Password { get; set; }
+    
     public bool ShowTodos { get; set; }
     public List<string> TodoTags { get; set; } = new();
+
+    [Range(1, 100, ErrorMessage = "{0} must be between 1 and 100 in size")]
+    public int ButtonGridSize { get; set; } = 20;
+    
+    public ButtonSize ButtonSize { get; set; }
     public List<ButtonData> Buttons { get; set; } = new();
 
     public PortalData(Guid id, string name)

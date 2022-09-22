@@ -6,14 +6,22 @@
 @using Strem.Core.Extensions
 @using Strem.Core.Services.Browsers.Web
 @using Strem.Core.Types
+@using Strem.Portals.Data.Overrides
 @using Strem.Portals.Events
+@using Strem.Portals.Extensions
 @using Strem.Portals.Types
 @using Strem.Todos.Data
 @using Strem.Todos.Services.Stores
+@using System.Reactive.Linq
+@using System.Reactive.Disposables
 
 @inject IWebBrowser WebBrowser
 @inject IEventBus EventBus
 @inject ITodoStore TodoStore 
+@inject ButtonRuntimeStyles ButtonRuntimeStyles 
+@inject DragController DragController
+
+@implements IDisposable
 
 <div class="box">
     <div class="field is-grouped">
@@ -35,40 +43,52 @@
 <div class="columns">
     <div class="column">
         <div class="box">
-            <div class="field is-grouped">
-                <div class="control">
-                    <button class="button is-info" @onclick="AddButton">
-                        <span class="icon is-small">
-                            <i class="fas fa-plus"></i>
-                        </span>
-                        <span>Add New Button</span>
-                    </button>
-                </div>
-            </div>
-            <div class="portal-page @(Enum.GetName(Portal.ButtonSize).ToLower())">
+            <div class="portal-page portal-editor">
                 <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-                    @foreach (var buttonData in Portal.Buttons)
+                    @for (var i = 0; i < Portal.ButtonGridSize; i++)
                     {
-                        <a class="button portal-button m-3 is-flex is-flex-direction-column"
-                           @onclick="() => EditButton(buttonData)" style="@GetButtonStyles(buttonData)">
-                            @if (buttonData.DefaultStyles.ButtonType == ButtonType.IconButton)
-                            {
-                                <span class="icon fa-3x m-auto">
-                                    <i class="fas @(buttonData.DefaultStyles.IconClass)"></i>
-                                </span>
-                            }
-                            else if (buttonData.DefaultStyles.ButtonType == ButtonType.ImageButton)
-                            {
-                                <figure class="image @GetImageSize(Portal.ButtonSize)">
-                                    <img alt="@buttonData.DefaultStyles.Text" src="@buttonData.DefaultStyles.ImageUrl.GetImageUrl()" class="is-full"/>
-                                </figure>
-                            }
-                            <label class="label @GetTextSize(Portal.ButtonSize)" style="white-space: break-spaces; color: @(buttonData.DefaultStyles.TextColor)">@buttonData.DefaultStyles.Text</label>
-                        </a>
+                        var cachedIndex = i;
+                        var possibleButton = GetButtonAt(i);
+                        if (possibleButton == null)
+                        {
+                            <DraggableElement Data="@cachedIndex" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.PortalButton }" 
+                                              CanDrag="false" Classes="is-flex is-flex-direction-column">
+                                <PlaceholderButton ButtonSize="Portal.ButtonSize" GridIndex="@cachedIndex" ButtonPressed="AddButton">
+                                    <span class="icon fa-3x m-auto">
+                                        <i class="fas fa-plus has-text-white"></i>
+                                    </span>
+                                    <label class="label has-text-white">Add Button</label>
+                                </PlaceholderButton>
+                            </DraggableElement>
+                        }
+                        else
+                        {
+                            <DraggableElement Data="possibleButton" DropType="@DropTypes.PortalButton" SupportedDropTypes="@(new []{ DropTypes.PortalButton })" @key="possibleButton.Id">
+                                <PortalButton ButtonId="possibleButton.Id" ButtonStyles="possibleButton.DefaultStyles" ButtonPressed="EditButton" ButtonSize="Portal.ButtonSize"/>
+                            </DraggableElement>
+                        }
                     }
                 </div>
             </div>
         </div>
+        @{
+            var orphanedButtons = Portal.Buttons
+                .Where(x => x.GridIndex < 0 || x.GridIndex >= Portal.ButtonGridSize).ToArray();
+        }
+        @if (orphanedButtons.Length > 0)
+        {
+            <div class="box">
+                <h3 class="title is-3 has-text-black">Orphaned Buttons</h3>
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                    @foreach (var button in orphanedButtons)
+                    {
+                        <DraggableElement Data="button" DropType="@DropTypes.PortalButton" SupportedDropTypes="@(new[] { DropTypes.None })" @key="button.Id">
+                            <PortalButton ButtonId="button.Id" ButtonStyles="button.DefaultStyles" ButtonSize="Portal.ButtonSize"/>
+                        </DraggableElement>
+                    }
+                </div>
+            </div>
+        }
     </div>
     @if (Portal.ShowTodos)
     {
@@ -87,10 +107,10 @@
 </div>
 
 
-<Modal IsVisible="ShowEditModal">
+<Modal IsVisible="ShowButtonEditModal">
     @if (SelectedButton != null)
     {
-        <PortalButtonEditor Data="SelectedButton" OnClosed="EditModalClosed" RequestedDeletion="DeleteButton"></PortalButtonEditor>
+        <PortalButtonEditor Data="SelectedButton" OnClosed="ButtonEditModalClosed" RequestedDeletion="DeleteButton"></PortalButtonEditor>
     }
 </Modal>
 
@@ -100,23 +120,62 @@
     
     [Parameter]
     public EventCallback<Guid> RequestingDeletion { get; set; }
-
-    public ButtonData SelectedButton { get; set; }
-    public bool ShowEditModal { get; set; }
-    public bool ShowDeletionModal { get; set; }
     
-    public void AddButton()
+    public ButtonData SelectedButton { get; set; }
+    public bool ShowButtonEditModal { get; set; }
+    public bool ShowDeletionModal { get; set; }
+
+    private CompositeDisposable _subs = new();
+    
+    protected override async Task OnInitializedAsync()
     {
-        var button = new ButtonData();
+        DragController.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.PortalButton && 
+                        x.DestinationDropType == DropTypes.PortalButton)
+            .Subscribe(SwapButtons)
+            .AddTo(_subs);
         
-        Portal.Buttons.Add(button);
-        EditButton(button);
+        DragController.OnDroppedItem
+            .Where(x => (x.SourceDropType == DropTypes.PortalButton) && 
+                        x.DestinationDropType == DropTypes.None)
+            .Subscribe(MoveButton)
+            .AddTo(_subs);
     }
 
-    public void EditButton(ButtonData buttonData)
+    public void SwapButtons(DropData data)
     {
-        SelectedButton = buttonData;
-        ShowEditModal = true;
+        var destinationButton = data.DestinationObject as ButtonData;
+        var sourceButton = data.SourceObject as ButtonData;
+        var destinationGridIndex = destinationButton.GridIndex;
+        destinationButton.GridIndex = sourceButton.GridIndex;
+        sourceButton.GridIndex = destinationGridIndex;
+        InvokeAsync(StateHasChanged);
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
+    }
+
+    public void MoveButton(DropData data)
+    {
+        var sourceButton = data.SourceObject as ButtonData;
+        var newIndex = (int)data.DestinationObject;
+        sourceButton.GridIndex = newIndex;
+        InvokeAsync(StateHasChanged);
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
+    }
+
+    public void AddButton(int gridIndex)
+    {
+        var button = new ButtonData { GridIndex = gridIndex };
+        Portal.Buttons.Add(button);
+        EditButton(button.Id);
+    }
+
+    public void EditButton(Guid buttonId)
+    {
+        var button = Portal.Buttons.SingleOrDefault(x => x.Id == buttonId);
+        if(button == null) { return; }
+        
+        SelectedButton = button;
+        ShowButtonEditModal = true;
     }
 
     public void ViewPortalInBrowser()
@@ -134,28 +193,12 @@
             .Where(x => Portal.TodoTags.All(requiredTag => x.Tags.Contains(requiredTag, StringComparer.OrdinalIgnoreCase)));
     }
     
-    public string GetButtonStyles(ButtonData buttonData)
-    { return $"background-color: {buttonData.DefaultStyles.BackgroundColor}; color: {buttonData.DefaultStyles.TextColor}"; }
-
-    private string GetImageSize(ButtonSize portalButtonSize)
+    private void ButtonEditModalClosed()
     {
-        if(portalButtonSize == ButtonSize.Medium) { return "is-128x128"; }
-        if(portalButtonSize == ButtonSize.Large) { return "is-160x160"; }
-        return "is-96x96";
-    }
-    
-    private string GetTextSize(ButtonSize portalButtonSize)
-    {
-        if(portalButtonSize == ButtonSize.Medium) { return "is-size-7"; }
-        if(portalButtonSize == ButtonSize.Large) { return "is-size-6"; }
-        return "is-size-7";
-    }
-
-    private void EditModalClosed()
-    {
-        ShowEditModal = false;
+        ShowButtonEditModal = false;
+        EventBus.PublishAsync(new PortalButtonChangedEvent(Portal.Id, SelectedButton.Id));
+        ButtonRuntimeStyles.RefreshStylesFor(Portal.Id, SelectedButton);
         SelectedButton = null;
-        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 
     private void PortalDetailsChanged()
@@ -166,7 +209,7 @@
 
     private void DeleteButton(Guid obj)
     {
-        ShowEditModal = false;
+        ShowButtonEditModal = false;
         Portal.Buttons.Remove(SelectedButton);
         SelectedButton = null;
         EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
@@ -177,5 +220,11 @@
 
     private void OnPortalDeletion()
     { RequestingDeletion.InvokeAsync(Portal.Id); }
+
+    private ButtonData? GetButtonAt(int gridIndex)
+    {return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex);}
+
+    public void Dispose()
+    { _subs.Dispose(); }
 
 }

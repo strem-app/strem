@@ -4,14 +4,13 @@ using Strem.Core.Plugins;
 using Strem.Core.Services.Registries.Menus;
 using Strem.Data;
 using Strem.Flows.Extensions;
-using Strem.Infrastructure.Services.Api;
 using Strem.Todos.Data;
 using Strem.Todos.Services.Repositories;
 using Strem.Todos.Services.Stores;
 
 namespace Strem.Todos.Plugin;
 
-public class TodoModule : IRequiresApiHostingModule
+public class TodoModule : IDependencyModule
 {
     public void Setup(IServiceCollection services)
     {

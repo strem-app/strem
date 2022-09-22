@@ -1,5 +1,4 @@
-﻿using System.IO.Compression;
-using System.Reactive.Disposables;
+﻿using System.Reactive.Disposables;
 using LiteDB;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
@@ -10,9 +9,7 @@ using Strem.Core.Services.Registries.Menus;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Data.Types;
-using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services;
-using Strem.Infrastructure.Services.Persistence;
 
 namespace Strem.Infrastructure.Plugin;
 
@@ -45,8 +42,6 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
 
     public async Task StartPlugin()
     {
-        await CheckIfBackupIsNeeded();
-        
         AppState.UserVariables.OnVariableChanged
             .Subscribe(x =>
             {
@@ -81,6 +76,7 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         SetupRegistries();
         Logger.Information("Setup Integration Registries");
         
+        await CheckIfBackupIsNeeded();
         SetDefaultSettingsIfNotSet();
     }
     
@@ -107,31 +103,16 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
             { backupIntervalInDays = requestedFrequency; }
         }
 
-        var timeSinceLastBackup = DateTime.Now - lastBackupDate ;
+        var timeSinceLastBackup = DateTime.Now - lastBackupDate;
         if(timeSinceLastBackup.TotalDays < backupIntervalInDays) { return; }
 
-        Logger.Information("Making a backup of app related data");
-        await BackupFiles();
+        Logger.Information("Making a backup file indicator");
+        await File.Create(StremPathHelper.BackupIndicatorFile).DisposeAsync();
+        
         AppState.AppVariables.Set(UIVariables.LastBackupDate, DateTime.Now.ToString("u"));
-        Logger.Information($"Finished making a backup of app related data, will try again in {backupIntervalInDays} days");
+        Logger.Information($"Finished making a backup indicator, will try again in {backupIntervalInDays} days");
     }
-
-    public async Task BackupFiles()
-    {
-        var backupDir = $"{PathHelper.StremDataDirectory}/backups";
-        if (!Directory.Exists(backupDir))
-        { Directory.CreateDirectory(backupDir); }
-        
-        var dateFormat = DateTime.Now.ToString("yyMMdd");
-        var backupFile = $"{backupDir}/data-backup-{dateFormat}.zip";
-        if (File.Exists(backupFile)) { return; }
-        
-        Database.Checkpoint();
-        
-        using var zip = ZipFile.Open(backupFile, ZipArchiveMode.Create);
-        { zip.CreateEntryFromGlob(PathHelper.StremDataDirectory, "*.db"); }
-    }
-
+    
     public void SetupRegistries()
     {
         var integrationDescriptors = Services.GetServices<IIntegrationDescriptor>();

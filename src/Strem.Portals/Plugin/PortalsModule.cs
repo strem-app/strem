@@ -6,6 +6,7 @@ using Strem.Flows.Extensions;
 using Strem.Infrastructure.Services.Api;
 using Strem.Portals.Data;
 using Strem.Portals.Data.Overrides;
+using Strem.Portals.Extensions;
 using Strem.Portals.Services.Data;
 using Strem.Portals.Services.Repositories;
 using Strem.Portals.Services.Stores;
@@ -46,12 +47,6 @@ public class PortalsModule : IRequiresApiHostingModule
     {
         var portalStore = services.GetService<IPortalStore>();
         var buttonRuntimeStyles = new ButtonRuntimeStyles();
-        foreach (var portal in portalStore.Data)
-        {
-            var buttonStyles = portal.Buttons
-                .ToDictionary(x => x.Id, x => new ButtonStyles(x.DefaultStyles));
-            buttonRuntimeStyles.RuntimeStyles.Add(portal.Id, buttonStyles);
-        }
-        return buttonRuntimeStyles;
+        return buttonRuntimeStyles.PopulateRuntimeStyles(portalStore);
     }
 }

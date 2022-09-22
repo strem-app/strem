@@ -13,4 +13,18 @@ public static class IRandomizerExtensions
 
         return string.Join("", randomChars);
     }
+
+    public static T PickRandomFrom<T>(this IRandomizer randomizer, IReadOnlyCollection<T> data)
+    {
+        var randomIndex = randomizer.Random(0, data.Count-1);
+        return data.ElementAt(randomIndex);
+    }
+
+    public static TimeSpan PickRandomBetween(this IRandomizer randomizer, TimeSpan min, TimeSpan max)
+    {
+        var difference = max - min;
+        var totalSeconds = (int)difference.TotalSeconds;
+        var randomSeconds = randomizer.Random(0, totalSeconds);
+        return min.Add(TimeSpan.FromSeconds(randomSeconds));
+    }
 }

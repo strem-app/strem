@@ -1,6 +1,8 @@
 # Strem
 A free and open source automation tool geared for assisting streamers.
 
+[![Documentation][gitbook-image]][gitbook-url]
+
 ![strem image](docs/images/strem.png)
 
 > Currently this is the most ALPHA of all alphas, so by all means use it, but just keep in mind this is SUPER early days.
@@ -47,3 +49,7 @@ To build it locally you will to:
 
 > Once loaded if you go into `Logs` you will be able to see where your data source files live and information around whats happening at runtime.
 
+
+
+[gitbook-image]: https://img.shields.io/static/v1.svg?label=Documentation&message=Read%20Now&color=Green&style=flat
+[gitbook-url]: https://strem.gitbook.io/strem-app/

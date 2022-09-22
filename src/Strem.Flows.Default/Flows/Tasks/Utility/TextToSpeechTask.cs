@@ -1,17 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
+using Strem.Core.Services.TTS;
 using Strem.Flows.Executors;
 using Strem.Flows.Processors;
 using Strem.Flows.Data.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
-using System.Speech.Synthesis;
-using Strem.Core.Extensions;
 using Strem.Flows.Extensions;
 
 namespace Strem.Flows.Default.Flows.Tasks.Utility;
 
-public class TextToSpeechTask : FlowTask<TextToSpeechTaskData>, IDisposable
+public class TextToSpeechTask : FlowTask<TextToSpeechTaskData>
 {
     public override string Code => TextToSpeechTaskData.TaskCode;
     public override string Version => TextToSpeechTaskData.TaskVersion;
@@ -21,12 +20,12 @@ public class TextToSpeechTask : FlowTask<TextToSpeechTaskData>, IDisposable
     public override string Description => "Makes the computer speak out the text provided";
 
     public IFlowExecutor FlowExecutor { get; }
-    public SpeechSynthesizer SpeechSynthesizer { get; }
+    public ITTSHandler TTSHandler { get; }
 
-    public TextToSpeechTask(ILogger<FlowTask<TextToSpeechTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutor flowExecutor) : base(logger, flowStringProcessor, appState, eventBus)
+    public TextToSpeechTask(ILogger<FlowTask<TextToSpeechTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IFlowExecutor flowExecutor, ITTSHandler ttsHandler) : base(logger, flowStringProcessor, appState, eventBus)
     {
         FlowExecutor = flowExecutor;
-        SpeechSynthesizer = new SpeechSynthesizer();
+        TTSHandler = ttsHandler;
     }
 
     public override bool CanExecute() => true;
@@ -40,15 +39,15 @@ public class TextToSpeechTask : FlowTask<TextToSpeechTaskData>, IDisposable
         if (!FlowStringProcessor.TryProcessInt(data.Volume, flowVars, out var processedVolume))
         { processedVolume = 100; }
 
-        SpeechSynthesizer.Volume = processedVolume;
-        SpeechSynthesizer.SelectVoiceByHints(data.VoiceGender, data.VoiceAge);
-        SpeechSynthesizer.SpeakAsync(textToSay);
+        var request = new TTSRequest
+        {
+            Volume = processedVolume,
+            VoiceGender = data.VoiceGender,
+            VoiceAge = data.VoiceAge,
+            TextToSay = textToSay
+        };
+        TTSHandler.SayText(request);
         
         return ExecutionResult.Success();
-    }
-
-    public void Dispose()
-    {
-        SpeechSynthesizer.Dispose();
     }
 }
