@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Obs.v4.WebSocket.Reactive;
-using Strem.Core.DI;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Flows.Extensions;
