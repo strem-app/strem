@@ -2,7 +2,6 @@
 using Cake.Common.Tools.DotNet.MSBuild;
 using Cake.Common.Tools.DotNet.Pack;
 using Cake.Frosting;
-using GlobExpressions;
 
 namespace Strem.Build.Tasks;
 
