@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
+using Strem.Core.Variables;
 using Strem.Flows.Default.Modules;
 using Strem.Flows.Plugins;
 using Strem.Infrastructure.Plugin;
@@ -54,15 +55,34 @@ public class PluginHandler
         return dependencyModules.Select(x => $"Processed Dependencies For {x.Name}");
     }
     
-    public async Task StartPlugins(IServiceProvider services, ILogger logger)
+    public async Task StartPlugins(IServiceProvider services, ILogger logger, IApplicationConfig appConfig)
     {
-        var startupServices = services.GetServices<IPluginStartup>();
+        var startupServices = services.GetServices<IPluginStartup>().ToArray();
+
+        // Setup plugins
         foreach (var startupService in startupServices)
         {
             var pluginName = startupService.GetType().Name;
-            logger.Information($"Starting {pluginName}");
+            logger.Information($"Setting Up {pluginName}");
+            await startupService.SetupPlugin();
+            logger.Information($"Finished Setup {pluginName}");
+        }
+        
+        // Start plugins
+        foreach (var startupService in startupServices)
+        {
+            var pluginName = startupService.GetType().Name;
+            var hasAllConfigKeys = startupService.RequiredConfigurationKeys.Length <= 0 || startupService.RequiredConfigurationKeys.All(appConfig.ContainsKey);
+            if (!hasAllConfigKeys)
+            {
+                var message = $"Cannot find all required config keys for {pluginName}, cannot start it";
+                logger.Error(message);
+                continue;
+            }
+            
+            logger.Information($"Starting Plugin {pluginName}");
             await startupService.StartPlugin();
-            logger.Information($"Finished {pluginName}");
+            logger.Information($"Started Plugin {pluginName}");
         }
     }
 }

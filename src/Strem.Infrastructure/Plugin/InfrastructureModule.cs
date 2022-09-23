@@ -20,6 +20,7 @@ using Strem.Core.Services.UI.Notifications;
 using Strem.Core.Services.Utils;
 using Strem.Core.Services.Validation;
 using Strem.Core.State;
+using Strem.Core.Variables;
 using Strem.Data.Types;
 using Strem.Flows.Variables;
 using Strem.Infrastructure.Services;
@@ -44,6 +45,9 @@ public class InfrastructureModule : IRequiresApiHostingModule
             },
             Formatting = Formatting.Indented
         };
+        
+        // Config
+        services.AddSingleton<IApplicationConfig, ApplicationConfig>();
         
         // Logging
         services.AddLogging(x => x.AddSerilog(SetupLogger()));

@@ -5,6 +5,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <OutputType>Library</OutputType>
+        <Version>0.0.0</Version>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,10 +15,5 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Components\Tasks\TaskComponent.razor" />
-      <_ContentIncludedByDefault Remove="Components\Triggers\TriggerComponent.razor" />
-    </ItemGroup>
-
+    
 </Project>

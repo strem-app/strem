@@ -4,6 +4,7 @@ using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.State;
+using Strem.Core.Variables;
 using Strem.Twitch.Events.OAuth;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
@@ -25,6 +26,8 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public IAppState AppState { get; }
     public ILogger<TwitchPluginStartup> Logger { get; }
 
+    public string[] RequiredConfigurationKeys { get; } = new[] { TwitchPluginSettings.TwitchClientIdKey };
+
     public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger)
     {
         TwitchOAuthClient = twitchOAuthClient;
@@ -34,7 +37,9 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         AppState = appState;
         Logger = logger;
     }
-
+    
+    public Task SetupPlugin() => Task.CompletedTask;
+    
     public async Task StartPlugin()
     {
         Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.RevalidatePeriodInMins))

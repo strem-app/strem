@@ -18,6 +18,8 @@ public class TodoPluginStartup : IPluginStartup, IDisposable
     public ITodoStore TodoStore { get; }
     public IEventBus EventBus { get; }
     public ILogger<TodoPluginStartup> Logger { get; }
+    
+    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
 
     public TodoPluginStartup(ITodoRepository todoRepository, ITodoStore todoStore, IEventBus eventBus, ILogger<TodoPluginStartup> logger)
     {
@@ -26,6 +28,8 @@ public class TodoPluginStartup : IPluginStartup, IDisposable
         EventBus = eventBus;
         Logger = logger;
     }
+    
+    public Task SetupPlugin() => Task.CompletedTask;
 
     public async Task StartPlugin()
     {
