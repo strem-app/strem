@@ -26,6 +26,8 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     public IIntegrationRegistry IntegrationRegistry { get; }
     public IMenuRegistry MenuRegistry { get; }
     public IServiceProvider Services { get; }
+    
+    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
 
     public InfrastructurePluginStartup(IAppState appState, IEventBus eventBus, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository, ILogger<InfrastructurePluginStartup> logger, ILiteDatabase database, IIntegrationRegistry integrationRegistry, IMenuRegistry menuRegistry, IServiceProvider services)
     {
@@ -39,6 +41,8 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         MenuRegistry = menuRegistry;
         Services = services;
     }
+    
+    public Task SetupPlugin() => Task.CompletedTask;
 
     public async Task StartPlugin()
     {

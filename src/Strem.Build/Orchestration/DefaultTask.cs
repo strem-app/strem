@@ -4,7 +4,8 @@ using Strem.Build.Tasks;
 namespace Strem.Build.Orchestration;
 
 [TaskName("default")]
-[IsDependentOn(typeof(PackageAppTask))]
+[IsDependentOn(typeof(CleanDirectoriesTask))]
+[IsDependentOn(typeof(PackageLibsTask))]
 public class DefaultTask : FrostingTask<BuildContext>
 {
     

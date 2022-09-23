@@ -5,6 +5,7 @@ namespace Strem.Build.Orchestration;
 
 [TaskName("publish")]
 [IsDependentOn(typeof(PackageAppTask))]
+[IsDependentOn(typeof(PackageLibsTask))]
 public class PublishTask : FrostingTask<BuildContext>
 {
     

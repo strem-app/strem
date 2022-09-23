@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
-using Strem.Portals.Data;
 using Strem.Portals.Events;
 using Strem.Portals.Events.Base;
 using Strem.Portals.Services.Repositories;
@@ -19,6 +18,8 @@ public class PortalsPluginStartup : IPluginStartup, IDisposable
     public IPortalStore PortalStore { get; }
     public IEventBus EventBus { get; }
     public ILogger<PortalsPluginStartup> Logger { get; }
+    
+    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
 
     public PortalsPluginStartup(IPortalRepository portalRepository, IPortalStore portalStore, ILogger<PortalsPluginStartup> logger, IEventBus eventBus)
     {
@@ -28,6 +29,8 @@ public class PortalsPluginStartup : IPluginStartup, IDisposable
         EventBus = eventBus;
     }
 
+    public Task SetupPlugin() => Task.CompletedTask;
+    
     public async Task StartPlugin()
     {
         EventBus

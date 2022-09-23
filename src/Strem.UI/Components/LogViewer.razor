@@ -1,6 +1,15 @@
 ﻿@using System.IO
 @using System.Text
 @using Strem.Infrastructure.Extensions
+@using System.Diagnostics.Eventing.Reader
+@using Strem.UI.Types
+
+<div class="field">
+    <label class="label">Log View Types</label>
+    <div class="control">
+        <EnumSelectInput T="LogViewType" @bind-Value="LogType" ValueChangedWithPrevious="_ => RefreshLogs()"></EnumSelectInput>
+    </div>
+</div>
 
 <div class="block">
     <label class="label">@LogPath</label>
@@ -20,26 +29,46 @@
     public string LogPath { get; set; }
 
     [Parameter]
+    public LogViewType LogType { get; set; } = LogViewType.All;
+
+    [Parameter]
     public int LinesToRead { get; set; } = 100;
     
     public string LatestLogContent { get; set; }
+    public string[] LastLogLines { get; set; }
 
     protected override async Task OnInitializedAsync()
     { await RefreshLogs(); }
 
     public async Task RefreshLogs()
-    { LatestLogContent = await LoadFileContent(LogPath); }
+    {
+        LastLogLines = await LoadFileContent(LogPath);
+        LatestLogContent = string.Join("\n", ShowOnlyRequestedLogs(LastLogLines).Reverse());
+    }
 
-    public async Task<string> LoadFileContent(string filePath)
+    public IEnumerable<string> ShowOnlyRequestedLogs(IEnumerable<string> allLogs)
+    {
+        switch (LogType)
+        {
+            case LogViewType.ErrorsOnly:
+                return allLogs.Where(x => x.Contains("[Error]", StringComparison.OrdinalIgnoreCase));
+            case LogViewType.InformationOnly:
+                return allLogs.Where(x => x.Contains("[Information]", StringComparison.OrdinalIgnoreCase));
+            default:
+                return allLogs;
+        }
+    }
+    
+    public async Task<string[]> LoadFileContent(string filePath)
     {
         if (!File.Exists(filePath))
-        { return string.Empty; }
+        { return Array.Empty<string>(); }
         
         using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         using (var sr = new StreamReader(fs, Encoding.Default))
         {
-            var last100Lines = await sr.TailAsync(100);
-            return string.Join("\n", last100Lines.Reverse());
+            return await sr.TailAsync(100);
+            
         }
     }
 }
