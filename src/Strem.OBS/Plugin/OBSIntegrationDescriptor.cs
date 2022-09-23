@@ -1,15 +1,15 @@
 ﻿using Strem.Core.Extensions;
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Core.Variables;
-using Strem.OBS.v4.Variables;
-using Strem.OBS.v4.Components.Integrations;
+using Strem.OBS.Components.Integrations;
+using Strem.OBS.Variables;
 
-namespace Strem.OBS.v4.Plugin;
+namespace Strem.OBS.Plugin;
 
 public class OBSIntegrationDescriptor : IIntegrationDescriptor
 {
-    public string Title => "OBS Legacy (v4) Websocket Integration - (Requires Obs-Websocket v4 Plugin For OBS)";
-    public string Code => "obs-integration-v4";
+    public string Title => "OBS Websocket Integration";
+    public string Code => "obs-integration";
 
     public VariableDescriptor[] VariableOutputs { get; } = new[]
     {

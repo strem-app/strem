@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Obs.v5.WebSocket.Reactive
+@using Strem.Flows.Components.Tasks
+@using Strem.OBS.Extensions
+
+@inherits CustomTaskComponent<Strem.OBS.Flows.Tasks.SetBrowserSourceUrlTaskData>
+
+@inject IObservableOBSWebSocket ObsClient;
+
+<div class="field">
+    <label class="label">Scene Name</label>
+    <div class="control">
+        <AutoComplete @bind-Value="@Data.SourceName" Data="SourceItems"></AutoComplete>
+    </div>
+</div>
+
+<div class="field">
+    <label class="label">Url</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="@Data.Url" Placeholder="i.e V(clip-url)"></ProcessedInput>
+    </div>
+</div>
+
+@code {
+    public override string Title => $"Set Text Source For {Data.SourceName}";
+    
+    public string[] SourceItems { get; set; } = Array.Empty<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ObsClient.IsConnected)
+        { SourceItems = ObsClient.GetAllSourceNames(); }
+        else
+        { SourceItems = Array.Empty<string>(); }
+        
+        await base.OnInitializedAsync();
+    }
+}

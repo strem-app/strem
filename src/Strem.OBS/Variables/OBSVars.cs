@@ -1,10 +1,10 @@
 ﻿using Strem.Core.Variables;
 
-namespace Strem.OBS.v4.Variables;
+namespace Strem.OBS.Variables;
 
 public class OBSVars
 {
-    public static readonly string OBSContext = "OBS-v4";
+    public static readonly string OBSContext = "OBS";
 
     public static readonly VariableEntry Host = new("host", OBSContext);
     public static readonly VariableEntry Port = new("port", OBSContext);

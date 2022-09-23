@@ -1,10 +1,11 @@
 ﻿@using System.Reactive.Disposables
-@using Obs.v4.WebSocket.Reactive
+@using Obs.v5.WebSocket.Reactive
 @using Persistity.Encryption
 @using Persistity.Extensions
+@using Strem.Core.Extensions
 @using Strem.Core.State
-@using Strem.OBS.v4.Extensions
-@using Strem.OBS.v4.Variables
+@using Strem.OBS.Extensions
+@using Strem.OBS.Variables
 
 @inject IObservableOBSWebSocket ObsClient
 @inject IAppState AppState
@@ -60,9 +61,6 @@
         </div>
     </div>
 </div>
-<div class="field">
-    <HelperInfo StyleType="has-text-danger">With Obs Websocket v4 being phased out, it is recommended you use the v5 integration (assuming your OBS is at least v28)</HelperInfo>
-</div>
 
 @code {
     private CompositeDisposable _subs = new();
@@ -112,7 +110,9 @@
             }
         }
         else
-        { ConnectionError = result.message; }
+        {
+            ConnectionError = result.message;
+        }
         
         IsConnecting = false;
         InvokeAsync(StateHasChanged);
@@ -124,7 +124,7 @@
         AppState.AppVariables.Delete(OBSVars.Host);
         AppState.AppVariables.Delete(OBSVars.Port);
         
-        if (!ObsClient.IsConnected){return;}
+        if (!ObsClient.IsConnected){ return; }
         ObsClient.Disconnect();
     }
     

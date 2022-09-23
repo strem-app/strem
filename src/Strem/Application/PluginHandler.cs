@@ -6,11 +6,12 @@ using Strem.Core.Plugins;
 using Strem.Flows.Default.Modules;
 using Strem.Flows.Plugins;
 using Strem.Infrastructure.Plugin;
-using Strem.OBS.v4.Plugin;
 using Strem.Platforms.Windows.Plugin;
 using Strem.Portals.Plugin;
 using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;
+using Obsv4Module = Strem.OBS.v4.Plugin.OBSModule;
+using ObsModule = Strem.OBS.Plugin.OBSModule;
 
 namespace Strem.Application;
 
@@ -26,7 +27,8 @@ public class PluginHandler
         _ = typeof(PortalsModule).Assembly;
         _ = typeof(TodoModule).Assembly;
         _ = typeof(TwitchModule).Assembly;
-        _ = typeof(OBSModule).Assembly;
+        _ = typeof(Obsv4Module).Assembly;
+        _ = typeof(ObsModule).Assembly;
     }
 
     public IEnumerable<string> PreLoadDynamicPlugins()

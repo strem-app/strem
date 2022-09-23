@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Obs.v5.WebSocket.Reactive
+@using Strem.Flows.Components.Tasks
+@using Strem.Core.State
+@using Strem.OBS.Extensions
+@using Strem.OBS.Types
+
+@inherits CustomTaskComponent<Strem.OBS.Flows.Tasks.SetSourceVisibilityTaskData>
+
+@inject IAppState AppState;
+@inject IAppState Encryptor;
+@inject IObservableOBSWebSocket ObsClient;
+
+<div class="field">
+    <label class="label">Source Name</label>
+    <div class="control">
+        <AutoComplete @bind-Value="@Data.SourceName" Data="CurrentSceneItems"></AutoComplete>
+    </div>
+</div>
+<div class="field">
+    <label class="label">Visibility</label>
+    <div class="control">
+        <EnumSelectInput @bind-Value="Data.Status"></EnumSelectInput>
+    </div>
+</div>
+
+
+@code {
+    public override string Title => GetTitle();
+
+    public string[] CurrentSceneItems { get; set; } = Array.Empty<string>();
+
+    public string GetTitle()
+    {
+        var starter = Data.Status == VisibilityStatus.Toggle ? 
+            $"Toggle Visibility For {Data.SourceName}" : 
+            $"Set {Data.SourceName} To {Enum.GetName(Data.Status)}";
+        return $"<strong>{starter}</strong> In OBS";
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (AppState.HasOBSHost() && ObsClient.IsConnected)
+        { CurrentSceneItems = ObsClient.GetAllSourceNames(); }
+        else
+        { CurrentSceneItems = Array.Empty<string>(); }
+        
+        await base.OnInitializedAsync();
+    }
+}
