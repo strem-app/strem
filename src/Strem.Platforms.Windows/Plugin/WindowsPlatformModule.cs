@@ -33,5 +33,6 @@ public class WindowsPlatformModule : IDependencyModule
         
         // Audio
         services.AddSingleton<IAudioHandler, WindowsAudioHandler>();
+        services.AddSingleton<IVoiceRecognition, VoiceRecognition>();
     }
 }

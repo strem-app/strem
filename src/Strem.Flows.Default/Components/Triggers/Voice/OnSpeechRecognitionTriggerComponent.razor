@@ -1,0 +1,18 @@
+﻿@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Voice.OnSpeechRecognitionTriggerData>
+
+<div class="field">
+    <label class="label">Trigger Term</label>
+    <div class="control">
+        <TextInput placeholder="i.e Create A Clip" @bind-Value="Data.TriggerTerm" />
+    </div>
+    <HelperInfo>This is the term you would say that would trigger the flow</HelperInfo>
+</div>
+
+<HelperInfo StyleType="has-text-warning" IconType="fa-triangle-exclamation">
+    Using a Speech Recognition trigger mean the application is constantly listening to your mic input for phrases, keep this in mind.
+</HelperInfo>
+
+
+@code {
+    public override string Title => $"On Speech Recognition Hears <strong>&quot;{Data.TriggerTerm}&quot;</strong>";
+}
