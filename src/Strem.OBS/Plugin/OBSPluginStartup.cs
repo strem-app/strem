@@ -1,7 +1,5 @@
 ﻿using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using Obs.v5.WebSocket.Reactive;
 using Obs.v5.WebSocket.Reactive;
 using Persistity.Encryption;
 using Strem.Core.Events.Bus;
@@ -30,6 +28,9 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
         OBSClient = obsClient;
         Encryptor = encryptor;
     }
+
+    public string[] RequiredConfigurationKeys => Array.Empty<string>();
+    public Task SetupPlugin() => Task.CompletedTask;
 
     public async Task StartPlugin()
     {

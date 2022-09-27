@@ -1,8 +1,5 @@
 ﻿@page "/test"
 @using Strem.Core.Types
-@using Obs.v4.WebSocket.Reactive
-
-@inject IObservableOBSWebSocket ObsClient;
 
 <div class="container is-fullwidth">
     <div class="box">
@@ -40,13 +37,5 @@
     public TimeUnitType UnitType { get; set; }
     public string ValueType { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (ObsClient.IsConnected)
-        {
-            var result = await ObsClient.GetSourcesList();
-            result.Select(x => x.Name).Distinct();
-        }
-    }
 
 }
