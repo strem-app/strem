@@ -26,7 +26,7 @@ public class ChangeSceneTask : FlowTask<ChangeSceneTaskData>
         ObsClient = obsClient;
     }
 
-    public override bool CanExecute() => AppState.HasOBSHost() && ObsClient.IsConnected;
+    public override bool CanExecute() => ObsClient.IsConnected;
 
     public override async Task<ExecutionResult> Execute(ChangeSceneTaskData data, IVariables flowVars)
     {

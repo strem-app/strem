@@ -26,7 +26,7 @@ public class SetStreamStateTask : FlowTask<SetStreamStateTaskData>
         ObsClient = obsClient;
     }
 
-    public override bool CanExecute() => AppState.HasOBSHost() && ObsClient.IsConnected;
+    public override bool CanExecute() => ObsClient.IsConnected;
 
     public override async Task<ExecutionResult> Execute(SetStreamStateTaskData data, IVariables flowVars)
     {

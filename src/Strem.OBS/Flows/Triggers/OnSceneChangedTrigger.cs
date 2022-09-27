@@ -36,7 +36,7 @@ public class OnSceneChangedTrigger : FlowTrigger<OnSceneChangedTriggerData>
         ObsClient = obsClient;
     }
 
-    public override bool CanExecute() => AppState.HasOBSHost() && ObsClient.IsConnected;
+    public override bool CanExecute() => ObsClient.IsConnected;
 
     public override async Task<IObservable<IVariables>> Execute(OnSceneChangedTriggerData data)
     {

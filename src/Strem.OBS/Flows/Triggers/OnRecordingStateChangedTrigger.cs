@@ -38,7 +38,7 @@ public class OnRecordingStateChangedTrigger : FlowTrigger<OnRecordingStateChange
         ObsClient = obsClient;
     }
 
-    public override bool CanExecute() => AppState.HasOBSHost();
+    public override bool CanExecute() => ObsClient.IsConnected;
 
     public override async Task<IObservable<IVariables>> Execute(OnRecordingStateChangedTriggerData data)
     {

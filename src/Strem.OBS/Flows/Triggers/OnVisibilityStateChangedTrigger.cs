@@ -38,7 +38,7 @@ public class OnVisibilityStateChangedTrigger : FlowTrigger<OnVisibilityStateChan
         ObsClient = obsClient;
     }
 
-    public override bool CanExecute() => AppState.HasOBSHost();
+    public override bool CanExecute() => ObsClient.IsConnected;
 
     public override async Task<IObservable<IVariables>> Execute(OnVisibilityStateChangedTriggerData data)
     {

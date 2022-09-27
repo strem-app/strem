@@ -39,7 +39,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        if (AppState.HasOBSHost() && ObsClient.IsConnected)
+        if (ObsClient.IsConnected)
         { CurrentSceneItems = ObsClient.GetAllSourceNames(); }
         else
         { CurrentSceneItems = Array.Empty<string>(); }

@@ -26,7 +26,7 @@ public class SetRecordingStateTask : FlowTask<SetRecordingStateTaskData>
         ObsClient = obsClient;
     }
 
-    public override bool CanExecute() => AppState.HasOBSHost() && ObsClient.IsConnected;
+    public override bool CanExecute() => ObsClient.IsConnected;
 
     public override async Task<ExecutionResult> Execute(SetRecordingStateTaskData data, IVariables flowVars)
     {
