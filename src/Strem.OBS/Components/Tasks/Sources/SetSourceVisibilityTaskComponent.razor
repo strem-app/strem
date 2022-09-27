@@ -1,20 +1,22 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Obs.v5.WebSocket.Reactive
 @using Strem.Flows.Components.Tasks
-@using Strem.Core.State
-@using Strem.OBS.Extensions
 @using Strem.OBS.Types
 
 @inherits CustomTaskComponent<Strem.OBS.Flows.Tasks.SetSourceVisibilityTaskData>
 
-@inject IAppState AppState;
-@inject IAppState Encryptor;
 @inject IObservableOBSWebSocket ObsClient;
 
 <div class="field">
+    <label class="label">Scene Name</label>
+    <div class="control">
+        <AutoComplete @bind-Value="@Data.SceneName" Data="SceneNames" ValueChangedWithPrevious="_ => RefreshSceneItems()"></AutoComplete>
+    </div>
+</div>
+<div class="field">
     <label class="label">Source Name</label>
     <div class="control">
-        <AutoComplete @bind-Value="@Data.SourceName" Data="CurrentSceneItems"></AutoComplete>
+        <AutoComplete @bind-Value="@Data.SceneItemName" Data="SceneItems"></AutoComplete>
     </div>
 </div>
 <div class="field">
@@ -28,23 +30,37 @@
 @code {
     public override string Title => GetTitle();
 
-    public string[] CurrentSceneItems { get; set; } = Array.Empty<string>();
+    public string[] SceneItems { get; set; } = Array.Empty<string>();
+    public string[] SceneNames { get; set; } = Array.Empty<string>();
 
     public string GetTitle()
     {
         var starter = Data.Status == VisibilityStatus.Toggle ? 
-            $"Toggle Visibility For {Data.SourceName}" : 
-            $"Set {Data.SourceName} To {Enum.GetName(Data.Status)}";
+            $"Toggle Visibility For {Data.SceneItemName}" : 
+            $"Set {Data.SceneItemName} To {Enum.GetName(Data.Status)}";
         return $"<strong>{starter}</strong> In OBS";
+    }
+
+    public void RefreshSceneNames()
+    {
+        SceneNames = ObsClient.GetSceneList()?.Scenes.Select(x => x.Name).ToArray() ?? Array.Empty<string>();
+    }
+
+    public void RefreshSceneItems()
+    {
+        if(string.IsNullOrEmpty(Data.SceneName)) { return; }
+        SceneItems = ObsClient.GetSceneItemList(Data.SceneName)?.Select(x => x.SourceName).ToArray() ?? Array.Empty<string>();
+        InvokeAsync(StateHasChanged);
     }
     
     protected override async Task OnInitializedAsync()
     {
         if (ObsClient.IsConnected)
-        { CurrentSceneItems = ObsClient.GetAllSourceNames(); }
-        else
-        { CurrentSceneItems = Array.Empty<string>(); }
-        
+        {
+            RefreshSceneNames();
+            RefreshSceneItems();
+        }
+
         await base.OnInitializedAsync();
     }
 }

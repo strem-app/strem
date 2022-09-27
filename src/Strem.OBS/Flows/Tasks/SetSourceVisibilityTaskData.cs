@@ -12,12 +12,12 @@ public class SetSourceVisibilityTaskData : IFlowTaskData
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
-    
+
     [Required]
     public string SceneName { get; set; }
     
     [Required]
-    public string SourceName { get; set; }
+    public string SceneItemName { get; set; }
     
     [Required]
     public VisibilityStatus Status { get; set; }

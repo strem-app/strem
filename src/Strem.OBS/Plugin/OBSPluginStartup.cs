@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
 using Obs.v5.WebSocket.Reactive;
 using Persistity.Encryption;
@@ -38,6 +39,10 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
             .Subscribe(x => AppState.SetCurrentSceneName(x.SceneName))
             .AddTo(_subs);
 
+        Observable.Interval(TimeSpan.FromSeconds(55))
+            .Subscribe(x => DoHeartbeat())
+            .AddTo(_subs);
+
         if (AppState.HasOBSHost())
         {
             await ConnectToOBS();
@@ -52,6 +57,12 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
         { Logger.Error($"Couldnt connect to OBS: {result.message}"); }
         else
         { Logger.Information(result.message); }
+    }
+
+    public async Task DoHeartbeat()
+    {
+        if (OBSClient.IsConnected)
+        { OBSClient.GetVersion(); }
     }
 
     public async Task RefreshOBSData()

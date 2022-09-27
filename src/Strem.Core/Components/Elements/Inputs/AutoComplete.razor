@@ -6,7 +6,7 @@
     <div class="dropdown-trigger">
         <input class="input" aria-haspopup="true" aria-controls="dropdown-menu" value="@Value"
                @onfocus="() => ShowDropdown = true" @onblur="HideDropDown"
-               @oninput="x => RefreshOptions(x.Value.ToString())"/>
+               @oninput="x => OnValueChanged(x.Value.ToString())"/>
     </div>
     <div class="dropdown-menu" id="dropdown-menu" role="menu">
         <div class="dropdown-content">
@@ -27,27 +27,15 @@
 
     [Parameter]
     public int MaxResults { get; set; } = 10;
-    
-    public IEnumerable<string> CurrentMatches { get; set; }
+
+    public IEnumerable<string> CurrentMatches => Data.Where(x => x.Contains(Value, StringComparison.OrdinalIgnoreCase));
     
     public bool ShowDropdown { get; set; }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        CurrentMatches = Data;
-    }
-
-    private void RefreshOptions(string currentInput)
-    {
-        CurrentMatches = Data.Where(x => x.Contains(currentInput, StringComparison.OrdinalIgnoreCase));
-        OnValueChanged(currentInput);
-    }
 
     private void SetSelection(string entry)
     {
         Value = entry;
-        ValueChanged.InvokeAsync(entry);
+        OnValueChanged(entry);
     }
 
     private async Task HideDropDown()
