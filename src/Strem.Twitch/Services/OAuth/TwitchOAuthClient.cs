@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
-using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Services.Browsers.Web;
@@ -8,7 +7,6 @@ using Strem.Core.Services.Utils;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Services.Api;
-using Strem.Twitch.Events;
 using Strem.Twitch.Events.OAuth;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Models;
@@ -27,28 +25,30 @@ public class TwitchOAuthClient : ITwitchOAuthClient
     
     public IWebBrowser WebBrowser { get; }
     public IAppState AppState { get; }
+    public IApplicationConfig AppConfig { get; }
     public IEventBus EventBus { get; }
     public IRandomizer Randomizer { get; }
     public ILogger<TwitchOAuthClient> Logger { get; }
 
-    public TwitchOAuthClient(IWebBrowser webBrowser, IAppState appState, IRandomizer randomizer, IEventBus eventBus, ILogger<TwitchOAuthClient> logger)
+    public TwitchOAuthClient(IWebBrowser webBrowser, IAppState appState, IRandomizer randomizer, IEventBus eventBus, ILogger<TwitchOAuthClient> logger, IApplicationConfig appConfig)
     {
         WebBrowser = webBrowser;
         AppState = appState;
         Randomizer = randomizer;
         EventBus = eventBus;
         Logger = logger;
+        AppConfig = appConfig;
     }
 
     public void StartAuthorisationProcess(string[] requiredScopes)
     {
         Logger.Information("Starting Twitch Implicit OAuth Process");
-        
+
         var randomState = Randomizer.RandomString();
         AppState.TransientVariables.Set(CommonVariables.OAuthState, TwitchVars.TwitchContext, randomState);
         
         var scopeQueryData = Uri.EscapeDataString(string.Join(" ", requiredScopes));
-        var queryData = $"client_id={TwitchVars.TwitchClientId}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";
+        var queryData = $"client_id={AppConfig.GetTwitchClientId()}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";
         var completeUrl = $"{TwitchApiUrl}/{AuthorizeEndpoint}?{queryData}";
         WebBrowser.LoadUrl(completeUrl);
     }
@@ -117,7 +117,7 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         var restClient = new RestClient(TwitchApiUrl);
         var restRequest = new RestRequest(RevokeEndpoint, Method.Post);
         restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-        restRequest.AddStringBody($"client_id={TwitchVars.TwitchClientId}&token={accessToken}", DataFormat.None);
+        restRequest.AddStringBody($"client_id={AppConfig.GetTwitchClientId()}&token={accessToken}", DataFormat.None);
 
         var response = await restClient.ExecuteAsync(restRequest);
         if (!response.IsSuccessful)

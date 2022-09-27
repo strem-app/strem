@@ -5,9 +5,8 @@ namespace Strem.Twitch.Variables;
 public class TwitchVars
 {
     // Generic
-    public static readonly string TwitchClientId = "yejalwgrfnh5vcup3db5bdxkko2xh1";
     public static readonly string TwitchContext = "twitch";
- 
+    
     // OAuth (app)
     public static readonly VariableEntry OAuthToken = new(CommonVariables.OAuthToken, TwitchContext);
     public static readonly VariableEntry TokenExpiry = new("token-expiry", TwitchContext);

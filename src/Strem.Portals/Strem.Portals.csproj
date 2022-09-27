@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <OutputType>Library</OutputType>
+        <Version>0.0.0</Version>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
 

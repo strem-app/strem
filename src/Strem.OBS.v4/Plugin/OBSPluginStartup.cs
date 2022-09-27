@@ -20,6 +20,8 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
     public IEncryptor Encryptor { get; }
     public IObservableOBSWebSocket OBSClient { get; }
     public ILogger<OBSPluginStartup> Logger { get; }
+    
+    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
 
     public OBSPluginStartup(IEventBus eventBus, IAppState appState, ILogger<OBSPluginStartup> logger, IObservableOBSWebSocket obsClient, IEncryptor encryptor)
     {
@@ -29,6 +31,8 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
         OBSClient = obsClient;
         Encryptor = encryptor;
     }
+    
+    public Task SetupPlugin() => Task.CompletedTask;
 
     public async Task StartPlugin()
     {
