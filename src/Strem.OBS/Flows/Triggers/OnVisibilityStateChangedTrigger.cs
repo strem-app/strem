@@ -22,13 +22,16 @@ public class OnVisibilityStateChangedTrigger : FlowTrigger<OnVisibilityStateChan
     public override string Category => "OBS";
     public override string Description => "Triggers when the visibility state has changed on a specific source";
 
-    public static VariableEntry ObsSourceVariable = new("source.name", OBSVars.OBSContext);
+    public static VariableEntry ObsSceneNameVariable = new("source.scene-name", OBSVars.OBSContext);
+    public static VariableEntry ObsSourceNameVariable = new("source.name", OBSVars.OBSContext);
+    public static VariableEntry ObsSourceNameFullVariable = new("source.name-full", OBSVars.OBSContext);
     public static VariableEntry ObsSourceMuteStateVariable = new("source.visibility-state", OBSVars.OBSContext);
     public static VariableEntry ObsSourceIsMutedVariable = new("source.is-visible", OBSVars.OBSContext);
 
     public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {
-        ObsSourceVariable.ToDescriptor(), ObsSourceMuteStateVariable.ToDescriptor(), ObsSourceIsMutedVariable.ToDescriptor()
+        ObsSceneNameVariable.ToDescriptor(), ObsSourceNameVariable.ToDescriptor(), ObsSourceNameFullVariable.ToDescriptor(),
+        ObsSourceMuteStateVariable.ToDescriptor(), ObsSourceIsMutedVariable.ToDescriptor()
     };
 
     public IObservableOBSWebSocket ObsClient { get; }
@@ -42,50 +45,47 @@ public class OnVisibilityStateChangedTrigger : FlowTrigger<OnVisibilityStateChan
 
     public override async Task<IObservable<IVariables>> Execute(OnVisibilityStateChangedTriggerData data)
     {
-        if(string.IsNullOrEmpty(data.SourceName))
+        if(string.IsNullOrEmpty(data.SceneItemName) || string.IsNullOrEmpty(data.SceneName))
         { return Observable.Empty<IVariables>(); }
         
         var observableChain = ObsClient.OnSceneItemEnableStateChanged;
-        var sceneName = AppState.GetCurrentSceneName();
-        var sceneItemId = ObsClient.GetSceneItemId(sceneName, data.SourceName, 0);
+        var sceneItemInformation = ObsClient.GetSceneOrGroupItemId(data.SceneName, data.SceneItemName);
 
         if (data.TriggerOnStart)
         {
             var visibilityState = await GetInitialValue(data);
-            var args = new SceneItemEnableStateChangedEventArgs(sceneName, sceneItemId, visibilityState);
+            var args = new SceneItemEnableStateChangedEventArgs(data.SceneName, sceneItemInformation.itemId, visibilityState);
             observableChain = observableChain.StartWith(args);
         }
 
         return observableChain
-            .Where(x => MatchesEvent(data, x, sceneItemId))
-            .Select(PopulateVariables);
+            .Where(x => MatchesEvent(data, x, sceneItemInformation.parentScene, sceneItemInformation.itemId))
+            .Select(x => PopulateVariables(x, data));
     }
 
     public async Task<bool> GetInitialValue(OnVisibilityStateChangedTriggerData data)
     {
         if(!ObsClient.IsConnected) { return false; }
-        var sceneName = AppState.GetCurrentSceneName();
-        var sceneItemId = ObsClient.GetSceneItemId(sceneName, data.SourceName, 0);
-        return ObsClient.GetSceneItemEnabled(sceneName, sceneItemId);
+        var sceneInformation = ObsClient.GetSceneOrGroupItemId(data.SceneName, data.SceneItemName);
+        return ObsClient.GetSceneItemEnabled(sceneInformation.parentScene, sceneInformation.itemId);
     }
 
-    public bool MatchesEvent(OnVisibilityStateChangedTriggerData data, SceneItemEnableStateChangedEventArgs args, int sceneItemId)
+    public bool MatchesEvent(OnVisibilityStateChangedTriggerData data, SceneItemEnableStateChangedEventArgs args, string parentSceneName, int sceneItemId)
     {
-        if(args.SceneItemId != sceneItemId)
-        { return false; }
-                
+        if(args.SceneName != parentSceneName) { return false; }
+        if(args.SceneItemId != sceneItemId) { return false; }
         if(data.TriggerOnVisible && args.SceneItemEnabled) { return true; }
         if(data.TriggerOnInvisible && !args.SceneItemEnabled) { return true; }
         return false;
     }
     
-    public IVariables PopulateVariables(SceneItemEnableStateChangedEventArgs args)
+    public IVariables PopulateVariables(SceneItemEnableStateChangedEventArgs args, OnVisibilityStateChangedTriggerData data)
     {
-        var sceneName = AppState.GetCurrentSceneName();
-        var sceneItems = ObsClient.GetSceneItemList(sceneName);
-        var sourceName = sceneItems.FirstOrDefault(x => x.ItemId == args.SceneItemId)?.SourceName ?? string.Empty;
         var variables = new Core.Variables.Variables();
-        variables.Set(ObsSourceVariable, sourceName);
+        var splitNames = data.SceneItemName.Split(IObservableOBSWebSocketExtensions.NestedSceneItemSeparator);
+        variables.Set(ObsSceneNameVariable, data.SceneName);
+        variables.Set(ObsSourceNameVariable, splitNames.Last());
+        variables.Set(ObsSourceNameFullVariable, data.SceneItemName);
         variables.Set(ObsSourceIsMutedVariable, args.SceneItemEnabled);
         variables.Set(ObsSourceMuteStateVariable, args.SceneItemEnabled ? "Visible" : "Invisible");
         return variables;

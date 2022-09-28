@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Registries.Menus;
 using Strem.Flows.Extensions;
 
-namespace Strem.Flows.Default.Modules;
+namespace Strem.Flows.Default.Plugins;
 
 public class DefaultFlowsModule : IDependencyModule
 {

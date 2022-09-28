@@ -13,7 +13,11 @@ public class OnVisibilityStateChangedTriggerData : IFlowTriggerData
     public string Version { get; set; } = TriggerVersion;
     
     [Required]
-    public string SourceName { get; set; }
+    public string SceneName { get; set; }
+    
+    [Required]
+    public string SceneItemName { get; set; }
+    
     public bool TriggerOnVisible { get; set; }
     public bool TriggerOnInvisible { get; set; }
     public bool TriggerOnStart { get; set; }

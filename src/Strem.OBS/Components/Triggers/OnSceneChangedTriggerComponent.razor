@@ -1,14 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Obs.v5.WebSocket.Reactive
 
 @inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.OBS.Flows.Triggers.OnSceneChangedTriggerData>
-
-@inject IObservableOBSWebSocket ObsClient;
 
 <div class="field">
     <label class="label">Matching Scene Name</label>
     <div class="control">
-        <AutoComplete @bind-Value="@Data.MatchingSceneName" Data="SceneNames"></AutoComplete>
+        <ObsSceneSelector @bind-Value="@Data.MatchingSceneName" />
     </div>
     <HelperInfo>This optionally lets you only trigger when the new scene matches the name you specified, leave blank to match any scene</HelperInfo>
 </div>
@@ -16,19 +13,4 @@
 
 @code {
     public override string Title => $"On Scene Changed {(string.IsNullOrEmpty(Data.MatchingSceneName) ? "" : $"To {Data.MatchingSceneName}")}";
-
-    public string[] SceneNames { get; set; } = Array.Empty<string>();
-    
-    protected override async Task OnInitializedAsync()
-    {
-        if (ObsClient.IsConnected)
-        {
-            var scenes = ObsClient.GetSceneList();
-            SceneNames = scenes.Scenes.Select(x => x.Name).ToArray();
-        }
-        else
-        { SceneNames = Array.Empty<string>(); }
-        
-        await base.OnInitializedAsync();
-    }
 }

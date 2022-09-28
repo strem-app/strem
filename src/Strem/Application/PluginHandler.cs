@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.Variables;
-using Strem.Flows.Default.Modules;
+using Strem.Flows.Default.Plugins;
 using Strem.Flows.Plugins;
 using Strem.Infrastructure.Plugin;
 using Strem.Platforms.Windows.Plugin;

@@ -36,7 +36,13 @@ public class TriggerExecutor : ITriggerExecutor
             Logger.LogWarning($"Trigger data contains invalid data for {triggerData.Id}|{triggerData.Code}, with errors {string.Join(" | ", validationResults.Errors)}");
             return;
         }
-            
+
+        if (!trigger.CanExecute())
+        {
+            Logger.LogWarning("Cannot start trigger {triggerData.Id}|{triggerData.Code}, due to it being unable to execute, pre-requisites are not met, you can try manually disabling and enabling it");
+            return;
+        }
+        
         var observable = await trigger.Execute(triggerData);
         observable.Subscribe(onStart).AddTo(flowSubs);
     }

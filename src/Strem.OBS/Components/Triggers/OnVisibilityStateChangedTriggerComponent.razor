@@ -1,17 +1,17 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Obs.v5.WebSocket.Reactive
-@using Strem.Core.State
-@using Strem.OBS.Extensions
 
 @inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.OBS.Flows.Triggers.OnVisibilityStateChangedTriggerData>
 
-@inject IAppState AppState;
-@inject IObservableOBSWebSocket ObsClient;
-
+<div class="field">
+    <label class="label">Scene Name</label>
+    <div class="control is-expanded">
+        <ObsSceneSelector @bind-Value="@Data.SceneName" />
+    </div>
+</div>
 <div class="field">
     <label class="label">Source Name</label>
-    <div class="control">
-        <AutoComplete @bind-Value="@Data.SourceName" Data="CurrentSceneItems"></AutoComplete>
+    <div class="control  is-expanded">
+        <ObsSceneItemSelector @bind-Value="@Data.SceneItemName" SceneName="@Data.SceneName" />
     </div>
 </div>
 <div class="field">
@@ -33,15 +33,5 @@
 </div>
 
 @code {
-    public override string Title => $"On {Data.SourceName} Visibility State Changed";
-
-    public string[] CurrentSceneItems { get; set; } = Array.Empty<string>();
-    
-    protected override async Task OnInitializedAsync()
-    {
-        if (ObsClient.IsConnected)
-        { CurrentSceneItems = ObsClient.GetAllSourceNames(); }
-        else
-        { CurrentSceneItems = Array.Empty<string>(); }
-    }
+    public override string Title => $"On {Data.SceneItemName} Visibility State Changed";
 }
