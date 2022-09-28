@@ -1,19 +1,21 @@
 ﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using Obs.v5.WebSocket.Reactive;
-using OBSWebsocketDotNet;
 using OBSWebsocketDotNet.Communication;
+using OBSWebsocketDotNet.Types;
 using Persistity.Encryption;
 using Persistity.Extensions;
 using Strem.Core.Extensions;
 using Strem.Core.State;
+using Strem.OBS.Plugin;
 using Strem.OBS.Variables;
 
 namespace Strem.OBS.Extensions;
 
 public static class IObservableOBSWebSocketExtensions
 {
+    public const string NestedSceneItemSeparator = " => ";
+    
     public static Task<(bool success, string message)> AttemptConnect(this IObservableOBSWebSocket obsClient, string host, string port, string password)
     {
         var websocketAddress = $"ws://{host}:{port}/api/websocket";
@@ -87,5 +89,38 @@ public static class IObservableOBSWebSocketExtensions
     public static string[] GetAllSourceNames(this IObservableOBSWebSocket client)
     {
         return client.GetInputList()?.Select(x => x.InputName).ToArray() ?? Array.Empty<string>();
+    }
+
+    public static IReadOnlyCollection<string> GetAllSceneItems(this IObservableOBSWebSocket client, string sceneOrGroupName, bool isGroup = false, string prefix = "")
+    {
+        var allItems = new List<string>();
+        IReadOnlyCollection<SceneItemDetails> currentItems;
+
+        if (!isGroup)
+        { currentItems = client.GetSceneItemList(sceneOrGroupName); }
+        else
+        { currentItems = (client as DebugOBSSocket).GetGroupItemList(sceneOrGroupName); }
+        
+        foreach (var sceneItem in currentItems)
+        {
+            if (sceneItem.SourceKind == null)
+            {
+                allItems.Add(sceneItem.SourceName);
+                var newPrefix = string.IsNullOrEmpty(prefix)
+                    ? sceneItem.SourceName
+                    : $"{prefix}{NestedSceneItemSeparator}{sceneItem.SourceName}";
+                
+                var nestedSceneItems = GetAllSceneItems(client, sceneItem.SourceName, true, newPrefix);
+                allItems.AddRange(nestedSceneItems);
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(prefix))
+            { allItems.Add(sceneItem.SourceName); }
+            else
+            { allItems.Add($"{prefix}{NestedSceneItemSeparator}{sceneItem.SourceName}"); }
+        }
+        
+        return allItems;
     }
 }

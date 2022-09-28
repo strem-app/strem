@@ -14,7 +14,7 @@ public class OBSModule : IDependencyModule
         services.AddSingleton<IPluginStartup, OBSPluginStartup>();
         
         // OBS Client
-        services.AddSingleton<IObservableOBSWebSocket, ObservableOBSWebSocket>();
+        services.AddSingleton<IObservableOBSWebSocket, DebugOBSSocket>();
         
         // Register Components
         var thisAssembly = GetType().Assembly;

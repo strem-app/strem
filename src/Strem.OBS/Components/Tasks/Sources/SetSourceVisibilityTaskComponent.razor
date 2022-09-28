@@ -1,21 +1,17 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Obs.v5.WebSocket.Reactive
-@using Strem.Flows.Components.Tasks
 @using Strem.OBS.Types
 
-@inherits CustomTaskComponent<Strem.OBS.Flows.Tasks.SetSourceVisibilityTaskData>
-
-@inject IObservableOBSWebSocket ObsClient;
+@inherits ObsSceneItemComponent<Strem.OBS.Flows.Tasks.SetSourceVisibilityTaskData>
 
 <div class="field">
     <label class="label">Scene Name</label>
-    <div class="control">
-        <AutoComplete @bind-Value="@Data.SceneName" Data="SceneNames" ValueChangedWithPrevious="_ => RefreshSceneItems()"></AutoComplete>
+    <div class="control is-expanded">
+        <AutoComplete @bind-Value="@Data.SceneName" Data="SceneNames" ValueChangedWithPrevious="x => RefreshSceneItems(x.New)"></AutoComplete>
     </div>
 </div>
 <div class="field">
     <label class="label">Source Name</label>
-    <div class="control">
+    <div class="control  is-expanded">
         <AutoComplete @bind-Value="@Data.SceneItemName" Data="SceneItems"></AutoComplete>
     </div>
 </div>
@@ -29,10 +25,7 @@
 
 @code {
     public override string Title => GetTitle();
-
-    public string[] SceneItems { get; set; } = Array.Empty<string>();
-    public string[] SceneNames { get; set; } = Array.Empty<string>();
-
+    
     public string GetTitle()
     {
         var starter = Data.Status == VisibilityStatus.Toggle ? 
@@ -40,26 +33,11 @@
             $"Set {Data.SceneItemName} To {Enum.GetName(Data.Status)}";
         return $"<strong>{starter}</strong> In OBS";
     }
-
-    public void RefreshSceneNames()
-    {
-        SceneNames = ObsClient.GetSceneList()?.Scenes.Select(x => x.Name).ToArray() ?? Array.Empty<string>();
-    }
-
-    public void RefreshSceneItems()
-    {
-        if(string.IsNullOrEmpty(Data.SceneName)) { return; }
-        SceneItems = ObsClient.GetSceneItemList(Data.SceneName)?.Select(x => x.SourceName).ToArray() ?? Array.Empty<string>();
-        InvokeAsync(StateHasChanged);
-    }
     
     protected override async Task OnInitializedAsync()
     {
         if (ObsClient.IsConnected)
-        {
-            RefreshSceneNames();
-            RefreshSceneItems();
-        }
+        { RefreshSceneItems(Data.SceneName); }
 
         await base.OnInitializedAsync();
     }

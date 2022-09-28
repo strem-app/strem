@@ -2,14 +2,14 @@
 
 @inherits Strem.Core.Components.Elements.Inputs.ValidatedInputBase<string>
 
-<div class="autocomplete dropdown @(ShowDropdown ? "is-active" : "") @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
-    <div class="dropdown-trigger">
+<div class="autocomplete dropdown is-leveled @(ShowDropdown ? "is-active" : "") @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")">
+    <div class="dropdown-trigger is-leveled">
         <input class="input" aria-haspopup="true" aria-controls="dropdown-menu" value="@Value"
                @onfocus="() => ShowDropdown = true" @onblur="HideDropDown"
                @oninput="x => OnValueChanged(x.Value.ToString())"/>
     </div>
-    <div class="dropdown-menu" id="dropdown-menu" role="menu">
-        <div class="dropdown-content">
+    <div class="dropdown-menu is-leveled" id="dropdown-menu" role="menu">
+        <div class="dropdown-content is-leveled">
             @foreach (var entry in CurrentMatches.Take(MaxResults))
             {
                 var entryText = entry;
