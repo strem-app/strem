@@ -13,7 +13,7 @@ public class SetBrowserSourceUrlTaskData : IFlowTaskData
     public string Version { get; set; } = TaskVersion;
     
     [Required]
-    public string SourceName { get; set; }
+    public string BrowserSourceName { get; set; }
     
     [Required]
     public string Url { get; set; }

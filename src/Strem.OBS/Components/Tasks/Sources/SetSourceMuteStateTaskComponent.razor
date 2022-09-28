@@ -1,25 +1,18 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Obs.v5.WebSocket.Reactive
-@using Strem.Flows.Components.Tasks
-@using Strem.Core.State
-@using Strem.OBS.Extensions
 @using Strem.OBS.Types
 
-@inherits CustomTaskComponent<Strem.OBS.Flows.Tasks.SetSourceMuteStateTaskData>
-
-@inject IAppState AppState;
-@inject IObservableOBSWebSocket ObsClient;
+@inherits ObsInputComponent<Strem.OBS.Flows.Tasks.SetSourceMuteStateTaskData>
 
 <div class="field">
     <label class="label">Source Name</label>
     <div class="control">
-        <AutoComplete @bind-Value="@Data.SourceName" Data="CurrentSceneItems"></AutoComplete>
+        <AutoComplete @bind-Value="@Data.SourceName" Data="InputNames" />
     </div>
 </div>
 <div class="field">
     <label class="label">Mute State</label>
     <div class="control">
-        <EnumSelectInput @bind-Value="Data.Status"></EnumSelectInput>
+        <EnumSelectInput @bind-Value="Data.Status" />
     </div>
 </div>
 
@@ -34,17 +27,4 @@
             $"Set {Data.SourceName} To {Enum.GetName(Data.Status)}d";
         return $"<strong>{starter}</strong> In OBS";
     }
-
-    public string[] CurrentSceneItems { get; set; } = Array.Empty<string>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (ObsClient.IsConnected)
-        { CurrentSceneItems = ObsClient.GetAllSourceNames(); }
-        else
-        { CurrentSceneItems = Array.Empty<string>(); }
-        
-        await base.OnInitializedAsync();
-    }
-
 }

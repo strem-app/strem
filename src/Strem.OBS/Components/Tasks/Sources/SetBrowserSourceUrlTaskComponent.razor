@@ -1,38 +1,28 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Obs.v5.WebSocket.Reactive
-@using Strem.Flows.Components.Tasks
-@using Strem.OBS.Extensions
+@using Strem.OBS.Types
 
-@inherits CustomTaskComponent<Strem.OBS.Flows.Tasks.SetBrowserSourceUrlTaskData>
-
-@inject IObservableOBSWebSocket ObsClient;
+@inherits ObsInputComponent<Strem.OBS.Flows.Tasks.SetBrowserSourceUrlTaskData>
 
 <div class="field">
-    <label class="label">Scene Name</label>
-    <div class="control">
-        <AutoComplete @bind-Value="@Data.SourceName" Data="SourceItems"></AutoComplete>
+    <label class="label">Browser Source Name</label>
+    <div class="control  is-expanded">
+        <AutoComplete @bind-Value="@Data.BrowserSourceName" Data="InputNames" />
     </div>
 </div>
 
 <div class="field">
     <label class="label">Url</label>
     <div class="control">
-        <ProcessedInput @bind-Value="@Data.Url" Placeholder="i.e V(clip-url)"></ProcessedInput>
+        <ProcessedInput @bind-Value="@Data.Url" Placeholder="i.e V(clip-url)" />
     </div>
 </div>
 
 @code {
-    public override string Title => $"Set Text Source For {Data.SourceName}";
+    public override string Title => $"Set Browser Url For {Data.BrowserSourceName}";
     
-    public string[] SourceItems { get; set; } = Array.Empty<string>();
-
     protected override async Task OnInitializedAsync()
     {
-        if (ObsClient.IsConnected)
-        { SourceItems = ObsClient.GetAllSourceNames(); }
-        else
-        { SourceItems = Array.Empty<string>(); }
-        
+        AllowedSourceKind = SourceKindType.BrowserSource;
         await base.OnInitializedAsync();
     }
 }

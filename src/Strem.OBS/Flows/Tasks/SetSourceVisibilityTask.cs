@@ -31,15 +31,15 @@ public class SetSourceVisibilityTask : FlowTask<SetSourceVisibilityTaskData>
 
     public override async Task<ExecutionResult> Execute(SetSourceVisibilityTaskData data, IVariables flowVars)
     {
-        var sceneItemId = ObsClient.GetSceneItemId(data.SceneName, data.SceneItemName, 0);
+        var sceneItemInformation = ObsClient.GetSceneOrGroupItemId(data.SceneName, data.SceneItemName);
 
-        var isVisible = false;        
+        var isVisible = false;
         if (data.Status == VisibilityStatus.Visible) { isVisible = true; }
         else if(data.Status == VisibilityStatus.Invisible) { isVisible = false; }
         else if (data.Status == VisibilityStatus.Toggle)
-        { isVisible = !ObsClient.GetSceneItemEnabled(data.SceneName, sceneItemId); }
+        { isVisible = !ObsClient.GetSceneItemEnabled(sceneItemInformation.parentScene, sceneItemInformation.itemId); }
         
-        ObsClient.SetSceneItemEnabled(data.SceneName, sceneItemId, isVisible);
+        ObsClient.SetSceneItemEnabled(sceneItemInformation.parentScene, sceneItemInformation.itemId, isVisible);
         return ExecutionResult.Success();
     }
 }

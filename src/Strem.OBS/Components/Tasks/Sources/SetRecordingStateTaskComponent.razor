@@ -6,10 +6,9 @@
 <div class="field">
     <label class="label">Stream Operation</label>
     <div class="control">
-        <TrueOrFalse @bind-Value="Data.StartRecording" TrueText="Start Recording" FalseText="Stop Recording"></TrueOrFalse>
+        <TrueOrFalse @bind-Value="Data.StartRecording" TrueText="Start Recording" FalseText="Stop Recording" />
     </div>
 </div>
-
 
 @code {
     public override string Title => GetTitle();

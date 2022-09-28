@@ -1,38 +1,28 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Obs.v5.WebSocket.Reactive
-@using Strem.Flows.Components.Tasks
-@using Strem.OBS.Extensions
+@using Strem.OBS.Types
 
-@inherits CustomTaskComponent<Strem.OBS.Flows.Tasks.SetTextSourceTaskData>
-
-@inject IObservableOBSWebSocket ObsClient;
+@inherits ObsInputComponent<Strem.OBS.Flows.Tasks.SetTextSourceTaskData>
 
 <div class="field">
     <label class="label">Scene Name</label>
     <div class="control">
-        <AutoComplete @bind-Value="@Data.SourceName" Data="SourceItems"></AutoComplete>
+        <AutoComplete @bind-Value="@Data.SourceName" Data="InputNames" />
     </div>
 </div>
 
 <div class="field">
     <label class="label">Text</label>
     <div class="control">
-        <ProcessedInput @bind-Value="@Data.Text" Placeholder="i.e V(viewer-count)"></ProcessedInput>
+        <ProcessedInput @bind-Value="@Data.Text" Placeholder="i.e V(viewer-count)" />
     </div>
 </div>
 
 @code {
     public override string Title => $"Set Text Source For {Data.SourceName}";
     
-    public string[] SourceItems { get; set; } = Array.Empty<string>();
-
     protected override async Task OnInitializedAsync()
     {
-        if (ObsClient.IsConnected)
-        { SourceItems = ObsClient.GetAllSourceNames(); }
-        else
-        { SourceItems = Array.Empty<string>(); }
-        
+        AllowedSourceKind = SourceKindType.TextSource;
         await base.OnInitializedAsync();
     }
 }

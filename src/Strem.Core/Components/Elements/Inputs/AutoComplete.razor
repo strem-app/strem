@@ -28,8 +28,12 @@
     [Parameter]
     public int MaxResults { get; set; } = 10;
 
-    public IEnumerable<string> CurrentMatches => Data.Where(x => x.Contains(Value, StringComparison.OrdinalIgnoreCase));
-    
+    public IEnumerable<string> CurrentMatches
+    {
+        get
+        { return Value is null ? Data : Data.Where(x => x.Contains(Value, StringComparison.OrdinalIgnoreCase)); }
+    }
+
     public bool ShowDropdown { get; set; }
 
     private void SetSelection(string entry)

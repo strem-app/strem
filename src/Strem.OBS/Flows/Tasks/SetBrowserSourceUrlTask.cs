@@ -7,6 +7,7 @@ using Strem.Core.Variables;
 using Strem.Flows.Data.Tasks;
 using Strem.Flows.Executors;
 using Strem.Flows.Processors;
+using Strem.OBS.Extensions;
 
 namespace Strem.OBS.Flows.Tasks;
 
@@ -30,15 +31,8 @@ public class SetBrowserSourceUrlTask : FlowTask<SetBrowserSourceUrlTaskData>
 
     public override async Task<ExecutionResult> Execute(SetBrowserSourceUrlTaskData data, IVariables flowVars)
     {
-        if(string.IsNullOrEmpty(data.SourceName))
-        { return ExecutionResult.Failed("SourceName is empty and is required"); }
-        
-        if(string.IsNullOrEmpty(data.Url))
-        { return ExecutionResult.Failed("Url is empty and is required"); }
-        
-        var newData = new JObject();
-        newData["url"] = FlowStringProcessor.Process(data.Url, flowVars);
-        ObsClient.SetInputSettings(data.SourceName, newData);
+        var newData = new JObject { ["url"] = FlowStringProcessor.Process(data.Url, flowVars) };
+        ObsClient.SetInputSettings(data.BrowserSourceName, newData);
         return ExecutionResult.Success();
     }
 }

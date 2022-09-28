@@ -8,6 +8,7 @@ using Persistity.Extensions;
 using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.OBS.Plugin;
+using Strem.OBS.Types;
 using Strem.OBS.Variables;
 
 namespace Strem.OBS.Extensions;
@@ -91,7 +92,7 @@ public static class IObservableOBSWebSocketExtensions
         return client.GetInputList()?.Select(x => x.InputName).ToArray() ?? Array.Empty<string>();
     }
 
-    public static IReadOnlyCollection<string> GetAllSceneItems(this IObservableOBSWebSocket client, string sceneOrGroupName, bool isGroup = false, string prefix = "")
+    public static IReadOnlyCollection<string> GetAllSceneItems(this IObservableOBSWebSocket client, string sceneOrGroupName, string sourceKind = "", bool isGroup = false, string prefix = "")
     {
         var allItems = new List<string>();
         IReadOnlyCollection<SceneItemDetails> currentItems;
@@ -105,14 +106,25 @@ public static class IObservableOBSWebSocketExtensions
         {
             if (sceneItem.SourceKind == null)
             {
-                allItems.Add(sceneItem.SourceName);
+                if(sourceKind == SourceKindType.Any)
+                { allItems.Add(sceneItem.SourceName); }
+                
                 var newPrefix = string.IsNullOrEmpty(prefix)
                     ? sceneItem.SourceName
                     : $"{prefix}{NestedSceneItemSeparator}{sceneItem.SourceName}";
                 
-                var nestedSceneItems = GetAllSceneItems(client, sceneItem.SourceName, true, newPrefix);
+                var nestedSceneItems = GetAllSceneItems(client, sceneItem.SourceName, sourceKind, true, newPrefix);
                 allItems.AddRange(nestedSceneItems);
                 continue;
+            }
+
+            if (sourceKind != SourceKindType.Any)
+            {
+                if (sourceKind == SourceKindType.CaptureSource && !sceneItem.IsCaptureSource())
+                { continue; }
+                
+                if(sceneItem.SourceKind != sourceKind)
+                { continue; }
             }
 
             if (string.IsNullOrEmpty(prefix))
@@ -122,5 +134,20 @@ public static class IObservableOBSWebSocketExtensions
         }
         
         return allItems;
+    }
+
+    public static (string parentScene, int itemId) GetSceneOrGroupItemId(this IObservableOBSWebSocket client, string sceneName, string itemName)
+    {
+        if (!itemName.Contains(NestedSceneItemSeparator))
+        {
+            var itemId = client.GetSceneItemId(sceneName, itemName, 0);
+            return (sceneName, itemId);
+        }
+
+        var hierarchy = itemName.Split(NestedSceneItemSeparator);
+        var nestedParentScene = hierarchy[^2];
+        var nestedSceneItem = hierarchy[^1];
+        var nestedItemId = client.GetSceneItemId(nestedParentScene, nestedSceneItem, 0);
+        return (nestedParentScene, nestedItemId);
     }
 }
