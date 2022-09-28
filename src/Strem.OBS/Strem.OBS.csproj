@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
+        <PackageReference Include="Obs.v5.WebSocket.Reactive" Version="1.0.9" />
+        <PackageReference Include="Persistity" Version="2.0.47" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\background.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\exampleJsInterop.js" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
+      <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

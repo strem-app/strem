@@ -1,5 +1,6 @@
 ﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
@@ -57,10 +58,17 @@ public class FlowsPluginStartup : IPluginStartup, IDisposable
             })
             .AddTo(_subs);
 
+        EventBus.Receive<ApplicationStartedEvent>()
+            .Subscribe(x => StartEventExecutor())
+            .AddTo(_subs);
+
         Logger.Information("Setting Up Flow Registries");
         StartRegistries();
         Logger.Information("Finished Setting Up Flow Registries");
-        
+    }
+
+    public async Task StartEventExecutor()
+    {
         Logger.Information("Starting Flow Execution Engine");
         await ExecutionEngine.StartEngine();
         Logger.Information("Started Flow Execution Engine");

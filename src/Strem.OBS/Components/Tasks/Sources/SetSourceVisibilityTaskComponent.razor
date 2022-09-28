@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.OBS.Types
+
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.SetSourceVisibilityTaskData>
+
+<div class="field">
+    <label class="label">Scene Name</label>
+    <div class="control is-expanded">
+        <ObsSceneSelector @bind-Value="@Data.SceneName" />
+    </div>
+</div>
+<div class="field">
+    <label class="label">Source Name</label>
+    <div class="control  is-expanded">
+        <ObsSceneItemSelector @bind-Value="@Data.SceneItemName" SceneName="@Data.SceneName" />
+    </div>
+</div>
+<div class="field">
+    <label class="label">Visibility</label>
+    <div class="control">
+        <EnumSelectInput @bind-Value="Data.Status"></EnumSelectInput>
+    </div>
+</div>
+
+
+@code {
+    public override string Title => GetTitle();
+    
+    public string GetTitle()
+    {
+        var starter = Data.Status == VisibilityStatus.Toggle ? 
+            $"Toggle Visibility For {Data.SceneItemName}" : 
+            $"Set {Data.SceneItemName} To {Enum.GetName(Data.Status)}";
+        return $"<strong>{starter}</strong> In OBS";
+    }
+}

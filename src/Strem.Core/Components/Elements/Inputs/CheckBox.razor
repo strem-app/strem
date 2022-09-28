@@ -1,11 +1,14 @@
 ﻿@inherits ValidatedInputBase<bool>
 
 <label class="checkbox">
-    <input type="checkbox" value="@Value" @onchange="e => OnValueChanged((bool)e.Value)">
+    <input type="checkbox" checked="@Value" @onchange="e => OnCheckboxChanged(e.Value)">
     <span>@Label</span>
 </label>
 
 @code {
     [Parameter]
     public string Label { get; set; }
+
+    public void OnCheckboxChanged(object e)
+    { OnValueChanged((bool)e); }
 }

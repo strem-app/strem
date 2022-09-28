@@ -1,8 +1,5 @@
 ﻿@page "/test"
 @using Strem.Core.Types
-@using Strem.OBS.v4.Services.Client
-
-@inject IObservableOBSClient ObsClient;
 
 <div class="container is-fullwidth">
     <div class="box">
@@ -11,9 +8,7 @@
                     <TrueOrFalse @bind-Value="IsActive"/>
                 </div>
             </div>
-        
-        
-            <span class="tag">@IsActive</span>
+        <span class="tag">@IsActive</span>
     </div>
 
     <div class="box">
@@ -42,13 +37,5 @@
     public TimeUnitType UnitType { get; set; }
     public string ValueType { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (ObsClient.IsConnected)
-        {
-            var result = await ObsClient.GetSourcesList();
-            result.Select(x => x.Name).Distinct();
-        }
-    }
 
 }

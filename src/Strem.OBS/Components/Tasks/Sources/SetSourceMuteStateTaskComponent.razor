@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.OBS.Types
+
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.SetSourceMuteStateTaskData>
+
+<div class="field">
+    <label class="label">Source Name</label>
+    <div class="control">
+        <ObsInputSelector @bind-Value="@Data.SourceName" AllowedSourceKind="@SourceKindType.BrowserSource" />
+    </div>
+</div>
+<div class="field">
+    <label class="label">Mute State</label>
+    <div class="control">
+        <EnumSelectInput @bind-Value="Data.Status" />
+    </div>
+</div>
+
+
+@code {
+    public override string Title => GetTitle();
+    
+    public string GetTitle()
+    {
+        var starter = Data.Status == MuteStatus.Toggle ? 
+            $"Toggle Mute Status For {Data.SourceName}" : 
+            $"Set {Data.SourceName} To {Enum.GetName(Data.Status)}d";
+        return $"<strong>{starter}</strong> In OBS";
+    }
+}

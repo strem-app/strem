@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.OBS.Types
+
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.SetTextSourceTaskData>
+
+<div class="field">
+    <label class="label">Scene Name</label>
+    <div class="control">
+        <ObsInputSelector @bind-Value="@Data.SourceName" AllowedSourceKind="@SourceKindType.TextSource" />
+    </div>
+</div>
+
+<div class="field">
+    <label class="label">Text</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="@Data.Text" Placeholder="i.e V(viewer-count)" />
+    </div>
+</div>
+
+@code {
+    public override string Title => $"Set Text Source For {Data.SourceName}";
+}

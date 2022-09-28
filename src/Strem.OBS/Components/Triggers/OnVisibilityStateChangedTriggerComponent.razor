@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.OBS.Flows.Triggers.OnVisibilityStateChangedTriggerData>
+
+<div class="field">
+    <label class="label">Scene Name</label>
+    <div class="control is-expanded">
+        <ObsSceneSelector @bind-Value="@Data.SceneName" />
+    </div>
+</div>
+<div class="field">
+    <label class="label">Source Name</label>
+    <div class="control  is-expanded">
+        <ObsSceneItemSelector @bind-Value="@Data.SceneItemName" SceneName="@Data.SceneName" />
+    </div>
+</div>
+<div class="field">
+    <div class="control">
+        <CheckBox @bind-Value="Data.TriggerOnVisible" Label="Trigger When Visible?"></CheckBox>
+    </div>
+</div>
+<div class="field">
+    <div class="control">
+        <CheckBox @bind-Value="Data.TriggerOnInvisible" Label="Trigger When Invisible?"></CheckBox>
+    </div>
+</div>
+
+<div class="field">
+    <div class="control">
+        <CheckBox @bind-Value="Data.TriggerOnStart" Label="Trigger On Start?"></CheckBox>
+    </div>
+    <HelperInfo>By default these triggers wait to be told when visibility state changes, but with this you can trigger it with the current state when it starts</HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"On {Data.SceneItemName} Visibility State Changed";
+}

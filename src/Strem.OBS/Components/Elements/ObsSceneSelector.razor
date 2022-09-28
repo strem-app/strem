@@ -1,0 +1,43 @@
+﻿@using Obs.v5.WebSocket.Reactive
+@using Strem.Core.Extensions
+@inherits Strem.Core.Components.Elements.Inputs.ValidatedInputBase<string>
+
+@inject IObservableOBSWebSocket ObsClient
+
+<div class="field has-addons">
+    <div class="control is-expanded">
+        <AutoComplete Value="@Value" ValueChanged="OnValueChanged" ValueExpression="ValueExpression" Data="SceneNames"/>
+    </div>
+    <div class="control">
+        <button class="button is-link" @onclick="RefreshSceneNames">
+            <span class="icon is-small">
+                <i class="fas fa-arrows-rotate"></i>
+            </span>
+            <span>Refresh</span>
+        </button>
+    </div>
+    <div class="control">
+        <button class="button is-danger" @onclick="_ => OnValueChanged(string.Empty)">
+            <span class="icon is-small">
+                <i class="fas fa-square-xmark"></i>
+            </span>
+        </button>
+    </div>
+</div>
+
+@code {
+    public IReadOnlyCollection<string> SceneNames { get; set; } = Array.Empty<string>();
+    
+    public void RefreshSceneNames()
+    {
+        if (!ObsClient.IsConnected){ return; }
+        SceneNames = ObsClient.GetSceneList()
+            ?.Scenes.Select(x => x.Name).ToArray() ?? Array.Empty<string>();
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        RefreshSceneNames();
+        await base.OnInitializedAsync();
+    }
+}

@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.OBS.Types
+
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.SetBrowserSourceUrlTaskData>
+
+<div class="field">
+    <label class="label">Browser Source Name</label>
+    <div class="control  is-expanded">
+        <ObsInputSelector @bind-Value="@Data.BrowserSourceName" AllowedSourceKind="@SourceKindType.BrowserSource" />
+    </div>
+</div>
+
+<div class="field">
+    <label class="label">Url</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="@Data.Url" Placeholder="i.e V(clip-url)" />
+    </div>
+</div>
+
+@code {
+    public override string Title => $"Set Browser Url For {Data.BrowserSourceName}";
+}

@@ -42,6 +42,12 @@ public class TaskExecutor : ITaskExecutor
             Logger.LogWarning($"Task data contains invalid data for {taskData.Id}|{taskData.Code}, with errors {string.Join(" | ", validationResults.Errors)}");
             return ExecutionResult.Failed("Task Data Failed Validation, See Log");
         }
+        
+        if(!task.CanExecute())
+        {
+            Logger.LogWarning($"Cannot execute task {taskData.Id}|{taskData.Code}, pre-requisites are not met for the given task");
+            return ExecutionResult.Failed("Task Data Failed CanExecute Check, See Log");
+        }
             
         EventBus.PublishAsync(new FlowTaskStartedEvent(flow.Id, taskData.Id));
         try

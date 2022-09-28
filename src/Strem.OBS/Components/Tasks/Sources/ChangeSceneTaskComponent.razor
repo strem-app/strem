@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.ChangeSceneTaskData>
+
+<div class="field">
+    <label class="label">Scene Name</label>
+    <div class="control">
+        <ObsSceneSelector @bind-Value="@Data.NewScene" />
+    </div>
+</div>
+
+@code {
+    public override string Title => $"Change Scene To {Data.NewScene}";
+}

@@ -1,22 +1,43 @@
 ﻿using System.Reflection;
+using GlobExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.Variables;
-using Strem.Flows.Default.Modules;
+using Strem.Flows.Default.Plugins;
 using Strem.Flows.Plugins;
 using Strem.Infrastructure.Plugin;
-using Strem.OBS.v4.Plugin;
 using Strem.Platforms.Windows.Plugin;
 using Strem.Portals.Plugin;
 using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;
+using Strem.OBS.Plugin;
 
 namespace Strem.Application;
 
 public class PluginHandler
 {
+    const string PluginsDirectory = "Plugins";
+    public static readonly string AbsolutePluginPath = Path.GetFullPath(PluginsDirectory);
+
+    public PluginHandler()
+    {
+        AppDomain.CurrentDomain.AssemblyResolve += ProxyAssemblyResolves;
+    }
+    
+    Assembly ProxyAssemblyResolves(object sender, ResolveEventArgs args)
+    {
+        var name = new AssemblyName(args.Name);
+        if (args.RequestingAssembly.Location.Contains(AbsolutePluginPath))
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var matchingAssembly = assemblies.SingleOrDefault(x => x.GetName().Name == name.Name);
+            return matchingAssembly;
+        }
+        return null;
+    }
+
     public void PreLoadLocalPlugins()
     {
         Assembly _;
@@ -32,17 +53,30 @@ public class PluginHandler
 
     public IEnumerable<string> PreLoadDynamicPlugins()
     {
-        var pluginsDirectory = "Plugins";
-        if (!Directory.Exists(pluginsDirectory)) { return Array.Empty<string>(); }
-        
-        var pluginFiles = Directory.GetFileSystemEntries(pluginsDirectory, "*.dll");
+        if (!Directory.Exists(AbsolutePluginPath))
+        {
+            Directory.CreateDirectory(AbsolutePluginPath);
+            return Array.Empty<string>();
+        }
+
+        var pluginFiles = Glob.Files($"{AbsolutePluginPath}", "**/*.dll").ToArray();
         if(pluginFiles.Length == 0) { return Array.Empty<string>(); }
 
         var outputLogs = new List<string>();
         foreach (var pluginFile in pluginFiles)
         {
-            try { Assembly.LoadFile(pluginFile); }
-            catch(Exception ex) { outputLogs.Add($"Failed to load Plugin {pluginFile}: {ex.Message}"); }
+            var fullPath = $"{AbsolutePluginPath}/{pluginFile}";
+            outputLogs.Add($"Found Plugin {pluginFile} - Attempting To Load [{fullPath}]");
+            try
+            {
+                Assembly.LoadFrom(fullPath);
+            }
+            catch (Exception ex)
+            {
+                outputLogs.Add($"Failed to load Plugin {pluginFile}: {ex.Message}");
+                continue;
+            }
+            outputLogs.Add($"Loaded Dynamic Plugin {pluginFile}");
         }
 
         return outputLogs;

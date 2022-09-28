@@ -1,0 +1,16 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.OBS.Flows.Triggers.OnSceneChangedTriggerData>
+
+<div class="field">
+    <label class="label">Matching Scene Name</label>
+    <div class="control">
+        <ObsSceneSelector @bind-Value="@Data.MatchingSceneName" />
+    </div>
+    <HelperInfo>This optionally lets you only trigger when the new scene matches the name you specified, leave blank to match any scene</HelperInfo>
+</div>
+
+
+@code {
+    public override string Title => $"On Scene Changed {(string.IsNullOrEmpty(Data.MatchingSceneName) ? "" : $"To {Data.MatchingSceneName}")}";
+}

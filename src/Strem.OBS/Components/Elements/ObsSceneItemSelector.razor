@@ -1,0 +1,50 @@
+﻿@using Obs.v5.WebSocket.Reactive
+@using Strem.OBS.Extensions
+@using Strem.OBS.Types
+@inherits Strem.Core.Components.Elements.Inputs.ValidatedInputBase<string>
+
+@inject IObservableOBSWebSocket ObsClient
+
+
+<div class="field has-addons">
+    <div class="control is-expanded">
+        <AutoComplete Value="@Value" ValueChanged="OnValueChanged" ValueExpression="ValueExpression" Data="SceneItems"/>
+    </div>
+    <div class="control">
+        <button class="button is-link" @onclick="RefreshSceneItems">
+            <span class="icon is-small">
+                <i class="fas fa-arrows-rotate"></i>
+            </span>
+            <span>Refresh</span>
+        </button>
+    </div>
+    <div class="control">
+        <button class="button is-danger" @onclick="_ => OnValueChanged(string.Empty)">
+            <span class="icon is-small">
+                <i class="fas fa-square-xmark"></i>
+            </span>
+        </button>
+    </div>
+</div>
+
+@code {
+    public IReadOnlyCollection<string> SceneItems { get; set; } = Array.Empty<string>();
+    
+    [Parameter]
+    public string SceneName { get; set; }
+    
+    [Parameter]
+    public string AllowedSourceKind { get; set; } = SourceKindType.Any;
+    
+    public void RefreshSceneItems()
+    {
+        if(string.IsNullOrEmpty(SceneName) || !ObsClient.IsConnected) { return; }
+        SceneItems = ObsClient.GetAllSceneItems(SceneName, AllowedSourceKind);
+    }
+
+    protected override void OnParametersSet()
+    {
+        RefreshSceneItems();
+        base.OnParametersSet();
+    }
+}
