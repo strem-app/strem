@@ -30,9 +30,6 @@ public class ChangeSceneTask : FlowTask<ChangeSceneTaskData>
 
     public override async Task<ExecutionResult> Execute(ChangeSceneTaskData data, IVariables flowVars)
     {
-        if(string.IsNullOrEmpty(data.NewScene))
-        { return ExecutionResult.Failed("NewScene is empty and is required"); }
-        
         ObsClient.SetCurrentProgramScene(data.NewScene);
         return ExecutionResult.Success();
     }

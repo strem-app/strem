@@ -40,11 +40,12 @@
     {
         Value = entry;
         OnValueChanged(entry);
+        InvokeAsync(StateHasChanged);
     }
 
     private async Task HideDropDown()
     {
-        await Task.Delay(100);
+        await Task.Delay(150);
         ShowDropdown = false;
     }
 }

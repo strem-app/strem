@@ -30,14 +30,7 @@ public class SetTextSourceTask : FlowTask<SetTextSourceTaskData>
 
     public override async Task<ExecutionResult> Execute(SetTextSourceTaskData data, IVariables flowVars)
     {
-        if(string.IsNullOrEmpty(data.SourceName))
-        { return ExecutionResult.Failed("SourceName is empty and is required"); }
-        
-        if(string.IsNullOrEmpty(data.Text))
-        { return ExecutionResult.Failed("Text is empty and is required"); }
-
-        var newData = new JObject();
-        newData["text"] = FlowStringProcessor.Process(data.Text, flowVars);
+        var newData = new JObject { ["text"] = FlowStringProcessor.Process(data.Text, flowVars) };
         ObsClient.SetInputSettings(data.SourceName, newData);
         return ExecutionResult.Success();
     }

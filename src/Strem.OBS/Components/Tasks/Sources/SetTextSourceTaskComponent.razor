@@ -1,12 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Strem.OBS.Types
 
-@inherits ObsInputComponent<Strem.OBS.Flows.Tasks.SetTextSourceTaskData>
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.SetTextSourceTaskData>
 
 <div class="field">
     <label class="label">Scene Name</label>
     <div class="control">
-        <AutoComplete @bind-Value="@Data.SourceName" Data="InputNames" />
+        <ObsInputSelector @bind-Value="@Data.SourceName" AllowedSourceKind="@SourceKindType.TextSource" />
     </div>
 </div>
 
@@ -19,10 +19,4 @@
 
 @code {
     public override string Title => $"Set Text Source For {Data.SourceName}";
-    
-    protected override async Task OnInitializedAsync()
-    {
-        AllowedSourceKind = SourceKindType.TextSource;
-        await base.OnInitializedAsync();
-    }
 }

@@ -1,11 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Components
 
-@inherits ObsSceneComponent<Strem.OBS.Flows.Tasks.ChangeSceneTaskData>
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.ChangeSceneTaskData>
 
 <div class="field">
     <label class="label">Scene Name</label>
     <div class="control">
-        <AutoComplete @bind-Value="@Data.NewScene" Data="SceneNames" />
+        <ObsSceneSelector @bind-Value="@Data.NewScene" />
     </div>
 </div>
 

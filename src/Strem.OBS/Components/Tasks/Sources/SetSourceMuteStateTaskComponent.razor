@@ -1,12 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Strem.OBS.Types
 
-@inherits ObsInputComponent<Strem.OBS.Flows.Tasks.SetSourceMuteStateTaskData>
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.SetSourceMuteStateTaskData>
 
 <div class="field">
     <label class="label">Source Name</label>
     <div class="control">
-        <AutoComplete @bind-Value="@Data.SourceName" Data="InputNames" />
+        <ObsInputSelector @bind-Value="@Data.SourceName" AllowedSourceKind="@SourceKindType.BrowserSource" />
     </div>
 </div>
 <div class="field">

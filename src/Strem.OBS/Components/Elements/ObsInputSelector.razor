@@ -1,0 +1,58 @@
+﻿@using Obs.v5.WebSocket.Reactive
+@using OBSWebsocketDotNet.Types
+@using Strem.OBS.Extensions
+@using Strem.OBS.Types
+@inherits Strem.Core.Components.Elements.Inputs.ValidatedInputBase<string>
+
+@inject IObservableOBSWebSocket ObsClient
+
+<div class="field has-addons">
+    <div class="control is-expanded">
+        <AutoComplete Value="@Value" ValueChanged="OnValueChanged" ValueExpression="ValueExpression" Data="InputNames"/>
+    </div>
+    <div class="control">
+        <button class="button is-link" @onclick="RefreshInputs">
+            <span class="icon is-small">
+                <i class="fas fa-arrows-rotate"></i>
+            </span>
+            <span>Refresh</span>
+        </button>
+    </div>
+    <div class="control">
+        <button class="button is-danger" @onclick="_ => OnValueChanged(string.Empty)">
+            <span class="icon is-small">
+                <i class="fas fa-square-xmark"></i>
+            </span>
+        </button>
+    </div>
+</div>
+
+@code {
+    public IReadOnlyCollection<string> InputNames { get; set; } = Array.Empty<string>();
+    
+    [Parameter]
+    public string AllowedSourceKind { get; set; } = SourceKindType.Any;
+
+    private bool MatchesSourceKind(InputBasicInfo info)
+    {
+        if (AllowedSourceKind == SourceKindType.Any)
+        { return true; }
+
+        if (AllowedSourceKind == SourceKindType.CaptureSource && !info.IsCaptureSource())
+        { return false; }
+
+        return info.InputKind == AllowedSourceKind;
+    }
+    
+    public void RefreshInputs()
+    {
+        if (!ObsClient.IsConnected){ return; }
+        InputNames = ObsClient.GetInputList()?.Where(MatchesSourceKind).Select(x => x.InputName).ToArray() ?? Array.Empty<string>();
+    }
+
+    protected override void OnParametersSet()
+    {
+        RefreshInputs();
+        base.OnParametersSet();
+    }
+}

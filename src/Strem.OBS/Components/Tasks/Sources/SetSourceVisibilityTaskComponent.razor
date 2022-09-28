@@ -1,18 +1,18 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Strem.OBS.Types
 
-@inherits ObsSceneItemComponent<Strem.OBS.Flows.Tasks.SetSourceVisibilityTaskData>
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.SetSourceVisibilityTaskData>
 
 <div class="field">
     <label class="label">Scene Name</label>
     <div class="control is-expanded">
-        <AutoComplete @bind-Value="@Data.SceneName" Data="SceneNames" ValueChangedWithPrevious="x => RefreshSceneItems(x.New)"></AutoComplete>
+        <ObsSceneSelector @bind-Value="@Data.SceneName" />
     </div>
 </div>
 <div class="field">
     <label class="label">Source Name</label>
     <div class="control  is-expanded">
-        <AutoComplete @bind-Value="@Data.SceneItemName" Data="SceneItems"></AutoComplete>
+        <ObsSceneItemSelector @bind-Value="@Data.SceneItemName" SceneName="@Data.SceneName" />
     </div>
 </div>
 <div class="field">
@@ -32,13 +32,5 @@
             $"Toggle Visibility For {Data.SceneItemName}" : 
             $"Set {Data.SceneItemName} To {Enum.GetName(Data.Status)}";
         return $"<strong>{starter}</strong> In OBS";
-    }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        if (ObsClient.IsConnected)
-        { RefreshSceneItems(Data.SceneName); }
-
-        await base.OnInitializedAsync();
     }
 }

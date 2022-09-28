@@ -1,12 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Strem.OBS.Types
 
-@inherits ObsInputComponent<Strem.OBS.Flows.Tasks.SetBrowserSourceUrlTaskData>
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.SetBrowserSourceUrlTaskData>
 
 <div class="field">
     <label class="label">Browser Source Name</label>
     <div class="control  is-expanded">
-        <AutoComplete @bind-Value="@Data.BrowserSourceName" Data="InputNames" />
+        <ObsInputSelector @bind-Value="@Data.BrowserSourceName" AllowedSourceKind="@SourceKindType.BrowserSource" />
     </div>
 </div>
 
@@ -19,10 +19,4 @@
 
 @code {
     public override string Title => $"Set Browser Url For {Data.BrowserSourceName}";
-    
-    protected override async Task OnInitializedAsync()
-    {
-        AllowedSourceKind = SourceKindType.BrowserSource;
-        await base.OnInitializedAsync();
-    }
 }
