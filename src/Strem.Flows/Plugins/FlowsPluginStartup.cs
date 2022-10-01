@@ -58,7 +58,7 @@ public class FlowsPluginStartup : IPluginStartup, IDisposable
             })
             .AddTo(_subs);
 
-        EventBus.Receive<ApplicationStartedEvent>()
+        EventBus.Receive<ApplicationPluginsLoadedEvent>()
             .Subscribe(x => StartEventExecutor())
             .AddTo(_subs);
 

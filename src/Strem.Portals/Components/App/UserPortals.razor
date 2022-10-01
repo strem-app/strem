@@ -2,6 +2,7 @@
 @using Strem.Core.Events.Bus
 @using System.Reactive.Disposables
 @using Strem.Core.Services.Browsers.File
+@using Strem.Core.Services.UI.Modal
 @using Strem.Core.Services.UI.Notifications
 @using Strem.Flows.Services.Data
 @using Strem.Portals.Data
@@ -21,7 +22,7 @@
   
   <div class="field">
     <div class="control">
-      <button class="button is-success is-leveled" @onclick="() => ShowCreateModal = true">
+      <button class="button is-success is-leveled" @onclick="() => ModalService.ShowModal(CreatePortalModal.Reference)">
         <span class="icon is-small">
           <i class="fas fa-globe"></i>
         </span>
@@ -45,7 +46,7 @@
       
       <div class="field">
         <div class="control">
-          <button class="button is-primary is-leveled" @onclick="() => ShowExportModal = true">
+          <button class="button is-primary is-leveled" @onclick="() => ModalService.ShowModal(ExportPortalsModal.Reference)">
             <span class="icon is-small">
               <i class="fas fa-file-export"></i>
             </span>
@@ -58,7 +59,7 @@
       {
         <div class="field">
           <div class="control">
-              <button class="button is-danger is-leveled" @onclick="() => ShowDeletionModal = true">
+              <button class="button is-danger is-leveled" @onclick="() => ModalService.ShowModal(ConfirmDeleteModal.Reference)">
                 <span class="icon is-">
                   <i class="fas fa-globe"></i>
                 </span>
@@ -85,30 +86,31 @@
   </aside>
 </div>
 
-<Modal IsVisible="ShowCreateModal">
-  <PortalCreator OnPortalCreated="OnPortalCreated" OnCancelled="OnModalCancelled"></PortalCreator>
-</Modal>
+<ModalContent Id="create-portal-modal"  @ref="CreatePortalModal">
+  <PortalCreator OnPortalCreated="OnPortalCreated" OnCancelled="ModalService.CloseModal"></PortalCreator>
+</ModalContent>
 
-<Modal IsVisible="ShowExportModal">
-  <PortalExportModal OnRequestExports="OnRequestedFlowsExport" OnCancelled="OnModalCancelled"></PortalExportModal>
-</Modal>
+<ModalContent Id="export-portal-modal" @ref="ExportPortalsModal">
+  <PortalExportModal OnRequestExports="OnRequestedPortalExport" OnCancelled="ModalService.CloseModal"></PortalExportModal>
+</ModalContent>
 
-
-<Modal IsVisible="ShowDeletionModal">
-  @if (SelectedPortal != null)
-  {
-    <ConfirmDeletion DeletingName="@SelectedPortal.Name" OnDeletion="OnDeleteCurrentPortal" OnCancelled="OnModalCancelled"></ConfirmDeletion>
-  }
-</Modal>
-
+<ModalContent Id="confirm-portal-deletion-modal" @ref="ConfirmDeleteModal">
+    @if (SelectedPortal != null)
+    {
+      <ConfirmDeletion DeletingName="@SelectedPortal.Name" OnDeletion="OnDeleteCurrentPortal" OnCancelled="ModalService.CloseModal"></ConfirmDeletion>
+    }
+</ModalContent>
 
 @code {
+  [CascadingParameter]
+  public IModalInteractionService ModalService { get; set; }
+  
   [Parameter] 
   public EventCallback<PortalData> OnPortalSelected { get; set; }
 
-  public bool ShowCreateModal { get; set; }
-  public bool ShowDeletionModal { get; set; }
-  public bool ShowExportModal { get; set; }
+  public ModalElementReference ConfirmDeleteModal { get; set; }
+  public ModalElementReference CreatePortalModal { get; set; }
+  public ModalElementReference ExportPortalsModal { get; set; }
   
   public PortalData? SelectedPortal { get; set; }
 
@@ -118,16 +120,9 @@
   {
     PortalStore.Add(newPortal);
     SelectPortal(newPortal);
-    ShowCreateModal = false;
+    ModalService.CloseModal();
   }
   
-  public void OnModalCancelled()
-  {
-    ShowCreateModal = false;
-    ShowDeletionModal = false;
-    ShowExportModal = false;
-  }
-
   public void SelectPortal(PortalData? selectedPortal)
   {
     SelectedPortal = selectedPortal;
@@ -139,14 +134,14 @@
     if (!PortalStore.Remove(SelectedPortal?.Id ?? Guid.Empty)){ return; }
     Notifier.ShowNotification($"Portal '{SelectedPortal.Name}' Has Been Deleted", "is-danger");
     SelectPortal(null);
-    OnModalCancelled();
+    ModalService.CloseModal();
     InvokeAsync(StateHasChanged);
   }
   
   public void Dispose()
   { _subs?.Dispose(); }
 
-  private async Task OnRequestedFlowsExport(IEnumerable<Guid> flowIds)
+  private async Task OnRequestedPortalExport(IEnumerable<Guid> flowIds)
   {
     var filePath = FileBrowser.BrowseToSaveJsonFile();
     if(string.IsNullOrEmpty(filePath)) { return; }
@@ -160,8 +155,7 @@
     
     await File.WriteAllTextAsync(filePath, flowData);
     await Notifier.ShowNotification("Exported Portals Successfully");
-    
-    OnModalCancelled();
+    ModalService.CloseModal();
   }
 
   private async Task ImportPortals()

@@ -3,7 +3,6 @@ using Strem.Flows.Executors;
 using Strem.Flows.Processors;
 using Strem.Flows.Data.Tasks;
 using Strem.Core.State;
-using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Portals.Data.Overrides;
 using Strem.Portals.Events;
@@ -33,15 +32,20 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
     {
         if (!ButtonRuntimeStyles.RuntimeStyles.ContainsKey(data.PortalId)) { return ExecutionResult.FailedButContinue("Cant find portal"); }
         if (!ButtonRuntimeStyles.RuntimeStyles[data.PortalId].ContainsKey(data.ButtonId)) { return ExecutionResult.FailedButContinue("Cant find button"); }
-
+        
         var runtimeStyles = ButtonRuntimeStyles.GetButtonStyles(data.PortalId, data.ButtonId);
-        if(data.ChangeText) { runtimeStyles.Text = data.NewStyles.Text; }
         if(data.ChangeButtonType) { runtimeStyles.ButtonType = data.NewStyles.ButtonType; }
         if(data.ChangeTextColor) { runtimeStyles.TextColor = data.NewStyles.TextColor; }
         if(data.ChangeBackgroundColor) { runtimeStyles.BackgroundColor = data.NewStyles.BackgroundColor; }
         if(data.ChangeIcon) { runtimeStyles.IconClass = data.NewStyles.IconClass; }
         if(data.ChangeImage) { runtimeStyles.ImageUrl = data.NewStyles.ImageUrl; }
 
+        if (data.ChangeText)
+        {
+            var processedText = FlowStringProcessor.Process(data.NewStyles.Text, flowVars);
+            runtimeStyles.Text = processedText;
+        }
+        
         EventBus.PublishAsync(new PortalButtonChangedEvent(data.PortalId, data.ButtonId));
         return ExecutionResult.Success();
     }

@@ -21,7 +21,20 @@
             }
             <div class="field is-grouped is-grouped-right">
                 <div class="control">
-                    <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">Delete Trigger</button>
+                    <button type="button" class="button is-info" @onclick="() => OnRequestingDuplication.InvokeAsync(Data)">
+                        <span class="icon is-small">
+                          <i class="fas fa-copy"></i>
+                        </span>
+                        <span>Duplicate Trigger</span>
+                    </button>
+                </div>
+                <div class="control">
+                    <button class="button is-danger" @onclick="() => OnRequestedDeletion.InvokeAsync(Data)">
+                        <span class="icon is-small">
+                            <i class="fas fa-square-xmark"></i>
+                        </span>
+                        <span>Delete Trigger</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -39,6 +52,9 @@
     
     [Parameter] 
     public EventCallback<IFlowTriggerData> OnRequestedDeletion { get; set; }
+    
+    [Parameter] 
+    public EventCallback<IFlowTriggerData> OnRequestingDuplication { get; set; }
     
     [Parameter]
     public string Title { get; set; }

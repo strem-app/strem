@@ -1,0 +1,10 @@
+﻿@inject IDragAndDropService DragAndDropService
+
+<CascadingValue Value="DragAndDropService">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

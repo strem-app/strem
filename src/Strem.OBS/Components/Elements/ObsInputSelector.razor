@@ -47,7 +47,9 @@
     public void RefreshInputs()
     {
         if (!ObsClient.IsConnected){ return; }
-        InputNames = ObsClient.GetInputList()?.Where(MatchesSourceKind).Select(x => x.InputName).ToArray() ?? Array.Empty<string>();
+        InputNames = ObsClient.GetInputList()?
+            .Where(MatchesSourceKind)
+            .Select(x => x.InputName).ToArray() ?? Array.Empty<string>();
     }
 
     protected override void OnParametersSet()

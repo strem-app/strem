@@ -24,11 +24,12 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public IObservableTwitchClient TwitchClient { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
+    public IApplicationConfig ApplicationConfig { get; }
     public ILogger<TwitchPluginStartup> Logger { get; }
 
     public string[] RequiredConfigurationKeys { get; } = new[] { TwitchPluginSettings.TwitchClientIdKey };
 
-    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger)
+    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger, IApplicationConfig applicationConfig)
     {
         TwitchOAuthClient = twitchOAuthClient;
         TwitchApi = twitchApi;
@@ -36,21 +37,22 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         EventBus = eventBus;
         AppState = appState;
         Logger = logger;
+        ApplicationConfig = applicationConfig;
     }
     
     public Task SetupPlugin() => Task.CompletedTask;
     
     public async Task StartPlugin()
     {
-        Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.RevalidatePeriodInMins))
+        Observable.Timer(TimeSpan.FromMinutes(TwitchPluginSettings.RevalidatePeriodInMins))
             .Subscribe(x => VerifyToken())
             .AddTo(_subs);
         
-        Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.ChatReconnectInMins))
+        Observable.Timer(TimeSpan.FromMinutes(TwitchPluginSettings.ChatReconnectInMins))
             .Subscribe(x => AttemptToConnectToChat())
             .AddTo(_subs);
         
-        Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(TwitchPluginSettings.RefreshChannelPeriodInMins))
+        Observable.Timer(TimeSpan.FromMinutes(TwitchPluginSettings.RefreshChannelPeriodInMins))
             .Subscribe(x => RefreshChannelDetails())
             .AddTo(_subs);
 
@@ -65,6 +67,8 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         EventBus.Receive<TwitchOAuthRevokedEvent>()
             .Subscribe(x => DisconnectEverything())
             .AddTo(_subs);
+
+        VerifyAndSetupConnections();
     }
 
     public void AttemptToConnectToChat()
@@ -84,7 +88,6 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     {
         await VerifyToken();
         AttemptToConnectToChat();
-        await RefreshChannelDetails();
     }
 
     public async Task DisconnectEverything()
@@ -106,28 +109,40 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         Logger.Information("Refreshing Twitch Channel & Stream Information");
         
         if (!AppState.HasTwitchOAuth()) { return; }
+        TwitchApi.Settings.SetCredentials(ApplicationConfig, AppState);
         
-        TwitchApi.Settings.SetCredentials(AppState);
         var userId = AppState.AppVariables.Get(TwitchVars.UserId);
         var accessToken = AppState.GetTwitchOAuthToken();
-        
-        var channelInformation = await TwitchApi.Helix.Channels.GetChannelInformationAsync(userId, accessToken);
-        if (channelInformation != null && channelInformation.Data.Length > 0)
-        {
-            var channelData = channelInformation.Data[0];
-            AppState.TransientVariables.Set(TwitchVars.Username, channelData.BroadcasterName);
-            AppState.TransientVariables.Set(TwitchVars.UserId, channelData.BroadcasterId);
-            AppState.TransientVariables.Set(TwitchVars.ChannelTitle, channelData.Title);
-            AppState.TransientVariables.Set(TwitchVars.ChannelGame, channelData.GameName);
-        }
 
-        var streamInformation = await TwitchApi.Helix.Streams.GetStreamsAsync(userIds: new List<string> { userId });
-        if (streamInformation != null && streamInformation.Streams.Length > 0)
+        try
         {
-            var streamData = streamInformation.Streams[0];
-            AppState.TransientVariables.Set(TwitchVars.StreamViewers, streamData.ViewerCount.ToString());
-            AppState.TransientVariables.Set(TwitchVars.StreamThumbnailUrl, streamData.ThumbnailUrl);
+            var channelInformation = await TwitchApi.Helix.Channels.GetChannelInformationAsync(userId, accessToken);
+            if (channelInformation != null && channelInformation.Data.Length > 0)
+            {
+                var channelData = channelInformation.Data[0];
+                AppState.TransientVariables.Set(TwitchVars.Username, channelData.BroadcasterName);
+                AppState.TransientVariables.Set(TwitchVars.UserId, channelData.BroadcasterId);
+                AppState.TransientVariables.Set(TwitchVars.ChannelTitle, channelData.Title);
+                AppState.TransientVariables.Set(TwitchVars.ChannelGame, channelData.GameName);
+            }
         }
+        catch (Exception e)
+        { Logger.Warning($"Couldnt get channel information: {e.Message}"); }
+        
+        try
+        {
+            var streamInformation = await TwitchApi.Helix.Streams.GetStreamsAsync(userIds: new List<string> { userId });
+            if (streamInformation != null && streamInformation.Streams.Length > 0)
+            {
+                var streamData = streamInformation.Streams[0];
+                AppState.TransientVariables.Set(TwitchVars.StreamViewers, streamData?.ViewerCount.ToString() ?? "0");
+                AppState.TransientVariables.Set(TwitchVars.StreamThumbnailUrl, streamData?.ThumbnailUrl ?? "");
+            }
+            else
+            { AppState.TransientVariables.Set(TwitchVars.StreamViewers, "0"); }
+        }
+        catch (Exception e)
+        { Logger.Warning($"Couldnt get stream information: {e.Message}"); }
     }
 
     public void Dispose()

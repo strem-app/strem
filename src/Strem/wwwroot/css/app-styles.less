@@ -92,7 +92,13 @@ body
         border-color: transparent;
     }
 
-    &>a.obs-integration-v4, &>a.obs-integration-v5 {
+    &>a.twitter-integration {
+        background-color: #00acee;
+        color: #fff;
+        border-color: transparent;
+    }
+
+    &>a.obs-integration-v4, &>a.obs-integration {
         background-color: @is-dark-grey;
         color: #fff;
         border-color: transparent;
@@ -340,4 +346,39 @@ li.drag-source
 .monaco-editor-container
 {
     height: 20em;
+}
+
+.is-sticky-column
+{
+    position: sticky;
+    display: inline-block;
+    max-height: 90vh;
+    overflow-y: auto;
+    top: 0;
+    bottom: 0;
+    vertical-align: top;
+    mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+}
+
+.has-left-scrollbar
+{
+    direction: rtl;
+    
+    &>div
+    { direction: ltr; }
+}
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.5);
 }

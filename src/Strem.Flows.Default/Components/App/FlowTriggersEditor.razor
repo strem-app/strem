@@ -3,16 +3,19 @@
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
 @using Strem.Core.Components.Elements.Drag
+@using Strem.Core.Services.UI.Notifications
 @using Strem.Core.Services.Utils
 @using Strem.Core.Types
 @using Strem.Flows.Data
 @using Strem.Flows.Data.Triggers
+@using Strem.Flows.Services.Data.Cloners
 @using Strem.Flows.Services.Registries.Triggers
 
 @inject ITriggerRegistry TriggerRegistry;
 @inject IEventBus EventBus;
-@inject DragController DragController
 @inject IRandomizer Randomizer
+@inject IFlowTriggerCloner TriggerCloner
+@inject INotifier Notifier
 
 @implements IDisposable
 
@@ -30,12 +33,15 @@
     <DraggableListElement Data="data" DropType="@DropTypes.FlowTrigger" ContainingList="Flow.TriggerData" 
                           SupportedDropTypes="@(new[] { DropTypes.FlowTrigger, DropTypes.NewTrigger })" @key="data.Id">
         <TriggerComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTriggerId == data.Id)" @key="data.Id"
-                          OnRequestedDeletion="RemoveTriggerData" Trigger="GetTriggerFor(data)"
+                          OnRequestedDeletion="RemoveTriggerData" OnRequestingDuplication="DuplicateTriggerData" Trigger="GetTriggerFor(data)"
                           DataChanged="() => TriggerDataChanged(data.Id)" />
     </DraggableListElement>
 }
 
 @code {
+    [CascadingParameter]
+    public IDragAndDropService DragAndDropService { get; set; }
+    
     [Parameter]
     public Flow Flow { get; set; }
     
@@ -63,21 +69,21 @@
     {
         ScopeContext = Randomizer.RandomString(30);
         
-        DragController.OnDroppedItem
+        DragAndDropService.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.FlowTrigger && 
                         x.DestinationDropType == DropTypes.FlowTrigger && 
                         Equals(x.DestinationList, Flow.TriggerData))
             .Subscribe(MoveTriggerElement)
             .AddTo(_subs);
         
-        DragController.OnDroppedItem
+        DragAndDropService.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.NewTrigger && 
                         x.DestinationDropType == DropTypes.FlowTrigger &&
                         Equals(x.DestinationList, Flow.TriggerData))
             .Subscribe(AddNewTriggerIntoExisting)
             .AddTo(_subs);
         
-        DragController.OnDroppedItem
+        DragAndDropService.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.NewTrigger && 
                         x.DestinationDropType == DropTypes.None &&
                         ScopeContext.Equals(x.DestinationObject))
@@ -131,6 +137,14 @@
     {
         Flow.TriggerData.Remove(data);
         TriggerDeleted.InvokeAsync(data.Id);
+    }
+    
+    public void DuplicateTriggerData(IFlowTriggerData data)
+    {
+        var clonedTrigger = TriggerCloner.Clone(data);
+        Flow.TriggerData.Add(clonedTrigger);
+        TriggerAdded.InvokeAsync(clonedTrigger.Id);
+        Notifier.ShowNotification($"Cloned Trigger");
     }
 
     public void TriggerDataChanged(Guid triggerId)

@@ -45,6 +45,25 @@ function animateElement(element, animation, prefix = 'animate__') {
     });
 }
 
+function setNoSleepButton(element) {
+    const noSleep = new NoSleep();
+    let isStoppingSleep = false;
+    element.addEventListener('click', function enableNoSleep() {
+        if(isStoppingSleep) 
+        { 
+            noSleep.disable();
+            element.innerText = "Anti-Sleep Mode Disabled";
+        }
+        else 
+        {
+            noSleep.enable();
+            element.innerText = "Anti-Sleep Mode Enabled";
+        }
+        
+        isStoppingSleep = !isStoppingSleep;
+    }, false);
+}
+
 bulmaToast.setDefaults({
     duration: 2000,
     position: 'bottom-right',

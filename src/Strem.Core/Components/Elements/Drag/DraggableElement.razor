@@ -3,21 +3,21 @@
 @using System.Reactive.Linq
 
 @typeparam TData
-
-@inject DragController DragController
-
 @implements IDisposable
 
 <div draggable="@(CanDrag.ToString())"
-    class="@(Classes) @(DragController.IsSourceObject(Data) ? "drag-source" : "") @(IsCurrentDropTarget ? OnTargetClasses : "")"
+    class="@(Classes) @(DragAndDropService.IsSourceObject(Data) ? "drag-source" : "") @(IsCurrentDropTarget ? OnTargetClasses : "")"
     ondragover="event.preventDefault()"
-    @ondragstart="@(() => DragController.OnDragStart(Data, ContainingList, DropType))"
-    @ondragenter="@(() => { DragController.OnDragEnterElement(Data, ContainingList, DropType); CheckForDragTarget(); })"
-    @ondragend="DragController.OnDragEnd">
+    @ondragstart="@(() => DragAndDropService.OnDragStart(Data, ContainingList, DropType))"
+    @ondragenter="@(() => { DragAndDropService.OnDragEnterElement(Data, ContainingList, DropType); CheckForDragTarget(); })"
+    @ondragend="DragAndDropService.OnDragEnd">
     @ChildContent
 </div>
 
 @code {
+    [CascadingParameter]
+    public IDragAndDropService DragAndDropService { get; set; }
+    
     [Parameter]
     public string DropType { get; set; }
 
@@ -47,7 +47,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        DragController.OnDestinationObjectChanged
+        DragAndDropService.OnDestinationObjectChanged
             .Where(x => IsCurrentDropTarget)
             .Subscribe(x =>
             {
@@ -59,8 +59,8 @@
 
     public bool IsDropTarget()
     {
-        return SupportedDropTypes.Contains(DragController.SourceDropType, StringComparer.OrdinalIgnoreCase) && 
-               DragController.IsDestinationObject(Data);
+        return SupportedDropTypes.Contains(DragAndDropService.SourceDropType, StringComparer.OrdinalIgnoreCase) && 
+               DragAndDropService.IsDestinationObject(Data);
     }
 
     public void CheckForDragTarget()

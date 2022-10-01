@@ -13,8 +13,10 @@
   <ErrorBoundary>
     <ChildContent>
     <div class="columns is-variable is-6">
-      <div class="column is-one-quarter">
-        <UserFlows OnFlowSelected="SelectFlow"></UserFlows>
+      <div class="column is-one-quarter is-sticky-column has-left-scrollbar">
+        <div>
+          <UserFlows OnFlowSelected="SelectFlow"></UserFlows>
+        </div>
       </div>
       <div class="column">
         @if (CurrentFlow == null)
@@ -26,7 +28,7 @@
           <FlowEditor Flow="CurrentFlow"></FlowEditor>
         }
       </div>
-      <div class="column is-one-quarter">
+      <div class="column is-one-quarter is-sticky-column">
         @if (CurrentFlow != null)
         {
           <FlowElementsMenu Flow="CurrentFlow" OnTaskSelected="AddTask" OnTriggerSelected="AddTrigger"></FlowElementsMenu>

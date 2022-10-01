@@ -9,6 +9,7 @@ using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Plugin;
+using Strem.Twitter.Plugin;
 
 namespace Strem.Application;
 
@@ -41,6 +42,7 @@ public class StremApplication
     public void RegisterConfiguration()
     {
         AppConfig.Add(TwitchPluginSettings.TwitchClientIdKey, ConfigData.TwitchClientId);
+        AppConfig.Add(TwitterPluginSettings.TwitterClientIdKey, ConfigData.TwitterClientId);
     }
 
     public void PreLoadPlugins()
@@ -72,6 +74,9 @@ public class StremApplication
         Logger.Information("Starting Registered Plugins");
         await PluginHandler.StartPlugins(services, Logger, AppConfig);
         Logger.Information("Started Registered Plugins");
+        
+        // This is a publish on purpose to hold execution
+        EventBus.Publish(new ApplicationPluginsLoadedEvent());
         
         //TODO: Solve this hack with webhost service collection separation
         WebHostHackExtensions.EventBus = EventBus;
