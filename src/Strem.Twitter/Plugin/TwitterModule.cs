@@ -2,6 +2,7 @@
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Flows.Extensions;
 using Strem.Infrastructure.Services.Api;
+using Strem.Twitter.Services.ApiClient;
 using Strem.Twitter.Services.OAuth;
 
 namespace Strem.Twitter.Plugin;
@@ -15,6 +16,9 @@ public class TwitterModule : IRequiresApiHostingModule
         
         // OAuth
         services.AddSingleton<ITwitterOAuthClient, TwitterOAuthClient>();
+        
+        // Api
+        services.AddSingleton<ITwitterApiClient, TwitterApiClient>();
         
         // Components
         var thisAssembly = GetType().Assembly;

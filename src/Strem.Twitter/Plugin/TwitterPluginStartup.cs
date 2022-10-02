@@ -6,11 +6,8 @@ using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Twitter.Events.OAuth;
 using Strem.Twitter.Extensions;
+using Strem.Twitter.Services.ApiClient;
 using Strem.Twitter.Services.OAuth;
-using Strem.Twitter.Variables;
-using Tweetinvi;
-using Tweetinvi.Client;
-using Tweetinvi.Models;
 
 namespace Strem.Twitter.Plugin;
 
@@ -37,42 +34,17 @@ public class TwitterPluginStartup : IPluginStartup, IDisposable
     
     public async Task StartPlugin()
     {
-        EventBus.Receive<TwitterOAuthSuccessEvent>()
-            .Subscribe(x => SetupConnections())
-            .AddTo(_subs);
-        
-        EventBus.Receive<TwitterOAuthRevokedEvent>()
-            .Subscribe(x => DisconnectEverything())
-            .AddTo(_subs);
-
         Observable.Interval(TimeSpan.FromMinutes(TwitterPluginSettings.RevalidatePeriodInMins))
             .Subscribe(_ => RefreshToken())
             .AddTo(_subs);
 
         RefreshToken();
     }
-
-    public async Task SetupConnections()
-    {
-        var twitterCredentials = new TwitterCredentials() { AccessToken = AppState.GetTwitterOAuthToken() };
-        var twitterApi = new TwitterClient(twitterCredentials);
-        var user = await twitterApi.Users.GetAuthenticatedUserAsync();
-        AppState.AppVariables.Set(TwitterVars.Username, user.Name);
-    }
-
-    public async Task DisconnectEverything()
-    {
-
-    }
-
+    
     public async Task RefreshToken()
     {
         if (!AppState.HasTwitterOAuth()) { return; }
-       
-        var hasRefreshed = await TwitterOAuthClient.RefreshToken();
-        if(!hasRefreshed) { return; }
-
-        await SetupConnections();
+        await TwitterOAuthClient.RefreshToken();
     }
 
     public void Dispose()
