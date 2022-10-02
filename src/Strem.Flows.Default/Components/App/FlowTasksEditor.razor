@@ -3,22 +3,25 @@
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
 @using Strem.Core.Components.Elements.Drag
+@using Strem.Core.Services.UI.Notifications
 @using Strem.Core.Services.Utils
 @using Strem.Core.Types
 @using Strem.Flows.Data
 @using Strem.Flows.Data.Tasks
+@using Strem.Flows.Services.Data.Cloners
 @using Strem.Flows.Services.Registries.Tasks
 
 @inject ITaskRegistry TaskRegistry
 @inject IEventBus EventBus
-@inject DragController DragController
 @inject IRandomizer Randomizer
+@inject IFlowTaskCloner TaskCloner
+@inject INotifier Notifier
 
 @implements IDisposable
 
 @if (TaskData.Count == 0)
 {
-    <DraggableElement Data="@ScopeContext" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTask }" 
+    <DraggableElement Data="@ScopeContext" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.NewTask, DropTypes.FlowTask }" 
                       CanDrag="false" Classes="notification has-text-centered">
         <p class="title is-5 has-text-black-ter">Drag tasks in here to give your flow something to do</p>
     </DraggableElement>
@@ -29,7 +32,8 @@
     <DraggableListElement Data="data" DropType="@DropTypes.FlowTask" ContainingList="TaskData" 
                           SupportedDropTypes="@(new []{ DropTypes.FlowTask, DropTypes.NewTask })" @key="data.Id">
         <TaskComponent Data="data" ComponentType="GetComponentFor(data)" IsRunning="@(ActiveTaskId == data.Id)" @key="data.Id"
-                       OnRequestedDeletion="RemoveTaskData" DataChanged="() => TaskDataChanged(data.Id)" Task="GetTaskFor(data)" />
+                       OnRequestedDeletion="RemoveTaskData"  OnRequestingDuplication="DuplicateTaskData"
+                       DataChanged="() => TaskDataChanged(data.Id)" Task="GetTaskFor(data)" />
     </DraggableListElement>
 
     if (data is IHasSubTaskData subTaskData && subTaskData.SubTaskKeys.Length > 0)
@@ -41,7 +45,8 @@
                 <ul class="sub-tasks @subKey">
                     <p class="menu-label">@subKey</p>
                     <FlowTasksEditor TaskData="@subTaskData.SubTasks[subKey]" TaskDeleted="x => TaskDeleted.InvokeAsync(x)"
-                                     TaskAdded="x => TaskAdded.InvokeAsync(x)" TasksMoved="() => TasksMoved.InvokeAsync()" />
+                                     TaskAdded="x => TaskAdded.InvokeAsync(x)" TasksMoved="() => TasksMoved.InvokeAsync()"
+                                     TaskChanged="x => TaskChanged.InvokeAsync(x)"/>
                 </ul>
             }
         }
@@ -49,6 +54,9 @@
 }
 
 @code {
+    [CascadingParameter]
+    public IDragAndDropService DragAndDropService { get; set; }
+    
     [Parameter]
     public List<IFlowTaskData> TaskData { get; set; }
     
@@ -77,25 +85,32 @@
         // We do this to differentiate nested recursive scopes
         ScopeContext = Randomizer.RandomString(30);
         
-        DragController.OnDroppedItem
+        DragAndDropService.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.FlowTask && 
                         x.DestinationDropType == DropTypes.FlowTask && 
                         Equals(x.DestinationList, TaskData))
             .Subscribe(MoveTaskElement)
             .AddTo(_subs);
         
-        DragController.OnDroppedItem
+        DragAndDropService.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.NewTask && 
                         x.DestinationDropType == DropTypes.FlowTask && 
                         Equals(x.DestinationList, TaskData))
             .Subscribe(AddNewTaskIntoExisting)
             .AddTo(_subs);
         
-        DragController.OnDroppedItem
+        DragAndDropService.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.NewTask && 
                         x.DestinationDropType == DropTypes.None &&
                         ScopeContext.Equals(x.DestinationObject))
             .Subscribe(AddNewTaskIntoFresh)
+            .AddTo(_subs);
+        
+        DragAndDropService.OnDroppedItem
+            .Where(x => x.SourceDropType == DropTypes.FlowTask && 
+                        x.DestinationDropType == DropTypes.None &&
+                        ScopeContext.Equals(x.DestinationObject))
+            .Subscribe(AddExistingTaskIntoFresh)
             .AddTo(_subs);
     }
 
@@ -103,6 +118,14 @@
     {
         TaskData.Remove(data);
         TaskDeleted.InvokeAsync(data.Id);
+    }
+
+    public void DuplicateTaskData(IFlowTaskData data)
+    {
+        var clonedTask = TaskCloner.Clone(data);
+        TaskData.Add(clonedTask);
+        TaskAdded.InvokeAsync(clonedTask.Id);
+        Notifier.ShowNotification($"Cloned Task");
     }
 
     public void MoveTaskElement(DropData args)
@@ -132,6 +155,16 @@
         { args.DestinationList.Insert(indexToAddAt, newTaskData); }
 
         TaskAdded.InvokeAsync(newTaskData.Id);
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void AddExistingTaskIntoFresh(DropData args)
+    {
+        var taskData = args.SourceObject as IFlowTaskData;
+        args.SourceList.Remove(args.SourceObject);
+        
+        TaskData.Add(taskData);
+        TasksMoved.InvokeAsync(taskData.Id);
         InvokeAsync(StateHasChanged);
     }
     

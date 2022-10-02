@@ -1,0 +1,12 @@
+﻿@typeparam T
+
+<ModalContainer>
+    <DragAndDropContainer>
+        <DynamicComponent Type="@typeof(T)" Parameters="ComponentParams"></DynamicComponent>
+    </DragAndDropContainer>
+</ModalContainer>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> ComponentParams { get; set; }
+}

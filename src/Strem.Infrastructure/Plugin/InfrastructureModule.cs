@@ -16,6 +16,7 @@ using Strem.Core.Services.Registries.Integrations;
 using Strem.Core.Services.Registries.Menus;
 using Strem.Core.Services.Threading;
 using Strem.Core.Services.UI.Animation;
+using Strem.Core.Services.UI.Modal;
 using Strem.Core.Services.UI.Notifications;
 using Strem.Core.Services.Utils;
 using Strem.Core.Services.Validation;
@@ -65,7 +66,8 @@ public class InfrastructureModule : IRequiresApiHostingModule
         // UI
         services.AddTransient<INotifier, Notifier>();
         services.AddTransient<IAnimator, Animator>();
-        services.AddSingleton<DragController>();
+        services.AddTransient<IModalService, ModalService>();
+        services.AddTransient<IDragAndDropService, DragAndDropService>();
         
         // Hosting
         services.AddSingleton<IInternalWebHost, InternalWebHost>();

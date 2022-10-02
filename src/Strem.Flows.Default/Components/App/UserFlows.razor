@@ -2,10 +2,13 @@
 @using Strem.Core.Events.Bus
 @using System.Reactive.Disposables
 @using Strem.Core.Services.Browsers.File
+@using Strem.Core.Services.UI.Modal
 @using Strem.Core.Services.UI.Notifications
+@using Strem.Core.Services.Utils
 @using Strem.Flows.Data
 @using Strem.Flows.Events
 @using Strem.Flows.Services.Data
+@using Strem.Flows.Services.Data.Cloners
 @using Strem.Flows.Services.Stores
 
 @inject IFlowStore FlowStore;
@@ -14,6 +17,7 @@
 @inject IFlowImporter FlowImporter;
 @inject IFlowExporter FlowExporter;
 @inject IFileBrowser FileBrowser;
+@inject IFlowCloner FlowCloner;
 
 @implements IDisposable
 
@@ -30,7 +34,7 @@
   
   <div class="field">
     <div class="control">
-      <button class="button is-primary is-leveled" @onclick="() => ShowCreateModal = true">
+      <button class="button is-primary is-leveled" @onclick="ShowCreateModal">
         <span class="icon is-small">
           <i class="fas fa-code-commit"></i>
         </span>
@@ -53,7 +57,7 @@
       
         <div class="field">
           <div class="control">
-            <button class="button is-primary is-leveled" @onclick="() => ShowExportModal = true">
+            <button class="button is-primary is-leveled" @onclick="ShowExportModal">
               <span class="icon is-small">
                 <i class="fas fa-file-export"></i>
               </span>
@@ -66,8 +70,19 @@
       {
         <div class="field">
           <div class="control">
-            <button class="button is-danger is-leveled" @onclick="() => ShowDeleteModal = true">
-              <span class="icon is-">
+            <button class="button is-info is-leveled" @onclick="DuplicateCurrentFlow">
+              <span class="icon is-small">
+                <i class="fas fa-code-commit"></i>
+              </span>
+              <span>Duplicate Current Flow</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="field">
+          <div class="control">
+            <button class="button is-danger is-leveled" @onclick="ShowDeleteModal">
+              <span class="icon is-small">
                 <i class="fas fa-code-commit"></i>
               </span>
               <span>Delete Current Flow</span>
@@ -96,28 +111,28 @@
   </aside>
 </div>
 
-<Modal IsVisible="ShowCreateModal">
-  <FlowCreatorModal OnFlowCreated="OnFlowCreated" OnCancelled="OnModalCancelled"></FlowCreatorModal>
-</Modal>
+<ModalContent Id="flow-creator-modal" @ref="CreateFlowModal">
+  <FlowCreatorModal OnFlowCreated="OnFlowCreated" OnCancelled="ModalService.CloseModal"></FlowCreatorModal>
+</ModalContent>
 
-<Modal IsVisible="ShowExportModal">
-  <FlowExportModal OnRequestExports="OnRequestedFlowsExport" OnCancelled="OnModalCancelled"></FlowExportModal>
-</Modal>
+<ModalContent Id="flow-export-modal" @ref="ExportFlowsModal">
+  <FlowExportModal OnRequestExports="OnRequestedFlowsExport" OnCancelled="ModalService.CloseModal"></FlowExportModal>
+</ModalContent>
 
-<Modal IsVisible="ShowDeleteModal">
-  @if (SelectedFlow != null)
-  {
-    <ConfirmDeletion DeletingName="@SelectedFlow.Name" OnDeletion="OnDeleteCurrentFlow" OnCancelled="OnModalCancelled"></ConfirmDeletion>
-  }
-</Modal>
+<ModalContent Id="confirm-flow-deletion-modal" @ref="ConfirmDeleteModal">
+  <ConfirmDeletion DeletingName="@SelectedFlow?.Name" OnDeletion="OnDeleteCurrentFlow" OnCancelled="ModalService.CloseModal"></ConfirmDeletion>
+</ModalContent>
 
 @code {
+  [CascadingParameter]
+  public IModalInteractionService ModalService { get; set; }
+  
   [Parameter] 
   public EventCallback<Flow> OnFlowSelected { get; set; }
 
-  public bool ShowCreateModal { get; set; }
-  public bool ShowDeleteModal { get; set; }
-  public bool ShowExportModal { get; set; }
+  public ModalElementReference CreateFlowModal { get; set; }
+  public ModalElementReference ExportFlowsModal { get; set; }
+  public ModalElementReference ConfirmDeleteModal { get; set; }
   
   public Flow? SelectedFlow { get; set; }
   public string SearchCriteria { get; set; }
@@ -149,33 +164,23 @@
   {
     FlowStore.Add(newFlow);
     SelectFlow(newFlow);
-    ShowCreateModal = false;
     EventBus.PublishAsync(new FlowAddedEvent(newFlow.Id));
+    ModalService.CloseModal();
   }
 
-  public void OnFlowHasBeenRemoved()
+  public async Task DuplicateCurrentFlow()
   {
-    SelectedFlow = null;
-    OnFlowSelected.InvokeAsync(null);
-    InvokeAsync(StateHasChanged);
-  }
-
-  public void OnModalCancelled()
-  {
-    ShowCreateModal = false;
-    ShowDeleteModal = false;
-    ShowExportModal = false;
+    if(SelectedFlow is null) { return; }
+    
+    var duplicatedFlow = FlowCloner.Clone(SelectedFlow);
+    FlowStore.Add(duplicatedFlow);
+    await Notifier.ShowNotification($"Duplicated {SelectedFlow.Name}");
   }
 
   public void SelectFlow(Flow selectedFlow)
   {
     SelectedFlow = selectedFlow;
     OnFlowSelected.InvokeAsync(selectedFlow);
-  }
-  
-  public void Dispose()
-  {
-    _subs?.Dispose();
   }
 
   private void OnDeleteCurrentFlow()
@@ -185,7 +190,7 @@
     Notifier.ShowNotification($"Flow '{SelectedFlow.Name}' Has Been Deleted", "is-danger");
     SelectFlow(null);
     InvokeAsync(StateHasChanged);
-    OnModalCancelled();
+    ModalService.CloseModal();
   }
 
   private async Task OnRequestedFlowsExport(IEnumerable<Guid> flowIds)
@@ -202,8 +207,7 @@
     
     await File.WriteAllTextAsync(filePath, flowData);
     await Notifier.ShowNotification("Exported Flows Successfully");
-    
-    OnModalCancelled();
+    ModalService.CloseModal();
   }
 
   private async Task ImportFlows()
@@ -223,4 +227,15 @@
     await Notifier.ShowNotification($"Imported {flowsImported} Flows Successfully");
   }
 
+  private void ShowDeleteModal()
+  { ModalService.ShowModal(ConfirmDeleteModal.Reference); }
+
+  private void ShowExportModal()
+  { ModalService.ShowModal(ExportFlowsModal.Reference); }
+
+  private void ShowCreateModal()
+  { ModalService.ShowModal(CreateFlowModal.Reference); }
+  
+  public void Dispose()
+  {_subs?.Dispose();}
 }

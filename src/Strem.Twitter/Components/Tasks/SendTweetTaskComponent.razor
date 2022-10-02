@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits CustomTaskComponent<Strem.Twitter.Flow.Tasks.SendTweetTaskData>
+
+<div class="field">
+    <label class="label">Tweet Content</label>
+    <div class="control">
+        <TextAreaInput @bind-Value="Data.TweetContent" Placeholder="Some data to tweet"></TextAreaInput>
+    </div>
+    <HelperInfo>
+        Remember you will be limited by the total length of characters, keep that in mind when using dynamic vars
+    </HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"Send Tweet";
+}

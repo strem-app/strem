@@ -1,8 +1,9 @@
-﻿@using Strem.Portals.Components.Client
+﻿@using Strem.Infrastructure.Components
+@using Strem.Portals.Components.Client
 @{
     ViewData["Title"] = "Portal Viewer";
     Layout = "_Layout";
  }
-<div >
-    @(await Html.RenderComponentAsync<PortalViewer>(RenderMode.Server, new { PortalId = Model.PortalId }))
+<div>
+    @(await Html.RenderComponentAsync<ClientComponent<PortalViewer>>(RenderMode.Server, new { PortalId = Model.PortalId }))
 </div> 

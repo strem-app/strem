@@ -1,0 +1,6 @@
+﻿@using Strem.Core.Extensions
+@inherits ValidatedInputBase<string>
+
+<textarea class="textarea @UnmatchedAttributes.ValueFor("class") @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")"
+       @oninput="e => OnValueChanged(e.Value.ToString())"
+       @attributes=@UnmatchedAttributes.AllBut("class")>@Value</textarea>

@@ -1,0 +1,54 @@
+﻿@using Strem.Core.Types
+<div class="box">
+    <div class="columns">
+        <div class="column">
+            <div class="field">
+                <label class="label">Tweet Permissions</label>
+                <div class="control">
+                    <EnumSelectInput Value="@TweetAccess" ValueChanged="(ScopeAccess v) => { TweetAccess = v; RequestScopeChange(); }"/>
+                </div>
+                <HelperInfo>Tweet permissions cover being able to read/manage tweets</HelperInfo>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public ScopeAccess TweetAccess { get; set; }
+    
+    [Parameter]
+    public string[] ExistingScopes { get; set; } = Array.Empty<string>();
+    
+    [Parameter]
+    public EventCallback<string[]> OnScopesChanged { get; set; }
+
+    public bool HasScopesFor(string[] requiredScopes)
+    {
+        return requiredScopes.All(x => ExistingScopes.Contains(x));
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (HasScopesFor(ScopeCollections.ManageTweetScopes)){ TweetAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ScopeCollections.ReadTweetScopes)) { TweetAccess = ScopeAccess.ReadOnly; }
+        else { TweetAccess = ScopeAccess.None; }
+    }
+
+    public void RequestScopeChange()
+    {
+        var newScopes = new List<string>();
+        switch (TweetAccess)
+        {
+            case ScopeAccess.Full:
+                newScopes.AddRange(ScopeCollections.ReadTweetScopes);
+                newScopes.AddRange(ScopeCollections.ManageTweetScopes);
+                break;
+            case ScopeAccess.ReadOnly:
+                newScopes.AddRange(ScopeCollections.ReadTweetScopes);
+                break;
+        }
+
+        OnScopesChanged.InvokeAsync(newScopes.ToArray());
+    }
+}

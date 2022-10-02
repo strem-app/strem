@@ -1,11 +1,9 @@
-﻿using Strem.Core.Extensions;
-using Strem.Core.State;
-using Strem.Core.Variables;
+﻿using Strem.Core.State;
 using Strem.Twitch.Variables;
 
 namespace Strem.Twitch.Extensions;
 
-public static class IAppSettingsExtensions
+public static class IAppStateExtensions
 {
     public static bool HasTwitchOAuth(this IAppState state) => state.AppVariables.Has(TwitchVars.OAuthToken);
     public static string GetTwitchOAuthToken(this IAppState state) => state.AppVariables.Get(TwitchVars.OAuthToken);

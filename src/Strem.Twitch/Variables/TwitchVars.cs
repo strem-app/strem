@@ -8,7 +8,7 @@ public class TwitchVars
     public static readonly string TwitchContext = "twitch";
     
     // OAuth (app)
-    public static readonly VariableEntry OAuthToken = new(CommonVariables.OAuthToken, TwitchContext);
+    public static readonly VariableEntry OAuthToken = new(CommonVariables.OAuthAccessToken, TwitchContext);
     public static readonly VariableEntry TokenExpiry = new("token-expiry", TwitchContext);
     public static readonly VariableEntry OAuthScopes = new("oauth-scopes", TwitchContext);
     

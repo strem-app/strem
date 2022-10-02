@@ -8,6 +8,7 @@
 @using System.Reactive.Disposables
 @using System.Reactive.Linq
 @using Microsoft.JSInterop
+@using Strem.Core.Services.UI.Modal
 @using Strem.Core.Services.UI.Notifications
 @using Strem.Portals.Events.Base
 @using Strem.Portals.Services.Stores
@@ -20,12 +21,19 @@
 
 @inject IJSRuntime Js
 
-@if (!ShowPasswordModal)
+@if (UserHasAccess)
 {
     <section class="hero is-dark is-fullheight">
         <div class="hero-body is-align-items-stretch">
             <div class="container is-fluid">
-                <p class="title">@Portal.Name</p>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <h3 class="title is-3">@Portal.Name</h3>
+                    </div>
+                    <div class="control is-expanded">
+                        <button id="no-sleep-button" class="button is-primary is-pulled-right" @ref="noSleepElement">Stop Device Sleeping</button>
+                    </div>
+                </div>
                 <div class="columns">
                     <div class="column">
                         <div class="portal-page portal-viewer box">
@@ -40,7 +48,7 @@
                                     else
                                     {
                                         <PortalViewerButton ButtonId="possibleButton.Id" ButtonStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
-                                                      ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ButtonSize" />
+                                                            ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ButtonSize"/>
                                     }
                                 }
                             </div>
@@ -66,15 +74,19 @@
     </section>
 }
 
-<Modal IsVisible="ShowPasswordModal" ShowCloseButton="false">
+<ModalContent Id="portal-password-modal" @ref="PortalPasswordModal">
   <PortalPasswordModal RequestAccess="OnRequestedAccess"></PortalPasswordModal>
-</Modal>
-
+</ModalContent>
 
 @code {
+    [CascadingParameter]
+    public IModalInteractionService ModalService { get; set; }
+    public ModalElementReference PortalPasswordModal { get; set; }
+    
     [Parameter]
     public Guid PortalId { get; set; }
     public PortalData Portal { get; set; }
+    public bool UserHasAccess { get; set; }
     
     public ButtonRuntimeStyles ButtonRuntimeStyles { get; set; }
     public IEventBus EventBus { get; set; }
@@ -82,7 +94,7 @@
     public INotifier Notifier { get; set; }
     public ILogger Logger { get; set; }
 
-    public bool ShowPasswordModal { get; set; }
+    public ElementReference noSleepElement { get; set; }
 
     private CompositeDisposable _subs = new();
     
@@ -90,10 +102,11 @@
     {
         EventBus = this.GetService<IEventBus>()!;
         ButtonRuntimeStyles = this.GetService<ButtonRuntimeStyles>()!;
-        var portalStore = this.GetService<IPortalStore>()!;
         TodoStore = this.GetService<ITodoStore>()!;
         Logger = this.GetService<ILogger<PortalViewer>>()!;
         Notifier = this.GetService<INotifier>()!;
+        
+        var portalStore = this.GetService<IPortalStore>()!;
         Portal = portalStore.Get(PortalId);
 
         if (Portal == null)
@@ -112,15 +125,32 @@
             .AddTo(_subs);
 
         if (!string.IsNullOrEmpty(Portal.Password))
-        { ShowPasswordModal = true; }
+        { UserHasAccess = false; }
+        else
+        { UserHasAccess = true; }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (UserHasAccess)
+            { await SetupSleepButton(); }
+            else
+            { ModalService.ShowModal(PortalPasswordModal.Reference); }
+        }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     public async Task OnRequestedAccess(string password)
     {
         if(Portal.Password.Equals(password))
         {
-            ShowPasswordModal = false;
+            UserHasAccess = true;
+            ModalService.CloseModal();
+            await InvokeAsync(StateHasChanged);
             await Js.InvokeVoidAsync("showNotification", "Login Successful", "is-success", 2000);
+            SetupSleepButton();
             Logger.Information($"Login Succeeded for {Portal.Name}");
             return;
         }
@@ -128,6 +158,9 @@
         await Js.InvokeVoidAsync("showNotification", "Login Failed", "is-danger", 2000);
         Logger.Error($"Failed login for {Portal.Name}");
     }
+    
+    public async Task SetupSleepButton()
+    { await Js.InvokeVoidAsync("setNoSleepButton", noSleepElement); }
     
     public IEnumerable<TodoData> GetFilteredTodos()
     {

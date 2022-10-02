@@ -1,5 +1,9 @@
 ﻿using System.Reflection;
+using Strem.Core.Components.Elements.Drag;
 using Strem.Core.Extensions;
+using Strem.Core.Services.UI.Animation;
+using Strem.Core.Services.UI.Modal;
+using Strem.Core.Services.UI.Notifications;
 using Strem.Infrastructure.ActionFilters;
 
 namespace Strem.Infrastructure.Services.Api;
@@ -33,21 +37,28 @@ public class InternalWebHost : IInternalWebHost
         {
             x.Filters.Add<LogActionFilter>();
         });
-
-        var pluginModules = GetAllApiHostingPlugins();
-        //foreach (var pluginModule in pluginModules)
-        //{ builder.Services.AddModule(pluginModule.module); }
         
         var mvcBuilder = builder.Services.AddMvcCore();
         mvcBuilder.AddApplicationPart(GetType().Assembly);
         
+        var pluginModules = GetAllApiHostingPlugins();
         foreach (var pluginModule in pluginModules)
         { mvcBuilder.AddApplicationPart(pluginModule.assembly); }
+
+        RegisterIsolatedServices(builder.Services);
 
         if(!builder.Environment.IsDevelopment())
         { builder.Logging.ClearProviders(); }
         
         return builder.Build();
+    }
+
+    private void RegisterIsolatedServices(IServiceCollection services)
+    {
+        services.AddTransient<INotifier, Notifier>();
+        services.AddTransient<IAnimator, Animator>();
+        services.AddTransient<IModalService, ModalService>();
+        services.AddTransient<IDragAndDropService, DragAndDropService>();
     }
 
     public void StartHost()

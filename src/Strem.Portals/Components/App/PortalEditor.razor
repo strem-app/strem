@@ -14,12 +14,12 @@
 @using Strem.Todos.Services.Stores
 @using System.Reactive.Linq
 @using System.Reactive.Disposables
+@using Strem.Core.Services.UI.Modal
 
 @inject IWebBrowser WebBrowser
 @inject IEventBus EventBus
 @inject ITodoStore TodoStore 
 @inject ButtonRuntimeStyles ButtonRuntimeStyles 
-@inject DragController DragController
 
 @implements IDisposable
 
@@ -106,15 +106,20 @@
     }
 </div>
 
-
-<Modal IsVisible="ShowButtonEditModal">
+<ModalContent Id="portal-button-editor-modal" @ref="EditButtonModal">
     @if (SelectedButton != null)
     {
-        <PortalButtonEditor Data="SelectedButton" OnClosed="ButtonEditModalClosed" RequestedDeletion="DeleteButton"></PortalButtonEditor>
+        <PortalButtonEditor Data="SelectedButton" OnClosed="ModalService.CloseModal" RequestedDeletion="DeleteButton"></PortalButtonEditor>
     }
-</Modal>
+</ModalContent>
 
 @code {
+    [CascadingParameter]
+    public IDragAndDropService DragAndDropService { get; set; }
+
+    [CascadingParameter]
+    public IModalInteractionService ModalService { get; set; }
+    
     [Parameter]
     public PortalData Portal { get; set; } = new();
     
@@ -122,20 +127,20 @@
     public EventCallback<Guid> RequestingDeletion { get; set; }
     
     public ButtonData SelectedButton { get; set; }
-    public bool ShowButtonEditModal { get; set; }
-    public bool ShowDeletionModal { get; set; }
+    
+    public ModalElementReference EditButtonModal { get; set; }
 
     private CompositeDisposable _subs = new();
     
     protected override async Task OnInitializedAsync()
     {
-        DragController.OnDroppedItem
+        DragAndDropService.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.PortalButton && 
                         x.DestinationDropType == DropTypes.PortalButton)
             .Subscribe(SwapButtons)
             .AddTo(_subs);
         
-        DragController.OnDroppedItem
+        DragAndDropService.OnDroppedItem
             .Where(x => (x.SourceDropType == DropTypes.PortalButton) && 
                         x.DestinationDropType == DropTypes.None)
             .Subscribe(MoveButton)
@@ -175,7 +180,7 @@
         if(button == null) { return; }
         
         SelectedButton = button;
-        ShowButtonEditModal = true;
+        ModalService.ShowModal(EditButtonModal.Reference);
     }
 
     public void ViewPortalInBrowser()
@@ -195,7 +200,7 @@
     
     private void ButtonEditModalClosed()
     {
-        ShowButtonEditModal = false;
+        ModalService.CloseModal();
         EventBus.PublishAsync(new PortalButtonChangedEvent(Portal.Id, SelectedButton.Id));
         ButtonRuntimeStyles.RefreshStylesFor(Portal.Id, SelectedButton);
         SelectedButton = null;
@@ -209,14 +214,11 @@
 
     private void DeleteButton(Guid obj)
     {
-        ShowButtonEditModal = false;
+        ModalService.CloseModal();
         Portal.Buttons.Remove(SelectedButton);
         SelectedButton = null;
         EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
-
-    private void DeletionModalClosed()
-    { ShowDeletionModal = false; }
 
     private void OnPortalDeletion()
     { RequestingDeletion.InvokeAsync(Portal.Id); }
