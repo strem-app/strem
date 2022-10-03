@@ -55,6 +55,4 @@ jobs:
         with:
           asset_paths: '["./dist/*.zip"]'
       - name: Publish To Nuget
-        run: |
-          ls dist
-          dotnet nuget push "dist\\*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
