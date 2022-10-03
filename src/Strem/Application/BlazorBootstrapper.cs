@@ -16,6 +16,7 @@ public class BlazorBootstrapper
 
     public void SetupWindow(PhotinoBlazorApp app)
     {
+        var rootIndexPage = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot\\_content\\Strem\\index.html");
         var appLauncher = app.MainWindow
             .SetTitle("Strem")
             
@@ -31,9 +32,10 @@ public class BlazorBootstrapper
 #if DEBUG
         appLauncher = appLauncher.SetDevToolsEnabled(true);
 #else
+        appLauncher = appLauncher.SetDevToolsEnabled(false);
         appLauncher = appLauncher.SetContextMenuEnabled(false);
 #endif
-        appLauncher.Load("_content/Strem/wwwroot/index.html");
+        appLauncher.Load(rootIndexPage);
     }
 
     public void SetupApp(Action<IServiceCollection> beforeCreated, Func<PhotinoBlazorApp, Task> afterCreated)
