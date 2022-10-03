@@ -28,6 +28,19 @@ public class PackageAppTask : FrostingTask<BuildContext>
             }
         };
         context.DotNetPublish(appProject, publishSettings);
+        MoveStaticIntoContent(context, outputDirectory);
         context.Zip(outputDirectory, $"{outputDirectory}.zip");
+    }
+
+    public void MoveStaticIntoContent(BuildContext context, string outputDirectory)
+    {
+        // TODO: This is a bodge as for some reason it doesnt do this automatically
+        var wwwroot = $"{outputDirectory}/wwwroot";
+        var stremContent = $"{wwwroot}/_content/Strem";
+        context.CreateDirectory(stremContent);
+        context.CopyFiles($"{wwwroot}/*", $"{stremContent}");
+        context.CopyDirectory($"{wwwroot}/css",$"{stremContent}/css");
+        context.CopyDirectory($"{wwwroot}/js",$"{stremContent}/js");
+        context.CopyDirectory($"{wwwroot}/webfonts",$"{stremContent}/webfonts");
     }
 }
