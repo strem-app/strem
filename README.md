@@ -5,17 +5,23 @@ A free and open source automation tool geared for assisting streamers.
 
 ![strem image](docs/images/strem.png)
 
-> Currently this is the most ALPHA of all alphas, so by all means use it, but just keep in mind this is SUPER early days.
-
 ## What Does It Do?
 
-It lets you build complex logic `flows` from `triggers` and `tasks`.
+It lets you build complex logic `flows` from `triggers` and `tasks` which can drive actions in 3rd party apps/tools like OBS and Twitch.
 
-For example you may want to play a meme on OBS every time chat contains "lollerskates", so you would make a twitch chat trigger, and have a task to show an obs source.
+> For example you may want to play a meme on OBS every time chat contains "lollerskates", so you would make a twitch chat trigger, and have a task to show an obs source.
 
-> To run OBS you will need to go and install the [v4.*](https://github.com/obsproject/obs-websocket/releases/tag/4.9.1) [obs-websocket-remote plugin](https://obsproject.com/forum/resources/obs-websocket-remote-control-obs-studio-using-websockets.466/updates#resource-update-3807) which lets other applications communicate with OBS, version 5 of the plugin is not supported yet.
+### Features
+- Simple to use application (open source + plugin mechanism)
+- Integrations with `OBS` from tasks/triggers (v28 or with v4 websocket plugin)
+- Integrations with `Twitch` to trigger chat, commands, donations etc
+- Integrations with `Twitter` to send tweets
+- `Todo` system to let you auto generate reminders to do things during/after streams
+- `Portal` system lets you setup buttons to drive your `Flows`
 
-## How Do I Run It?
+> Currently this is the most ALPHA of all alphas, so by all means use it, but just keep in mind this is SUPER early days.
+
+## How Do I Install/Run It?
 Just go to releases, download the latest zip file and put it in a directory somewhere and run `strem.exe`
 
 > Currently only windows is supported, but only a few things realistically require windows so in the long run we may pull those dependencies out to support other platforms too (i.e file browsing, keyboard input simulation, tts etc).
@@ -28,6 +34,8 @@ The only integrations supported out of the box currently are `Twitch` and `OBS`,
 
 Here are some of the existing tutorials for how to do basic use cases for the app:
 
+> These may not be 100% accurate as the app is changing rapidly due to it being fairly new, but the general high level approaches should still be relevant.
+
 ### Creating A Death Counter (Per Game)
 [![Watch the video](https://img.youtube.com/vi/Dg-VzJN4Mk4/default.jpg)](https://youtu.be/Dg-VzJN4Mk4)
 
@@ -36,6 +44,12 @@ Here are some of the existing tutorials for how to do basic use cases for the ap
 
 ### How To Delete Flows
 [![Watch the video](https://img.youtube.com/vi/TkI_oELPkys/default.jpg)](https://youtu.be/TkI_oELPkys)
+
+## OBS Integration Isnt Working!?
+The out the box OBS integration we use is meant for v28+ of OBS which internally contains a web socket server, you will need to enable that.
+
+> If you use the [v4 websocket server plugin](https://github.com/obsproject/obs-websocket/releases/tag/4.9.1), you will need to go and download the [Strem.Plugins.OBS.v4 Plugin](https://github.com/strem-app/Strem.Plugins.OBS.v4) which will add support for the older OBS websocket server.
+
 
 ## I Want To Add To This Project
 
@@ -48,7 +62,6 @@ To build it locally you will to:
 - Read Stuff In [docs](./docs) folder
 
 > Once loaded if you go into `Logs` you will be able to see where your data source files live and information around whats happening at runtime.
-
 
 
 [gitbook-image]: https://img.shields.io/static/v1.svg?label=Documentation&message=Read%20Now&color=Green&style=flat
