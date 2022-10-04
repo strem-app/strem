@@ -78,12 +78,31 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     public bool DoesMessageTextMeetRequirements(TextMatchType matchTypeType, string matchText, string message)
     { return matchTypeType == TextMatchType.None || message.MatchesText(matchTypeType, matchText); }
 
+    public bool DoesChannelMatch(OnTwitchChatMessageTriggerData data, ChatMessage message)
+    {
+        var isDefaultChannel = string.IsNullOrEmpty(data.Channel);
+        var channel = isDefaultChannel ? AppState.GetTwitchUsername() : data.Channel;
+        var processedChannel = FlowStringProcessor.Process(channel ?? string.Empty, new Core.Variables.Variables());
+        if(!message.Channel.Equals(processedChannel)) { return false; }
+        return true;
+    }
+
+    public void JoinChannelIfNeeded(OnTwitchChatMessageTriggerData data)
+    {
+        var isDefaultChannel = string.IsNullOrEmpty(data.Channel);
+        if(isDefaultChannel){ return; }
+        
+        var processedChannel = FlowStringProcessor.Process(data.Channel ?? string.Empty, new Core.Variables.Variables());
+        if (!TwitchClient.Client.HasJoinedChannel(processedChannel))
+        {
+            TwitchClient.Client.JoinChannel(processedChannel);
+            Logger.Information($"[{data.Code}:{data.Id}] has joined twitch channel: {processedChannel}");
+        }
+    }
+    
     public bool DoesMessageMeetCriteria(OnTwitchChatMessageTriggerData data, ChatMessage message)
     {
-        var channel = string.IsNullOrEmpty(data.Channel) ? AppState.GetTwitchUsername() : data.Channel;
-        var processedChannel = FlowStringProcessor.Process(channel, new Core.Variables.Variables());
-        if(!message.Channel.Equals(processedChannel)) { return false; }
-        
+        if(!DoesChannelMatch(data, message)){ return false; }        
         if(!IsUserAboveMinimumRequired(data.MinimumUserType, message.UserType)) { return false; }
         if(data.IsVip && !message.IsVip) { return false; }
         if(data.IsSubscriber && !message.IsSubscriber) { return false; }
@@ -96,6 +115,8 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
 
     public override async Task<IObservable<IVariables>> Execute(OnTwitchChatMessageTriggerData data)
     {
+        JoinChannelIfNeeded(data);
+        
         return TwitchClient.OnMessageReceived
             .Where(x => DoesMessageMeetCriteria(data, x.ChatMessage))
             .Select(x => PopulateVariables(x.ChatMessage));

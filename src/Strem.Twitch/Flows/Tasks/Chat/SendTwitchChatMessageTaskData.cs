@@ -12,8 +12,8 @@ public class SendTwitchChatMessageTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
     
-    public string Channel { get; set; }
+    public string? Channel { get; set; }
     
     [Required]
-    public string Message { get; set; }
+    public string? Message { get; set; }
 }

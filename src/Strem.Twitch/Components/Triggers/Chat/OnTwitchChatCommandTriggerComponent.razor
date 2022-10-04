@@ -1,8 +1,15 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using Strem.Core.Types
 @using TwitchLib.Client.Enums
 
 @inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Chat.OnTwitchChatCommandTriggerData>
+
+<div class="field">
+    <label class="label">Channel</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.Channel" Placeholder="i.e optional channel name"></ProcessedInput>
+    </div>
+    <HelperInfo>This is an optional field and will default to your own channel, but you can listen to other channels if you have already joined them</HelperInfo>
+</div>
 
 <div class="field">
     <label class="label">Minimum Required User Type</label>
