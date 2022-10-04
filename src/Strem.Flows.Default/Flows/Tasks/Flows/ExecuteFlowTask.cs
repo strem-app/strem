@@ -1,14 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
-using Strem.Core.Extensions;
+using Strem.Core.State;
+using Strem.Core.Variables;
+using Strem.Flows.Data.Tasks;
 using Strem.Flows.Executors;
 using Strem.Flows.Processors;
-using Strem.Flows.Data.Tasks;
-using Strem.Core.State;
-using Strem.Core.Types;
-using Strem.Core.Variables;
 
-namespace Strem.Flows.Default.Flows.Tasks.Utility;
+namespace Strem.Flows.Default.Flows.Tasks.Flows;
 
 public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
 {
@@ -16,7 +14,7 @@ public class ExecuteFlowTask : FlowTask<ExecuteFlowTaskData>
     public override string Version => ExecuteFlowTaskData.TaskVersion;
     
     public override string Name => "Execute Flow";
-    public override string Category => "Utility";
+    public override string Category => "Flows";
     public override string Description => "Executes an existing flow";
 
     public IFlowExecutor FlowExecutor { get; }

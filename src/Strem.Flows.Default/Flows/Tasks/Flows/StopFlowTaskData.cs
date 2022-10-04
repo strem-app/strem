@@ -1,6 +1,6 @@
 ﻿using Strem.Flows.Data.Tasks;
 
-namespace Strem.Flows.Default.Flows.Tasks.Logic;
+namespace Strem.Flows.Default.Flows.Tasks.Flows;
 
 public class StopFlowTaskData : IFlowTaskData
 {

@@ -11,7 +11,6 @@ using Strem.Todos.Services.Stores;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.Api.Helix;
 using TwitchLib.Api.Helix.Models.Clips.CreateClip;
 using TwitchLib.Api.Interfaces;
 
@@ -22,6 +21,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
     public override string Code => CreateTwitchClipTaskData.TaskCode;
     public override string Version => CreateTwitchClipTaskData.TaskVersion;
     
+    public static VariableEntry ClipChannelVariable = new("clip.channel", TwitchVars.TwitchContext);
     public static VariableEntry ClipUrlVariable = new("clip.url", TwitchVars.TwitchContext);
     public static VariableEntry ClipEditUrlVariable = new("clip.url.edit", TwitchVars.TwitchContext);
     
@@ -31,7 +31,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
 
     public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {
-        ClipUrlVariable.ToDescriptor(), ClipEditUrlVariable.ToDescriptor()
+        ClipUrlVariable.ToDescriptor(), ClipEditUrlVariable.ToDescriptor(), ClipChannelVariable.ToDescriptor()
     };
 
     public ITwitchAPI TwitchApi { get; }
@@ -45,8 +45,16 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
 
     public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ApiScopes.ManageClips);
 
-    public void PopulateVariablesFor(CreatedClipResponse clipResponse, IVariables flowVars)
+    public void PopulateVariablesFor(CreateTwitchClipTaskData data, CreatedClipResponse clipResponse, IVariables flowVars)
     {
+        if (string.IsNullOrEmpty(data.Channel))
+        { flowVars.Set(ClipChannelVariable, AppState.GetTwitchUsername()); }
+        else
+        {
+            var processedChannel = FlowStringProcessor.Process(data.Channel, flowVars);
+            { flowVars.Set(ClipChannelVariable, processedChannel); }
+        }
+        
         var clip = clipResponse.CreatedClips[0];
         flowVars.Set(ClipEditUrlVariable, clip.EditUrl);
         flowVars.Set(ClipUrlVariable, clip.EditUrl.Replace("/Edit", "", StringComparison.OrdinalIgnoreCase));
@@ -77,11 +85,12 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
         var userId = AppState.GetTwitchUserId();
         if (!string.IsNullOrEmpty(data.Channel))
         {
-            var userDetails = await TwitchApi.Helix.Users.GetUsersAsync(logins: new () { data.Channel });
+            var processedChannel = FlowStringProcessor.Process(data.Channel, flowVars);
+            var userDetails = await TwitchApi.Helix.Users.GetUsersAsync(logins: new () { processedChannel });
             if (userDetails.Users.Length == 0)
             {
-                Logger.Warning($"Couldnt Find UserId For Use [{ data.Channel }]");
-                return ExecutionResult.Failed($"Couldnt Find UserId For Use [{ data.Channel }]");
+                Logger.Warning($"Couldnt Find UserId For Use [{ processedChannel }]");
+                return ExecutionResult.Failed($"Couldnt Find UserId For Use [{ processedChannel }]");
             }
 
             userId = userDetails.Users[0].Id;
@@ -90,7 +99,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
         var clip = await TwitchApi.Helix.Clips.CreateClipAsync(userId);
         if(clip?.CreatedClips.Length == 0) { return ExecutionResult.Failed("Twitch couldnt create clip for some reason"); }
 
-        PopulateVariablesFor(clip, flowVars);
+        PopulateVariablesFor(data, clip, flowVars);
         CreateTodoIfNeeded(data, clip);
         
         return ExecutionResult.Success();
