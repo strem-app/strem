@@ -2,7 +2,7 @@
 {
     document.body.style.zoom = `${newSize}%`;
     let scaleAlteration = ((100-newSize)/100);
-    if(scaleAlteration >= 0) { scaleAlteration *= 1.5; }
+    if(scaleAlteration >= 0) { scaleAlteration *= 1.75; }
     if(scaleAlteration < 0) { scaleAlteration /= 1.5; }
 
     console.log("alteration", scaleAlteration);

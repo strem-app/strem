@@ -82,8 +82,15 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         
         await CheckIfBackupIsNeeded();
         SetDefaultSettingsIfNotSet();
+
+        SetupDefaultVariables();
     }
-    
+
+    private void SetupDefaultVariables()
+    {
+        AppState.TransientVariables.Set(CommonVariables.StremVersion, GetType().Assembly.GetName().Version.ToString());
+    }
+
     public void SetDefaultSettingsIfNotSet()
     {
         if(!AppState.AppVariables.Has(UIVariables.ShowHelpersVariable))
