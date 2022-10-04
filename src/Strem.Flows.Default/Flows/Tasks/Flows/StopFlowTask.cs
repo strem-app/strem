@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
-using Strem.Flows.Executors;
-using Strem.Flows.Processors;
-using Strem.Flows.Data.Tasks;
 using Strem.Core.State;
 using Strem.Core.Variables;
+using Strem.Flows.Data.Tasks;
+using Strem.Flows.Executors;
+using Strem.Flows.Processors;
 
-namespace Strem.Flows.Default.Flows.Tasks.Logic;
+namespace Strem.Flows.Default.Flows.Tasks.Flows;
 
 public class StopFlowTask : FlowTask<StopFlowTaskData>
 {
