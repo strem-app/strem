@@ -5,11 +5,9 @@
 <div class="field">
     <label class="label">Channel To Clip From</label>
     <div class="control">
-        <TextInput @bind-Value="Data.Channel" placeholder="i.e Leave blank for your own channel" />
+        <ProcessedInput @bind-Value="Data.Channel" Placeholder="i.e optional channel name"></ProcessedInput>
     </div>
-    <HelperInfo>
-        You can leave it blank for your own stream, or put another channel name in for another channel
-    </HelperInfo>
+    <HelperInfo>You can leave it blank for your own stream, or put another channel name in for another channel</HelperInfo>
 </div>
 
 <div class="field">

@@ -37,7 +37,7 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
     {
         ChatCommandVariable.ToDescriptor(), BitsSentVariable.ToDescriptor(), BitsValueVariable.ToDescriptor(),
         ChatCommandArgsVariable.ToDescriptor(), UserTypeVariable.ToDescriptor(), UsernameVariable.ToDescriptor(),
-        UserIdVariable.ToDescriptor(), RawChatMessageVariable.ToDescriptor()
+        UserIdVariable.ToDescriptor(), RawChatMessageVariable.ToDescriptor(), ChatChannelVariable.ToDescriptor()
     };
 
     public ICommandStringProcessor CommandStringProcessor { get; }
