@@ -1,5 +1,4 @@
 ﻿using Strem.Flows.Data.Triggers;
-using Strem.Core.Types;
 using TwitchLib.Client.Enums;
 
 namespace Strem.Twitch.Flows.Triggers.Chat;
@@ -20,4 +19,5 @@ public class OnTwitchChatCommandTriggerData : IFlowTriggerData
     public bool IsSubscriber { get; set; }
     public bool IsVip { get; set; }
     public bool HasBits { get; set; }
+    public string? Channel { get; set; }
 }

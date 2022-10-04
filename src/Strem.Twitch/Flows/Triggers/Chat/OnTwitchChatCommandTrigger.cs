@@ -4,7 +4,6 @@ using Strem.Core.Extensions;
 using Strem.Flows.Processors;
 using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
-using Strem.Core.Types;
 using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
@@ -20,6 +19,7 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
     public override string Code => OnTwitchChatCommandTriggerData.TriggerCode;
     public override string Version => OnTwitchChatCommandTriggerData.TriggerVersion;
 
+    public static VariableEntry ChatChannelVariable = new("chat.channel", TwitchVars.TwitchContext);
     public static VariableEntry ChatCommandVariable = new("chat.command", TwitchVars.TwitchContext);
     public static VariableEntry ChatCommandArgsVariable = new("chat.command.args", TwitchVars.TwitchContext);
     public static VariableEntry RawChatMessageVariable = new("chat.raw-message", TwitchVars.TwitchContext);
@@ -56,6 +56,7 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
         var parsedCommand = CommandStringProcessor.Process(message.Message);
         
         var flowVars = new Core.Variables.Variables();
+        flowVars.Set(ChatChannelVariable, message.Channel);
         flowVars.Set(ChatCommandVariable, parsedCommand.CommandName);
         flowVars.Set(ChatCommandArgsVariable, parsedCommand.CommandArgs);
         flowVars.Set(RawChatMessageVariable, message.RawIrcMessage);
@@ -70,8 +71,18 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
     public bool IsUserAboveMinimumRequired(UserType userTypeRequired, UserType messageUserType)
     { return messageUserType >= userTypeRequired; }
 
+    public bool DoesChannelMatch(OnTwitchChatCommandTriggerData data, ChatMessage message)
+    {
+        var isDefaultChannel = string.IsNullOrEmpty(data.Channel);
+        var channel = isDefaultChannel ? AppState.GetTwitchUsername() : data.Channel;
+        var processedChannel = FlowStringProcessor.Process(channel ?? string.Empty, new Core.Variables.Variables());
+        if(!message.Channel.Equals(processedChannel)) { return false; }
+        return true;
+    }
+    
     public bool DoesMessageMeetCriteria(OnTwitchChatCommandTriggerData data, ChatMessage message)
     {
+        if(!DoesChannelMatch(data, message)){ return false; }
         if(!IsUserAboveMinimumRequired(data.MinimumUserType, message.UserType)) { return false; }
         if(data.IsVip && !message.IsVip) { return false; }
         if(data.IsSubscriber && !message.IsSubscriber) { return false; }
@@ -83,9 +94,24 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
 
         return data.CommandName.Equals(parsedCommand.CommandName, StringComparison.OrdinalIgnoreCase);
     }
+    
+    public void JoinChannelIfNeeded(OnTwitchChatCommandTriggerData data)
+    {
+        var isDefaultChannel = string.IsNullOrEmpty(data.Channel);
+        if(isDefaultChannel){ return; }
+        
+        var processedChannel = FlowStringProcessor.Process(data.Channel ?? string.Empty, new Core.Variables.Variables());
+        if (!TwitchClient.Client.HasJoinedChannel(processedChannel))
+        {
+            TwitchClient.Client.JoinChannel(processedChannel);
+            Logger.Information($"[{data.Code}:{data.Id}] has joined twitch channel: {processedChannel}");
+        }
+    }
 
     public override async Task<IObservable<IVariables>> Execute(OnTwitchChatCommandTriggerData data)
     {
+        JoinChannelIfNeeded(data);
+            
         return TwitchClient.OnMessageReceived
             .Where(x => DoesMessageMeetCriteria(data, x.ChatMessage))
             .Select(x => PopulateVariables(x.ChatMessage));

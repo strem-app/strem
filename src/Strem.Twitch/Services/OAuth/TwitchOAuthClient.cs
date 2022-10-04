@@ -95,6 +95,7 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         restRequest.AddHeader("Authorization", $"OAuth {accessToken}");
 
         var response = await restClient.ExecuteAsync(restRequest);
+        
         if (!response.IsSuccessful)
         {
             Logger.Error($"Validation Error: {response.Content ?? "unknown error validating"}");

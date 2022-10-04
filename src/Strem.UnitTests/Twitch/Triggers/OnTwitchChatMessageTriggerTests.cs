@@ -14,6 +14,8 @@ using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 using TwitchLib.Client.Models.Builders;
 
 namespace Strem.UnitTests.Twitch.Triggers;
@@ -75,6 +77,7 @@ public class OnTwitchChatMessageTriggerTests
         var mockEventBus = new Mock<IEventBus>();
         var dummyAppState = new AppState(new Variables(), new Variables(), new Variables());
         var mockTwitchClient = new Mock<IObservableTwitchClient>();
+        var mockTwitchChatClient = new Mock<ITwitchClient>();
 
         var expectedChannel = "some-channel";
 
@@ -82,6 +85,14 @@ public class OnTwitchChatMessageTriggerTests
         mockTwitchClient
             .Setup(x => x.OnMessageReceived)
             .Returns(onChatMessageSubject);
+
+        mockTwitchClient
+            .Setup(x => x.Client)
+            .Returns(mockTwitchChatClient.Object);
+
+        mockTwitchChatClient
+            .Setup(x => x.JoinedChannels)
+            .Returns(new[] { new JoinedChannel(expectedChannel) });
         
         mockFlowStringProcessor
             .Setup(x => x.Process(expectedChannel, It.IsAny<IVariables>()))
