@@ -52,9 +52,14 @@ public class FlowExecutionEngine : IFlowExecutionEngine
         EventBus.Receive<FlowTriggerChangedEvent>()
             .Subscribe(async x => ResetFlow(x.FlowId))
             .AddTo(InternalSubs);
-        
-        foreach(var flow in FlowStore.Data)
-        { await SetupFlow(flow); }
+
+        foreach (var flow in FlowStore.Data)
+        {
+            try
+            { await SetupFlow(flow); }
+            catch (Exception e)
+            { Logger.Error($"Unable to setup flow [{flow.Name}|{flow.Id}], error thrown: {e.Message}"); }
+        }
     }
     
     public async Task SetupFlow(Flow flow)

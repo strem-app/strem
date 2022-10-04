@@ -68,15 +68,17 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
             .Subscribe(x => DisconnectEverything())
             .AddTo(_subs);
 
-        VerifyAndSetupConnections();
+        await VerifyAndSetupConnections();
     }
 
     public void AttemptToConnectToChat()
     {
+        Logger.Information($"Checking if twitch chat can connect");
         if(!AppState.HasTwitchOAuth()) { return; }
         if(TwitchClient.Client.IsConnected) { return; }
         if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
         
+        Logger.Information($"Connecting to twitch chat");
         var result = TwitchClient.Client.ConnectOrRefresh(AppState);
         if(result.success)
         { Logger.Information($"Connected to twitch chat"); }

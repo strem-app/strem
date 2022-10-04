@@ -21,8 +21,8 @@ public static class ITwitchClientExtensions
 
         if (client.Connect())
         { return (true, string.Empty); }
-        else
-        { return (false, "Couldnt connect to twitch chat for unknown reason"); }
+
+        return (false, "Couldnt connect to twitch chat for unknown reason");
     }
 
     public static bool HasJoinedChannel(this ITwitchClient client, string channel)

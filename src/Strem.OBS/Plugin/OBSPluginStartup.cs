@@ -56,7 +56,7 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
         if (!result.success)
         { Logger.Error($"Couldnt connect to OBS: {result.message}"); }
         else
-        { Logger.Information(result.message); }
+        { Logger.Information("Connected To OBS"); }
     }
 
     public async Task DoHeartbeat()

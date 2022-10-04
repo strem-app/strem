@@ -100,8 +100,13 @@ public class PluginHandler
         {
             var pluginName = startupService.GetType().Name;
             logger.Information($"Setting Up {pluginName}");
-            await startupService.SetupPlugin();
-            logger.Information($"Finished Setup {pluginName}");
+            try
+            {
+                await startupService.SetupPlugin();
+                logger.Information($"Finished Setup {pluginName}");
+            }
+            catch(Exception e)
+            { logger.Error($"Failed To Setup {pluginName}, with error: {e.Message}"); }
         }
         
         // Start plugins
@@ -117,8 +122,14 @@ public class PluginHandler
             }
             
             logger.Information($"Starting Plugin {pluginName}");
-            await startupService.StartPlugin();
-            logger.Information($"Started Plugin {pluginName}");
+            try
+            {
+                await startupService.StartPlugin();
+                logger.Information($"Started Plugin {pluginName}");
+            }
+            catch(Exception e)
+            { logger.Error($"Failed To Start {pluginName}, with error: {e.Message}"); }
+
         }
     }
 }
