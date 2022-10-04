@@ -41,7 +41,7 @@
         @foreach (var trigger in triggerGroup)
         {
           <DraggableListElement Data="trigger" DropType="@DropTypes.NewTrigger">
-            <a class="is-trigger has-tooltip-left has-tooltip-multiline @(IsTriggerEnabled(trigger.Trigger) ? "enabled" : "disabled")"
+            <a class="is-trigger has-tooltip-multiline has-tooltip-warning @(IsTriggerEnabled(trigger.Trigger) ? "enabled" : "disabled")"
                data-tooltip="@trigger.Trigger.Description" @onclick="@(() => OnTriggerSelected.InvokeAsync(trigger))">
               <span class="icon is-small">
                 <i class="fa fa-plus"></i>
@@ -66,7 +66,7 @@
       @foreach (var task in taskGroup)
       {
         <DraggableListElement Data="task" DropType="@DropTypes.NewTask">
-            <a class="is-task has-tooltip-left has-tooltip-multiline @(IsTaskEnabled(task.Task) ? "enabled" : "disabled")"
+            <a class="is-task has-tooltip-multiline has-tooltip-warning @(IsTaskEnabled(task.Task) ? "enabled" : "disabled")"
                data-tooltip="@task.Task.Description">
               <span class="icon is-small">
                 <i class="fa fa-plus"></i>

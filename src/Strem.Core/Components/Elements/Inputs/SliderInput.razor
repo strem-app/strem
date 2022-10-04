@@ -1,0 +1,21 @@
+﻿@inherits ValidatedInputBase<int>
+
+<input class="slider is-fullwidth" step="@Step" min="@Min" max="@Max" type="range" @bind="ProxyValue">
+
+@code {
+
+    [Parameter]
+    public int Step { get; set; } = 5;
+
+    [Parameter]
+    public int Min { get; set; } = 0;
+
+    [Parameter]
+    public int Max { get; set; } = 100;
+
+    private int ProxyValue
+    {
+        get => Value;
+        set => OnValueChanged(value);
+    }
+}

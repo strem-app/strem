@@ -47,6 +47,10 @@ each(range(5, 100, 5), {
 });
 
 each(range(5, 100, 5), {
+    .mh-@{value} { min-height: ~"@{value}%"; }
+});
+
+each(range(5, 100, 5), {
     .opacity-@{value} { opacity: ~"@{value}%"; }
 });
 
@@ -208,11 +212,19 @@ body
         input, .processed-output { .has-error-border(); }
     }
     
-    .processed-output .tags
+    .processed-output
     {
-        margin-bottom: -0.5em;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        
+        .tags
+        {
+            margin-bottom: -0.5em;
+            margin-left: 0.5em;
+            margin-right: 0.5em;
+            display: inline;
+        }
     }
 }
 
@@ -253,7 +265,7 @@ input.invalid, textarea.invalid
 }
 
 .portal-button 
-{
+{    
     &.button-size-small
     {
         width: 8rem;

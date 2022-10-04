@@ -45,7 +45,7 @@
                     </nav>
                 </div>
                 <div class="control">
-                    <input class="slider is-fullwidth" step="5" min="75" max="125" type="range" @bind="ZoomRate">
+                    <SliderInput Min="75" Max="125" @bind-Value="ZoomRate" />
                 </div>
                 <HelperInfo>This will make everything bigger/smaller throughout the app</HelperInfo>
             </div>

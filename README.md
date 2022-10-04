@@ -16,6 +16,8 @@ It lets you build complex logic `flows` from `triggers` and `tasks` which can dr
 - Integrations with `OBS` from tasks/triggers (v28 or with v4 websocket plugin)
 - Integrations with `Twitch` to trigger chat, commands, donations etc
 - Integrations with `Twitter` to send tweets
+- Smart Variables (Allows variables to be tied to contexts, i.e one `death-count` variable for each game)
+- Sub Flow Support (Express branching logic in flows, i.e `if statements` with multiple possible outcomes)
 - `Todo` system to let you auto generate reminders to do things during/after streams
 - `Portal` system lets you setup buttons to drive your `Flows`
 

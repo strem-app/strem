@@ -30,10 +30,47 @@
                     <div class="control">
                         <h3 class="title is-3">@Portal.Name</h3>
                     </div>
-                    <div class="control is-expanded">
-                        <button id="no-sleep-button" class="button is-primary is-pulled-right" @ref="noSleepElement">Stop Device Sleeping</button>
-                    </div>
                 </div>
+                <Accordion Title="Portal Viewer Settings">
+                    <div class="box">
+                        <div class="columns">
+                            <div class="column is-three-quarters">
+                                <div class="field">
+                                    <label class="label">Zoom Level</label>
+                                    <div class="control">
+                                        <nav class="level">
+                                            <div class="level-item has-text-left">
+                                                <div>
+                                                    <span class="tag">50%</span>
+                                                </div>
+                                            </div>
+                                            <div class="level-item has-text-centered">
+                                                <div>
+                                                    <span class="tag">100%</span>
+                                                </div>
+                                            </div>
+                                            <div class="level-item has-text-right">
+                                                <div>
+                                                    <span class="tag">150%</span>
+                                                </div>
+                                            </div>
+                                        </nav>
+                                    </div>
+                                    <div class="control">
+                                        <SliderInput Min="50" Max="150" @bind-Value="ZoomRate" ValueChangedWithPrevious="OnZoomChanged"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-one-quarter has-text-right">
+                                <div class="field">
+                                    <div class="control">
+                                        <button id="no-sleep-button" class="button is-primary" @ref="noSleepElement">Stop Device Sleeping</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Accordion>
                 <div class="columns">
                     <div class="column">
                         <div class="portal-page portal-viewer box">
@@ -95,6 +132,8 @@
     public ILogger Logger { get; set; }
 
     public ElementReference noSleepElement { get; set; }
+
+    public int ZoomRate { get; set; } = 100;
 
     private CompositeDisposable _subs = new();
     
@@ -187,4 +226,7 @@
     
     private ButtonData? GetButtonAt(int gridIndex)
     { return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex); }
+    
+    public async Task OnZoomChanged(ValueWithPrevious<int> values)
+    { await Js.InvokeVoidAsync("setZoom", values.New);}
 }
