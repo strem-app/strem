@@ -8,7 +8,7 @@
 @using Strem.Twitter.Services.OAuth
 @using Strem.Twitter.Variables
 
-@inject ITwitterOAuthClient TwitchOAuthClient
+@inject ITwitterOAuthClient TwitterOAuthClient
 @inject IAppState AppState
 @inject IEventBus EventBus
 
@@ -23,17 +23,17 @@
                 <input class="input" type="text" placeholder="Account Not Linked" value="@Username" disabled/>
             </div>
             <div class="control">
-                @if (IsTwitchAccountLinked && !HavePermissionsChanged)
+                @if (IsTwitterAccountLinked && !HavePermissionsChanged)
                 {
-                    <a class="button is-danger" @onclick="DisconnectFromTwitch">Disconnect From Twitch</a>
+                    <a class="button is-danger" @onclick="DisconnectFromTwitter">Disconnect From Twitter</a>
                 }
-                else if (IsTwitchAccountLinked && HavePermissionsChanged)
+                else if (IsTwitterAccountLinked && HavePermissionsChanged)
                 {
-                    <a class="button is-warning" @onclick="ConnectToTwitch">Request New Permissions</a>
+                    <a class="button is-warning" @onclick="ConnectToTwitter">Request New Permissions</a>
                 }
                 else
                 {
-                    <a class="button is-success" @onclick="ConnectToTwitch">Connect To Twitch</a>
+                    <a class="button is-success" @onclick="ConnectToTwitter">Connect To Twitter</a>
                 }
             </div>
         </div>
@@ -49,17 +49,17 @@
     private CompositeDisposable _subs = new();
     
     public string Username { get; set; }
-    public bool IsTwitchAccountLinked { get; set; }
+    public bool IsTwitterAccountLinked { get; set; }
     public bool HavePermissionsChanged { get; set; }
     public string[] CurrentScopes { get; set; } = Array.Empty<string>();
     public string[] NewScopes { get; set; } = Array.Empty<string>();
     
     protected override async Task OnInitializedAsync()
     {
-        IsTwitchAccountLinked = AppState.HasTwitterOAuth();
+        IsTwitterAccountLinked = AppState.HasTwitterOAuth();
         Username = AppState.AppVariables.Get(TwitterVars.Username);
 
-        if (IsTwitchAccountLinked)
+        if (IsTwitterAccountLinked)
         {
             CurrentScopes = AppState.GetTwitterScopes();
             NewScopes = CurrentScopes.ToArray();
@@ -77,7 +77,7 @@
         EventBus.Receive<TwitterOAuthSuccessEvent>()
             .Subscribe(x =>
             {
-                IsTwitchAccountLinked = true;
+                IsTwitterAccountLinked = true;
                 InvokeAsync(StateHasChanged);
             })
             .AddTo(_subs);        
@@ -85,21 +85,21 @@
         EventBus.Receive<TwitterOAuthRevokedEvent>()
             .Subscribe(x =>
             {
-                IsTwitchAccountLinked = false;
+                IsTwitterAccountLinked = false;
                 Username = string.Empty;
                 InvokeAsync(StateHasChanged);
             })
             .AddTo(_subs);
     }
 
-    public void ConnectToTwitch()
+    public void ConnectToTwitter()
     {
-        TwitchOAuthClient.StartAuthorisationProcess(NewScopes);
+        TwitterOAuthClient.StartAuthorisationProcess(NewScopes);
     }
 
-    public void DisconnectFromTwitch()
+    public void DisconnectFromTwitter()
     {
-        TwitchOAuthClient.RevokeToken();
+        TwitterOAuthClient.RevokeToken();
     }
     
     public void RequestNewScopeAccess(string[] newScopes)
