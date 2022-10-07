@@ -6,7 +6,6 @@
 
 @inject IEventBus EventBus;
 
-<h3 class="title is-3 @(Flow.Enabled ? "" : "has-text-danger")">Editing Details For: @Flow.Name</h3>
 <div class="box">
   <FlowDetailsEditor Data="Flow" DataChanged="NotifyDetailsChanged" />
   <div class="field">

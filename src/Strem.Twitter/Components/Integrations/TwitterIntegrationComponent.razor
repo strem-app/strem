@@ -63,13 +63,14 @@
         {
             CurrentScopes = AppState.GetTwitterScopes();
             NewScopes = CurrentScopes.ToArray();
+            Username = AppState.GetTwitterUsername();
         }
 
         AppState.AppVariables.OnVariableChanged
             .Where(x => x.Key == TwitterVars.Username)
             .Subscribe(x =>
             {
-                Username = AppState.AppVariables.Get(TwitterVars.Username);
+                Username = AppState.GetTwitterUsername();
                 InvokeAsync(StateHasChanged);
             })
             .AddTo(_subs);
