@@ -24,20 +24,17 @@
 @implements IDisposable
 
 <div class="box">
-    <div class="field is-grouped">
-        <div class="control">
-            <h3 class="title is-3 has-text-black">Editing @Portal.Name</h3>
-        </div>
-        <div class="control is-expanded">
-            <button class="button is-primary is-pulled-right" @onclick="ViewPortalInBrowser">
-                <span class="icon is-small">
-                    <i class="fas fa-globe"></i>
-                </span>
-                <span>View In Browser</span>
-            </button>
-        </div>
-    </div>
     <PortalDetailsEditor Data="Portal" DataChanged="PortalDetailsChanged" />
+     <div class="field">
+            <div class="control">
+                <button class="button is-primary is-leveled" onclick="ViewPortalInBrowser">
+                    <span class="icon is-small">
+                        <i class="fas fa-globe"></i>
+                    </span>
+                    <span>View In Browser</span>
+                </button>
+            </div>
+        </div>
 </div>
 
 <div class="columns">

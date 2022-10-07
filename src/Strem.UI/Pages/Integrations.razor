@@ -3,14 +3,22 @@
 
 @inject IIntegrationRegistry IntegrationRegistry;
 
-<div class="container">
+<div class="container is-fluid">
     <ErrorBoundary>
         <ChildContent>
-        <h3 class="title is-3">Integrations</h3>
-        @foreach (var integrationDescriptor in IntegrationRegistry.GetAll())
-        {
-            <IntegrationComponent Descriptor="integrationDescriptor"></IntegrationComponent>
-        }
+            <div class="columns h-100 is-variable is-6">
+                  <div class="column mh-100 is-one-quarter is-sticky-column">
+                    <div>
+                      <IntegrationSelector OnIntegrationSelected="SelectIntegration"></IntegrationSelector>
+                    </div>
+                  </div>
+                <div class="column mh-100">
+                    @if (CurrentIntegration != null)
+                    {
+                        <IntegrationComponent Descriptor="CurrentIntegration"></IntegrationComponent>
+                    }
+                </div>
+            </div>
         </ChildContent>
         <ErrorContent>
             <TheSkyIsFalling/>
@@ -19,5 +27,11 @@
 </div>
 
 @code {
-    
+    public IIntegrationDescriptor CurrentIntegration { get; set; }
+
+    private void SelectIntegration(string integrationCode)
+    {
+        CurrentIntegration = IntegrationRegistry.Get(integrationCode);
+    }
+
 }

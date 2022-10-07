@@ -1,0 +1,33 @@
+﻿@using Strem.Core.Services.Registries.Integrations
+@inject IIntegrationRegistry IntegrationRegistry;
+
+<div class="box">
+  <aside class="menu integration-menu">
+    <p class="menu-label">
+       <span>Integrations</span>
+    </p>
+    <ul class="menu-list">
+      @foreach (var integration in IntegrationRegistry.GetAll())
+      {
+        <li>
+          <a class="is-integration @(integration.Code == SelectedIntegrationCode ? "is-active" : "")"
+             @onclick="() => SelectIntegration(integration.Code)">@integration.Title</a>
+        </li>
+      }
+    </ul>
+  </aside>
+</div>
+
+@code {
+  public string SelectedIntegrationCode { get; set; }
+  
+  [Parameter] 
+  public EventCallback<string> OnIntegrationSelected { get; set; }
+
+  private void SelectIntegration(string integrationCode)
+  {
+    SelectedIntegrationCode = integrationCode;
+    OnIntegrationSelected.InvokeAsync(SelectedIntegrationCode);
+  }
+
+}

@@ -14,5 +14,6 @@ public class TwitterVars
     public static readonly VariableEntry OAuthScopes = new("oauth-scopes", Context);
     
     // User (app)
+    public static readonly VariableEntry UserId = new("userId", Context);
     public static readonly VariableEntry Username = new("username", Context);
 }
