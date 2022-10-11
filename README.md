@@ -6,6 +6,8 @@ A free and open source automation tool geared for assisting streamers.
 ![strem image](docs/images/strem-v0.5.x.png)
 ![strem image](docs/images/portals.png)
 
+> Currently we are only building for windows officially, but custom cut down builds can probably be built for other platforms.
+
 ## What Does It Do?
 
 It lets you build complex logic `flows` from `triggers` and `tasks` which can drive actions in 3rd party apps/tools like OBS and Twitch.
