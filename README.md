@@ -4,6 +4,7 @@ A free and open source automation tool geared for assisting streamers.
 [![Documentation][gitbook-image]][gitbook-url]
 
 ![strem image](docs/images/strem-v0.5.x.png)
+![strem image](docs/images/portals.png)
 
 ## What Does It Do?
 
