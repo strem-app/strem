@@ -1,7 +1,7 @@
 # Strem
 A free and open source automation tool geared for assisting streamers.
 
-[![Documentation][gitbook-image]][gitbook-url]
+[![Documentation][gitbook-image]][gitbook-url] [![Discord][discord-image]][discord-invite-url]
 
 ![strem image](docs/images/strem-v0.5.x.png)
 ![strem image](docs/images/portals.png)
@@ -69,3 +69,5 @@ To build it locally you will to:
 
 [gitbook-image]: https://img.shields.io/static/v1.svg?label=Documentation&message=Read%20Now&color=Green&style=flat
 [gitbook-url]: https://strem.gitbook.io/strem-app/
+[discord-image]: https://img.shields.io/discord/1029317879461580800.svg
+[discord-invite-url]: https://discord.gg/H5xKhDeUCk
