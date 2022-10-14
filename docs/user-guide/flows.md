@@ -18,6 +18,17 @@ A trigger can be seen as the activator of a flow, without any triggers a flow wo
 
 ![trigger-example](../images/trigger-example.png)
 
+Here are some example triggers:
+
+- On Twitch Chat Message Received
+- On An Interval
+- On OBS Mute Status Changed
+- On App Started
+- On Variable Changed
+- On Portal Button Pressed
+
+There are loads of other `triggers` in the app but as you can see they let you indicate what should cause a flow to start processing.
+
 > You can have as many triggers setup as you want, i.e you could have a flow start on an arbitrary interval (every 60 seconds) or when someone says something in chat or an obs element is enabled etc
 
 ### What Is A Task?
@@ -29,6 +40,19 @@ You can have as many tasks as you want and they flow on from one to the next unt
 ![task-example](../images/task-example.png)
 
 > As you can see here it triggers on a twitch command and then increments a `deaths` variable for the current game on twitch and persists the value, then writes out to the log that it has done so.
+
+Here are some example tasks:
+
+- Send Message In Twitch Chat
+- Create A Clip On Twitch
+- Mute An OBS Source
+- Write Data To A File
+- Make A HTTP Request
+- Execute C#/Python/Powershell Script
+
+There are loads of other `tasks` within the app and you can add sequentially to form a flow, you can even add your own custom ones via plugins.
+
+> There are also special tasks which allow you to have branching logic known as `sub flows` which will be discussed later in the documentation.
 
 ## The Flow Page Layout
 

@@ -3,7 +3,7 @@
 Strem is an automation application that primarily lets you automatically handle certain scenarios with automated `flows` rather than having to manually handle them yourself.
 
 Some common use cases could be:
-- Every X seconds send a follow reminder in chat
+- Every N minutes send a follow reminder in chat
 - Track deaths in games and display them on OBS
 - Add custom commands on twitch
 - Auto respond to certain chat strings
