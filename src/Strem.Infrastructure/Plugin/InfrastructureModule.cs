@@ -88,8 +88,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         SetupDatabase(services);
 
         // State/Stores
-        services.AddSingleton<IAppFileHandler, AppFileHandler>();
-        services.AddSingleton<IAppState>(LoadAppState);
+        services.AddSingleton(LoadAppState);
 
         // Registries
         services.AddSingleton<IIntegrationRegistry, IntegrationRegistry>();
@@ -101,8 +100,14 @@ public class InfrastructureModule : IRequiresApiHostingModule
     
     public IAppState LoadAppState(IServiceProvider services)
     {
-        var stateFileHandler = services.GetService<IAppFileHandler>();
-        return Task.Run(async () => await stateFileHandler.LoadAppState()).Result;
+        var appVariablesRepo = services.GetService<IAppVariablesRepository>();
+        var appVariableData = new Dictionary<VariableEntry, string>(appVariablesRepo?.GetAll() ?? Array.Empty<KeyValuePair<VariableEntry, string>>());
+        var appVariables = new Variables(appVariableData);
+        
+        var userVariablesRepo = services.GetService<IUserVariablesRepository>();
+        var userVariableData = new Dictionary<VariableEntry, string>(userVariablesRepo?.GetAll() ?? Array.Empty<KeyValuePair<VariableEntry, string>>());
+        var userVariables = new Variables(new Dictionary<VariableEntry, string>(userVariableData));
+        return new AppState(userVariables, appVariables, new Variables());
     }
 
     public void SetupDatabase(IServiceCollection services)

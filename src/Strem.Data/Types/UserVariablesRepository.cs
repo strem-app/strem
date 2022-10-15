@@ -19,9 +19,4 @@ public class UserVariablesRepository : Repository<KeyValuePair<VariableEntry, st
         var json = JsonConvert.SerializeObject(entity);
         return JsonSerializer.Deserialize(json).AsDocument;
     }
-
-    public override KeyValuePair<VariableEntry, string> GetEntity(BsonDocument doc)
-    {
-        throw new NotImplementedException();
-    }
 }
