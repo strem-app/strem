@@ -1,10 +1,16 @@
 ﻿@using Strem.Core.Services.Registries.Menus
+@using Strem.Core.Services.Browsers.Web
+
 @inject IMenuRegistry MenuRegistry
+@inject IWebBrowser Browser
 
 <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
   <div class="navbar-menu">
-    <div class="navbar-start ml-auto">
-      
+    <div class="navbar-start">
+      <span class="tag is-dark strem-logo">Strem - v@(GetType().Assembly.GetName().Version) (Alpha)</span>
+    </div>
+    <div class="navbar ml-auto">
+
       @foreach (var menuDescriptor in MenuRegistry.GetAll().OrderBy(x => x.Priority))
       {
         <NavLink href="@menuDescriptor.PageUrl" ActiveClass="is-active" class="navbar-item" Match="NavLinkMatch.All">
@@ -12,7 +18,7 @@
           <span>@menuDescriptor.Title</span>
         </NavLink>
       }
-      
+
       <hr class="navbar-divider">
       <div class="navbar-item has-dropdown is-hoverable">
         <NavLink href="settings" ActiveClass="is-active" class="navbar-link" Match="NavLinkMatch.All">
@@ -49,5 +55,37 @@
         #endif
       }
     </div>
+    <div class="navbar-end">
+      <button class="button is-info is-small mr-4" @onclick="LoadDocs">
+        <span class="icon mr-1"><i class="fas fa-book" aria-hidden="true"></i></span>
+        <span>Read Docs</span>
+      </button>
+      <button class="button is-link is-small mr-4" @onclick="JoinDiscord">
+        <span class="icon mr-1"><i class="fab fa-discord" aria-hidden="true"></i></span>
+        <span>Join Discord</span>
+      </button>
+      <button class="button is-danger is-small" @onclick="LoadGithubIssues">
+        <span class="icon mr-1"><i class="fas fa-bug" aria-hidden="true"></i></span>
+        <span>Report Bug</span>
+      </button>
+    </div>
   </div>
 </nav>
+
+
+@code {
+  private void LoadDocs()
+  {
+    Browser.LoadUrl("https://strem.gitbook.io/strem-app/");
+  }
+  
+  private void LoadGithubIssues()
+  {
+    Browser.LoadUrl("https://github.com/strem-app/strem/issues/new/choose");
+  }
+  
+  private void JoinDiscord()
+  {
+    Browser.LoadUrl("https://discord.gg/H5xKhDeUCk");
+  }
+}
