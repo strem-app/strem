@@ -3,11 +3,13 @@
 @using Strem.Flows.Events
 @using Strem.Flows.Events.Tasks
 @using Strem.Flows.Events.Triggers
+@using Strem.Flows.Services.Stores
 
-@inject IEventBus EventBus;
+@inject IEventBus EventBus
+@inject IFlowStore FlowStore
 
 <div class="box">
-  <FlowDetailsEditor Data="Flow" DataChanged="NotifyDetailsChanged" />
+  <FlowDetailsEditor Data="Flow" DataChanged="NotifyDetailsChanged" ExistingCategories="ExistingCategories" />
   <div class="field">
     <div class="control">
       <button @onclick="ToggleFlowEnablement" class="button is-leveled @(Flow.Enabled ? "is-danger" : "is-success")">
@@ -38,6 +40,8 @@
 @code {
   [Parameter]
   public Flow Flow { get; set; }
+
+  public string[] ExistingCategories => FlowStore.Data.Select(x => x.Category).Distinct().ToArray();
   
   public void NotifyTaskChanged(Guid taskId)
   { EventBus.PublishAsync(new FlowTaskChangedEvent(Flow.Id, taskId)); }

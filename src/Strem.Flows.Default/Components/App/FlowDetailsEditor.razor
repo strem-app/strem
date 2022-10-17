@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Components
+@using Strem.Flows.Services.Stores
 
 @inherits ValidatedComponent<Strem.Flows.Data.Flow>
 
@@ -12,7 +13,7 @@
     <div class="field">
         <label class="label">Category</label>
         <div class="control">
-            <TextInput Placeholder="i.e Memes" @bind-Value="Data.Category" />
+            <AutoComplete Placeholder="i.e Memes" @bind-Value="Data.Category" Data="ExistingCategories" />
         </div>
         <HelperInfo>Flow categories help you group flows with similar functionality or context for easier viewing</HelperInfo>
     </div>
@@ -21,3 +22,10 @@
         <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
     }
 </EditForm>
+
+@code {
+
+    [Parameter]
+    public string[] ExistingCategories { get; set; } = Array.Empty<string>();
+
+}
