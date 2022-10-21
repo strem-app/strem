@@ -27,7 +27,11 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     public IMenuRegistry MenuRegistry { get; }
     public IServiceProvider Services { get; }
     
-    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
+    public string[] RequiredConfigurationKeys { get; } = new[]
+    {
+        InfrastructurePluginSettings.EncryptionKeyKey,
+        InfrastructurePluginSettings.EncryptionIVKey
+    };
 
     public InfrastructurePluginStartup(IAppState appState, IEventBus eventBus, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository, ILogger<InfrastructurePluginStartup> logger, ILiteDatabase database, IIntegrationRegistry integrationRegistry, IMenuRegistry menuRegistry, IServiceProvider services)
     {

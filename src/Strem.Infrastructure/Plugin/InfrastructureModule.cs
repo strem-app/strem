@@ -24,9 +24,9 @@ using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Data.Types;
 using Strem.Flows.Variables;
+using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services;
 using Strem.Infrastructure.Services.Api;
-using Strem.Infrastructure.Services.Persistence;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 using VariableEntryConvertor = Strem.Core.Variables.VariableEntryConvertor;
 
@@ -46,9 +46,6 @@ public class InfrastructureModule : IRequiresApiHostingModule
             },
             Formatting = Formatting.Indented
         };
-        
-        // Config
-        services.AddSingleton<IApplicationConfig, ApplicationConfig>();
         
         // Logging
         services.AddLogging(x => x.AddSerilog(SetupLogger()));
@@ -74,10 +71,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton(SetupLogger());
         
         // Encryption
-        // TODO: this needs to be moved somewhere else at some point
-        var key = Encoding.UTF8.GetBytes("UxRBN8hfjzTG86d6SkSSNzyUhERGu5Zj");
-        var iv = Encoding.UTF8.GetBytes("7cA8jkRMJGZ8iMeJ");
-        services.AddSingleton<IEncryptor>(new CustomEncryptor(key, iv));
+        services.AddSingleton<IEncryptor>(SetupEncryption);
         
         // Persistence Base
         services.AddSingleton<ISerializer, JsonSerializer>();
@@ -96,6 +90,14 @@ public class InfrastructureModule : IRequiresApiHostingModule
 
         // Plugin (this isnt technically a plugin I know)
         services.AddSingleton<IPluginStartup, InfrastructurePluginStartup>();
+    }
+
+    public IEncryptor SetupEncryption(IServiceProvider services)
+    {
+        var appConfig = services.GetService<IApplicationConfig>();
+        var key = Encoding.UTF8.GetBytes(appConfig.GetEncryptionKey());
+        var iv = Encoding.UTF8.GetBytes(appConfig.GetEncryptionIV());
+        return new CustomEncryptor(key, iv);
     }
     
     public IAppState LoadAppState(IServiceProvider services)
