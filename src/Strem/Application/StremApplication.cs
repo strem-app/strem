@@ -7,6 +7,7 @@ using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
+using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Plugin;
 using Strem.Twitter.Plugin;
@@ -20,7 +21,7 @@ public class StremApplication
     public BackupHandler BackupHandler { get; } = new();
     
     public IEventBus EventBus { get; private set; }
-    public IApplicationConfig AppConfig { get; private set; }
+    public IApplicationConfig AppConfig { get; } = new ApplicationConfig();
     public ILogger<StremApplication> Logger { get; private set; }
     public IInternalWebHost WebHost { get; private set; }
     public ILiteDatabase Database { get; private set; }
@@ -43,6 +44,8 @@ public class StremApplication
     {
         AppConfig.Add(TwitchPluginSettings.TwitchClientIdKey, ConfigData.TwitchClientId);
         AppConfig.Add(TwitterPluginSettings.TwitterClientIdKey, ConfigData.TwitterClientId);
+        AppConfig.Add(InfrastructurePluginSettings.EncryptionKeyKey, ConfigData.EncryptionKey);
+        AppConfig.Add(InfrastructurePluginSettings.EncryptionIVKey, ConfigData.EncryptionIV);
     }
 
     public void PreLoadPlugins()
@@ -54,22 +57,23 @@ public class StremApplication
 
     public void LoadPlugins(IServiceCollection services)
     {
-        var logs = PluginHandler.LoadPluginDependencies(services);
-        PreStartupLogs.AddRange(logs);
+        // Config
+        PreStartupLogs.Add("Setting up Application Config");
+        services.AddSingleton<IApplicationConfig>(AppConfig);
+        RegisterConfiguration();
+        
+        PluginHandler.LoadPluginDependencies(services, AppConfig, PreStartupLogs);
     }
     
     public async Task StartApplication(IServiceProvider services)
     {
         Logger = services.GetService<ILogger<StremApplication>>()!;
-        AppConfig = services.GetService<IApplicationConfig>()!;
         EventBus = services.GetService<IEventBus>()!;
         WebHost = services.GetService<IInternalWebHost>()!;
         Database = services.GetService<ILiteDatabase>()!;
 
         HasStarted = true;
         PreStartupLogs.ForEach(Logger.Information);
-        
-        RegisterConfiguration();
         
         Logger.Information("Starting Registered Plugins");
         await PluginHandler.StartPlugins(services, Logger, AppConfig);

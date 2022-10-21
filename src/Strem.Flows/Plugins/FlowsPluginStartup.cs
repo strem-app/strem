@@ -29,8 +29,6 @@ public class FlowsPluginStartup : IPluginStartup, IDisposable
     public IFlowExecutionEngine ExecutionEngine { get; }
     public IServiceProvider Services { get; }
 
-    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
-
     public FlowsPluginStartup(IEventBus eventBus, IFlowStore flowStore, IFlowRepository flowRepository, ILogger<FlowsPluginStartup> logger, ITaskRegistry taskRegistry, ITriggerRegistry triggerRegistry, IFlowExecutionEngine executionEngine, IServiceProvider services)
     {
         EventBus = eventBus;

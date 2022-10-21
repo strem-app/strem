@@ -84,11 +84,23 @@ public class PluginHandler
         return outputLogs;
     }
 
-    public IEnumerable<string> LoadPluginDependencies(IServiceCollection services)
+    public void LoadPluginDependencies(IServiceCollection services, IApplicationConfig appConfig, List<string> preLaunchLogs)
     {
-        var dependencyModules = AppDomain.CurrentDomain.GetAllTypesImplementing<IDependencyModule>();
-        services.AddModules(dependencyModules);
-        return dependencyModules.Select(x => $"Processed Dependencies For {x.Name}");
+        var dependencyModuleTypes = AppDomain.CurrentDomain.GetAllTypesImplementing<IDependencyModule>();
+        foreach (var moduleType in dependencyModuleTypes)
+        {
+            var module = (IDependencyModule)Activator.CreateInstance(moduleType)!;
+            var pluginName = moduleType.Name;
+            var hasAllConfigKeys = module.RequiredConfigurationKeys.Length <= 0 || module.RequiredConfigurationKeys.All(appConfig.ContainsKey);
+            if (!hasAllConfigKeys)
+            {
+                var message = $"Cannot find all required config keys for {pluginName}, cannot register dependencies for it";
+                preLaunchLogs.Add(message);
+                continue;
+            }   
+            services.AddModule(module);
+            preLaunchLogs.Add($"Processed Dependencies For {pluginName} - Met All {module.RequiredConfigurationKeys.Length} Config Requirements");
+        }
     }
     
     public async Task StartPlugins(IServiceProvider services, ILogger logger, IApplicationConfig appConfig)
@@ -125,7 +137,7 @@ public class PluginHandler
             try
             {
                 await startupService.StartPlugin();
-                logger.Information($"Started Plugin {pluginName}");
+                logger.Information($"Started Plugin {pluginName}  - Met All {startupService.RequiredConfigurationKeys.Length} Config Requirements");
             }
             catch(Exception e)
             { logger.Error($"Failed To Start {pluginName}, with error: {e.Message}"); }
