@@ -19,8 +19,6 @@ public class PortalsPluginStartup : IPluginStartup, IDisposable
     public IEventBus EventBus { get; }
     public ILogger<PortalsPluginStartup> Logger { get; }
     
-    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
-
     public PortalsPluginStartup(IPortalRepository portalRepository, IPortalStore portalStore, ILogger<PortalsPluginStartup> logger, IEventBus eventBus)
     {
         PortalRepository = portalRepository;

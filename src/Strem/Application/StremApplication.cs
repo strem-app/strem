@@ -62,8 +62,7 @@ public class StremApplication
         services.AddSingleton<IApplicationConfig>(AppConfig);
         RegisterConfiguration();
         
-        var logs = PluginHandler.LoadPluginDependencies(services);
-        PreStartupLogs.AddRange(logs);
+        PluginHandler.LoadPluginDependencies(services, AppConfig, PreStartupLogs);
     }
     
     public async Task StartApplication(IServiceProvider services)

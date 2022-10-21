@@ -34,6 +34,12 @@ namespace Strem.Infrastructure.Plugin;
 
 public class InfrastructureModule : IRequiresApiHostingModule
 {
+    public string[] RequiredConfigurationKeys { get; } = new[]
+    {
+        InfrastructurePluginSettings.EncryptionKeyKey,
+        InfrastructurePluginSettings.EncryptionIVKey
+    };
+    
     public void Setup(IServiceCollection services)
     {
         // Tertiary

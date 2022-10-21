@@ -1,10 +1,7 @@
 ﻿using System.Reactive.Disposables;
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events.Bus;
-using Strem.Core.Extensions;
 using Strem.Core.Plugins;
-using Strem.Todos.Data;
-using Strem.Todos.Events;
 using Strem.Todos.Services.Repositories;
 using Strem.Todos.Services.Stores;
 
@@ -19,8 +16,6 @@ public class TodoPluginStartup : IPluginStartup, IDisposable
     public IEventBus EventBus { get; }
     public ILogger<TodoPluginStartup> Logger { get; }
     
-    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
-
     public TodoPluginStartup(ITodoRepository todoRepository, ITodoStore todoStore, IEventBus eventBus, ILogger<TodoPluginStartup> logger)
     {
         TodoRepository = todoRepository;

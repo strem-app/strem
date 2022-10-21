@@ -30,7 +30,6 @@ public class OBSPluginStartup : IPluginStartup, IDisposable
         Encryptor = encryptor;
     }
 
-    public string[] RequiredConfigurationKeys => Array.Empty<string>();
     public Task SetupPlugin() => Task.CompletedTask;
 
     public async Task StartPlugin()
