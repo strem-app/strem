@@ -19,7 +19,7 @@
         <div class="field">
             <label class="label">Portal Button</label>
             <div class="control">
-                <DataSelectInput @bind-Value="Data.RequiredButtonId" Data="portal.Buttons" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())" />
+                <DataSelectInput @bind-Value="Data.RequiredButtonId" Data="portal.Elements" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())" />
             </div>
             <HelperInfo>This lets you specify which button you want to listen for presses on</HelperInfo>
         </div>
@@ -35,7 +35,7 @@
         { return $"On Portal Button Pressed"; }
 
         var portal = PortalStore.Get(Data.RequiredPortalId);
-        var button = portal?.Buttons.SingleOrDefault(x => x.Id == Data.RequiredButtonId);
+        var button = portal?.Elements.SingleOrDefault(x => x.Id == Data.RequiredButtonId);
         if(button == null) { return "On Portal Button Pressed"; }
 
         return $"On {button.Name} Pressed In {portal.Name}";

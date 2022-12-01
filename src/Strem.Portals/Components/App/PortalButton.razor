@@ -1,22 +1,23 @@
 ﻿@using Strem.Portals.Data
 @using Strem.Portals.Types
 @using Strem.Core.Extensions
+@using Strem.Portals.Extensions
 
 <a class="button portal-button m-3 is-flex is-flex-direction-column button-size-@(ButtonSize.ToString().ToLower())"
    @onclick="OnButtonPressed" style="@GetButtonStyles()">
-    @if (ButtonStyles.ButtonType == ButtonType.IconButton)
+    @if (ElementStyles.ButtonType == ButtonType.IconButton)
     {
         <span class="icon fa-3x m-auto">
-            <i class="fas @(ButtonStyles.IconClass)"></i>
+            <i class="fas @(ElementStyles.IconClass())"></i>
         </span>
     }
-    else if (ButtonStyles.ButtonType == ButtonType.ImageButton)
+    else if (ElementStyles.ButtonType == ButtonType.ImageButton)
     {
         <figure class="image @GetImageSize()">
-            <img alt="@ButtonStyles.Text" src="@ButtonStyles.ImageUrl.GetImageUrl()" class="is-full"/>
+            <img alt="@ElementStyles.Text" src="@ElementStyles.ImageUrl().GetImageUrl()" class="is-full"/>
         </figure>
     }
-    <label class="label @GetTextSize()" style="color: @(ButtonStyles.TextColor)">@ButtonStyles.Text</label>
+    <label class="label @GetTextSize()" style="color: @(ElementStyles.ForegroundColor)">@ElementStyles.Text</label>
 </a>
 
 @code {
@@ -24,7 +25,7 @@
     public Guid ButtonId { get; set; }
     
     [Parameter]
-    public ButtonStyles ButtonStyles { get; set; }
+    public ElementStyles ElementStyles { get; set; }
     
     [Parameter]
     public ButtonSize ButtonSize { get; set; }
@@ -39,7 +40,7 @@
     }
     
     private string GetButtonStyles()
-    { return $"background-color: {ButtonStyles.BackgroundColor}; color: {ButtonStyles.TextColor}"; }
+    { return $"background-color: {ElementStyles.BackgroundColor}; color: {ElementStyles.ForegroundColor}"; }
 
     private string GetImageSize()
     {

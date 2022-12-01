@@ -1,5 +1,7 @@
 ﻿@using Strem.Core.Extensions
+@using Strem.Portals.Extensions
 @using Strem.Portals.Services.Stores
+@using Microsoft.AspNetCore.Components
 @inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.Portals.Flows.Tasks.ChangePortalButtonStylesTaskData>
 
 @inject IPortalStore PortalStore
@@ -22,7 +24,7 @@
             <label class="label">Portal Button</label>
             <div class="control">
                 <div class="select">
-                    <DataSelectInput @bind-Value="Data.ButtonId" Data="portal.Buttons" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"/>
+                    <DataSelectInput @bind-Value="Data.ButtonId" Data="portal.Elements" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"/>
                 </div>
             </div>
             <HelperInfo>This lets you specify which button you want to alter</HelperInfo>
@@ -42,7 +44,7 @@
     <div class="field">
         <label class="label">Change Text Color</label>
         <div class="control">
-            <GatedTextInput @bind-Value="Data.NewStyles.TextColor" @bind-Enabled="Data.ChangeTextColor" type="color" />
+            <GatedTextInput @bind-Value="Data.NewStyles.ForegroundColor" @bind-Enabled="Data.ChangeTextColor" type="color" />
         </div>
     </div>
 
@@ -70,7 +72,7 @@
             </button>
         </div>
         <div class="control">
-            <IconPicker @bind-Value="Data.NewStyles.IconClass" disabled="@(!Data.ChangeIcon)" />
+            <IconPicker Value="@Data.NewStyles.IconClass()" ValueChanged="x => Data.NewStyles.IconClass(x)" disabled="@(!Data.ChangeIcon)" />
         </div>
     </div>
 
@@ -84,17 +86,17 @@
             </button>
         </div>
         <div class="control">
-            <FileInputBrowser @bind-Value="Data.NewStyles.ImageUrl" disabled="@(!Data.ChangeImage)" />
+            <FileInputBrowser Value="@Data.NewStyles.ImageUrl()" ValueChanged="x => Data.NewStyles.ImageUrl(x)" disabled="@(!Data.ChangeImage)" />
         </div>
     </div>
     <HelperInfo>This can be a url to a file online or a local file, local files need more processing though so the larger they are the longer they will take to load, try to keep sizes below 256x256 pixels</HelperInfo>
 
-    if (!string.IsNullOrEmpty(Data.NewStyles.ImageUrl))
+    if (!string.IsNullOrEmpty(Data.NewStyles.ImageUrl()))
     {
         <div class="field">
             <div class="control">
                 <figure class="image is-128x128">
-                    <img alt="@Data.NewStyles.Text" src="@Data.NewStyles.ImageUrl.GetImageUrl()" class="is-full"/>
+                    <img alt="@Data.NewStyles.Text" src="@Data.NewStyles.ImageUrl().GetImageUrl()" class="is-full"/>
                 </figure>
             </div>
         </div>
@@ -111,7 +113,7 @@
         { return $"Change Button Style"; }
 
         var portal = PortalStore.Get(Data.PortalId);
-        var button = portal?.Buttons.SingleOrDefault(x => x.Id == Data.ButtonId);
+        var button = portal?.Elements.SingleOrDefault(x => x.Id == Data.ButtonId);
         if(button == null) { return "Change Button Style"; }
 
         return $"Change {button.Name} Styles In {portal.Name}";

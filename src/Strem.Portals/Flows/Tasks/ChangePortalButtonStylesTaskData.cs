@@ -7,7 +7,7 @@ namespace Strem.Portals.Flows.Tasks;
 public class ChangePortalButtonStylesTaskData : IFlowTaskData
 {
     public static readonly string TaskCode = "change-portal-button-style";
-    public static readonly string TaskVersion = "1.0.0";
+    public static readonly string TaskVersion = "1.1.0";
     
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
@@ -25,9 +25,5 @@ public class ChangePortalButtonStylesTaskData : IFlowTaskData
     public bool ChangeBackgroundColor { get; set; }
     public bool ChangeTextColor { get; set; }
 
-    public ButtonStyles NewStyles { get; set; } = new ButtonStyles
-    {
-        IconClass = string.Empty,
-        ImageUrl = string.Empty
-    };
+    public ElementStyles NewStyles { get; set; } = new();
 }

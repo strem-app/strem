@@ -50,7 +50,7 @@
                         {
                             <DraggableElement Data="@cachedIndex" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.PortalElement }" 
                                               CanDrag="false" Classes="is-flex is-flex-direction-column">
-                                <PlaceholderButton ButtonSize="Portal.ButtonSize" GridIndex="@cachedIndex" ButtonPressed="AddElement">
+                                <PlaceholderButton ButtonSize="Portal.ElementSize" GridIndex="@cachedIndex" ButtonPressed="AddElement">
                                     <span class="icon fa-3x m-auto">
                                         <i class="fas fa-plus has-text-white"></i>
                                     </span>
@@ -61,7 +61,7 @@
                         else
                         {
                             <DraggableElement Data="possibleElement" DropType="@DropTypes.PortalElement" SupportedDropTypes="@(new []{ DropTypes.PortalElement })" @key="possibleElement.Id">
-                                <PortalButton ButtonId="possibleElement.Id" ButtonStyles="possibleElement.DefaultStyles" ButtonPressed="EditElement" ButtonSize="Portal.ButtonSize"/>
+                                <PortalButton ButtonId="possibleElement.Id" ElementStyles="possibleElement.DefaultStyles" ButtonPressed="EditElement" ButtonSize="Portal.ElementSize"/>
                             </DraggableElement>
                         }
                     }
@@ -69,7 +69,7 @@
             </div>
         </div>
         @{
-            var orphanedButtons = Portal.Buttons
+            var orphanedButtons = Portal.Elements
                 .Where(x => x.GridIndex < 0 || x.GridIndex >= Portal.ElementGridSize).ToArray();
         }
         @if (orphanedButtons.Length > 0)
@@ -80,7 +80,7 @@
                     @foreach (var button in orphanedButtons)
                     {
                         <DraggableElement Data="button" DropType="@DropTypes.PortalElement" SupportedDropTypes="@(new[] { DropTypes.None })" @key="button.Id">
-                            <PortalButton ButtonId="button.Id" ButtonStyles="button.DefaultStyles" ButtonSize="Portal.ButtonSize"/>
+                            <PortalButton ButtonId="button.Id" ElementStyles="button.DefaultStyles" ButtonSize="Portal.ElementSize"/>
                         </DraggableElement>
                     }
                 </div>
@@ -167,13 +167,13 @@
     public void AddElement(int gridIndex)
     {
         var button = new GridElementData { GridIndex = gridIndex };
-        Portal.Buttons.Add(button);
+        Portal.Elements.Add(button);
         EditElement(button.Id);
     }
 
     public void EditElement(Guid buttonId)
     {
-        var button = Portal.Buttons.SingleOrDefault(x => x.Id == buttonId);
+        var button = Portal.Elements.SingleOrDefault(x => x.Id == buttonId);
         if(button == null) { return; }
         
         SelectedGridElement = button;
@@ -212,7 +212,7 @@
     private void DeleteButton(Guid obj)
     {
         ModalService.CloseModal();
-        Portal.Buttons.Remove(SelectedGridElement);
+        Portal.Elements.Remove(SelectedGridElement);
         SelectedGridElement = null;
         EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
@@ -221,7 +221,7 @@
     { RequestingDeletion.InvokeAsync(Portal.Id); }
 
     private GridElementData? GetElementAt(int gridIndex)
-    {return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex);}
+    {return Portal.Elements.FirstOrDefault(x => x.GridIndex == gridIndex);}
 
     public void Dispose()
     { _subs.Dispose(); }

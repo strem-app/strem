@@ -2,5 +2,5 @@
 
 public class ButtonRuntimeStyles
 {
-    public Dictionary<Guid, Dictionary<Guid, ButtonStyles>> RuntimeStyles { get; set; } = new();
+    public Dictionary<Guid, Dictionary<Guid, ElementStyles>> RuntimeStyles { get; set; } = new();
 }

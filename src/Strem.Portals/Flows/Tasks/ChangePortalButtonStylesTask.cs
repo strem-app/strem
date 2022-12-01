@@ -35,10 +35,10 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
         
         var runtimeStyles = ButtonRuntimeStyles.GetButtonStyles(data.PortalId, data.ButtonId);
         if(data.ChangeButtonType) { runtimeStyles.ButtonType = data.NewStyles.ButtonType; }
-        if(data.ChangeTextColor) { runtimeStyles.TextColor = data.NewStyles.TextColor; }
+        if(data.ChangeTextColor) { runtimeStyles.ForegroundColor = data.NewStyles.ForegroundColor; }
         if(data.ChangeBackgroundColor) { runtimeStyles.BackgroundColor = data.NewStyles.BackgroundColor; }
-        if(data.ChangeIcon) { runtimeStyles.IconClass = data.NewStyles.IconClass; }
-        if(data.ChangeImage) { runtimeStyles.ImageUrl = data.NewStyles.ImageUrl; }
+        if(data.ChangeIcon) { runtimeStyles.IconClass(data.NewStyles.IconClass()); }
+        if(data.ChangeImage) { runtimeStyles.ImageUrl(data.NewStyles.ImageUrl()); }
 
         if (data.ChangeText)
         {

@@ -80,12 +80,12 @@
                                     var possibleButton = GetButtonAt(i);
                                     if (possibleButton == null)
                                     {
-                                        <PlaceholderButton ButtonSize="Portal.ButtonSize"/>
+                                        <PlaceholderButton ButtonSize="Portal.ElementSize"/>
                                     }
                                     else
                                     {
-                                        <PortalViewerButton ButtonId="possibleButton.Id" ButtonStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
-                                                            ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ButtonSize"/>
+                                        <PortalViewerButton ButtonId="possibleButton.Id" ElementStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
+                                                            ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ElementSize"/>
                                     }
                                 }
                             </div>
@@ -225,7 +225,7 @@
     }
     
     private GridElementData? GetButtonAt(int gridIndex)
-    { return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex); }
+    { return Portal.Elements.FirstOrDefault(x => x.GridIndex == gridIndex); }
     
     public async Task OnZoomChanged(ValueWithPrevious<int> values)
     { await Js.InvokeVoidAsync("setZoom", values.New);}
