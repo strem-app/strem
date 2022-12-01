@@ -2,24 +2,20 @@
 
 namespace Strem.Portals.Data;
 
-public class ButtonStyles
+public class ButtonStyles : ElementStyles
 {
-    public string Text { get; set; } = string.Empty;
     public string IconClass { get; set; } = "fas fa-circle-play";
     public string ImageUrl { get; set; } = string.Empty;
-    public string BackgroundColor { get; set; } = "#4a4a4a";
     public string TextColor { get; set; } = "#ffffff";
     public ButtonType ButtonType { get; set; } = ButtonType.IconButton;
 
     public ButtonStyles()
     {}
 
-    public ButtonStyles(string text, string iconClass, string imageUrl, string backgroundColor, string textColor, ButtonType type)
+    public ButtonStyles(string text, string iconClass, string imageUrl, string backgroundColor, string textColor, ButtonType type) : base(text, backgroundColor)
     {
-        Text = text;
         IconClass = iconClass;
         ImageUrl = imageUrl;
-        BackgroundColor = backgroundColor;
         TextColor = textColor;
         ButtonType = type;
     }

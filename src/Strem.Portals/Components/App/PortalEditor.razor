@@ -27,7 +27,7 @@
     <PortalDetailsEditor Data="Portal" DataChanged="PortalDetailsChanged" />
      <div class="field">
             <div class="control">
-                <button class="button is-primary is-leveled" onclick="ViewPortalInBrowser">
+                <button class="button is-primary is-leveled" @onclick="ViewPortalInBrowser">
                     <span class="icon is-small">
                         <i class="fas fa-globe"></i>
                     </span>
@@ -42,26 +42,26 @@
         <div class="box">
             <div class="portal-page portal-editor">
                 <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-                    @for (var i = 0; i < Portal.ButtonGridSize; i++)
+                    @for (var i = 0; i < Portal.ElementGridSize; i++)
                     {
                         var cachedIndex = i;
-                        var possibleButton = GetButtonAt(i);
-                        if (possibleButton == null)
+                        var possibleElement = GetElementAt(i);
+                        if (possibleElement == null)
                         {
-                            <DraggableElement Data="@cachedIndex" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.PortalButton }" 
+                            <DraggableElement Data="@cachedIndex" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.PortalElement }" 
                                               CanDrag="false" Classes="is-flex is-flex-direction-column">
-                                <PlaceholderButton ButtonSize="Portal.ButtonSize" GridIndex="@cachedIndex" ButtonPressed="AddButton">
+                                <PlaceholderButton ButtonSize="Portal.ButtonSize" GridIndex="@cachedIndex" ButtonPressed="AddElement">
                                     <span class="icon fa-3x m-auto">
                                         <i class="fas fa-plus has-text-white"></i>
                                     </span>
-                                    <label class="label has-text-white">Add Button</label>
+                                    <label class="label has-text-white">Add Element</label>
                                 </PlaceholderButton>
                             </DraggableElement>
                         }
                         else
                         {
-                            <DraggableElement Data="possibleButton" DropType="@DropTypes.PortalButton" SupportedDropTypes="@(new []{ DropTypes.PortalButton })" @key="possibleButton.Id">
-                                <PortalButton ButtonId="possibleButton.Id" ButtonStyles="possibleButton.DefaultStyles" ButtonPressed="EditButton" ButtonSize="Portal.ButtonSize"/>
+                            <DraggableElement Data="possibleElement" DropType="@DropTypes.PortalElement" SupportedDropTypes="@(new []{ DropTypes.PortalElement })" @key="possibleElement.Id">
+                                <PortalButton ButtonId="possibleElement.Id" ButtonStyles="possibleElement.DefaultStyles" ButtonPressed="EditElement" ButtonSize="Portal.ButtonSize"/>
                             </DraggableElement>
                         }
                     }
@@ -70,7 +70,7 @@
         </div>
         @{
             var orphanedButtons = Portal.Buttons
-                .Where(x => x.GridIndex < 0 || x.GridIndex >= Portal.ButtonGridSize).ToArray();
+                .Where(x => x.GridIndex < 0 || x.GridIndex >= Portal.ElementGridSize).ToArray();
         }
         @if (orphanedButtons.Length > 0)
         {
@@ -79,7 +79,7 @@
                 <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
                     @foreach (var button in orphanedButtons)
                     {
-                        <DraggableElement Data="button" DropType="@DropTypes.PortalButton" SupportedDropTypes="@(new[] { DropTypes.None })" @key="button.Id">
+                        <DraggableElement Data="button" DropType="@DropTypes.PortalElement" SupportedDropTypes="@(new[] { DropTypes.None })" @key="button.Id">
                             <PortalButton ButtonId="button.Id" ButtonStyles="button.DefaultStyles" ButtonSize="Portal.ButtonSize"/>
                         </DraggableElement>
                     }
@@ -104,9 +104,9 @@
 </div>
 
 <ModalContent Id="portal-button-editor-modal" @ref="EditButtonModal">
-    @if (SelectedButton != null)
+    @if (SelectedGridElement != null)
     {
-        <PortalButtonEditor Data="SelectedButton" OnClosed="ModalService.CloseModal" RequestedDeletion="DeleteButton"></PortalButtonEditor>
+        <PortalButtonEditor Data="SelectedGridElement" OnClosed="ModalService.CloseModal" RequestedDeletion="DeleteButton"></PortalButtonEditor>
     }
 </ModalContent>
 
@@ -123,7 +123,7 @@
     [Parameter]
     public EventCallback<Guid> RequestingDeletion { get; set; }
     
-    public ButtonData SelectedButton { get; set; }
+    public GridElementData SelectedGridElement { get; set; }
     
     public ModalElementReference EditButtonModal { get; set; }
 
@@ -132,13 +132,13 @@
     protected override async Task OnInitializedAsync()
     {
         DragAndDropService.OnDroppedItem
-            .Where(x => x.SourceDropType == DropTypes.PortalButton && 
-                        x.DestinationDropType == DropTypes.PortalButton)
+            .Where(x => x.SourceDropType == DropTypes.PortalElement && 
+                        x.DestinationDropType == DropTypes.PortalElement)
             .Subscribe(SwapButtons)
             .AddTo(_subs);
         
         DragAndDropService.OnDroppedItem
-            .Where(x => (x.SourceDropType == DropTypes.PortalButton) && 
+            .Where(x => (x.SourceDropType == DropTypes.PortalElement) && 
                         x.DestinationDropType == DropTypes.None)
             .Subscribe(MoveButton)
             .AddTo(_subs);
@@ -146,8 +146,8 @@
 
     public void SwapButtons(DropData data)
     {
-        var destinationButton = data.DestinationObject as ButtonData;
-        var sourceButton = data.SourceObject as ButtonData;
+        var destinationButton = data.DestinationObject as GridElementData;
+        var sourceButton = data.SourceObject as GridElementData;
         var destinationGridIndex = destinationButton.GridIndex;
         destinationButton.GridIndex = sourceButton.GridIndex;
         sourceButton.GridIndex = destinationGridIndex;
@@ -157,26 +157,26 @@
 
     public void MoveButton(DropData data)
     {
-        var sourceButton = data.SourceObject as ButtonData;
+        var sourceButton = data.SourceObject as GridElementData;
         var newIndex = (int)data.DestinationObject;
         sourceButton.GridIndex = newIndex;
         InvokeAsync(StateHasChanged);
         EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 
-    public void AddButton(int gridIndex)
+    public void AddElement(int gridIndex)
     {
-        var button = new ButtonData { GridIndex = gridIndex };
+        var button = new GridElementData { GridIndex = gridIndex };
         Portal.Buttons.Add(button);
-        EditButton(button.Id);
+        EditElement(button.Id);
     }
 
-    public void EditButton(Guid buttonId)
+    public void EditElement(Guid buttonId)
     {
         var button = Portal.Buttons.SingleOrDefault(x => x.Id == buttonId);
         if(button == null) { return; }
         
-        SelectedButton = button;
+        SelectedGridElement = button;
         ModalService.ShowModal(EditButtonModal.Reference);
     }
 
@@ -198,9 +198,9 @@
     private void ButtonEditModalClosed()
     {
         ModalService.CloseModal();
-        EventBus.PublishAsync(new PortalButtonChangedEvent(Portal.Id, SelectedButton.Id));
-        ButtonRuntimeStyles.RefreshStylesFor(Portal.Id, SelectedButton);
-        SelectedButton = null;
+        EventBus.PublishAsync(new PortalButtonChangedEvent(Portal.Id, SelectedGridElement.Id));
+        ButtonRuntimeStyles.RefreshStylesFor(Portal.Id, SelectedGridElement);
+        SelectedGridElement = null;
     }
 
     private void PortalDetailsChanged()
@@ -212,15 +212,15 @@
     private void DeleteButton(Guid obj)
     {
         ModalService.CloseModal();
-        Portal.Buttons.Remove(SelectedButton);
-        SelectedButton = null;
+        Portal.Buttons.Remove(SelectedGridElement);
+        SelectedGridElement = null;
         EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 
     private void OnPortalDeletion()
     { RequestingDeletion.InvokeAsync(Portal.Id); }
 
-    private ButtonData? GetButtonAt(int gridIndex)
+    private GridElementData? GetElementAt(int gridIndex)
     {return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex);}
 
     public void Dispose()

@@ -75,7 +75,7 @@
                     <div class="column">
                         <div class="portal-page portal-viewer box">
                             <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-                                @for (var i = 0; i < Portal.ButtonGridSize; i++)
+                                @for (var i = 0; i < Portal.ElementGridSize; i++)
                                 {
                                     var possibleButton = GetButtonAt(i);
                                     if (possibleButton == null)
@@ -210,8 +210,8 @@
             .Where(x => x.Tags.All(tag => Portal.TodoTags.Contains(tag, StringComparer.OrdinalIgnoreCase)));
     }
 
-    public void NotifyButtonPressed(ButtonData buttonData)
-    { EventBus.PublishAsync(new PortalButtonPressedEvent(Portal.Id, Portal.Name, buttonData.Id, buttonData.Name)); }
+    public void NotifyButtonPressed(GridElementData gridElementData)
+    { EventBus.PublishAsync(new PortalButtonPressedEvent(Portal.Id, Portal.Name, gridElementData.Id, gridElementData.Name)); }
     
     public void Dispose()
     {
@@ -224,7 +224,7 @@
         StateHasChanged();
     }
     
-    private ButtonData? GetButtonAt(int gridIndex)
+    private GridElementData? GetButtonAt(int gridIndex)
     { return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex); }
     
     public async Task OnZoomChanged(ValueWithPrevious<int> values)
