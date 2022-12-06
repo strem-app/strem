@@ -64,6 +64,12 @@ function setNoSleepButton(element) {
     }, false);
 }
 
+function setSliderColors(id, trackColor, thumbColor) {
+    const element = document.getElementById(id);
+    element.style.setProperty("--slider-track-color", trackColor, "");
+    element.style.setProperty("--slider-thumb-color", thumbColor, "");
+}
+
 bulmaToast.setDefaults({
     duration: 2000,
     position: 'bottom-right',

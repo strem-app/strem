@@ -12,66 +12,76 @@
 </div>
 
 <EditForm EditContext="EditContext" class="block">
-<div class="field">
-    <label class="label">Button Name</label>
-    <div class="control">
-        <TextInput placeholder="i.e PlaysAMeme" @bind-Value="Data.Name" />
+    <div class="field">
+        <label class="label">Button Name</label>
+        <div class="control">
+            <TextInput placeholder="i.e PlaysAMeme" @bind-Value="Data.Name" />
+        </div>
     </div>
-</div>
-<div class="field">
-    <label class="label">Button Text</label>
-    <div class="control">
-        <TextInput placeholder="i.e Play A Meme" @bind-Value="Data.DefaultStyles.Text"/>
+    <div class="field">
+        <label class="label">Element Type</label>
+        <EnumSelectInput @bind-Value="Data.DefaultStyles.ButtonType"></EnumSelectInput>
     </div>
-</div>
-<div class="field">
-    <label class="label">Button Color</label>
-    <div class="control">
-        <TextInput type="color" @bind-Value="Data.DefaultStyles.BackgroundColor" />
+    <div class="field">
+        <label class="label">Element Text</label>
+        <div class="control">
+            <TextInput placeholder="i.e Play A Meme" @bind-Value="Data.DefaultStyles.Text"/>
+        </div>
     </div>
-</div>
-<div class="field">
-    <label class="label">Text Color</label>
-    <div class="control">
-        <TextInput type="color" @bind-Value="Data.DefaultStyles.ForegroundColor" />
+    <div class="field">
+        <label class="label">Background/Button Color</label>
+        <div class="control">
+            <TextInput type="color" @bind-Value="Data.DefaultStyles.BackgroundColor" />
+        </div>
     </div>
-</div>
-<div class="field">
-    <label class="label">Button Type</label>
-    <EnumSelectInput @bind-Value="Data.DefaultStyles.ButtonType"></EnumSelectInput>
-</div>
+    <div class="field">
+        <label class="label">Foreground/Text Color</label>
+        <div class="control">
+            <TextInput type="color" @bind-Value="Data.DefaultStyles.ForegroundColor" />
+        </div>
+    </div>
 
-@if (Data.DefaultStyles.ButtonType == ButtonType.IconButton)
-{
-    <label class="label">Icon Style</label>
-    <div class="field">
-        <div class="control">
-            <IconPicker Value="@Data.DefaultStyles.IconClass()" ValueChanged="x => Data.DefaultStyles.IconClass(x)"></IconPicker>
+    @if (Data.DefaultStyles.ButtonType == ButtonType.IconButton)
+    {
+        <label class="label">Icon Style</label>
+        <div class="field">
+            <div class="control">
+                <IconPicker Value="@Data.DefaultStyles.IconClass()" ValueChanged="x => Data.DefaultStyles.IconClass(x)"></IconPicker>
+            </div>
         </div>
-    </div>
-}
-else if (Data.DefaultStyles.ButtonType == ButtonType.ImageButton)
-{
-    <label class="label">Icon Image</label>
-    <div class="field">
-        <div class="control">
-            <FileInputBrowser Value="@Data.DefaultStyles.ImageUrl()" ValueChanged="x => Data.DefaultStyles.ImageUrl(x)" placeholder="i.e http://some-site.com/some-image.png or c:/some-file.png" />
+    }
+    else if (Data.DefaultStyles.ButtonType == ButtonType.Slider)
+    {
+        <label class="label">Grid Size</label>
+        <div class="field">
+            <div class="control">
+                <IntInput Value="@Data.DefaultStyles.CellSize()" ValueChanged="x => Data.DefaultStyles.CellSize(x)" Min="1" Max="6" Step="1" />
+            </div>
+            <HelperInfo>This is how many cells in the grid the slider should take up 2 being the default</HelperInfo>
         </div>
-        <HelperInfo>This can be a url to a file online or a local file, local files need more processing though so the larger they are the longer they will take to load, try to keep sizes below 256x256 pixels</HelperInfo>
-    </div>
-    <div class="field">
-        <div class="control">
-            <figure class="image is-128x128">
-                <img alt="@Data.DefaultStyles.Text" src="@Data.DefaultStyles.ImageUrl().GetImageUrl()" class="is-full" />
-            </figure>
+    }
+    else if (Data.DefaultStyles.ButtonType == ButtonType.ImageButton)
+    {
+        <label class="label">Icon Image</label>
+        <div class="field">
+            <div class="control">
+                <FileInputBrowser Value="@Data.DefaultStyles.ImageUrl()" ValueChanged="x => Data.DefaultStyles.ImageUrl(x)" placeholder="i.e http://some-site.com/some-image.png or c:/some-file.png" />
+            </div>
+            <HelperInfo>This can be a url to a file online or a local file, local files need more processing though so the larger they are the longer they will take to load, try to keep sizes below 256x256 pixels</HelperInfo>
         </div>
-    </div>
-}
+        <div class="field">
+            <div class="control">
+                <figure class="image is-128x128">
+                    <img alt="@Data.DefaultStyles.Text" src="@Data.DefaultStyles.ImageUrl().GetImageUrl()" class="is-full" />
+                </figure>
+            </div>
+        </div>
+    }
 
-@if (!IsValid)
-{
-    <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
-}
+    @if (!IsValid)
+    {
+        <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+    }
 </EditForm>
 <div class="field">
     <div class="control">

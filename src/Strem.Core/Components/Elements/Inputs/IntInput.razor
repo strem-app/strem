@@ -2,10 +2,19 @@
 @inherits ValidatedInputBase<int>
 
 <input type="number" class="input @UnmatchedAttributes.ValueFor("class") @(IsValid != null ? IsValid.Value ? "valid" : "invalid" : "")"
-       value="@Value" @onchange="e => HandleValueChanged(e.Value)"
+       value="@Value" @onchange="e => HandleValueChanged(e.Value)" step="@Step" min="@Min" max="@Max"
        @attributes=@UnmatchedAttributes.AllBut("class", "type") />
        
 @code {
+    [Parameter]
+    public int Step { get; set; } = 1;
+
+    [Parameter]
+    public int Min { get; set; } = int.MinValue;
+
+    [Parameter]
+    public int Max { get; set; } = int.MaxValue;
+    
     private void HandleValueChanged(object? value)
     {
         var valueString = value?.ToString();

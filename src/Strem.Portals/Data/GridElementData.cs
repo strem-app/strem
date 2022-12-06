@@ -10,4 +10,5 @@ public class GridElementData
     [Required] 
     public string Name { get; set; } = string.Empty;
     public ElementStyles DefaultStyles { get; set; } = new ();
+    public int Value { get; set; }
 }

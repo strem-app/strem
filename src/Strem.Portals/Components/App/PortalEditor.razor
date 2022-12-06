@@ -61,7 +61,16 @@
                         else
                         {
                             <DraggableElement Data="possibleElement" DropType="@DropTypes.PortalElement" SupportedDropTypes="@(new []{ DropTypes.PortalElement })" @key="possibleElement.Id">
-                                <PortalButton ButtonId="possibleElement.Id" ElementStyles="possibleElement.DefaultStyles" ButtonPressed="EditElement" ButtonSize="Portal.ElementSize"/>
+                                
+                                    @if (possibleElement.DefaultStyles.ButtonType == ButtonType.Slider)
+                                    {
+                                        <PortalSlider ElementId="possibleElement.Id" ElementData="possibleElement" ElementStyles="possibleElement.DefaultStyles" OnClick="EditElement"/>
+                                    }
+                                    else
+                                    {
+                                        <PortalButton ElementId="possibleElement.Id" ElementStyles="possibleElement.DefaultStyles" />
+                                    }
+                                
                             </DraggableElement>
                         }
                     }
@@ -69,18 +78,25 @@
             </div>
         </div>
         @{
-            var orphanedButtons = Portal.Elements
+            var orphanedElements = Portal.Elements
                 .Where(x => x.GridIndex < 0 || x.GridIndex >= Portal.ElementGridSize).ToArray();
         }
-        @if (orphanedButtons.Length > 0)
+        @if (orphanedElements.Length > 0)
         {
             <div class="box">
-                <h3 class="title is-3 has-text-black">Orphaned Buttons</h3>
+                <h3 class="title is-3 has-text-black">Orphaned Elements</h3>
                 <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-                    @foreach (var button in orphanedButtons)
+                    @foreach (var element in orphanedElements)
                     {
-                        <DraggableElement Data="button" DropType="@DropTypes.PortalElement" SupportedDropTypes="@(new[] { DropTypes.None })" @key="button.Id">
-                            <PortalButton ButtonId="button.Id" ElementStyles="button.DefaultStyles" ButtonSize="Portal.ElementSize"/>
+                        <DraggableElement Data="element" DropType="@DropTypes.PortalElement" SupportedDropTypes="@(new[] { DropTypes.None })" @key="element.Id">
+                                @if (element.DefaultStyles.ButtonType == ButtonType.Slider)
+                                {
+                                    <PortalSlider ElementId="element.Id" ElementData="element" ElementStyles="element.DefaultStyles" />
+                                }
+                                else
+                                {
+                                    <PortalButton ElementId="element.Id" ElementStyles="element.DefaultStyles"/>
+                                }
                         </DraggableElement>
                     }
                 </div>

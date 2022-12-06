@@ -3,8 +3,7 @@
 @using Strem.Core.Extensions
 @using Strem.Portals.Extensions
 
-<a class="button portal-button m-3 is-flex is-flex-direction-column button-size-@(ButtonSize.ToString().ToLower())"
-   @onclick="OnButtonPressed" style="@GetButtonStyles()">
+<a class="button portal-button m-3 is-flex is-flex-direction-column" @onclick="OnButtonPressed" style="@GetButtonStyles()">
     @if (ElementStyles.ButtonType == ButtonType.IconButton)
     {
         <span class="icon fa-3x m-auto">
@@ -13,22 +12,19 @@
     }
     else if (ElementStyles.ButtonType == ButtonType.ImageButton)
     {
-        <figure class="image @GetImageSize()">
+        <figure class="image is-96x96">
             <img alt="@ElementStyles.Text" src="@ElementStyles.ImageUrl().GetImageUrl()" class="is-full"/>
         </figure>
     }
-    <label class="label @GetTextSize()" style="color: @(ElementStyles.ForegroundColor)">@ElementStyles.Text</label>
+    <label class="label is-size-7" style="color: @(ElementStyles.ForegroundColor)">@ElementStyles.Text</label>
 </a>
 
 @code {
     [Parameter]
-    public Guid ButtonId { get; set; }
+    public Guid ElementId { get; set; }
     
     [Parameter]
     public ElementStyles ElementStyles { get; set; }
-    
-    [Parameter]
-    public ButtonSize ButtonSize { get; set; }
     
     [Parameter]
     public EventCallback<Guid> ButtonPressed { get; set; }
@@ -36,23 +32,9 @@
 
     public void OnButtonPressed()
     {
-        ButtonPressed.InvokeAsync(ButtonId);
+        ButtonPressed.InvokeAsync(ElementId);
     }
     
     private string GetButtonStyles()
     { return $"background-color: {ElementStyles.BackgroundColor}; color: {ElementStyles.ForegroundColor}"; }
-
-    private string GetImageSize()
-    {
-        if(ButtonSize == ButtonSize.Medium) { return "is-128x128"; }
-        if(ButtonSize == ButtonSize.Large) { return "is-160x160"; }
-        return "is-96x96";
-    }
-    
-    private string GetTextSize()
-    {
-        if(ButtonSize == ButtonSize.Medium) { return "is-size-7"; }
-        if(ButtonSize == ButtonSize.Large) { return "is-size-6"; }
-        return "is-size-7";
-    }
 }

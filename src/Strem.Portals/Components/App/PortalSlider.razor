@@ -1,0 +1,41 @@
+﻿@using Strem.Portals.Data
+@using Strem.Portals.Types
+@using Strem.Core.Extensions
+@using Strem.Portals.Extensions
+
+<div class="m-3 is-flex is-flex-direction-column portal-slider has-text-centered is-size-@(ElementStyles.CellSize().ToString())" @onclick="Clicked">
+    <div class="field">
+        <label class="label">@ElementData.DefaultStyles.Text</label>
+        <div class="control">
+            <SliderInput @bind-Value="ElementData.Value" ValueChangedWithPrevious="ValueChanged" class="is-circle is-large" 
+                         ThumbColor="@ElementStyles.ForegroundColor" TrackColor="@ElementStyles.BackgroundColor" />
+        </div>
+    </div>
+    
+</div>
+
+@code {
+    [Parameter]
+    public Guid ElementId { get; set; }
+    
+    [Parameter]
+    public GridElementData ElementData { get; set; }
+    
+    [Parameter]
+    public ElementStyles ElementStyles { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> OnValueChanged { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> OnClick { get; set; }
+
+    public void ValueChanged()
+    { OnValueChanged.InvokeAsync(ElementId); }
+    
+    public void Clicked()
+    { OnClick.InvokeAsync(ElementId); }
+    
+    private string GetButtonStyles()
+    { return $"background-color: {ElementStyles.BackgroundColor}; color: {ElementStyles.ForegroundColor}"; }
+}
