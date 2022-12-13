@@ -12,6 +12,7 @@
 @using Strem.Core.Services.UI.Notifications
 @using Strem.Portals.Events.Base
 @using Strem.Portals.Services.Stores
+@using Strem.Portals.Types
 @using Strem.Todos.Data
 @using Strem.Todos.Events
 @using Strem.Todos.Events.Base
@@ -84,8 +85,19 @@
                                     }
                                     else
                                     {
-                                        <PortalViewerButton ButtonId="possibleButton.Id" ElementStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
-                                                            ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ElementSize"/>
+                                        <span id="@possibleButton.Id">
+                                            
+                                            @if (possibleButton.DefaultStyles.ButtonType == ButtonType.Slider)
+                                            {
+                                                <PortalSlider ElementId="possibleButton.Id" ElementData="possibleButton" ElementStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
+                                                        OnValueChanged="x => NotifySliderValueChanged(possibleButton, x.Value)"/>
+                                            }
+                                            else
+                                            {
+                                                <PortalButton ElementId="possibleButton.Id" ElementStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
+                                                          ButtonPressed="() => NotifyButtonPressed(possibleButton)"/>
+                                            }
+                                        </span>
                                     }
                                 }
                             </div>
@@ -154,7 +166,7 @@
             return;
         }
 
-        EventBus.ReceiveAs<PortalEvent, PortalChangedEvent, PortalCreatedEvent, PortalRemovedEvent, PortalButtonChangedEvent>()
+        EventBus.ReceiveAs<PortalEvent, PortalChangedEvent, PortalCreatedEvent, PortalRemovedEvent, PortalElementChangedEvent>()
             .Where(x => x.PortalId == PortalId)
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
@@ -210,8 +222,14 @@
             .Where(x => x.Tags.All(tag => Portal.TodoTags.Contains(tag, StringComparer.OrdinalIgnoreCase)));
     }
 
-    public void NotifyButtonPressed(GridElementData gridElementData)
-    { EventBus.PublishAsync(new PortalButtonPressedEvent(Portal.Id, Portal.Name, gridElementData.Id, gridElementData.Name)); }
+    public async Task NotifyButtonPressed(GridElementData gridElementData)
+    {
+        EventBus.PublishAsync(new PortalButtonPressedEvent(Portal.Id, Portal.Name, gridElementData.Id, gridElementData.Name));
+        await Js.InvokeVoidAsync("animateElementById", gridElementData.Id, "heartBeat");
+    }
+    
+    public void NotifySliderValueChanged(GridElementData gridElementData, int value)
+    { EventBus.PublishAsync(new PortalSliderValueChangedEvent(Portal.Id, Portal.Name, gridElementData.Id, gridElementData.Name, value)); }
     
     public void Dispose()
     {

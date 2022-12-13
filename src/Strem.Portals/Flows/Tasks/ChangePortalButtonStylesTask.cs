@@ -46,7 +46,7 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
             runtimeStyles.Text = processedText;
         }
         
-        EventBus.PublishAsync(new PortalButtonChangedEvent(data.PortalId, data.ButtonId));
+        EventBus.PublishAsync(new PortalElementChangedEvent(data.PortalId, data.ButtonId));
         return ExecutionResult.Success();
     }
 }

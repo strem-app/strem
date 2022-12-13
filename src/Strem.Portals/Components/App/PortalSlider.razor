@@ -5,7 +5,7 @@
 
 <div class="m-3 is-flex is-flex-direction-column portal-slider has-text-centered is-size-@(ElementStyles.CellSize().ToString())" @onclick="Clicked">
     <div class="field">
-        <label class="label">@ElementData.DefaultStyles.Text</label>
+        <label class="label">@ElementStyles.Text</label>
         <div class="control">
             <nav class="level">
                 <div class="level-item has-text-left">
@@ -26,7 +26,7 @@
             </nav>
         </div>
         <div class="control">
-            <SliderInput value="@ElementData.DefaultValue()" ValueChanged="x => ElementData.DefaultValue(x)"
+            <SliderInput value="@ElementData.CurrentValue()" ValueChanged="x => ElementData.CurrentValue(x)"
                          Min="@ElementData.MinValue()" Max="@ElementData.MaxValue()"
                          ValueChangedWithPrevious="ValueChanged" class="is-circle is-large" 
                          ThumbColor="@ElementStyles.ForegroundColor" TrackColor="@ElementStyles.BackgroundColor" />
@@ -46,13 +46,13 @@
     public ElementStyles ElementStyles { get; set; }
     
     [Parameter]
-    public EventCallback<Guid> OnValueChanged { get; set; }
+    public EventCallback<(Guid Id, int Value)> OnValueChanged { get; set; }
     
     [Parameter]
     public EventCallback<Guid> OnClick { get; set; }
 
-    public void ValueChanged()
-    { OnValueChanged.InvokeAsync(ElementId); }
+    public void ValueChanged(ValueWithPrevious<int> valueWithPrevious)
+    { OnValueChanged.InvokeAsync((ElementId, valueWithPrevious.New)); }
     
     public void Clicked()
     { OnClick.InvokeAsync(ElementId); }

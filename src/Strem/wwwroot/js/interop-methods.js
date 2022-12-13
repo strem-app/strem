@@ -45,6 +45,11 @@ function animateElement(element, animation, prefix = 'animate__') {
     });
 }
 
+function animateElementById(elementId, animation, prefix = 'animate__') {
+    const element = document.getElementById(elementId);
+    animateElement(element, animation, prefix);
+}
+
 function setNoSleepButton(element) {
     const noSleep = new NoSleep();
     let isStoppingSleep = false;

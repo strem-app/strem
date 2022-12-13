@@ -215,7 +215,7 @@
     private void ButtonEditModalClosed()
     {
         ModalService.CloseModal();
-        EventBus.PublishAsync(new PortalButtonChangedEvent(Portal.Id, SelectedGridElement.Id));
+        EventBus.PublishAsync(new PortalElementChangedEvent(Portal.Id, SelectedGridElement.Id));
         ButtonRuntimeStyles.RefreshStylesFor(Portal.Id, SelectedGridElement);
         SelectedGridElement = null;
     }

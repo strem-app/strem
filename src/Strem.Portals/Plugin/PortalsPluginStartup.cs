@@ -32,7 +32,7 @@ public class PortalsPluginStartup : IPluginStartup, IDisposable
     public async Task StartPlugin()
     {
         EventBus
-            .ReceiveAs<PortalEvent, PortalChangedEvent, PortalButtonChangedEvent>()
+            .ReceiveAs<PortalEvent, PortalChangedEvent, PortalElementChangedEvent>()
             .ThrottledByKey(x => x, TimeSpan.FromSeconds(2))
             .Select(x => PortalStore.Get(x.PortalId))
             .Subscribe(x =>

@@ -4,7 +4,7 @@ namespace Strem.Portals.Extensions;
 
 public static class ElementValueExtensions
 {
-    public static string DefaultValueKey = "default-value";
+    public static string CurrentValueKey = "current-value";
     public static string MinValueKey = "min-value";
     public static string MaxValueKey = "max-value";
 
@@ -18,8 +18,8 @@ public static class ElementValueExtensions
     public static void SetFromKey(GridElementData element, string key, int value)
     { element.Values[key] = value; }
 
-    public static int DefaultValue(this GridElementData element) => GetFromKey(element, DefaultValueKey);
-    public static void DefaultValue(this GridElementData element, int value) => SetFromKey(element, DefaultValueKey, value);
+    public static int CurrentValue(this GridElementData element) => GetFromKey(element, CurrentValueKey);
+    public static void CurrentValue(this GridElementData element, int value) => SetFromKey(element, CurrentValueKey, value);
     public static int MinValue(this GridElementData element) => GetFromKey(element, MinValueKey);
     public static void MinValue(this GridElementData element, int value) => SetFromKey(element, MinValueKey, value);
     public static int MaxValue(this GridElementData element)
