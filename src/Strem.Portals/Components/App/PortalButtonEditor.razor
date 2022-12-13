@@ -59,6 +59,17 @@
             </div>
             <HelperInfo>This is how many cells in the grid the slider should take up 2 being the default</HelperInfo>
         </div>
+        <label class="label">Min Slider Value</label>
+        <div class="field">
+            <div class="control">
+                <IntInput Value="@Data.MinValue()" ValueChanged="x => Data.MinValue(x)" />
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <IntInput Value="@Data.MaxValue()" ValueChanged="x => Data.MaxValue(x)" />
+            </div>
+        </div>
     }
     else if (Data.DefaultStyles.ButtonType == ButtonType.ImageButton)
     {

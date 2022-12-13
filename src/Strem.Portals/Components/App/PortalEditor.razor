@@ -183,6 +183,7 @@
     public void AddElement(int gridIndex)
     {
         var button = new GridElementData { GridIndex = gridIndex };
+        button.MaxValue(100);
         Portal.Elements.Add(button);
         EditElement(button.Id);
     }

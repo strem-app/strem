@@ -7,7 +7,28 @@
     <div class="field">
         <label class="label">@ElementData.DefaultStyles.Text</label>
         <div class="control">
-            <SliderInput @bind-Value="ElementData.Value" ValueChangedWithPrevious="ValueChanged" class="is-circle is-large" 
+            <nav class="level">
+                <div class="level-item has-text-left">
+                    <div>
+                        <span class="tag">@ElementData.MinValue()</span>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <span class="tag">@(ElementData.MaxValue()/2)</span>
+                    </div>
+                </div>
+                <div class="level-item has-text-right">
+                    <div>
+                        <span class="tag">@ElementData.MaxValue()</span>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="control">
+            <SliderInput value="@ElementData.DefaultValue()" ValueChanged="x => ElementData.DefaultValue(x)"
+                         Min="@ElementData.MinValue()" Max="@ElementData.MaxValue()"
+                         ValueChangedWithPrevious="ValueChanged" class="is-circle is-large" 
                          ThumbColor="@ElementStyles.ForegroundColor" TrackColor="@ElementStyles.BackgroundColor" />
         </div>
     </div>
@@ -35,7 +56,4 @@
     
     public void Clicked()
     { OnClick.InvokeAsync(ElementId); }
-    
-    private string GetButtonStyles()
-    { return $"background-color: {ElementStyles.BackgroundColor}; color: {ElementStyles.ForegroundColor}"; }
 }
