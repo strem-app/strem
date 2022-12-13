@@ -62,7 +62,7 @@
                         {
                             <DraggableElement Data="possibleElement" DropType="@DropTypes.PortalElement" SupportedDropTypes="@(new []{ DropTypes.PortalElement })" @key="possibleElement.Id">
                                 
-                                    @if (possibleElement.DefaultStyles.ButtonType == ButtonType.Slider)
+                                    @if (possibleElement.ElementType == GridElementType.Slider)
                                     {
                                         <PortalSlider ElementId="possibleElement.Id" ElementData="possibleElement" ElementStyles="possibleElement.DefaultStyles" OnClick="EditElement"/>
                                     }
@@ -89,7 +89,7 @@
                     @foreach (var element in orphanedElements)
                     {
                         <DraggableElement Data="element" DropType="@DropTypes.PortalElement" SupportedDropTypes="@(new[] { DropTypes.None })" @key="element.Id">
-                                @if (element.DefaultStyles.ButtonType == ButtonType.Slider)
+                                @if (element.ElementType == GridElementType.Slider)
                                 {
                                     <PortalSlider ElementId="element.Id" ElementData="element" ElementStyles="element.DefaultStyles" />
                                 }

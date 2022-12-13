@@ -86,11 +86,10 @@
                                     else
                                     {
                                         <span id="@possibleButton.Id">
-                                            
-                                            @if (possibleButton.DefaultStyles.ButtonType == ButtonType.Slider)
+                                            @if (possibleButton.ElementType == GridElementType.Slider)
                                             {
                                                 <PortalSlider ElementId="possibleButton.Id" ElementData="possibleButton" ElementStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
-                                                        OnValueChanged="x => NotifySliderValueChanged(possibleButton, x.Value)"/>
+                                                        OnValueChanged="x => NotifySliderValueChanged(possibleButton, x.Value)" />
                                             }
                                             else
                                             {

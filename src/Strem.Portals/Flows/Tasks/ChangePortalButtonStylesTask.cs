@@ -34,7 +34,7 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
         if (!ButtonRuntimeStyles.RuntimeStyles[data.PortalId].ContainsKey(data.ButtonId)) { return ExecutionResult.FailedButContinue("Cant find button"); }
         
         var runtimeStyles = ButtonRuntimeStyles.GetButtonStyles(data.PortalId, data.ButtonId);
-        if(data.ChangeButtonType) { runtimeStyles.ButtonType = data.NewStyles.ButtonType; }
+        if(data.ChangeButtonType) { runtimeStyles.ButtonType(data.NewStyles.ButtonType()); }
         if(data.ChangeTextColor) { runtimeStyles.ForegroundColor = data.NewStyles.ForegroundColor; }
         if(data.ChangeBackgroundColor) { runtimeStyles.BackgroundColor = data.NewStyles.BackgroundColor; }
         if(data.ChangeIcon) { runtimeStyles.IconClass(data.NewStyles.IconClass()); }

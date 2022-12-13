@@ -4,13 +4,13 @@
 @using Strem.Portals.Extensions
 
 <a class="button portal-button m-3 is-flex is-flex-direction-column" @onclick="OnButtonPressed" style="@GetButtonStyles()">
-    @if (ElementStyles.ButtonType == ButtonType.IconButton)
+    @if (ElementStyles.ButtonType() == ButtonType.IconButton)
     {
         <span class="icon fa-3x m-auto">
             <i class="fas @(ElementStyles.IconClass())"></i>
         </span>
     }
-    else if (ElementStyles.ButtonType == ButtonType.ImageButton)
+    else if (ElementStyles.ButtonType() == ButtonType.ImageButton)
     {
         <figure class="image is-96x96">
             <img alt="@ElementStyles.Text" src="@ElementStyles.ImageUrl().GetImageUrl()" class="is-full"/>
@@ -28,7 +28,6 @@
     
     [Parameter]
     public EventCallback<Guid> ButtonPressed { get; set; }
-
 
     public void OnButtonPressed()
     {

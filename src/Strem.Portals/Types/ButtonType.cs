@@ -4,6 +4,5 @@ public enum ButtonType
 {
     TextButton,
     IconButton,
-    ImageButton,
-    Slider
+    ImageButton
 }
