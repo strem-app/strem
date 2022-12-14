@@ -25,7 +25,7 @@
             <label class="label">Portal Button</label>
             <div class="control">
                 <div class="select">
-                    <DataSelectInput @bind-Value="Data.ButtonId" Data="portal.Elements" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"/>
+                    <DataSelectInput @bind-Value="Data.ButtonId" Data="portal.Elements.Where(x => x.ElementType == GridElementType.Button)" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"/>
                 </div>
             </div>
             <HelperInfo>This lets you specify which button you want to alter</HelperInfo>

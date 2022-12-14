@@ -50,7 +50,7 @@
                         {
                             <DraggableElement Data="@cachedIndex" DropType="@DropTypes.None" SupportedDropTypes="new []{ DropTypes.PortalElement }" 
                                               CanDrag="false" Classes="is-flex is-flex-direction-column">
-                                <PlaceholderButton ButtonSize="Portal.ElementSize" GridIndex="@cachedIndex" ButtonPressed="AddElement">
+                                <PlaceholderButton GridIndex="@cachedIndex" ButtonPressed="AddElement">
                                     <span class="icon fa-3x m-auto">
                                         <i class="fas fa-plus has-text-white"></i>
                                     </span>
@@ -122,7 +122,7 @@
 <ModalContent Id="portal-button-editor-modal" @ref="EditButtonModal">
     @if (SelectedGridElement != null)
     {
-        <PortalElementEditor Data="SelectedGridElement" OnClosed="ModalService.CloseModal" RequestedDeletion="DeleteButton"></PortalElementEditor>
+        <PortalElementEditor Data="SelectedGridElement" OnClosed="ElementEditModalClosed" RequestedDeletion="DeleteButton"></PortalElementEditor>
     }
 </ModalContent>
 
@@ -150,17 +150,17 @@
         DragAndDropService.OnDroppedItem
             .Where(x => x.SourceDropType == DropTypes.PortalElement && 
                         x.DestinationDropType == DropTypes.PortalElement)
-            .Subscribe(SwapButtons)
+            .Subscribe(SwapElement)
             .AddTo(_subs);
         
         DragAndDropService.OnDroppedItem
             .Where(x => (x.SourceDropType == DropTypes.PortalElement) && 
                         x.DestinationDropType == DropTypes.None)
-            .Subscribe(MoveButton)
+            .Subscribe(MoveElement)
             .AddTo(_subs);
     }
 
-    public void SwapButtons(DropData data)
+    public void SwapElement(DropData data)
     {
         var destinationButton = data.DestinationObject as GridElementData;
         var sourceButton = data.SourceObject as GridElementData;
@@ -171,7 +171,7 @@
         EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
     }
 
-    public void MoveButton(DropData data)
+    public void MoveElement(DropData data)
     {
         var sourceButton = data.SourceObject as GridElementData;
         var newIndex = (int)data.DestinationObject;
@@ -212,10 +212,11 @@
             .Where(x => Portal.TodoTags.All(requiredTag => x.Tags.Contains(requiredTag, StringComparer.OrdinalIgnoreCase)));
     }
     
-    private void ButtonEditModalClosed()
+    private void ElementEditModalClosed()
     {
         ModalService.CloseModal();
         EventBus.PublishAsync(new PortalElementChangedEvent(Portal.Id, SelectedGridElement.Id));
+        EventBus.PublishAsync(new PortalChangedEvent(Portal.Id));
         GridElementRuntimeStyles.RefreshStylesFor(Portal.Id, SelectedGridElement);
         SelectedGridElement = null;
     }
