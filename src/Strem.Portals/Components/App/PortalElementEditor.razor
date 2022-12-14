@@ -20,7 +20,9 @@
     </div>
     <div class="field">
         <label class="label">Element Type</label>
-        <EnumSelectInput @bind-Value="Data.ElementType" />
+        <div class="control is-expanded">
+           <EnumSelectInput @bind-Value="Data.ElementType" />
+        </div>
     </div>
     <div class="field">
         <label class="label">Element Text</label>
@@ -41,6 +43,8 @@
         </div>
     </div>
     
+    <hr />
+    
     @if (Data.ElementType == GridElementType.Button)
     {
         <div class="field">
@@ -50,7 +54,9 @@
         </div>
         <div class="field">
             <label class="label">Element Type</label>
-            <EnumSelectInput T="ButtonType" Value="Data.DefaultStyles.ButtonType()" ValueChanged="x => Data.DefaultStyles.ButtonType(x)" />
+            <div class="control is-expanded">
+                <EnumSelectInput T="ButtonType" Value="Data.DefaultStyles.ButtonType()" ValueChanged="x => Data.DefaultStyles.ButtonType(x)" />
+            </div>
         </div>
         
         @if (Data.DefaultStyles.ButtonType() == ButtonType.IconButton)
@@ -109,7 +115,7 @@
     
     @if (!IsValid)
     {
-        <ValidaitonMessageContainer Messages="EditContext.GetValidationMessages()"/>
+        <ValidationMessageContainer Messages="EditContext.GetValidationMessages()"/>
     }
 </EditForm>
 <div class="field">

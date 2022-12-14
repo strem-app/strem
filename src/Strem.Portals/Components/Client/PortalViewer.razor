@@ -88,13 +88,13 @@
                                         <span id="@possibleButton.Id">
                                             @if (possibleButton.ElementType == GridElementType.Slider)
                                             {
-                                                <PortalSlider ElementId="possibleButton.Id" ElementData="possibleButton" ElementStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
+                                                <PortalSlider ElementId="possibleButton.Id" ElementData="possibleButton" ElementStyles="ElementRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
                                                         OnValueChanged="x => NotifySliderValueChanged(possibleButton, x.Value)" />
                                             }
                                             else
                                             {
-                                                <PortalButton ElementId="possibleButton.Id" ElementStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
-                                                          ButtonPressed="() => NotifyButtonPressed(possibleButton)"/>
+                                                <PortalButton ElementId="possibleButton.Id" ElementStyles="ElementRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
+                                                          OnClick="() => NotifyButtonPressed(possibleButton)"/>
                                             }
                                         </span>
                                     }
@@ -136,7 +136,7 @@
     public PortalData Portal { get; set; }
     public bool UserHasAccess { get; set; }
     
-    public ButtonRuntimeStyles ButtonRuntimeStyles { get; set; }
+    public GridElementRuntimeStyles ElementRuntimeStyles { get; set; }
     public IEventBus EventBus { get; set; }
     public ITodoStore TodoStore { get; set; }
     public INotifier Notifier { get; set; }
@@ -151,7 +151,7 @@
     protected override async Task OnInitializedAsync()
     {
         EventBus = this.GetService<IEventBus>()!;
-        ButtonRuntimeStyles = this.GetService<ButtonRuntimeStyles>()!;
+        ElementRuntimeStyles = this.GetService<GridElementRuntimeStyles>()!;
         TodoStore = this.GetService<ITodoStore>()!;
         Logger = this.GetService<ILogger<PortalViewer>>()!;
         Notifier = this.GetService<INotifier>()!;

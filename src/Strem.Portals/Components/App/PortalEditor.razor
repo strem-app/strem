@@ -19,7 +19,7 @@
 @inject IWebBrowser WebBrowser
 @inject IEventBus EventBus
 @inject ITodoStore TodoStore 
-@inject ButtonRuntimeStyles ButtonRuntimeStyles 
+@inject GridElementRuntimeStyles GridElementRuntimeStyles 
 
 @implements IDisposable
 
@@ -68,7 +68,7 @@
                                     }
                                     else
                                     {
-                                        <PortalButton ElementId="possibleElement.Id" ElementStyles="possibleElement.DefaultStyles" />
+                                        <PortalButton ElementId="possibleElement.Id" ElementStyles="possibleElement.DefaultStyles" OnClick="EditElement" />
                                     }
                                 
                             </DraggableElement>
@@ -122,7 +122,7 @@
 <ModalContent Id="portal-button-editor-modal" @ref="EditButtonModal">
     @if (SelectedGridElement != null)
     {
-        <PortalButtonEditor Data="SelectedGridElement" OnClosed="ModalService.CloseModal" RequestedDeletion="DeleteButton"></PortalButtonEditor>
+        <PortalElementEditor Data="SelectedGridElement" OnClosed="ModalService.CloseModal" RequestedDeletion="DeleteButton"></PortalElementEditor>
     }
 </ModalContent>
 
@@ -216,7 +216,7 @@
     {
         ModalService.CloseModal();
         EventBus.PublishAsync(new PortalElementChangedEvent(Portal.Id, SelectedGridElement.Id));
-        ButtonRuntimeStyles.RefreshStylesFor(Portal.Id, SelectedGridElement);
+        GridElementRuntimeStyles.RefreshStylesFor(Portal.Id, SelectedGridElement);
         SelectedGridElement = null;
     }
 

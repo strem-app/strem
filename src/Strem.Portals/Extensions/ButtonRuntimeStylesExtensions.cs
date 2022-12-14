@@ -6,9 +6,9 @@ namespace Strem.Portals.Extensions;
 
 public static class ButtonRuntimeStylesExtensions
 {
-    public static ButtonRuntimeStyles PopulateRuntimeStyles(this ButtonRuntimeStyles styles, IPortalStore portalStore)
+    public static GridElementRuntimeStyles PopulateRuntimeStyles(this GridElementRuntimeStyles styles, IPortalStore portalStore)
     {
-        var buttonRuntimeStyles = new ButtonRuntimeStyles();
+        var buttonRuntimeStyles = new GridElementRuntimeStyles();
         foreach (var portal in portalStore.Data)
         {
             var buttonStyles = portal.Elements
@@ -18,7 +18,7 @@ public static class ButtonRuntimeStylesExtensions
         return buttonRuntimeStyles;
     }
     
-    public static void RefreshStylesFor(this ButtonRuntimeStyles styles, Guid portalId, GridElementData gridElement)
+    public static void RefreshStylesFor(this GridElementRuntimeStyles styles, Guid portalId, GridElementData gridElement)
     {
         if(!styles.RuntimeStyles.ContainsKey(portalId))
         { return; }
@@ -30,32 +30,32 @@ public static class ButtonRuntimeStylesExtensions
         portalStyles[gridElement.Id] = new ElementStyles(gridElement.DefaultStyles);
     }
     
-    public static ElementStyles GetButtonStyles(this ButtonRuntimeStyles styles, Guid portalId, Guid buttonId)
+    public static ElementStyles GetButtonStyles(this GridElementRuntimeStyles styles, Guid portalId, Guid buttonId)
     {
         if(!styles.RuntimeStyles.ContainsKey(portalId)) { return null; }
         if(!styles.RuntimeStyles[portalId].ContainsKey(buttonId)) { return null; }
         return styles.RuntimeStyles[portalId][buttonId];
     }
     
-    public static string GetButtonText(this ButtonRuntimeStyles styles, Guid portalId, Guid buttonId)
+    public static string GetButtonText(this GridElementRuntimeStyles styles, Guid portalId, Guid buttonId)
     {
         var buttonStyles = styles.GetButtonStyles(portalId, buttonId);
         return buttonStyles?.Text ?? string.Empty;
     }
     
-    public static string GetButtonIcon(this ButtonRuntimeStyles styles, Guid portalId, Guid buttonId)
+    public static string GetButtonIcon(this GridElementRuntimeStyles styles, Guid portalId, Guid buttonId)
     {
         var buttonStyles = styles.GetButtonStyles(portalId, buttonId);
         return buttonStyles?.IconClass() ?? string.Empty;
     }
     
-    public static string GetButtonBackgroundColor(this ButtonRuntimeStyles styles, Guid portalId, Guid buttonId)
+    public static string GetButtonBackgroundColor(this GridElementRuntimeStyles styles, Guid portalId, Guid buttonId)
     {
         var buttonStyles = styles.GetButtonStyles(portalId, buttonId);
         return buttonStyles?.BackgroundColor ?? string.Empty;
     }    
     
-    public static string GetButtonTextColor(this ButtonRuntimeStyles styles, Guid portalId, Guid buttonId)
+    public static string GetButtonTextColor(this GridElementRuntimeStyles styles, Guid portalId, Guid buttonId)
     {
         var buttonStyles = styles.GetButtonStyles(portalId, buttonId);
         return buttonStyles?.Text ?? string.Empty;

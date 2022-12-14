@@ -2,6 +2,7 @@
 @using Strem.Portals.Extensions
 @using Strem.Portals.Services.Stores
 @using Microsoft.AspNetCore.Components
+@using Strem.Portals.Types
 @inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.Portals.Flows.Tasks.ChangePortalButtonStylesTaskData>
 
 @inject IPortalStore PortalStore
@@ -58,7 +59,7 @@
     <div class="field">
         <label class="label">Change Button Type</label>
         <div class="control">
-            <GatedSelect @bind-Value="Data.NewStyles.ButtonType" @bind-Enabled="Data.ChangeButtonType" />
+            <GatedSelect TEnum="ButtonType" Value="Data.NewStyles.ButtonType()" ValueChanged="x => Data.NewStyles.ButtonType(x)" @bind-Enabled="Data.ChangeButtonType" />
         </div>
     </div>
 

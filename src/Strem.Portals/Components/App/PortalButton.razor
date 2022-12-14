@@ -27,11 +27,11 @@
     public ElementStyles ElementStyles { get; set; }
     
     [Parameter]
-    public EventCallback<Guid> ButtonPressed { get; set; }
+    public EventCallback<Guid> OnClick { get; set; }
 
     public void OnButtonPressed()
     {
-        ButtonPressed.InvokeAsync(ElementId);
+        OnClick.InvokeAsync(ElementId);
     }
     
     private string GetButtonStyles()
