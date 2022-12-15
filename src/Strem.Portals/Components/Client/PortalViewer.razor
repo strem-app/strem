@@ -223,7 +223,7 @@
 
     public async Task NotifyButtonPressed(GridElementData gridElementData)
     {
-        EventBus.PublishAsync(new PortalButtonPressedEvent(Portal.Id, Portal.Name, gridElementData.Id, gridElementData.Name));
+        EventBus.PublishAsync(new PortalElementPressedEvent(Portal.Id, Portal.Name, gridElementData.Id, gridElementData.Name));
         await Js.InvokeVoidAsync("animateElementById", gridElementData.Id, "heartBeat");
     }
     

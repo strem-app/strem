@@ -34,12 +34,12 @@ public class OnPortalButtonPressedTrigger : FlowTrigger<OnPortalButtonPressedTri
 
     public override bool CanExecute() => true;
 
-    public bool EventMatchesData(OnPortalButtonPressedTriggerData data, PortalButtonPressedEvent eventData)
+    public bool EventMatchesData(OnPortalButtonPressedTriggerData data, PortalElementPressedEvent eventData)
     {
         if (data.RequiredPortalId != Guid.Empty && data.RequiredPortalId != eventData.PortalId)
         { return false; }
 
-        if (data.RequiredButtonId != Guid.Empty && data.RequiredButtonId != eventData.ButtonId)
+        if (data.RequiredButtonId != Guid.Empty && data.RequiredButtonId != eventData.ElementId)
         { return false; }
 
         return true;
@@ -47,7 +47,7 @@ public class OnPortalButtonPressedTrigger : FlowTrigger<OnPortalButtonPressedTri
     
     public override async Task<IObservable<IVariables>> Execute(OnPortalButtonPressedTriggerData data)
     {
-        return EventBus.Receive<PortalButtonPressedEvent>()
+        return EventBus.Receive<PortalElementPressedEvent>()
             .Where(x => EventMatchesData(data, x))
             .Select(x =>
             {
@@ -55,7 +55,7 @@ public class OnPortalButtonPressedTrigger : FlowTrigger<OnPortalButtonPressedTri
                 newVariables.Set(PortalNameVariable, x.PortalName);
                 newVariables.Set(PortalIdVariable, x.PortalId);
                 newVariables.Set(ButtonNameVariable, x.ButtonName);
-                newVariables.Set(ButtonIdVariable, x.ButtonId);
+                newVariables.Set(ButtonIdVariable, x.ElementId);
                 return newVariables;
             });
     }

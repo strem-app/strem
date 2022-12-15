@@ -16,7 +16,7 @@ public class ChangePortalButtonStylesTaskData : IFlowTaskData
     [NotEmpty]
     public Guid PortalId { get; set; }
     [NotEmpty]
-    public Guid ButtonId { get; set; }
+    public Guid ElementId { get; set; }
     
     public bool ChangeText { get; set; }
     public bool ChangeIcon { get; set; }

@@ -31,9 +31,9 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
     public override async Task<ExecutionResult> Execute(ChangePortalButtonStylesTaskData data, IVariables flowVars)
     {
         if (!GridElementRuntimeStyles.RuntimeStyles.ContainsKey(data.PortalId)) { return ExecutionResult.FailedButContinue("Cant find portal"); }
-        if (!GridElementRuntimeStyles.RuntimeStyles[data.PortalId].ContainsKey(data.ButtonId)) { return ExecutionResult.FailedButContinue("Cant find button"); }
+        if (!GridElementRuntimeStyles.RuntimeStyles[data.PortalId].ContainsKey(data.ElementId)) { return ExecutionResult.FailedButContinue("Cant find button"); }
         
-        var runtimeStyles = GridElementRuntimeStyles.GetButtonStyles(data.PortalId, data.ButtonId);
+        var runtimeStyles = GridElementRuntimeStyles.GetButtonStyles(data.PortalId, data.ElementId);
         if(data.ChangeButtonType) { runtimeStyles.ButtonType(data.NewStyles.ButtonType()); }
         if(data.ChangeTextColor) { runtimeStyles.ForegroundColor = data.NewStyles.ForegroundColor; }
         if(data.ChangeBackgroundColor) { runtimeStyles.BackgroundColor = data.NewStyles.BackgroundColor; }
@@ -46,7 +46,7 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
             runtimeStyles.Text = processedText;
         }
         
-        EventBus.PublishAsync(new PortalElementChangedEvent(data.PortalId, data.ButtonId));
+        EventBus.PublishAsync(new PortalElementChangedEvent(data.PortalId, data.ElementId));
         return ExecutionResult.Success();
     }
 }
