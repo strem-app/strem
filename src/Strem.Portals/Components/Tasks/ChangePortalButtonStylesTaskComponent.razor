@@ -3,6 +3,7 @@
 @using Strem.Portals.Services.Stores
 @using Microsoft.AspNetCore.Components
 @using Strem.Portals.Types
+
 @inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.Portals.Flows.Tasks.ChangePortalButtonStylesTaskData>
 
 @inject IPortalStore PortalStore
@@ -73,7 +74,7 @@
             </button>
         </div>
         <div class="control">
-            <IconPicker Value="@Data.NewStyles.IconClass()" ValueChanged="x => Data.NewStyles.IconClass(x)" disabled="@(!Data.ChangeIcon)" />
+            <IconPicker Value="@Data.NewStyles.IconClass()" ValueChanged="IconClassChanged" disabled="@(!Data.ChangeIcon)" />
         </div>
     </div>
 
@@ -87,7 +88,7 @@
             </button>
         </div>
         <div class="control">
-            <FileInputBrowser Value="@Data.NewStyles.ImageUrl()" ValueChanged="x => Data.NewStyles.ImageUrl(x)" disabled="@(!Data.ChangeImage)" />
+            <FileInputBrowser Value="@Data.NewStyles.ImageUrl()" ValueChanged="ImageUrlChanged" disabled="@(!Data.ChangeImage)" />
         </div>
     </div>
     <HelperInfo>This can be a url to a file online or a local file, local files need more processing though so the larger they are the longer they will take to load, try to keep sizes below 256x256 pixels</HelperInfo>
@@ -119,4 +120,17 @@
 
         return $"Change {button.Name} Styles In {portal.Name}";
     }
+
+    private void IconClassChanged(string newValue)
+    {
+        Data.NewStyles.IconClass(newValue);
+        NotifyPropertyChanged(nameof(Data.NewStyles));
+    }
+    
+    private void ImageUrlChanged(string newValue)
+    {
+        Data.NewStyles.ImageUrl(newValue);
+        NotifyPropertyChanged(nameof(Data.NewStyles));
+    }
+
 }
