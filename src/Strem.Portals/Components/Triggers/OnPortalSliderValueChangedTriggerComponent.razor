@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Strem.Portals.Services.Stores
 @using Strem.Portals.Types
-@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Portals.Flows.Triggers.OnPortalButtonPressedTriggerData>
+@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Portals.Flows.Triggers.OnPortalSliderValueChangedTriggerData>
 
 @inject IPortalStore PortalStore
 
@@ -18,11 +18,11 @@
     if (portal != null)
     {
         <div class="field">
-            <label class="label">Portal Button</label>
+            <label class="label">Portal Slider</label>
             <div class="control">
-                <DataSelectInput @bind-Value="Data.RequiredElementId" Data="portal.Elements.Where(x => x.ElementType == GridElementType.Button)" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())" />
+                <DataSelectInput @bind-Value="Data.RequiredElementId" Data="portal.Elements.Where(x => x.ElementType == GridElementType.Slider)" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())" />
             </div>
-            <HelperInfo>This lets you specify which slider you want to listen for value changes on</HelperInfo>
+            <HelperInfo>This lets you specify which button you want to listen for presses on</HelperInfo>
         </div>
     }
 }
@@ -33,12 +33,12 @@
     public string GetTitle()
     {
         if(Data.RequiredPortalId == Guid.Empty && Data.RequiredElementId == Guid.Empty)
-        { return $"On Portal Button Pressed"; }
+        { return $"On Portal Slider Value Changed"; }
 
         var portal = PortalStore.Get(Data.RequiredPortalId);
-        var button = portal?.Elements.SingleOrDefault(x => x.Id == Data.RequiredElementId);
-        if(button == null) { return "On Portal Button Pressed"; }
+        var element = portal?.Elements.SingleOrDefault(x => x.Id == Data.RequiredElementId);
+        if(element == null) { return "On Portal Slider Value Changed"; }
 
-        return $"On {button.Name} Pressed In {portal.Name}";
+        return $"On {element.Name} Value Changed In {portal.Name}";
     }
 }
