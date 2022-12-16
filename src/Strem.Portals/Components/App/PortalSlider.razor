@@ -1,0 +1,59 @@
+﻿@using Strem.Portals.Data
+@using Strem.Portals.Types
+@using Strem.Core.Extensions
+@using Strem.Portals.Extensions
+
+<div class="m-3 is-flex is-flex-direction-column portal-slider has-text-centered is-size-@(ElementStyles.CellSize().ToString())" @onclick="Clicked">
+    <div class="field">
+        <label class="label">@ElementStyles.Text</label>
+        <div class="control">
+            <nav class="level">
+                <div class="level-item has-text-left">
+                    <div>
+                        <span class="tag">@ElementData.MinValue()</span>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <span class="tag">@(ElementData.MaxValue()/2)</span>
+                    </div>
+                </div>
+                <div class="level-item has-text-right">
+                    <div>
+                        <span class="tag">@ElementData.MaxValue()</span>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="control">
+            <SliderInput value="@ElementData.CurrentValue()" ValueChanged="x => ElementData.CurrentValue(x)"
+                         Min="@ElementData.MinValue()" Max="@ElementData.MaxValue()"
+                         ValueChangedWithPrevious="ValueChanged" class="is-circle is-large" 
+                         ThumbColor="@ElementStyles.ForegroundColor" TrackColor="@ElementStyles.BackgroundColor" />
+        </div>
+    </div>
+    
+</div>
+
+@code {
+    [Parameter]
+    public Guid ElementId { get; set; }
+    
+    [Parameter]
+    public GridElementData ElementData { get; set; }
+    
+    [Parameter]
+    public ElementStyles ElementStyles { get; set; }
+    
+    [Parameter]
+    public EventCallback<(Guid Id, int Value)> OnValueChanged { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> OnClick { get; set; }
+
+    public void ValueChanged(ValueWithPrevious<int> valueWithPrevious)
+    { OnValueChanged.InvokeAsync((ElementId, valueWithPrevious.New)); }
+    
+    public void Clicked()
+    { OnClick.InvokeAsync(ElementId); }
+}

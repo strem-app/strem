@@ -12,6 +12,7 @@
 @using Strem.Core.Services.UI.Notifications
 @using Strem.Portals.Events.Base
 @using Strem.Portals.Services.Stores
+@using Strem.Portals.Types
 @using Strem.Todos.Data
 @using Strem.Todos.Events
 @using Strem.Todos.Events.Base
@@ -75,17 +76,27 @@
                     <div class="column">
                         <div class="portal-page portal-viewer box">
                             <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-                                @for (var i = 0; i < Portal.ButtonGridSize; i++)
+                                @for (var i = 0; i < Portal.ElementGridSize; i++)
                                 {
                                     var possibleButton = GetButtonAt(i);
                                     if (possibleButton == null)
                                     {
-                                        <PlaceholderButton ButtonSize="Portal.ButtonSize"/>
+                                        <PlaceholderButton />
                                     }
                                     else
                                     {
-                                        <PortalViewerButton ButtonId="possibleButton.Id" ButtonStyles="ButtonRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
-                                                            ButtonPressed="() => NotifyButtonPressed(possibleButton)" ButtonSize="Portal.ButtonSize"/>
+                                        <span id="@possibleButton.Id">
+                                            @if (possibleButton.ElementType == GridElementType.Slider)
+                                            {
+                                                <PortalSlider ElementId="possibleButton.Id" ElementData="possibleButton" ElementStyles="ElementRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
+                                                        OnValueChanged="x => NotifySliderValueChanged(possibleButton, x.Value)" />
+                                            }
+                                            else
+                                            {
+                                                <PortalButton ElementId="possibleButton.Id" ElementStyles="ElementRuntimeStyles.GetButtonStyles(Portal.Id, possibleButton.Id)"
+                                                          OnClick="() => NotifyButtonPressed(possibleButton)"/>
+                                            }
+                                        </span>
                                     }
                                 }
                             </div>
@@ -125,7 +136,7 @@
     public PortalData Portal { get; set; }
     public bool UserHasAccess { get; set; }
     
-    public ButtonRuntimeStyles ButtonRuntimeStyles { get; set; }
+    public GridElementRuntimeStyles ElementRuntimeStyles { get; set; }
     public IEventBus EventBus { get; set; }
     public ITodoStore TodoStore { get; set; }
     public INotifier Notifier { get; set; }
@@ -140,7 +151,7 @@
     protected override async Task OnInitializedAsync()
     {
         EventBus = this.GetService<IEventBus>()!;
-        ButtonRuntimeStyles = this.GetService<ButtonRuntimeStyles>()!;
+        ElementRuntimeStyles = this.GetService<GridElementRuntimeStyles>()!;
         TodoStore = this.GetService<ITodoStore>()!;
         Logger = this.GetService<ILogger<PortalViewer>>()!;
         Notifier = this.GetService<INotifier>()!;
@@ -154,7 +165,7 @@
             return;
         }
 
-        EventBus.ReceiveAs<PortalEvent, PortalChangedEvent, PortalCreatedEvent, PortalRemovedEvent, PortalButtonChangedEvent>()
+        EventBus.ReceiveAs<PortalEvent, PortalChangedEvent, PortalCreatedEvent, PortalRemovedEvent, PortalElementChangedEvent>()
             .Where(x => x.PortalId == PortalId)
             .Subscribe(x => InvokeAsync(StateHasChanged))
             .AddTo(_subs);
@@ -210,8 +221,14 @@
             .Where(x => x.Tags.All(tag => Portal.TodoTags.Contains(tag, StringComparer.OrdinalIgnoreCase)));
     }
 
-    public void NotifyButtonPressed(ButtonData buttonData)
-    { EventBus.PublishAsync(new PortalButtonPressedEvent(Portal.Id, Portal.Name, buttonData.Id, buttonData.Name)); }
+    public async Task NotifyButtonPressed(GridElementData gridElementData)
+    {
+        EventBus.PublishAsync(new PortalElementPressedEvent(Portal.Id, Portal.Name, gridElementData.Id, gridElementData.Name));
+        await Js.InvokeVoidAsync("animateElementById", gridElementData.Id, "heartBeat");
+    }
+    
+    public void NotifySliderValueChanged(GridElementData gridElementData, int value)
+    { EventBus.PublishAsync(new PortalSliderValueChangedEvent(Portal.Id, Portal.Name, gridElementData.Id, gridElementData.Name, value)); }
     
     public void Dispose()
     {
@@ -224,8 +241,8 @@
         StateHasChanged();
     }
     
-    private ButtonData? GetButtonAt(int gridIndex)
-    { return Portal.Buttons.FirstOrDefault(x => x.GridIndex == gridIndex); }
+    private GridElementData? GetButtonAt(int gridIndex)
+    { return Portal.Elements.FirstOrDefault(x => x.GridIndex == gridIndex); }
     
     public async Task OnZoomChanged(ValueWithPrevious<int> values)
     { await Js.InvokeVoidAsync("setZoom", values.New);}

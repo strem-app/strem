@@ -1,3 +1,3 @@
 ﻿namespace Strem.Portals.Events.Base;
 
-public abstract record PortalButtonEvent(Guid PortalId, Guid ButtonId) : PortalEvent(PortalId);
+public abstract record PortalElementEvent(Guid PortalId, Guid ElementId) : PortalEvent(PortalId);

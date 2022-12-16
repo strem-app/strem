@@ -45,6 +45,11 @@ function animateElement(element, animation, prefix = 'animate__') {
     });
 }
 
+function animateElementById(elementId, animation, prefix = 'animate__') {
+    const element = document.getElementById(elementId);
+    animateElement(element, animation, prefix);
+}
+
 function setNoSleepButton(element) {
     const noSleep = new NoSleep();
     let isStoppingSleep = false;
@@ -62,6 +67,12 @@ function setNoSleepButton(element) {
         
         isStoppingSleep = !isStoppingSleep;
     }, false);
+}
+
+function setSliderColors(id, trackColor, thumbColor) {
+    const element = document.getElementById(id);
+    element.style.setProperty("--slider-track-color", trackColor, "");
+    element.style.setProperty("--slider-thumb-color", thumbColor, "");
 }
 
 bulmaToast.setDefaults({

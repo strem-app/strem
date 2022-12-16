@@ -266,26 +266,23 @@ input.invalid, textarea.invalid
 
 .portal-button 
 {    
-    &.button-size-small
-    {
-        width: 8rem;
-        height: 8rem;
-    }
-
-    &.button-size-medium
-    {
-        width: 10rem;
-        height: 10rem;
-    }
-
-    &.button-size-large
-    {
-        width: 12rem;
-        height: 12rem;
-    }
+    width: 8rem;
+    height: 8rem;
         
     .label
     { white-space: break-spaces; }
+}
+
+.portal-slider
+{
+    width: 8rem;
+    height: 8rem;
+    
+    &.is-size-2 { width: 17.5rem; }
+    &.is-size-3 { width: 27rem; }
+    &.is-size-4 { width: 36.5rem; }
+    &.is-size-5 { width: 46rem; }
+    &.is-size-6 { width: 55.5rem; }
 }
 
 .portal-editor
@@ -371,6 +368,12 @@ li.drag-source
     vertical-align: top;
     mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+}
+
+.slider
+{
+    &::-webkit-slider-thumb { background: var(--slider-thumb-color) !important; }
+    &::-webkit-slider-runnable-track { background: var(--slider-track-color) !important; }
 }
 
 .has-left-scrollbar

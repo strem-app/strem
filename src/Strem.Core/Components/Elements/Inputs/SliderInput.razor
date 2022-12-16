@@ -1,6 +1,10 @@
-﻿@inherits ValidatedInputBase<int>
+﻿@using Strem.Core.Extensions
+@inherits ValidatedInputBase<int>
+@inject IJSRuntime JS
 
-<input class="slider is-fullwidth" step="@Step" min="@Min" max="@Max" type="range" @bind="ProxyValue">
+<input id="@_id" class="slider is-fullwidth @UnmatchedAttributes.ValueFor("class")" 
+       step="@Step" min="@Min" max="@Max" type="range" @bind="ProxyValue"
+       style="@UnmatchedAttributes.ValueFor("style")" />
 
 @code {
 
@@ -13,9 +17,24 @@
     [Parameter]
     public int Max { get; set; } = 100;
 
+    [Parameter]
+    public string TrackColor { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ThumbColor { get; set; } = string.Empty;
+
     private int ProxyValue
     {
         get => Value;
         set => OnValueChanged(value);
     }
+    
+    protected Guid _id = Guid.NewGuid();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        await JS.InvokeVoidAsync("setSliderColors", _id, TrackColor, ThumbColor);
+    }
+
 }

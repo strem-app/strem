@@ -44,6 +44,8 @@ public abstract class ValidatedInputBase<T> : ComponentBase
     public void OnValueChanged(T value)
     {
         var previousValue = Value;
+        if(previousValue?.Equals(value) ?? false) { return; }
+        
         ValueChanged.InvokeAsync(value);
         if(_fieldIdentifier != null)
         { EditContext?.NotifyFieldChanged(_fieldIdentifier.Value); }

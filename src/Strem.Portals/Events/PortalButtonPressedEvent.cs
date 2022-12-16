@@ -2,4 +2,4 @@
 
 namespace Strem.Portals.Events;
 
-public record PortalButtonPressedEvent(Guid PortalId, string PortalName, Guid ButtonId, string ButtonName) : PortalButtonEvent(PortalId, ButtonId);
+public record PortalElementPressedEvent(Guid PortalId, string PortalName, Guid ElementId, string ButtonName) : PortalElementEvent(PortalId, ElementId);

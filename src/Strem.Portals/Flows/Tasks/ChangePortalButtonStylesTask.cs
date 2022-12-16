@@ -19,26 +19,26 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
     public override string Category => "Portals";
     public override string Description => "Allows you to edit a buttons styles dynamically";
 
-    public ButtonRuntimeStyles ButtonRuntimeStyles { get; }
+    public GridElementRuntimeStyles GridElementRuntimeStyles { get; }
 
-    public ChangePortalButtonStylesTask(ILogger<FlowTask<ChangePortalButtonStylesTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, ButtonRuntimeStyles buttonRuntimeStyles) : base(logger, flowStringProcessor, appState, eventBus)
+    public ChangePortalButtonStylesTask(ILogger<FlowTask<ChangePortalButtonStylesTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, GridElementRuntimeStyles gridElementRuntimeStyles) : base(logger, flowStringProcessor, appState, eventBus)
     {
-        ButtonRuntimeStyles = buttonRuntimeStyles;
+        GridElementRuntimeStyles = gridElementRuntimeStyles;
     }
 
     public override bool CanExecute() => true;
 
     public override async Task<ExecutionResult> Execute(ChangePortalButtonStylesTaskData data, IVariables flowVars)
     {
-        if (!ButtonRuntimeStyles.RuntimeStyles.ContainsKey(data.PortalId)) { return ExecutionResult.FailedButContinue("Cant find portal"); }
-        if (!ButtonRuntimeStyles.RuntimeStyles[data.PortalId].ContainsKey(data.ButtonId)) { return ExecutionResult.FailedButContinue("Cant find button"); }
+        if (!GridElementRuntimeStyles.RuntimeStyles.ContainsKey(data.PortalId)) { return ExecutionResult.FailedButContinue("Cant find portal"); }
+        if (!GridElementRuntimeStyles.RuntimeStyles[data.PortalId].ContainsKey(data.ElementId)) { return ExecutionResult.FailedButContinue("Cant find button"); }
         
-        var runtimeStyles = ButtonRuntimeStyles.GetButtonStyles(data.PortalId, data.ButtonId);
-        if(data.ChangeButtonType) { runtimeStyles.ButtonType = data.NewStyles.ButtonType; }
-        if(data.ChangeTextColor) { runtimeStyles.TextColor = data.NewStyles.TextColor; }
+        var runtimeStyles = GridElementRuntimeStyles.GetButtonStyles(data.PortalId, data.ElementId);
+        if(data.ChangeButtonType) { runtimeStyles.ButtonType(data.NewStyles.ButtonType()); }
+        if(data.ChangeTextColor) { runtimeStyles.ForegroundColor = data.NewStyles.ForegroundColor; }
         if(data.ChangeBackgroundColor) { runtimeStyles.BackgroundColor = data.NewStyles.BackgroundColor; }
-        if(data.ChangeIcon) { runtimeStyles.IconClass = data.NewStyles.IconClass; }
-        if(data.ChangeImage) { runtimeStyles.ImageUrl = data.NewStyles.ImageUrl; }
+        if(data.ChangeIcon) { runtimeStyles.IconClass(data.NewStyles.IconClass()); }
+        if(data.ChangeImage) { runtimeStyles.ImageUrl(data.NewStyles.ImageUrl()); }
 
         if (data.ChangeText)
         {
@@ -46,7 +46,7 @@ public class ChangePortalButtonStylesTask : FlowTask<ChangePortalButtonStylesTas
             runtimeStyles.Text = processedText;
         }
         
-        EventBus.PublishAsync(new PortalButtonChangedEvent(data.PortalId, data.ButtonId));
+        EventBus.PublishAsync(new PortalElementChangedEvent(data.PortalId, data.ElementId));
         return ExecutionResult.Success();
     }
 }

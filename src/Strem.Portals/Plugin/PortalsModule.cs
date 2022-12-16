@@ -32,7 +32,7 @@ public class PortalsModule : IRequiresApiHostingModule
         services.AddSingleton<IPortalStore, PortalStore>();
         services.AddSingleton<IPortalImporter, PortalImporter>();
         services.AddSingleton<IPortalExporter, PortalExporter>();
-        services.AddSingleton<ButtonRuntimeStyles>(PopulateRuntimeStyles);
+        services.AddSingleton<GridElementRuntimeStyles>(PopulateRuntimeStyles);
         
         // Components/Flows
         var thisAssembly = GetType().Assembly;
@@ -43,10 +43,10 @@ public class PortalsModule : IRequiresApiHostingModule
         services.AddSingleton<IPluginStartup, PortalsPluginStartup>();
     }
     
-    public ButtonRuntimeStyles PopulateRuntimeStyles(IServiceProvider services)
+    public GridElementRuntimeStyles PopulateRuntimeStyles(IServiceProvider services)
     {
         var portalStore = services.GetService<IPortalStore>();
-        var buttonRuntimeStyles = new ButtonRuntimeStyles();
+        var buttonRuntimeStyles = new GridElementRuntimeStyles();
         return buttonRuntimeStyles.PopulateRuntimeStyles(portalStore);
     }
 }

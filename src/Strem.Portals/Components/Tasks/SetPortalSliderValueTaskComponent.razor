@@ -1,0 +1,60 @@
+﻿@using Strem.Portals.Services.Stores
+@using Microsoft.AspNetCore.Components
+@using Strem.Portals.Types
+
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.Portals.Flows.Tasks.SetPortalSliderValueTaskData>
+
+@inject IPortalStore PortalStore
+
+<div class="field">
+    <label class="label">Required Portal</label>
+    <div class="control">
+        <div class="select">
+            <DataSelectInput @bind-Value="Data.PortalId" Data="PortalStore.Data" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"/>
+        </div>
+    </div>
+    <HelperInfo>This lets you specify which portal contains the button</HelperInfo>
+</div>
+@if (Data.PortalId != Guid.Empty)
+{
+    var portal = PortalStore.Get(Data.PortalId);
+    if (portal != null)
+    {
+        <div class="field">
+            <label class="label">Portal Slider</label>
+            <div class="control">
+                <div class="select">
+                    <DataSelectInput @bind-Value="Data.ElementId" Data="portal.Elements.Where(x => x.ElementType == GridElementType.Slider)" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"/>
+                </div>
+            </div>
+            <HelperInfo>This lets you specify which slider you want to alter</HelperInfo>
+        </div>
+    }
+}
+
+@if (Data.ElementId != Guid.Empty)
+{
+    <div class="field">
+        <label class="label">New Value</label>
+        <div class="control">
+            <ProcessedInput @bind-Value="Data.NewValue" Placeholder="i.e 23 or dynamic var"></ProcessedInput>
+        </div>
+        <HelperInfo>This is the new value you wish to set, it should be a numeric value or a dynamic value containing a numeric value</HelperInfo>
+    </div>    
+}
+
+@code {
+    public override string Title => GetTitle();
+    
+    public string GetTitle()
+    {
+        if(Data.PortalId == Guid.Empty && Data.ElementId == Guid.Empty)
+        { return $"Set Slider Value"; }
+
+        var portal = PortalStore.Get(Data.PortalId);
+        var elementData = portal?.Elements.SingleOrDefault(x => x.Id == Data.ElementId);
+        if(elementData == null) { return "Set Slider Value"; }
+
+        return $"Set {elementData.Name} Value In {portal.Name} to {Data.NewValue}";
+    }
+}

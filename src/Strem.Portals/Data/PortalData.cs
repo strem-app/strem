@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Strem.Portals.Types;
 
 namespace Strem.Portals.Data;
 
 public class PortalData
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Version { get; set; } = "1.0.0";
     
     [Required]
     public string Name { get; set; }
@@ -15,10 +15,9 @@ public class PortalData
     public List<string> TodoTags { get; set; } = new();
 
     [Range(1, 100, ErrorMessage = "{0} must be between 1 and 100 in size")]
-    public int ButtonGridSize { get; set; } = 20;
+    public int ElementGridSize { get; set; } = 20;
     
-    public ButtonSize ButtonSize { get; set; }
-    public List<ButtonData> Buttons { get; set; } = new();
+    public List<GridElementData> Elements { get; set; } = new();
 
     public PortalData(Guid id, string name)
     {

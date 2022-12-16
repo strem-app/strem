@@ -1,14 +1,11 @@
 ﻿@using Strem.Portals.Types
 
-<a class="button portal-button placeholder m-3 is-flex is-flex-direction-column button-size-@(ButtonSize.ToString().ToLower())" 
+<a class="button portal-button placeholder m-3 is-flex is-flex-direction-column" 
    @onclick="() => ButtonPressed.InvokeAsync(GridIndex)">
     @ChildContent
 </a>
 
 @code {
-    [Parameter]
-    public ButtonSize ButtonSize { get; set; }
-    
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     
