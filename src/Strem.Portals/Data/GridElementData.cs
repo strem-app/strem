@@ -13,5 +13,5 @@ public class GridElementData
     public string Name { get; set; } = string.Empty;
     public ElementStyles DefaultStyles { get; set; } = new ();
 
-    public Dictionary<string, int> Values { get; set; } = new();
+    public Dictionary<string, string> Values { get; set; } = new();
 }
