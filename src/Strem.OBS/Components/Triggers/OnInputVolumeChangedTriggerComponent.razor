@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.OBS.Flows.Triggers.OnInputVolumeChangedTriggerData>
+
+<div class="field">
+    <label class="label">Input Name</label>
+    <div class="control">
+        <ObsInputSelector @bind-Value="@Data.InputName" />
+    </div>
+    <HelperInfo>This is the input within OBS you want to monitor for volume changes</HelperInfo>
+</div>
+<div class="field">
+    <div class="control">
+        <CheckBox @bind-Value="Data.TriggerOnStart" Label="Trigger On Start?"></CheckBox>
+    </div>
+    <HelperInfo>By default these triggers wait to be told when volume changes, but with this you can trigger it with the current volume when it starts</HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"On {Data.InputName} Volume Changed";
+}

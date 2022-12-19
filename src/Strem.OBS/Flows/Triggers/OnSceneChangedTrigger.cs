@@ -22,11 +22,11 @@ public class OnSceneChangedTrigger : FlowTrigger<OnSceneChangedTriggerData>
     public override string Category => "OBS";
     public override string Description => "Triggers when a scene has been changed, with optional name checking";
 
-    public static VariableEntry ObsSourceVariable = new("scene.name", OBSVars.OBSContext);
+    public static readonly VariableEntry ObsSceneNameVariable = new("scene.name", OBSVars.OBSContext);
 
     public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {
-        ObsSourceVariable.ToDescriptor()
+        ObsSceneNameVariable.ToDescriptor()
     };
 
     public IObservableOBSWebSocket ObsClient { get; }
@@ -51,7 +51,7 @@ public class OnSceneChangedTrigger : FlowTrigger<OnSceneChangedTriggerData>
     public IVariables PopulateVariables(ProgramSceneChangedEventArgs args)
     {
         var variables = new Core.Variables.Variables();
-        variables.Set(ObsSourceVariable, args.SceneName);
+        variables.Set(ObsSceneNameVariable, args.SceneName);
         return variables;
     }
 }
