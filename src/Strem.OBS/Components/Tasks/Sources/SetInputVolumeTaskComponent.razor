@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.OBS.Types
+
+@inherits Strem.Flows.Components.Tasks.CustomTaskComponent<Strem.OBS.Flows.Tasks.SetInputVolumeTaskData>
+
+<div class="field">
+    <label class="label">Input Name</label>
+    <div class="control">
+        <ObsInputSelector @bind-Value="@Data.InputName" />
+    </div>
+</div>
+<div class="field">
+    <label class="label">Volume</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="@Data.Volume" placeholder="i.e 50 or dynamic value"></ProcessedInput>
+    </div>
+    <HelperInfo>Should be a value between 0-100 or a dynamic value</HelperInfo>
+</div>
+
+
+@code {
+    public override string Title => GetTitle();
+    
+    public string GetTitle()
+    {
+        if (string.IsNullOrEmpty(Data.InputName)){ return "Set Input Volume"; }
+        return $"Set Volume On {Data.InputName}";
+    }
+}

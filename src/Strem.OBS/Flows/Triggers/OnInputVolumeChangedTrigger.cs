@@ -75,7 +75,7 @@ public class OnInputVolumeChangedTrigger : FlowTrigger<OnInputVolumeChangedTrigg
         var variables = new Core.Variables.Variables();
         variables.Set(ObsInputNameVariable, args.Volume.InputName);
         variables.Set(ObsInputVolumeDecibelValueVariable, args.Volume.InputVolumeDb);
-        variables.Set(ObsInputVolumePercentageValueVariable, args.SliderPercent());
+        variables.Set(ObsInputVolumePercentageValueVariable, args.Volume.InputVolumeDb.DecibelToPercent());
         return variables;
     }
 }
