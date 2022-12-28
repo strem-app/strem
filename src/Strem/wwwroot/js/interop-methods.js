@@ -1,4 +1,48 @@
-﻿function setZoom(newSize)
+﻿function loadJsFile(url) {
+    const container = document.body;
+    const existingScripts = container.getElementsByTagName('script');
+    let alreadyExists = false;
+        
+    for (let i = existingScripts.length; i--;) {
+        const existingScript = existingScripts[i];
+        if (existingScript.src == url || existingScript.src.replace(existingScript.baseURI, '') == url) {
+            alreadyExists = true;
+            break;
+        }
+    }
+    
+    if(alreadyExists) { return; }    
+
+    const newScript = document.createElement('script');
+    newScript.src = url;
+    newScript.onload = function() { console.log(`Loaded ${url}`); eval("console.log('AC', ApexCharts)"); }
+    container.appendChild(newScript);    
+    console.log(`Appending script [${url}] to app`);
+}
+
+function loadCssFile(url) {
+    const head = document.head;
+    const existingScripts = head.getElementsByTagName('link');
+    let alreadyExists = false;
+
+    for (let i = existingScripts.length; i--;) {
+        const existingScript = existingScripts[i];
+        if (existingScript.href == url || existingScript.href.replace(existingScript.baseURI, '') == url) {
+            alreadyExists = true;
+            break;
+        }
+    }
+
+    if(alreadyExists) { return; }
+
+    const newCss = document.createElement('link');
+    newCss.type = 'text/css';
+    newCss.href = url;
+    head.appendChild(newCss);
+    console.log(`Appending css [${url}] to app`);
+}
+
+function setZoom(newSize)
 {
     document.body.style.zoom = `${newSize}%`;
     let scaleAlteration = ((100-newSize)/100);
