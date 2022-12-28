@@ -39,6 +39,9 @@ public abstract class Repository<TE,TK> : IRepository<TE, TK>
     public IEnumerable<TE> GetAll()
     { return Collection.FindAll().Select(GetEntity); }
 
+    public IEnumerable<TE> Query(Query query)
+    { return Collection.Find(query).Select(GetEntity); }
+
     public void Create(TK id, TE entity)
     {
         var document = GetDocument(entity);
@@ -58,4 +61,12 @@ public abstract class Repository<TE,TK> : IRepository<TE, TK>
     }
 
     public void Delete(TK id) => Collection.Delete(GetId(id));
+    
+    public IEnumerable<TE?> Query(IBsonQuery query)
+    {
+        var queryCollection = Collection.Query();
+        return query.Query(queryCollection)
+            .ToEnumerable()
+            .Select(GetEntity);
+    }
 }

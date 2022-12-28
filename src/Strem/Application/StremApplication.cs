@@ -76,7 +76,13 @@ public class StremApplication
         PreStartupLogs.ForEach(Logger.Information);
         
         Logger.Information("Starting Registered Plugins");
-        await PluginHandler.StartPlugins(services, Logger, AppConfig);
+        try
+        { await PluginHandler.StartPlugins(services, Logger, AppConfig); }
+        catch (Exception ex)
+        {
+            Logger.Error(ex.Message);
+            throw ex;
+        }
         Logger.Information("Started Registered Plugins");
         
         // This is a publish on purpose to hold execution
@@ -87,7 +93,13 @@ public class StremApplication
         WebHostHackExtensions.ServiceLocator = services;
         
         Logger.Information("Starting Internal Host");
-        WebHost.StartHost();
+        try
+        { WebHost.StartHost(); }
+        catch (Exception ex)
+        {
+            Logger.Error(ex.Message);
+            throw ex;
+        }
         Logger.Information($"Started Internal Host: http://localhost:{InternalWebHostConfiguration.ApiHostPort}");
         
         Logger.Information("Strem Initialized");

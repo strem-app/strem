@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Microsoft.Extensions.FileProviders;
 using Strem.Core.Components.Elements.Drag;
 using Strem.Core.Extensions;
 using Strem.Core.Services.UI.Animation;
@@ -74,6 +75,14 @@ public class InternalWebHost : IInternalWebHost
         app.UseStaticFiles(new StaticFileOptions
         {
             ServeUnknownFileTypes = true,
+        });
+
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            RequestPath = new PathString("/Plugins"),
+            FileProvider = new PhysicalFileProvider(StremPathHelper.PluginPath),
+            ServeUnknownFileTypes = true,
+            
         });
         
         app.UseEndpoints(endpoints =>

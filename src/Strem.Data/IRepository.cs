@@ -1,4 +1,6 @@
-﻿namespace Strem.Data;
+﻿using LiteDB;
+
+namespace Strem.Data;
 
 public interface IRepository<TE, in TK>
 {
@@ -8,4 +10,5 @@ public interface IRepository<TE, in TK>
     bool Update(TK id, TE entity);
     void Delete(TK id);
     bool Upsert(TK id, TE entity);
+    IEnumerable<TE?> Query(IBsonQuery query);
 }
