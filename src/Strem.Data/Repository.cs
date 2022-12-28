@@ -65,8 +65,12 @@ public abstract class Repository<TE,TK> : IRepository<TE, TK>
     public IEnumerable<TE?> Query(IBsonQuery query)
     {
         var queryCollection = Collection.Query();
-        return query.Query(queryCollection)
-            .ToEnumerable()
-            .Select(GetEntity);
+        return query.Query(queryCollection).Select(GetEntity);
+    }
+
+    public IEnumerable<TE?> Query(string query)
+    {
+        using var reader = Connection.Execute(query);
+        return reader.ToEnumerable().Select(x => GetEntity(x.AsDocument));
     }
 }
