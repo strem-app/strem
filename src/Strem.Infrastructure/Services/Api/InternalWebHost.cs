@@ -74,15 +74,14 @@ public class InternalWebHost : IInternalWebHost
         app.UseStaticFiles();
         app.UseStaticFiles(new StaticFileOptions
         {
-            ServeUnknownFileTypes = true,
+            ServeUnknownFileTypes = true
         });
 
         app.UseStaticFiles(new StaticFileOptions
         {
             RequestPath = new PathString("/Plugins"),
             FileProvider = new PhysicalFileProvider(StremPathHelper.PluginPath),
-            ServeUnknownFileTypes = true,
-            
+            ServeUnknownFileTypes = true
         });
         
         app.UseEndpoints(endpoints =>
