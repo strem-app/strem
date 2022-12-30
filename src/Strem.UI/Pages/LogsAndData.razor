@@ -24,6 +24,10 @@
                 <VariablesViewer Title="Transient Data" Variables="@AppState.TransientVariables" />
             </Accordion>
             
+            <Accordion Title="Loaded Plugins" HeaderClasses="is-warning" IsExpanded="false">
+                <PluginsViewer />
+            </Accordion>
+            
             <Accordion Title="Latest App Logs" HeaderClasses="is-info" IsExpanded="true">
                 <LogViewer LogPath="@LatestLogFile" />
             </Accordion>
