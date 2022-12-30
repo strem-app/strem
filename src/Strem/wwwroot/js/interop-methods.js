@@ -15,7 +15,6 @@
 
     const newScript = document.createElement('script');
     newScript.src = url;
-    newScript.onload = function() { console.log(`Loaded ${url}`); eval("console.log('AC', ApexCharts)"); }
     container.appendChild(newScript);    
     console.log(`Appending script [${url}] to app`);
 }

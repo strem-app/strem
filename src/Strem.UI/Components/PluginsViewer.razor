@@ -1,0 +1,35 @@
+﻿@using Strem.Core.Variables
+@using Strem.Core.Plugins
+
+@inject IPluginRegistry PluginRegistry
+
+<article class="message is-info">
+    <div class="message-header">
+        <span>Plugins</span>
+    </div>
+    <div class="message-body">
+        <table class="table is-leveled">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Version</th>
+                <th>Load State</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var pluginInfo in PluginRegistry.GetPluginInfo())
+            {
+                <tr>
+                    <td>@pluginInfo.Name</td>
+                    <td>@pluginInfo.Version</td>
+                    <td>@pluginInfo.LoadState.ToString()</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</article>
+
+@code {
+
+}

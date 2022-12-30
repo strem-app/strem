@@ -5,6 +5,7 @@ using Strem.Config;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
+using Strem.Core.Plugins;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Plugin;
@@ -60,6 +61,7 @@ public class StremApplication
         // Config
         PreStartupLogs.Add("Setting up Application Config");
         services.AddSingleton<IApplicationConfig>(AppConfig);
+        services.AddSingleton<IPluginRegistry>(PluginHandler);
         RegisterConfiguration();
         
         PluginHandler.LoadPluginDependencies(services, AppConfig, PreStartupLogs);
