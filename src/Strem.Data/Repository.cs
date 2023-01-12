@@ -68,9 +68,6 @@ public abstract class Repository<TE,TK> : IRepository<TE, TK>
         return query.Query(queryCollection).Select(GetEntity);
     }
 
-    public IEnumerable<TE?> Query(string query)
-    {
-        using var reader = Connection.Execute(query);
-        return reader.ToEnumerable().Select(x => GetEntity(x.AsDocument));
-    }
+    public T Query<T>(IRawQuery<T> query)
+    { return query.Query(Connection); }
 }

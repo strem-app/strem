@@ -70,6 +70,20 @@
             </div>
         </div>
     </div>
+    
+    <div class="column">
+        <div class="field">
+            <label class="label">Channels Joined</label>
+            <div class="control">
+                <div class="tags">
+                    @foreach (var joinedChannel in TwitchClient.JoinedChannels)
+                    {
+                        <span class="tag is-success">@joinedChannel.Channel</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 

@@ -36,6 +36,7 @@ function loadCssFile(url) {
 
     const newCss = document.createElement('link');
     newCss.type = 'text/css';
+    newCss.rel = 'stylesheet';
     newCss.href = url;
     head.appendChild(newCss);
     console.log(`Appending css [${url}] to app`);

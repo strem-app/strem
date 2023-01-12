@@ -11,4 +11,5 @@ public interface IRepository<TE, in TK>
     void Delete(TK id);
     bool Upsert(TK id, TE entity);
     IEnumerable<TE?> Query(IBsonQuery query);
+    T Query<T>(IRawQuery<T> query);
 }
