@@ -1,0 +1,62 @@
+﻿@using System.Reactive.Disposables
+@using System.Reactive.Linq
+@using Strem.Core.Events.Bus
+@using Strem.Core.Extensions
+@using Strem.Core.State
+@using Strem.StreamElements.Extensions
+
+@inject IAppState AppState
+@inject IEventBus EventBus
+
+@implements IDisposable
+
+<div class="columns">
+    
+    <div class="column">
+        <label class="label">Connected Account</label>
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                <input class="input" type="password" placeholder="Enter JWT Token" value="@JwtToken"/>
+            </div>
+            <div class="control">
+                @if (HasJwtToken)
+                {
+                    <a class="button is-danger" @onclick="DisconnectFromStreamElements">Disconnect From StreamElements</a>
+                }
+                else
+                {
+                    <a class="button is-success" @onclick="ConnectToStreamElements">Connect To StreamElements</a>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    
+    private CompositeDisposable _subs = new();
+    
+    public string JwtToken { get; set; }
+    public bool HasJwtToken { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        HasJwtToken = AppState.HasJwtToken();
+    }
+
+    public void DisconnectFromStreamElements()
+    {
+        
+    }
+    
+    public void ConnectToStreamElements()
+    {
+        
+    }
+
+    public void Dispose()
+    {
+        _subs?.Dispose();  
+    } 
+}

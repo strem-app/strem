@@ -24,4 +24,16 @@
       <_ContentIncludedByDefault Remove="wwwroot\exampleJsInterop.js" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Integrations\StreamElementsIntegrationComponent.razor" />
+    </ItemGroup>
+
 </Project>
