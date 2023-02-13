@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Registries.Integrations;
+using Strem.Flows.Extensions;
+using Strem.StreamElements.Services.Client;
 
 namespace Strem.StreamElements.Plugin;
 
@@ -10,14 +13,9 @@ public class StreamElementsModule : IDependencyModule
         // Plugin
         services.AddSingleton<IPluginStartup, StreamElementsPluginStartup>();
         
-        /*
         // General
-        services.AddSingleton<ITwitchAPI, TwitchAPI>();
-        services.AddSingleton<ITwitchClient>(CreateTwitchClient);
-        services.AddSingleton<IObservableTwitchClient, ObservableTwitchClient>();
-        
-        // OAuth
-        services.AddSingleton<ITwitchOAuthClient, TwitchOAuthClient>();
+        services.AddSingleton<CustomStreamElementsClient>(new CustomStreamElementsClient());
+        services.AddSingleton<IObservableStreamElementsClient, ObservableStreamElementsClient>();
         
         // Components
         var thisAssembly = GetType().Assembly;
@@ -25,18 +23,6 @@ public class StreamElementsModule : IDependencyModule
         services.RegisterAllTriggersAndComponentsIn(thisAssembly);
         
         // Integration Components
-        services.AddSingleton<IIntegrationDescriptor, TwitchIntegrationDescriptor>();
-    }
-
-    public ITwitchClient CreateTwitchClient(IServiceProvider services)
-    {
-        var clientOptions = new ClientOptions
-        {
-            MessagesAllowedInPeriod = 750,
-            ThrottlingPeriod = TimeSpan.FromSeconds(30)
-        };
-        var socketClient = new WebSocketClient(clientOptions);
-        return new TwitchClient(socketClient, ClientProtocol.WebSocket, services.GetService<ILogger<TwitchClient>>());
-        */
+        services.AddSingleton<IIntegrationDescriptor, StreamElementsIntegrationDescriptor>();
     }
 }

@@ -9,13 +9,13 @@ using StreamElementsNET.Models.Tip;
 using Strem.Core.Extensions;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
-namespace Strem.StreamElements.Client;
+namespace Strem.StreamElements.Services.Client;
 
 using StreamElementsClient = StreamElementsNET.Client;
 
 public class ObservableStreamElementsClient : IObservableStreamElementsClient
 {
-    public StreamElementsClient Client { get; }
+    public CustomStreamElementsClient Client { get; }
     
     public IObservable<Unit> OnConnected { get; private set; }
     public IObservable<Unit> OnDisconnected { get; private set; }
@@ -69,7 +69,7 @@ public class ObservableStreamElementsClient : IObservableStreamElementsClient
     public IObservable<string> OnUnknownComplexObject { get; private set; }
     public IObservable<string> OnUnknownSimpleUpdate { get; private set; }
     
-    public ObservableStreamElementsClient(StreamElementsClient client)
+    public ObservableStreamElementsClient(CustomStreamElementsClient client)
     {
         Client = client;
         SetupObservables();

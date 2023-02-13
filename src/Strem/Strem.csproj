@@ -27,6 +27,7 @@
         <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
         <ProjectReference Include="..\Strem.Platforms.Windows\Strem.Platforms.Windows.csproj" />
         <ProjectReference Include="..\Strem.Portals\Strem.Portals.csproj" />
+        <ProjectReference Include="..\Strem.StreamElements\Strem.StreamElements.csproj" />
         <ProjectReference Include="..\Strem.Twitter\Strem.Twitter.csproj" />
         <ProjectReference Include="..\Strem.UI\Strem.UI.csproj" />
         <ProjectReference Include="..\Strem.Flows.Default\Strem.Flows.Default.csproj" />

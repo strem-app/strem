@@ -26,6 +26,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
+      <ProjectReference Include="..\Strem.Flows\Strem.Flows.csproj" />
     </ItemGroup>
 
     <ItemGroup>

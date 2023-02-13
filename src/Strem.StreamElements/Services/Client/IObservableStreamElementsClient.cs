@@ -7,11 +7,12 @@ using StreamElementsNET.Models.Subscriber;
 using StreamElementsNET.Models.Tip;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
-namespace Strem.StreamElements.Client;
+namespace Strem.StreamElements.Services.Client;
 
 public interface IObservableStreamElementsClient
 {
-    StreamElementsNET.Client Client { get; }
+    CustomStreamElementsClient Client { get; }
+    
     IObservable<Unit> OnConnected { get; }
     IObservable<Unit> OnDisconnected { get; }
     IObservable<Authenticated> OnAuthenticated { get; }
