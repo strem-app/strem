@@ -1,12 +1,14 @@
 ﻿using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using StreamElements.WebSocket.Reactive;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.StreamElements.Extensions;
-using Strem.StreamElements.Services.Client;
 using Strem.StreamElements.Variables;
 
 namespace Strem.StreamElements.Plugin;
@@ -49,15 +51,19 @@ public class StreamElementsPluginStartup : IPluginStartup, IDisposable
             .AddTo(_subs);
         
         if (AppState.HasJwtToken())
-        { AttemptConnect(); }
+        { await AttemptConnect(); }
     }
 
-    public void AttemptConnect()
+    public Task AttemptConnect()
     {
-        if (StreamElementsClient.Client.IsConnected) { return; }
+        if (StreamElementsClient.WebSocketClient.IsConnected) { return Task.CompletedTask; }
 
         var token = AppState.AppVariables.Get(StreamElementsVars.JwtToken);
-        StreamElementsClient.Client.Connect(token);
+
+        var task = Task.WhenAny(StreamElementsClient.OnConnected.FirstAsync().ToTask(), Task.Delay(2000));
+        StreamElementsClient.WebSocketClient.Connect(token);
+
+        return task;
     }
 
     public void Dispose()

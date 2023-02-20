@@ -1,4 +1,5 @@
-﻿using Strem.Flows.Data.Triggers;
+﻿using Strem.Core.Types;
+using Strem.Flows.Data.Triggers;
 
 namespace Strem.StreamElements.Flows.Triggers;
 
@@ -11,5 +12,6 @@ public class OnStreamElementsRedemptionTriggerData : IFlowTriggerData
     public string Code => TriggerCode;
     public string Version { get; set; } = TriggerVersion;
 
-    public string StoreItemName { get; set; }
+    public string StoreItemName { get; set; } = string.Empty;
+    public TextMatchType NameMatchType { get; set; } = TextMatchType.Match;
 }

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using StreamElements.WebSocket;
+using StreamElements.WebSocket.Reactive;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Flows.Extensions;
-using Strem.StreamElements.Services.Client;
-
 namespace Strem.StreamElements.Plugin;
 
 public class StreamElementsModule : IDependencyModule
@@ -14,7 +14,7 @@ public class StreamElementsModule : IDependencyModule
         services.AddSingleton<IPluginStartup, StreamElementsPluginStartup>();
         
         // General
-        services.AddSingleton<CustomStreamElementsClient>(new CustomStreamElementsClient());
+        services.AddSingleton<IStreamElementsClient>(new StreamElementsClient());
         services.AddSingleton<IObservableStreamElementsClient, ObservableStreamElementsClient>();
         
         // Components

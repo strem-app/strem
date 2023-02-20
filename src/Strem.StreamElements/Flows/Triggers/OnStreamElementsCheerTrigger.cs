@@ -1,13 +1,13 @@
 ﻿using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using StreamElementsNET.Models.Cheer;
+using StreamElements.WebSocket.Models.Cheer;
+using StreamElements.WebSocket.Reactive;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Flows.Data.Triggers;
 using Strem.Flows.Processors;
-using Strem.StreamElements.Services.Client;
 using Strem.StreamElements.Variables;
 
 namespace Strem.StreamElements.Flows.Triggers;
@@ -39,7 +39,7 @@ public class OnStreamElementsCheerTrigger : FlowTrigger<OnStreamElementsCheerTri
         StreamElementsClient = client;
     }
 
-    public override bool CanExecute() => StreamElementsClient.Client.IsConnected;
+    public override bool CanExecute() => StreamElementsClient.WebSocketClient.IsConnected;
 
     public IVariables PopulateVariables(Cheer arg)
     {
