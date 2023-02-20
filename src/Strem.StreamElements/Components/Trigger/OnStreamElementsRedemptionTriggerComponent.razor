@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@inherits CustomTriggerComponent<Strem.StreamElements.Flows.Triggers.OnStreamElementsRedemptionTriggerData>
+
+<div class="field">
+    <label class="label">Store Item Name</label>
+    <div class="control">
+        <EnumWithValueInput @bind-Value="Data.StoreItemName" @bind-EnumValue="Data.NameMatchType" placeholder="i.e Play Doge Meme"></EnumWithValueInput>
+    </div>
+    <HelperInfo>The store item name is what you would see in StreamElements, you can use partial matches using the match type</HelperInfo>
+</div>
+
+@code {
+    public override string Title => GenerateTitle();
+    
+    public string GenerateTitle()
+    {
+        var storeItemName =  !string.IsNullOrEmpty(Data.StoreItemName) ? Data.StoreItemName : "";
+        return $"Trigger On Redeeming <strong>{storeItemName}</strong>";
+    }
+}

@@ -1,0 +1,94 @@
+﻿@using System.Reactive.Disposables
+@using global::StreamElements.WebSocket.Reactive
+@using Strem.Core.Events.Bus
+@using Strem.Core.Extensions
+@using Strem.Core.Services.UI.Notifications
+@using Strem.Core.State
+@using Strem.StreamElements.Variables
+
+@inject IAppState AppState
+@inject IEventBus EventBus
+@inject IObservableStreamElementsClient StreamElementsClient
+@inject INotifier Notifier
+
+@implements IDisposable
+
+<div class="columns">
+    
+    <div class="column">
+        <label class="label">Connected Account</label>
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                <TextAreaInput placeholder="Enter JWT Token" @bind-Value="JwtToken"/>
+            </div>
+            <div class="control">
+                @if (IsConnectedToStreamElements)
+                {
+                    <a class="button is-danger" @onclick="DisconnectFromStreamElements">Disconnect From StreamElements</a>
+                }
+                else
+                {
+                    <a class="button is-success" @onclick="ConnectToStreamElements" disabled="@IsConnecting">Connect To StreamElements</a>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    
+    private CompositeDisposable _subs = new();
+    
+    public string JwtToken { get; set; }
+    public bool IsConnecting { get; set; }
+    public bool IsConnectedToStreamElements => StreamElementsClient.WebSocketClient.IsConnected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        JwtToken = AppState.AppVariables.Get(StreamElementsVars.JwtToken);
+
+        StreamElementsClient.OnConnected
+            .Subscribe(x =>
+            {
+                IsConnecting = false;
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+        
+        StreamElementsClient.OnDisconnected
+            .Subscribe(x =>
+            {
+                IsConnecting = false;
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+
+        StreamElementsClient.OnError
+            .Subscribe(async x =>
+            {
+                IsConnecting = false;
+                await Notifier.ShowNotification(x.Exception.Message, "is-error");
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+    }
+
+    public void DisconnectFromStreamElements()
+    {
+        AppState.AppVariables.Delete(StreamElementsVars.JwtToken);
+        StreamElementsClient.WebSocketClient.Disconnect();
+    }
+    
+    public void ConnectToStreamElements()
+    {
+        IsConnecting = true;
+        AppState.AppVariables.Set(StreamElementsVars.JwtToken, JwtToken);
+        StreamElementsClient.WebSocketClient.Connect(JwtToken);
+    }
+
+    public void Dispose()
+    {
+        _subs?.Dispose();
+    } 
+}

@@ -15,13 +15,26 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
-        <PackageReference Include="StreamElementsNET" Version="1.0.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+        <PackageReference Include="StreamElements.WebSocket.Reactive" Version="1.0.2" />
     </ItemGroup>
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\background.png" />
       <_ContentIncludedByDefault Remove="wwwroot\exampleJsInterop.js" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Strem.Core\Strem.Core.csproj" />
+      <ProjectReference Include="..\Strem.Flows\Strem.Flows.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Integrations\StreamElementsIntegrationComponent.razor" />
     </ItemGroup>
 
 </Project>
