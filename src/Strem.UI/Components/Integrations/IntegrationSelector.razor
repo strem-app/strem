@@ -10,7 +10,7 @@
       @foreach (var integration in IntegrationRegistry.GetAll())
       {
         <li>
-          <a class="is-integration @(integration.Code == SelectedIntegrationCode ? "is-active" : "")"
+          <a class="is-integration @(integration.Code) @(integration.Code == SelectedIntegrationCode ? "is-active" : "")"
              @onclick="() => SelectIntegration(integration.Code)">@integration.Title</a>
         </li>
       }

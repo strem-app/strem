@@ -88,27 +88,6 @@ body
     }
 }
 
-.accordion
-{
-    &>a.twitch-integration {
-        background-color: #6441a5;
-        color: #fff;
-        border-color: transparent;
-    }
-
-    &>a.twitter-integration {
-        background-color: #00acee;
-        color: #fff;
-        border-color: transparent;
-    }
-
-    &>a.obs-integration-v4, &>a.obs-integration {
-        background-color: @is-dark-grey;
-        color: #fff;
-        border-color: transparent;
-    }
-}
-
 .has-success-pulse {
     box-shadow: 0 0 0 0 @is-success;
     animation: pulse-success 1s infinite;
@@ -396,4 +375,41 @@ li.drag-source
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.5);
+}
+
+.masked-input
+{
+    color: transparent;
+    text-shadow: #111 0 0 15px;
+}
+
+/* Integrations */
+
+@twitch-color: #6441a5;
+@twitter-color: #00acee;
+@stream-elements-color: #333343;
+@obs-color: #4a4a4a;
+
+.integration-menu
+{
+    a { border-left: 0.5rem solid @is-info;  }
+    
+    a.stream-elements-integration { border-color: @stream-elements-color; }
+    a.twitch-integration { border-color: @twitch-color; }
+    a.twitter-integration { border-color: @twitter-color; }
+    a.obs-integration { border-color: @obs-color; }
+}
+
+.integration-components .accordion
+{
+    &>a {
+        background-color: @is-info;
+        color: #fff;
+        border-color: transparent;
+    }
+    
+    &>a.twitch-integration { background-color: @twitch-color; }
+    &>a.twitter-integration { background-color: @twitter-color; }
+    &>a.stream-elements-integration { background-color: @stream-elements-color; }
+    &>a.obs-integration-v4, &>a.obs-integration { background-color: @obs-color; }
 }
