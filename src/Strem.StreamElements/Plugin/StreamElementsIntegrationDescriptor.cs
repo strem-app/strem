@@ -9,10 +9,7 @@ public class StreamElementsIntegrationDescriptor : IIntegrationDescriptor
     public string Title => "Stream Elements Integration";
     public string Code => "stream-elements-integration";
 
-    public VariableDescriptor[] VariableOutputs { get; } = new[]
-    {
-        new VariableDescriptor(new VariableEntry("foo", "bar"), false)
-    };
+    public VariableDescriptor[] VariableOutputs { get; } = Array.Empty<VariableDescriptor>();
 
     public Type ComponentType { get; } = typeof(StreamElementsIntegrationComponent);
 }

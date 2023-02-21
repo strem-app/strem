@@ -16,11 +16,14 @@
 <div class="columns">
     
     <div class="column">
-        <label class="label">Connected Account</label>
-        <div class="field has-addons">
+        <label class="label">StreamElements JWT Token</label>
+        <div class="field">
             <div class="control is-expanded">
-                <TextAreaInput placeholder="Enter JWT Token" @bind-Value="JwtToken"/>
+                <TextAreaInput placeholder="Enter JWT Token" @bind-Value="JwtToken" class="masked-input" onblur="this.classList.add('masked-input')" onfocus="this.classList.remove('masked-input')"/>
             </div>
+        </div>
+        
+        <div class="field">
             <div class="control">
                 @if (IsConnectedToStreamElements)
                 {
@@ -31,9 +34,11 @@
                     <a class="button is-success" @onclick="ConnectToStreamElements" disabled="@IsConnecting">Connect To StreamElements</a>
                 }
             </div>
+            <HelperInfo>Your JWT token is under your secrets within your StreamElements profile page, click "Show Secrets" then copy the code in here.</HelperInfo>
+            <HelperInfo IconType="fa-triangle-exclamation" StyleType="has-text-danger">This information is private and should be kept secret, do not share it with anyone.</HelperInfo>
         </div>
     </div>
-
+    
 </div>
 
 @code {
