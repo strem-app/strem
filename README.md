@@ -27,7 +27,7 @@ It lets you build complex logic `flows` from `triggers` and `tasks` which can dr
 > Currently this is the most ALPHA of all alphas, so by all means use it, but just keep in mind this is SUPER early days.
 
 ## How Do I Install/Run It?
-Just go to releases, download the latest zip file and put it in a directory somewhere and run `strem.exe`
+Just go to [releases](https://github.com/strem-app/strem/releases/latest), download the latest zip file and put it in a directory somewhere and run `strem.exe`
 
 > Currently only windows is supported, but only a few things realistically require windows so in the long run we may pull those dependencies out to support other platforms too (i.e file browsing, keyboard input simulation, tts etc).
 
