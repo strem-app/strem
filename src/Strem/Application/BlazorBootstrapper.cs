@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
+using Strem.Infrastructure.Services;
 using Strem.UI;
 
 namespace Strem.Application;
@@ -28,7 +29,7 @@ public class BlazorBootstrapper
             
             .SetSize(1920, 1080)
             .SetUseOsDefaultSize(false)
-            .SetIconFile("strem.ico");
+            .SetIconFile(Path.GetFullPath($"{StremPathHelper.AppPath}/strem.ico"));
 #if DEBUG
         appLauncher = appLauncher.SetDevToolsEnabled(true);
 #else
