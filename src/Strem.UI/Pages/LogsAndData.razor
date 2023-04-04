@@ -2,11 +2,15 @@
 
 @using System.IO
 @using Strem.Core.Extensions
+@using Strem.Core.Services.Browsers.File
+@using Strem.Core.Services.Browsers.Web
 @using Strem.Core.State
 @using Strem.Core.Variables
+@using Strem.Infrastructure.Services
 @using Strem.UI.Components.Models
 
 @inject IAppState AppState
+@inject IWebBrowser WebBrowser
 
 <div class="container is-fluid">
     <ErrorBoundary>
@@ -26,10 +30,22 @@
             
             <Accordion Title="Loaded Plugins" HeaderClasses="is-warning" IsExpanded="false">
                 <PluginsViewer />
+                <div class="field">
+                    <div class="control">
+                        <a class="button is-info" @onclick="() => WebBrowser.LoadUrl(StremPathHelper.PluginPath)">Open Plugin Folder</a>
+                    </div>
+                    <HelperInfo>The plugin directory is where you can add your own 3rd party plugins, found at [@StremPathHelper.PluginPath]</HelperInfo>
+                </div>
             </Accordion>
             
             <Accordion Title="Latest App Logs" HeaderClasses="is-info" IsExpanded="true">
                 <LogViewer LogPath="@LatestLogFile" />
+                <div class="field">
+                    <div class="control">
+                        <a class="button is-info" @onclick="() => WebBrowser.LoadUrl(StremPathHelper.LogPath)">Open Logs Folder</a>
+                    </div>
+                    <HelperInfo>The log directory is where you can view all current and historic logs, found at [@StremPathHelper.LogPath]</HelperInfo>
+                </div>
             </Accordion>
             <Accordion Title="Flow Executions" HeaderClasses="is-info" IsExpanded="true">
                 <FlowExecutionViewer />
@@ -42,8 +58,6 @@
 </div>
 
 @code {
-    const string LogPath = "./logs";
-
     public string LatestLogFile { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -53,7 +67,7 @@
 
     public string GetLatestLogFile()
     {
-        var file = new DirectoryInfo(LogPath)
+        var file = new DirectoryInfo(StremPathHelper.LogPath)
             .GetFileSystemInfos()
             .MaxBy(o => o.LastWriteTime);
 

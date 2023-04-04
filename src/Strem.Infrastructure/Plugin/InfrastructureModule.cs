@@ -135,7 +135,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         return new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.Console()
-            .WriteTo.File("logs/strem.log", rollingInterval: RollingInterval.Day,
+            .WriteTo.File($"{StremPathHelper.LogPath}/strem.log", rollingInterval: RollingInterval.Day,
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] ({SourceContext}.{Method}) {Message}{NewLine}{Exception}")
             .Enrich.FromLogContext()
             
