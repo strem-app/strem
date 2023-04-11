@@ -3,6 +3,7 @@
 * What Is Strem?
     * [What Is It?](introduction/what-is-it.md)
     * [Installation](introduction/installation.md)
+    * [Additional Information](introduction/additional-information.md)
 * Users - How To Use The App
     * [Overview](user-guide/readme.md)
     * [Flows](user-guide/flows.md)
