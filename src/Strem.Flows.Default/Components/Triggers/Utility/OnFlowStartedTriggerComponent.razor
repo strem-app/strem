@@ -1,0 +1,21 @@
+﻿@using Strem.Flows.Services.Stores
+@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Utility.OnFlowStartedTriggerData>
+
+@inject IFlowStore FlowStore;
+
+<div class="field">
+    <label class="label">Flow</label>
+    <div class="control">
+        <DataSelectInput @bind-Value="Data.FlowId" Data="FlowStore.Data" GetName="x => x.Name" GetValue="x => x.Id" MapValue="x => Guid.Parse(x.ToString())"></DataSelectInput>
+    </div>
+</div>
+
+@code {
+    public override string Title => GetTitle();
+
+    public string GetTitle()
+    {
+        var targetedFlow = FlowStore.Get(Data.FlowId);
+        return $"On <strong>{targetedFlow?.Name ?? "Flow"}</strong> Starting";
+    }
+}

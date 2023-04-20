@@ -95,7 +95,7 @@ public class FlowExecutionEngine : IFlowExecutionEngine
     
     public void FinishFlow(Flow flow, ExecutionResultType executionResultType, IVariables flowVariables, FlowExecutionLog executionLog, IFlowTaskData? currentTaskData = null)
     {
-        EventBus.PublishAsync(new FlowFinishedEvent(flow.Id));
+        EventBus.PublishAsync(new FlowFinishedEvent(flow.Id, executionResultType));
         FlowExecutionLogger.CloseLogFor(executionLog, flowVariables, executionResultType, currentTaskData);
     }
 
