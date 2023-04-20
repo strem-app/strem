@@ -50,7 +50,7 @@ public class OnFlowFinishedTrigger : FlowTrigger<OnFlowFinishedTriggerData>
     private bool MatchesExecutionState(FlowFinishedEvent eventData, OnFlowFinishedTriggerData flowData)
     {
         if (flowData.OnlyOnSuccessfulExecution)
-        { return eventData.executionResultType is ExecutionResultType.Success or ExecutionResultType.FailedButContinue; }
+        { return eventData.ExecutionResultType is ExecutionResultType.Success or ExecutionResultType.FailedButContinue; }
 
         return true;
     }
