@@ -34,6 +34,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <AdditionalFiles Include="Components\Triggers\Utility\OnFlowStartedTriggerComponent.razor" />
       <AdditionalFiles Include="Pages\Flows.razor" />
     </ItemGroup>
 
