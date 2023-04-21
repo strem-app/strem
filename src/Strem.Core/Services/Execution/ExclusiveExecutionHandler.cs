@@ -4,16 +4,20 @@ namespace Strem.Core.Services.Execution;
 
 public class ExclusiveExecutionHandler : IExclusiveExecutionHandler
 {
+    public const int FrequencyCheck = 250;
+    
     public Dictionary<string, bool> ExclusivityGroupLocks { get; } = new();
     public object lockHandle = new();
 
     public async Task<bool> RequestLockFor(string group, CancellationToken cancellationToken = default)
     {
-        if (!ExclusivityGroupLocks.ContainsKey(group))
+        lock (lockHandle)
         {
-            lock (lockHandle) 
-            { ExclusivityGroupLocks.Add(group, true); }
-            return true;
+            if (!ExclusivityGroupLocks.ContainsKey(group))
+            {
+                ExclusivityGroupLocks.Add(group, true);
+                return true;
+            }
         }
 
         var isLocked = ExclusivityGroupLocks[group];
@@ -21,10 +25,10 @@ public class ExclusiveExecutionHandler : IExclusiveExecutionHandler
         {
             while (ExclusivityGroupLocks[group])
             {
-                await Task.Delay(250, cancellationToken);
-                
                 if (cancellationToken.IsCancellationRequested)
                 { return false; }
+                
+                await Task.Delay(FrequencyCheck);
             }
         }
         

@@ -1,0 +1,23 @@
+﻿@using Strem.Flows.Default.Types
+
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Utility.ExclusiveExecutionTaskData>
+
+<div class="field">
+    <label class="label">Group Name</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.GroupName" Placeholder="i.e obs-camera-group or V(some-var)" />
+    </div>
+    <HelperInfo>The group name should be shared between all other tasks which need exclusive access to execution</HelperInfo>
+</div>
+
+<div class="field">
+    <label class="label">Timeout Length</label>
+    <div class="control">
+        <EnumWithValueInput @bind-Value="Data.TimeoutAmount" @bind-EnumValue="Data.TimeoutUnitsType" placeholder="i.e 5 or dynamic vars"></EnumWithValueInput>
+    </div>
+    <HelperInfo>This is the maximum period you are allowed to hold exclusive execution for this group, on finish or timeout elapsed the group will be freed up for other tasks to use</HelperInfo>
+</div>
+
+@code {
+    public override string Title => $"Grant Exclusive Execution For Group {Data.GroupName}";
+}

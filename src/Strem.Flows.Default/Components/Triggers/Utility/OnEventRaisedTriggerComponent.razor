@@ -1,10 +1,11 @@
 ﻿@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Utility.OnEventRaisedTriggerData>
 
 <div class="field">
-    <label class="label">Interval Value</label>
+    <label class="label">Event Name</label>
     <div class="control">
         <TextInput placeholder="i.e user-redeemed-points" @bind-Value="Data.EventName" />
     </div>
+    <HelperInfo>This should match the name of the event that is raised elsewhere</HelperInfo>
 </div>
 
 @code {

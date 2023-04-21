@@ -33,4 +33,8 @@
       <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Tasks\Utility\ExclusiveExecutionTaskComponent.razor" />
+    </ItemGroup>
+
 </Project>
