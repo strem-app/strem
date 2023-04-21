@@ -75,6 +75,12 @@ public class TaskExecutor : ITaskExecutor
                     }
                     executionLog.ElementExecutionSummary.Add($"Finished Sub Task For {taskData.Code} With Key {subTaskKey}");
                 }
+                
+                if (task is INotifyOnSubTasksFinished subTaskNotifier)
+                {
+                    executionLog.ElementExecutionSummary.Add($"Started Post Processing Of Sub Tasks For {taskData.Code}");
+                    await subTaskNotifier.OnSubTasksFinished(taskData, flowVariables, executionResult.ResultType);
+                }
             }
 
             EventBus.PublishAsync(new FlowTaskFinishedEvent(flow.Id, taskData.Id));
@@ -83,6 +89,12 @@ public class TaskExecutor : ITaskExecutor
         }
         catch (Exception ex)
         {
+            if (task is INotifyOnSubTasksFinished subTaskNotifier)
+            {
+                executionLog.ElementExecutionSummary.Add($"Trying to unlock failed exclusive execution group on {flow.Name} | {taskData.Code}");
+                await subTaskNotifier.OnSubTasksFinished(taskData, flowVariables, ExecutionResultType.Failed);
+            }
+            
             Logger.Error($"Error Executing Flow {flow.Name} | Task Info {taskData.Code}[{taskData.Id}] | Error: {ex.Message}");
             EventBus.PublishAsync(new FlowTaskFinishedEvent(flow.Id, taskData.Id));
             return ExecutionResult.Failed($"Task Failed With Exception: {ex.Message}");

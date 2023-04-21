@@ -12,6 +12,7 @@ using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Browsers.Web;
+using Strem.Core.Services.Execution;
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Core.Services.Registries.Menus;
 using Strem.Core.Services.Threading;
@@ -60,6 +61,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         // General
         services.AddSingleton<IMessageBroker, MessageBroker>();
         services.AddSingleton<IThreadHandler, ThreadHandler>();
+        services.AddSingleton<IExclusiveExecutionHandler, ExclusiveExecutionHandler>();
         services.AddSingleton<IEventBus, EventBus>();
         services.AddSingleton<IRandomizer>(new DefaultRandomizer(new Random()));
         services.AddSingleton<IWebBrowser, WebBrowser>();
