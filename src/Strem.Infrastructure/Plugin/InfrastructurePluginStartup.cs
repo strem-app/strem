@@ -4,6 +4,7 @@ using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Input;
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Core.Services.Registries.Menus;
 using Strem.Core.State;
@@ -26,8 +27,9 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     public IIntegrationRegistry IntegrationRegistry { get; }
     public IMenuRegistry MenuRegistry { get; }
     public IServiceProvider Services { get; }
+    public IInputHandler InputHandler { get; }
     
-    public InfrastructurePluginStartup(IAppState appState, IEventBus eventBus, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository, ILogger<InfrastructurePluginStartup> logger, ILiteDatabase database, IIntegrationRegistry integrationRegistry, IMenuRegistry menuRegistry, IServiceProvider services)
+    public InfrastructurePluginStartup(IAppState appState, IEventBus eventBus, IAppVariablesRepository appVariablesRepository, IUserVariablesRepository userVariablesRepository, ILogger<InfrastructurePluginStartup> logger, ILiteDatabase database, IIntegrationRegistry integrationRegistry, IMenuRegistry menuRegistry, IServiceProvider services, IInputHandler inputHandler)
     {
         AppState = appState;
         EventBus = eventBus;
@@ -38,6 +40,7 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         IntegrationRegistry = integrationRegistry;
         MenuRegistry = menuRegistry;
         Services = services;
+        InputHandler = inputHandler;
     }
     
     public Task SetupPlugin() => Task.CompletedTask;
@@ -130,7 +133,10 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         var menuDescriptors = Services.GetServices<MenuDescriptor>();
         MenuRegistry?.AddMany(menuDescriptors);
     }
-    
+
     public void Dispose()
-    { _subs?.Dispose(); }
+    {
+        _subs?.Dispose();
+        InputHandler.Dispose();
+    }
 }

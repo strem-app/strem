@@ -7,12 +7,15 @@ using Persistity.Encryption;
 using Persistity.Flow.Builders;
 using Persistity.Serializers.Json;
 using Serilog;
+using SharpHook;
+using SharpHook.Reactive;
 using Strem.Core.Components.Elements.Drag;
 using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Browsers.Web;
 using Strem.Core.Services.Execution;
+using Strem.Core.Services.Input;
 using Strem.Core.Services.Registries.Integrations;
 using Strem.Core.Services.Registries.Menus;
 using Strem.Core.Services.Threading;
@@ -67,6 +70,11 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IWebBrowser, WebBrowser>();
         services.AddSingleton<ICloner, Cloner>();
         services.AddSingleton<IDataValidator, DataValidator>();
+        
+        // Input
+        services.AddSingleton<IReactiveGlobalHook, SimpleReactiveGlobalHook>();
+        services.AddSingleton<IEventSimulator, EventSimulator>();
+        services.AddSingleton<IInputHandler, DefaultInputHandler>();
         
         // UI
         services.AddTransient<INotifier, Notifier>();

@@ -1,10 +1,11 @@
-﻿using Strem.Core.Types;
-using Strem.Core.Types.Input;
+﻿using System.Reactive;
+using SharpHook.Native;
 
 namespace Strem.Core.Services.Input;
 
-public interface IInputHandler
+public interface IInputHandler : IDisposable
 {
-    void KeyPress(params InputKeyCodes[] keyCodes);
-    void ModifiedKeyPress(IEnumerable<InputKeyCodes> modifierKeyCodes, IEnumerable<InputKeyCodes> keyCodes);
+    void SimulateKeyPress(params KeyCode[] keyCodes);
+    void SimulateModifiedKeyPress(IReadOnlyCollection<ModifierMask> modifiers, IReadOnlyCollection<KeyCode> keyCodes);
+    IObservable<Unit> ListenForKeyPresses(IReadOnlyCollection<ModifierMask> modifiers, IReadOnlyCollection<KeyCode> keyCodes);
 }

@@ -33,9 +33,9 @@ public class SimulateKeyPressTask : FlowTask<SimulateKeyPressTaskData>
         { return ExecutionResult.FailedButContinue("No keys were provided"); }
 
         if (data.KeyModifiers.Count == 0)
-        { InputHandler.KeyPress(data.KeysToPress.ToArray()); }
+        { InputHandler.SimulateKeyPress(data.KeysToPress.ToArray()); }
         else
-        { InputHandler.ModifiedKeyPress(data.KeyModifiers, data.KeysToPress); }
+        { InputHandler.SimulateModifiedKeyPress(data.KeyModifiers, data.KeysToPress); }
 
         return ExecutionResult.Success();
     }

@@ -1,5 +1,7 @@
-﻿@using Strem.Core.Types.Input
-
+﻿@using SharpHook.Native
+@using Strem.Core.Extensions
+@using Strem.Core.Types
+@using KeyCode = SharpHook.Native.KeyCode;
 @inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Input.SimulateKeyPressTaskData>
 
 <div class="columns">
@@ -13,10 +15,10 @@
             var index = i;
             <div class="field has-addons">
                 <div class="control">
-                    <select class="input" value="@Data.KeyModifiers[index]" @onchange="x => ModifierChanged(index, Enum.Parse<InputKeyCodes>(x.Value.ToString()))">
-                        @foreach (var modifierKeys in Modifiers)
+                    <select class="input" value="@Data.KeyModifiers[index]" @onchange="x => ModifierChanged(index, Enum.Parse<ModifierMask>(x.Value.ToString()))">
+                        @foreach (var modifierKeys in InputTypes.Modifiers)
                         {
-                            <option value="@modifierKeys">@MakeKeyCodeNice(modifierKeys)</option>
+                            <option value="@modifierKeys">@modifierKeys</option>
                         }
                     </select>
                 </div>
@@ -40,10 +42,10 @@
             var index = i;
             <div class="field has-addons">
                 <div class="control">
-                    <select class="input" value="@Data.KeysToPress[index]" @onchange="x => KeysChanged(index, Enum.Parse<InputKeyCodes>(x.Value.ToString()))">
-                        @foreach (var normalKeys in NormalKeys)
+                    <select class="input" value="@Data.KeysToPress[index]" @onchange="x => KeysChanged(index, Enum.Parse<KeyCode>(x.Value.ToString()))">
+                        @foreach (var normalKeys in InputTypes.KeyCodes)
                         {
-                            <option value="@normalKeys">@MakeKeyCodeNice(normalKeys)</option>
+                            <option value="@normalKeys">@normalKeys.MakeKeyCodeNice()</option>
                         }
                     </select>
                 </div>
@@ -60,33 +62,13 @@
 </div>
 
 @code {
-    public static readonly InputKeyCodes[] Modifiers = new[]{
-        InputKeyCodes.SHIFT,
-        InputKeyCodes.LSHIFT,
-        InputKeyCodes.RSHIFT,
-        InputKeyCodes.CONTROL,
-        InputKeyCodes.LCONTROL,
-        InputKeyCodes.RCONTROL,
-        InputKeyCodes.LWIN,
-        InputKeyCodes.RWIN,
-        InputKeyCodes.MENU,
-        InputKeyCodes.LMENU,
-        InputKeyCodes.RMENU
-    };
-
-    public static readonly InputKeyCodes[] NormalKeys = Enum.GetValues<InputKeyCodes>()
-        .Where(x => !Modifiers.Contains(x))
-        .ToArray();
-
-    public string MakeKeyCodeNice(InputKeyCodes keycode)
-    { return keycode.ToString().Replace("VK_", "").Replace("MENU", "ALT"); }
     
     public override string Title => GenerateTitle();
 
     public string GenerateTitle()
     {
-        var modifierKeys = string.Join(", ", Data.KeyModifiers.Select(MakeKeyCodeNice));
-        var normalKeys = string.Join(", ", Data.KeysToPress.Select(MakeKeyCodeNice));
+        var modifierKeys = string.Join(", ", Data.KeyModifiers);
+        var normalKeys = string.Join(", ", Data.KeysToPress.Select(x => x.MakeKeyCodeNice()));
         var starter = modifierKeys.Length > 0 ? "Holding " : "Pressing ";
         var follower = modifierKeys.Length > 0 ? " Then " : "";
         return $"Simulate {starter} <strong>{modifierKeys}</strong>{follower}<strong>{normalKeys}</strong>";
@@ -94,23 +76,23 @@
 
     private void AddModifier()
     {
-        Data.KeyModifiers.Add(InputKeyCodes.SHIFT);
+        Data.KeyModifiers.Add(ModifierMask.LeftShift);
         NotifyPropertyChanged(nameof(Data.KeyModifiers));
     }
     
     private void AddKeysToPress()
     {
-        Data.KeysToPress.Add(InputKeyCodes.VK_A);
+        Data.KeysToPress.Add(KeyCode.VcA);
         NotifyPropertyChanged(nameof(Data.KeysToPress));
     }
 
-    private void ModifierChanged(int index, InputKeyCodes newModifier)
+    private void ModifierChanged(int index, ModifierMask newModifier)
     {
         Data.KeyModifiers[index] = newModifier;
         NotifyPropertyChanged(nameof(Data.KeyModifiers));
     }
     
-    private void KeysChanged(int index, InputKeyCodes newKey)
+    private void KeysChanged(int index, KeyCode newKey)
     {
         Data.KeysToPress[index] = newKey;
         NotifyPropertyChanged(nameof(Data.KeysToPress));
