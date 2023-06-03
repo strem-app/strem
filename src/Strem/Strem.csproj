@@ -18,8 +18,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BlazorMonaco" Version="2.1.0" />
-        <PackageReference Include="Photino.Blazor" Version="2.4.0" />
+        <PackageReference Include="BlazorMonaco" Version="3.0.0" />
+        <PackageReference Include="Photino.Blazor" Version="2.6.0" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>
     

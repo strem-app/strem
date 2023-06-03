@@ -1,8 +1,9 @@
-﻿@using SharpHook.Native
-@using Strem.Core.Extensions
+﻿@using Strem.Core.Extensions
 @using Strem.Core.Types
-@using KeyCode = SharpHook.Native.KeyCode;
-@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Input.SimulateKeyPressTaskData>
+@using KeyCode = SharpHook.Native.KeyCode
+@using SharpHook.Native
+@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Input.OnKeyboardShortcutTriggerData>
+
 
 <div class="columns">
     <div class="column">
@@ -69,9 +70,7 @@
     {
         var modifierKeys = string.Join(", ", Data.KeyModifiers);
         var normalKeys = string.Join(", ", Data.KeysToPress.Select(x => x.MakeKeyCodeNice()));
-        var starter = modifierKeys.Length > 0 ? "Holding " : "Pressing ";
-        var follower = modifierKeys.Length > 0 ? " Then " : "";
-        return $"Simulate {starter} <strong>{modifierKeys}</strong>{follower}<strong>{normalKeys}</strong>";
+        return $"On <strong>{modifierKeys}</strong> <strong>{normalKeys}</strong> Shortcut Pressed";
     }
 
     private void AddModifier()

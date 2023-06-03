@@ -1,15 +1,16 @@
-﻿@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Code.ExecutePowerShellTaskData>
+﻿@using BlazorMonaco.Editor
+@inherits CustomTaskComponent<Strem.Flows.Default.Flows.Tasks.Code.ExecutePowerShellTaskData>
 
 <div class="field">
     <div class="control" style="min-height: 20em;">
-        <MonacoEditor Id="@Data.Id.ToString()" CssClass="block is-info" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="OnContentChanged" @ref="_editor"/>
+        <StandaloneCodeEditor Id="@Data.Id.ToString()" CssClass="block is-info" ConstructionOptions="EditorConstructionOptions" OnDidChangeModelContent="OnContentChanged" @ref="_editor"/>
     </div>
     <HelperInfo>Your variables are exposed in the format of <strong>GetVariable name.context</strong> (context is optional as always) i.e GetVariable username.twitch</HelperInfo>
 </div>
 
 @code 
 {
-    private MonacoEditor _editor { get; set; }
+    private StandaloneCodeEditor  _editor { get; set; }
 
     public override string Title => GetTitle();
 
@@ -18,7 +19,7 @@
         return $"Execute Powershell Script";
     }
     
-    private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
+    private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor  editor)
     {
         return new StandaloneEditorConstructionOptions
         {

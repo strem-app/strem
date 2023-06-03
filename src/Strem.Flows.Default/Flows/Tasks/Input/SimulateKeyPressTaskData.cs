@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Strem.Core.Types;
-using Strem.Core.Types.Input;
+using SharpHook.Native;
 using Strem.Flows.Data.Tasks;
 
 namespace Strem.Flows.Default.Flows.Tasks.Input;
@@ -14,7 +13,8 @@ public class SimulateKeyPressTaskData : IFlowTaskData
     public string Code => TaskCode;
     public string Version { get; set; } = TaskVersion;
 
-    public List<InputKeyCodes> KeyModifiers { get; set; } = new();
+    public List<ModifierMask> KeyModifiers { get; set; } = new();
+    
     [MinLength(1)]
-    public List<InputKeyCodes> KeysToPress { get; set; } = new();
+    public List<KeyCode> KeysToPress { get; set; } = new();
 }

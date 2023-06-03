@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Strem.Flows.Components;
 using Strem.Flows.Data.Triggers;
 
@@ -9,4 +10,9 @@ public abstract class CustomTriggerComponent<T> : CustomFlowElementComponent
 {
     [Parameter]
     public T Data { get; set; }
+    
+    public void NotifyPropertyChanged(string propertyName)
+    {
+        EditContext?.NotifyFieldChanged(new FieldIdentifier(Data, propertyName));
+    }
 }
