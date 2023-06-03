@@ -1,6 +1,6 @@
 ﻿namespace Strem.Core.Plugins;
 
-public interface IPluginStartup
+public interface IPluginStartup : IDisposable
 {
     /// <summary>
     /// This indicates the plugin REQUIRES these configuration keys to run

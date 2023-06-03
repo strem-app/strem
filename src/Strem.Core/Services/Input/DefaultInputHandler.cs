@@ -15,13 +15,13 @@ public class DefaultInputHandler : IInputHandler
     {
         InputHook = inputHook;
         InputSimulator = inputSimulator;
-        inputHook.RunAsync();
     }
 
+    public void StartInputHook()
+    { InputHook.RunAsync(); }
+
     public void Dispose()
-    {
-        InputHook.Dispose();
-    }
+    { InputHook.Dispose(); }
 
     public void SimulateKeyPress(params KeyCode[] keyCodes)
     { InputSimulator.SimulateKeyPresses(keyCodes); }

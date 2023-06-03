@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Strem.Core.Events;
 using Strem.Core.Events.Bus;
+using Strem.Core.Services.Input;
 using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
 using Strem.Core.Variables;
@@ -16,17 +17,20 @@ public class OnKeyboardShortcutTrigger : FlowTrigger<OnKeyboardShortcutTriggerDa
 
     public override string Name => "On Keyboard Shortcut";
     public override string Category => "Input";
-    public override string Description => "Triggers when a specific shortcut is entered globally";
+    public override string Description => "Triggers when a shortcut is entered globally";
 
-    public OnKeyboardShortcutTrigger(ILogger<FlowTrigger<OnKeyboardShortcutTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus) : base(logger, flowStringProcessor, appState, eventBus)
+    public IInputHandler InputHandler { get; }
+    
+    public OnKeyboardShortcutTrigger(ILogger<FlowTrigger<OnKeyboardShortcutTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IInputHandler inputHandler) : base(logger, flowStringProcessor, appState, eventBus)
     {
+        InputHandler = inputHandler;
     }
 
     public override bool CanExecute() => true;
 
     public override async Task<IObservable<IVariables>> Execute(OnKeyboardShortcutTriggerData data)
     {
-        return EventBus.Receive<ApplicationStartedEvent>()
+        return InputHandler.ListenForKeyPresses(data.KeyModifiers, data.KeysToPress)
             .Select(x => new Core.Variables.Variables());
     }
 }

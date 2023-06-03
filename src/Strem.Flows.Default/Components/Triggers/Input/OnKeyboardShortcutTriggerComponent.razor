@@ -1,0 +1,111 @@
+﻿@using Strem.Core.Extensions
+@using Strem.Core.Types
+@using KeyCode = SharpHook.Native.KeyCode
+@using SharpHook.Native
+@inherits Strem.Flows.Components.Triggers.CustomTriggerComponent<Strem.Flows.Default.Flows.Triggers.Input.OnKeyboardShortcutTriggerData>
+
+
+<div class="columns">
+    <div class="column">
+        <label class="label is-5">Modifiers</label>
+        <div class="block">
+            <button class="button is-info" @onclick="AddModifier">Add Modifier Key</button>
+        </div>
+        @for (var i = 0; i < Data.KeyModifiers.Count; i++)
+        {
+            var index = i;
+            <div class="field has-addons">
+                <div class="control">
+                    <select class="input" value="@Data.KeyModifiers[index]" @onchange="x => ModifierChanged(index, Enum.Parse<ModifierMask>(x.Value.ToString()))">
+                        @foreach (var modifierKeys in InputTypes.Modifiers)
+                        {
+                            <option value="@modifierKeys">@modifierKeys</option>
+                        }
+                    </select>
+                </div>
+                <div class="control">
+                    <button class="button is-danger" @onclick="() => RemoveModifier(index)">
+                        <span class="icon is-small">
+                          <i class="fas fa-times"></i>
+                        </span>
+                      </button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="column">
+        <label class="label is-5">Keys</label>
+        <div class="block">
+            <button class="button is-info" @onclick="AddKeysToPress">Add Key</button>
+        </div>
+        @for (var i = 0; i < Data.KeysToPress.Count; i++)
+        {
+            var index = i;
+            <div class="field has-addons">
+                <div class="control">
+                    <select class="input" value="@Data.KeysToPress[index]" @onchange="x => KeysChanged(index, Enum.Parse<KeyCode>(x.Value.ToString()))">
+                        @foreach (var normalKeys in InputTypes.KeyCodes)
+                        {
+                            <option value="@normalKeys">@normalKeys.MakeKeyCodeNice()</option>
+                        }
+                    </select>
+                </div>
+                <div class="control">
+                    <button class="button is-danger" @onclick="() => RemoveKeysToPress(index)">
+                        <span class="icon is-small">
+                          <i class="fas fa-times"></i>
+                        </span>
+                      </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    
+    public override string Title => GenerateTitle();
+
+    public string GenerateTitle()
+    {
+        var modifierKeys = string.Join(", ", Data.KeyModifiers);
+        var normalKeys = string.Join(", ", Data.KeysToPress.Select(x => x.MakeKeyCodeNice()));
+        return $"On <strong>{modifierKeys}</strong> <strong>{normalKeys}</strong> Shortcut Pressed";
+    }
+
+    private void AddModifier()
+    {
+        Data.KeyModifiers.Add(ModifierMask.LeftShift);
+        NotifyPropertyChanged(nameof(Data.KeyModifiers));
+    }
+    
+    private void AddKeysToPress()
+    {
+        Data.KeysToPress.Add(KeyCode.VcA);
+        NotifyPropertyChanged(nameof(Data.KeysToPress));
+    }
+
+    private void ModifierChanged(int index, ModifierMask newModifier)
+    {
+        Data.KeyModifiers[index] = newModifier;
+        NotifyPropertyChanged(nameof(Data.KeyModifiers));
+    }
+    
+    private void KeysChanged(int index, KeyCode newKey)
+    {
+        Data.KeysToPress[index] = newKey;
+        NotifyPropertyChanged(nameof(Data.KeysToPress));
+    }
+
+    private void RemoveModifier(int index)
+    {
+        Data.KeyModifiers.RemoveAt(index);
+        NotifyPropertyChanged(nameof(Data.KeyModifiers));
+    }
+
+    private void RemoveKeysToPress(int index)
+    {
+        Data.KeysToPress.RemoveAt(index);
+        NotifyPropertyChanged(nameof(Data.KeysToPress));
+    }
+}

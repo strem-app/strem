@@ -172,4 +172,25 @@ public class PluginHandler : IPluginRegistry
             PluginInfo.Add(pluginInfo);
         }
     }
+    
+    public void StopPlugins(IServiceProvider services, ILogger logger)
+    {
+        var startupServices = services.GetServices<IPluginStartup>().ToArray();
+        
+        // Stop plugins
+        foreach (var startupService in startupServices)
+        {
+            var pluginName = startupService.GetType().Name;
+            logger.Information($"Stopping {pluginName}");
+            try
+            {
+                startupService.Dispose();
+                logger.Information($"Finished Stopping {pluginName}");
+            }
+            catch (Exception e)
+            {
+                logger.Error($"Failed To Stop {pluginName}, with error: {e.Message}");
+            }
+        }
+    }
 }

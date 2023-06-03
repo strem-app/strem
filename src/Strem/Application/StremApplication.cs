@@ -26,6 +26,7 @@ public class StremApplication
     public ILogger<StremApplication> Logger { get; private set; }
     public IInternalWebHost WebHost { get; private set; }
     public ILiteDatabase Database { get; private set; }
+    public IServiceProvider Services { get; private set; }
     
     public bool HasStarted { get; private set; }
 
@@ -69,17 +70,18 @@ public class StremApplication
     
     public async Task StartApplication(IServiceProvider services)
     {
-        Logger = services.GetService<ILogger<StremApplication>>()!;
-        EventBus = services.GetService<IEventBus>()!;
-        WebHost = services.GetService<IInternalWebHost>()!;
-        Database = services.GetService<ILiteDatabase>()!;
+        Services = services;
+        Logger = Services.GetService<ILogger<StremApplication>>()!;
+        EventBus = Services.GetService<IEventBus>()!;
+        WebHost = Services.GetService<IInternalWebHost>()!;
+        Database = Services.GetService<ILiteDatabase>()!;
 
         HasStarted = true;
         PreStartupLogs.ForEach(Logger.Information);
         
         Logger.Information("Starting Registered Plugins");
         try
-        { await PluginHandler.StartPlugins(services, Logger, AppConfig); }
+        { await PluginHandler.StartPlugins(Services, Logger, AppConfig); }
         catch (Exception ex)
         {
             Logger.Error(ex.Message);
@@ -92,7 +94,7 @@ public class StremApplication
         
         //TODO: Solve this hack with webhost service collection separation
         WebHostHackExtensions.EventBus = EventBus;
-        WebHostHackExtensions.ServiceLocator = services;
+        WebHostHackExtensions.ServiceLocator = Services;
         
         Logger.Information("Starting Internal Host");
         try
@@ -111,6 +113,7 @@ public class StremApplication
     public bool ShutdownApp()
     {
         EventBus?.Publish(new ApplicationClosingEvent());
+        PluginHandler?.StopPlugins(Services, Logger);
         Database?.Dispose();
         if(WebHost?.IsRunning ?? false) { WebHost.StopHost(); }
         Logger?.Information("Strem Stopped");

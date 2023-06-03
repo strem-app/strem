@@ -1,5 +1,4 @@
-﻿using InputSimulatorStandard;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Audio;
 using Strem.Core.Services.Browsers.File;

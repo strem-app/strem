@@ -81,6 +81,10 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         SetupRegistries();
         Logger.Information("Setup Integration Registries");
         
+        Logger.Information("Starting Input Hooking");
+        InputHandler.StartInputHook();
+        Logger.Information("Started Input Hooking");
+        
         await CheckIfBackupIsNeeded();
         SetDefaultSettingsIfNotSet();
 
@@ -137,6 +141,9 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
     public void Dispose()
     {
         _subs?.Dispose();
-        InputHandler.Dispose();
+        
+        Logger.Information("Stopping Input Hooking");
+        InputHandler?.Dispose();
+        Logger.Information("Stopped Input Hooking");
     }
 }
