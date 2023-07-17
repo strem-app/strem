@@ -16,7 +16,6 @@ using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;
 using Strem.OBS.Plugin;
 using Strem.StreamElements.Plugin;
-using Strem.Twitter.Plugin;
 
 namespace Strem.Application;
 
@@ -53,7 +52,6 @@ public class PluginHandler : IPluginRegistry
         _ = typeof(TodoModule).Assembly;
         _ = typeof(TwitchModule).Assembly;
         _ = typeof(OBSModule).Assembly;
-        _ = typeof(TwitterModule).Assembly;
         _ = typeof(StreamElementsModule).Assembly;
     }
 

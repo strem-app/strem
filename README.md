@@ -46,6 +46,7 @@ We will probably move this to be its own docs section at a later date but for no
 
 - [Strem.Plugins.OBS.v4](https://github.com/strem-app/Strem.Plugins.OBS.v4) (Support for older OBS v4 websocket plugin)
 - [Strem.Plugins.Analytics](https://github.com/strem-app/Strem.Plugins.Analytics) (Allows you to track and view stream metrics within the app)
+- [Strem.Plugins.Twitter](https://github.com/strem-app/Strem.Plugins.Twitter) (Allows you to interact with twitter in triggers/tasks)
 
 ## I Want To Add To This Project
 Thats great, for the moment everything is VERY fluid so while im open to taking PRs and FRs just keep in mind I want to stabilize stuff a bit further before I open the flood gates a fully.
