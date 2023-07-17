@@ -11,7 +11,6 @@ using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Plugin;
-using Strem.Twitter.Plugin;
 
 namespace Strem.Application;
 
@@ -45,7 +44,6 @@ public class StremApplication
     public void RegisterConfiguration()
     {
         AppConfig.Add(TwitchPluginSettings.TwitchClientIdKey, ConfigData.TwitchClientId);
-        AppConfig.Add(TwitterPluginSettings.TwitterClientIdKey, ConfigData.TwitterClientId);
         AppConfig.Add(InfrastructurePluginSettings.EncryptionKeyKey, ConfigData.EncryptionKey);
         AppConfig.Add(InfrastructurePluginSettings.EncryptionIVKey, ConfigData.EncryptionIV);
     }
