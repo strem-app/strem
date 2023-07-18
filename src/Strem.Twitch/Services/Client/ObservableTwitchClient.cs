@@ -11,9 +11,6 @@ public class ObservableTwitchClient : IObservableTwitchClient
 {
     public ITwitchClient Client { get; }
     
-    /// <summary>Occurs when [on being hosted].</summary>
-    public IObservable<OnBeingHostedArgs> OnBeingHosted { get; private set; }
-
     /// <summary>Occurs when [on channel state changed].</summary>
     public IObservable<OnChannelStateChangedArgs> OnChannelStateChanged { get; private set; }
 
@@ -40,12 +37,6 @@ public class ObservableTwitchClient : IObservableTwitchClient
 
     /// <summary>Occurs when [on gifted subscription].</summary>
     public IObservable<OnGiftedSubscriptionArgs> OnGiftedSubscription { get; private set; }
-
-    /// <summary>Occurs when [on hosting started].</summary>
-    public IObservable<OnHostingStartedArgs> OnHostingStarted { get; private set; }
-
-    /// <summary>Occurs when [on hosting stopped].</summary>
-    public IObservable<OnHostingStoppedArgs> OnHostingStopped { get; private set; }
 
     /// <summary>Occurs when [on host left].</summary>
     public IObservable<Unit> OnHostLeft { get; private set; }
@@ -187,11 +178,6 @@ public class ObservableTwitchClient : IObservableTwitchClient
                 e => Client.OnReconnected -= e)
             .Select(x => x.EventArgs);
         
-        OnBeingHosted = Observable.FromEventPattern<OnBeingHostedArgs>(
-                e => Client.OnBeingHosted += e,
-                e => Client.OnBeingHosted -= e)
-            .Select(x => x.EventArgs);
-        
         OnChatCleared = Observable.FromEventPattern<OnChatClearedArgs>(
                 e => Client.OnChatCleared += e,
                 e => Client.OnChatCleared -= e)
@@ -211,21 +197,6 @@ public class ObservableTwitchClient : IObservableTwitchClient
                 e => Client.OnGiftedSubscription += e,
                 e => Client.OnGiftedSubscription -= e)
             .Select(x => x.EventArgs);
-        
-        OnHostingStarted = Observable.FromEventPattern<OnHostingStartedArgs>(
-                e => Client.OnHostingStarted += e,
-                e => Client.OnHostingStarted -= e)
-            .Select(x => x.EventArgs);
-        
-        OnHostingStopped = Observable.FromEventPattern<OnHostingStoppedArgs>(
-                e => Client.OnHostingStopped += e,
-                e => Client.OnHostingStopped -= e)
-            .Select(x => x.EventArgs);
-        
-        OnHostLeft = Observable.FromEventPattern(
-                e => Client.OnHostLeft += e,
-                e => Client.OnHostLeft -= e)
-            .ToUnit();
 
         OnGiftedSubscription = Observable.FromEventPattern<OnGiftedSubscriptionArgs>(
                 e => Client.OnGiftedSubscription += e,
@@ -286,12 +257,7 @@ public class ObservableTwitchClient : IObservableTwitchClient
                 e => Client.OnNewSubscriber += e,
                 e => Client.OnNewSubscriber -= e)
             .Select(x => x.EventArgs);
-        
-        OnNowHosting = Observable.FromEventPattern<OnNowHostingArgs>(
-                e => Client.OnNowHosting += e,
-                e => Client.OnNowHosting -= e)
-            .Select(x => x.EventArgs);
-        
+
         OnRaidNotification = Observable.FromEventPattern<OnRaidNotificationArgs>(
                 e => Client.OnRaidNotification += e,
                 e => Client.OnRaidNotification -= e)

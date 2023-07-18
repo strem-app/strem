@@ -8,9 +8,6 @@ namespace Strem.Twitch.Services.Client;
 public interface IObservableTwitchClient
 {
     ITwitchClient Client { get; }
-    
-    /// <summary>Occurs when [on being hosted].</summary>
-    IObservable<OnBeingHostedArgs> OnBeingHosted { get; }
 
     /// <summary>Occurs when [on channel state changed].</summary>
     IObservable<OnChannelStateChangedArgs> OnChannelStateChanged { get; }
@@ -38,12 +35,6 @@ public interface IObservableTwitchClient
 
     /// <summary>Occurs when [on gifted subscription].</summary>
     IObservable<OnGiftedSubscriptionArgs> OnGiftedSubscription { get; }
-
-    /// <summary>Occurs when [on hosting started].</summary>
-    IObservable<OnHostingStartedArgs> OnHostingStarted { get; }
-
-    /// <summary>Occurs when [on hosting stopped].</summary>
-    IObservable<OnHostingStoppedArgs> OnHostingStopped { get; }
 
     /// <summary>Occurs when [on host left].</summary>
     IObservable<Unit> OnHostLeft { get; }
