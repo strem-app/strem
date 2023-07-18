@@ -17,7 +17,7 @@
     <ItemGroup>
         <PackageReference Include="BlazorMonaco" Version="3.0.0" />
         <PackageReference Include="IronPython" Version="3.4.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.16" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.20" />
         <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.13" />
         <PackageReference Include="RestSharp" Version="108.0.1" />
         <PackageReference Include="SharpHook.Reactive" Version="4.2.1" />
