@@ -10,8 +10,8 @@
     <ItemGroup>
       <PackageReference Include="NativeFileDialogSharp" Version="0.5.0" />
       <PackageReference Include="NAudio" Version="2.1.0" />
-      <PackageReference Include="System.Speech" Version="6.0.0" />
-      <PackageReference Include="TextCopy" Version="6.1.0" />
+      <PackageReference Include="System.Speech" Version="7.0.0" />
+      <PackageReference Include="TextCopy" Version="6.2.1" />
     </ItemGroup>
 
     <ItemGroup>
