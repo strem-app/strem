@@ -1,0 +1,117 @@
+﻿@using System.Reactive.Disposables
+@using System.Reactive.Linq
+@using Strem.Core.Events.Bus
+@using Strem.Core.Extensions
+@using Strem.Core.State
+@using Strem.Youtube.Events.OAuth
+@using Strem.Youtube.Extensions
+@using Strem.Youtube.Services.OAuth
+@using Strem.Youtube.Variables
+
+@inject IYoutubeOAuthClient YoutubeOAuthClient
+@inject IAppState AppState
+@inject IEventBus EventBus
+
+@implements IDisposable
+
+<div class="columns">
+    
+    <div class="column">
+        <label class="label">Connected Account</label>
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                <input class="input" type="text" placeholder="Account Not Linked" value="@Username" disabled/>
+            </div>
+            <div class="control">
+                @if (IsYoutubeAccountLinked && !HavePermissionsChanged)
+                {
+                    <a class="button is-danger" @onclick="DisconnectFromYoutube">Disconnect From Youtube</a>
+                }
+                else if (IsYoutubeAccountLinked && HavePermissionsChanged)
+                {
+                    <a class="button is-warning" @onclick="ConnectToYoutube">Request New Permissions</a>
+                }
+                else
+                {
+                    <a class="button is-success" @onclick="ConnectToYoutube">Connect To Youtube</a>
+                }
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<label class="label">Requested Privilages</label>
+<YoutubeScopes ExistingScopes="CurrentScopes" OnScopesChanged="RequestNewScopeAccess"></YoutubeScopes>
+
+@code {
+    
+    private CompositeDisposable _subs = new();
+    
+    public string Username { get; set; }
+    public bool IsYoutubeAccountLinked { get; set; }
+    public bool HavePermissionsChanged { get; set; }
+    public string[] CurrentScopes { get; set; } = Array.Empty<string>();
+    public string[] NewScopes { get; set; } = Array.Empty<string>();
+    
+    
+    protected override async Task OnInitializedAsync()
+    {
+        IsYoutubeAccountLinked = AppState.HasYoutubeOAuth();
+        Username = AppState.AppVariables.Get(YoutubeVars.Username);
+
+        if (IsYoutubeAccountLinked)
+        {
+            CurrentScopes = AppState.GetYoutubeScopes();
+            NewScopes = CurrentScopes.ToArray();
+            Username = AppState.GetYoutubeUsername();
+        }
+
+        AppState.AppVariables.OnVariableChanged
+            .Where(x => x.Key == YoutubeVars.Username)
+            .Subscribe(x =>
+            {
+                Username = AppState.GetYoutubeUsername();
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+        
+        EventBus.Receive<YoutubeOAuthSuccessEvent>()
+            .Subscribe(x =>
+            {
+                IsYoutubeAccountLinked = true;
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);        
+        
+        EventBus.Receive<YoutubeOAuthRevokedEvent>()
+            .Subscribe(x =>
+            {
+                IsYoutubeAccountLinked = false;
+                Username = string.Empty;
+                InvokeAsync(StateHasChanged);
+            })
+            .AddTo(_subs);
+    }
+
+    public void ConnectToYoutube()
+    {
+        YoutubeOAuthClient.StartAuthorisationProcess(NewScopes);
+    }
+
+    public void DisconnectFromYoutube()
+    {
+        YoutubeOAuthClient.RevokeToken();
+    }
+    
+    public void RequestNewScopeAccess(string[] newScopes)
+    {
+        NewScopes = newScopes;
+        HavePermissionsChanged = true;
+    }
+
+    public void Dispose()
+    {
+        _subs?.Dispose();  
+    } 
+}

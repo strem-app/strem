@@ -50,7 +50,7 @@ public class StreamElementsPluginStartup : IPluginStartup, IDisposable
             .Subscribe(x => Logger.LogError(x.Exception, "StreamElements error reported"))
             .AddTo(_subs);
         
-        if (AppState.HasJwtToken())
+        if (AppState.HasStreamElementsJwtToken())
         { await AttemptConnect(); }
     }
 

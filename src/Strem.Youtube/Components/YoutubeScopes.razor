@@ -1,0 +1,41 @@
+﻿@using Strem.Core.Types
+
+<div class="box">
+    <div class="columns">
+        <div class="column">
+            <div class="field">
+                <label class="label">Tweet Permissions</label>
+                <div class="control">
+                    <p>TODO</p>
+                </div>
+                <HelperInfo>Tweet permissions cover being able to read/manage tweets</HelperInfo>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public ScopeAccess ChatScopes { get; set; }
+    
+    [Parameter]
+    public string[] ExistingScopes { get; set; } = Array.Empty<string>();
+    
+    [Parameter]
+    public EventCallback<string[]> OnScopesChanged { get; set; }
+
+    public bool HasScopesFor(string[] requiredScopes)
+    {
+        return requiredScopes.All(x => ExistingScopes.Contains(x));
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    public void RequestScopeChange()
+    {
+        
+    }
+}

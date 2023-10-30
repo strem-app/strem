@@ -11,6 +11,7 @@ using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Plugin;
+using Strem.Youtube.Plugin;
 
 namespace Strem.Application;
 
@@ -44,6 +45,7 @@ public class StremApplication
     public void RegisterConfiguration()
     {
         AppConfig.Add(TwitchPluginSettings.TwitchClientIdKey, ConfigData.TwitchClientId);
+        AppConfig.Add(YoutubePluginSettings.YoutubeClientIdKey, ConfigData.YoutubeClientId);
         AppConfig.Add(InfrastructurePluginSettings.EncryptionKeyKey, ConfigData.EncryptionKey);
         AppConfig.Add(InfrastructurePluginSettings.EncryptionIVKey, ConfigData.EncryptionIV);
     }
