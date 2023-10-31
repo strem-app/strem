@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+
+<html>
+    <head>
+      <title>Youtube Is Calling</title>
+      <link href="/_content/Strem/css/bulma.css" rel="stylesheet" />
+      <link href="/_content/Strem/css/all.css" rel="stylesheet" />
+    </head>
+    <body>
+      <section class="hero is-dark is-fullheight">
+        <div class="hero-body">
+          <div class="container has-text-centered">
+            <section class="block">
+              <p class="title">
+                <span class="icon-text">
+                  <span class="icon is-large">
+                    <i class="fab fa-youtube"></i>
+                  </span>
+                </span>
+                Youtube Is A Go Go!
+              </p>
+              <p id="info" class="subtitle">
+                We are just processing stuff, one moment please...
+              </p>
+            </section>
+            <article id="error-element" style="display: none;" class="message is-danger">
+              <div class="message-header">
+                <p>DANGER WILL ROBINSON!</p>
+              </div>
+              <div class="message-body">
+                Something has gone wrong, sorry but we cannot authorise you. Close this window and try again in a few mins.
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    <script type="text/javascript">
+        const hashContent = window.location.hash.replace("#", "");
+        const contentData = Object.fromEntries(new URLSearchParams(hashContent));
+        const callbackUrl = '@Url.Action("OAuthLocalCallback")';
+        console.log(hashContent, contentData);
+        
+        async function postToServer(payload) {
+          return await fetch(callbackUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)            
+          });
+        }
+        
+        function onSuccess() {
+          document.querySelector('#info').innerHTML = "All done now, you can close this window!";
+        }
+        
+        function onFailure() {
+          document.querySelector('#error-element').style.display = "";
+        }
+        
+        postToServer(contentData)
+          .then((response) => { 
+            console.log("DATA RETURNED:", response);
+            if (response.ok) { onSuccess(); }
+            else { onFailure(); }
+          })
+          .catch(() => onFailure());
+        
+    </script>
+    </body>
+</html>

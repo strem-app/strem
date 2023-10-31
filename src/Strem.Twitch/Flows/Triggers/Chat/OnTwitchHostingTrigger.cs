@@ -18,8 +18,8 @@ public class OnTwitchHostingTrigger : FlowTrigger<OnTwitchHostingTriggerData>
     public override string Code => OnTwitchHostingTriggerData.TriggerCode;
     public override string Version => OnTwitchHostingTriggerData.TriggerVersion;
 
-    public static VariableEntry HostingChannelVariable = new("hosting.channel", TwitchVars.TwitchContext);
-    public static VariableEntry HostedChannelVariable = new("hosted.channel", TwitchVars.TwitchContext);
+    public static VariableEntry HostingChannelVariable = new("hosting.channel", TwitchVars.Context);
+    public static VariableEntry HostedChannelVariable = new("hosted.channel", TwitchVars.Context);
     
     public override string Name => "On Twitch Hosting";
     public override string Category => "Twitch";
@@ -37,7 +37,7 @@ public class OnTwitchHostingTrigger : FlowTrigger<OnTwitchHostingTriggerData>
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ReadWhispers);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.ReadWhispers);
 
     public IVariables PopulateVariables(OnNowHostingArgs args)
     {

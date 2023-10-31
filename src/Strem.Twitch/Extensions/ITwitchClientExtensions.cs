@@ -8,14 +8,14 @@ public static class ITwitchClientExtensions
 {
     public static (bool success, string message) ConnectOrRefresh(this ITwitchClient client, IAppState appState)
     {
-        if (!appState.HasTwitchOAuth())
+        if (!appState.HasTwitchAccessToken())
         { return (false, "No access token available, cannot initialize chat"); }
         
         if(client.IsConnected)
         { client.Disconnect(); }
         
         var username = appState.GetTwitchUsername();
-        var accessToken = appState.GetTwitchOAuthToken();
+        var accessToken = appState.GetTwitchAccessToken();
         var credentials = new ConnectionCredentials(username, accessToken);
         client.Initialize(credentials, username);
 

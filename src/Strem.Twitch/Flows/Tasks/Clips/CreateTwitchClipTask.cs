@@ -21,9 +21,9 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
     public override string Code => CreateTwitchClipTaskData.TaskCode;
     public override string Version => CreateTwitchClipTaskData.TaskVersion;
     
-    public static VariableEntry ClipChannelVariable = new("clip.channel", TwitchVars.TwitchContext);
-    public static VariableEntry ClipUrlVariable = new("clip.url", TwitchVars.TwitchContext);
-    public static VariableEntry ClipEditUrlVariable = new("clip.url.edit", TwitchVars.TwitchContext);
+    public static VariableEntry ClipChannelVariable = new("clip.channel", TwitchVars.Context);
+    public static VariableEntry ClipUrlVariable = new("clip.url", TwitchVars.Context);
+    public static VariableEntry ClipEditUrlVariable = new("clip.url.edit", TwitchVars.Context);
     
     public override string Name => "Create Clip";
     public override string Category => "Twitch";
@@ -43,7 +43,7 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
         TodoStore = todoStore;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ApiScopes.ManageClips);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ManageClips);
 
     public void PopulateVariablesFor(CreateTwitchClipTaskData data, CreatedClipResponse clipResponse, IVariables flowVars)
     {

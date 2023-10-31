@@ -51,7 +51,7 @@ public class TwitchController : Controller
             return BadRequest($"Twitch couldn't complete OAuth: {errorEvent.Message}");
         }
 
-        var existingState = AppState.TransientVariables.Get(CommonVariables.OAuthState, TwitchVars.TwitchContext);
+        var existingState = AppState.TransientVariables.Get(CommonVariables.OAuthState, TwitchVars.Context);
         if (payload.State != existingState)
         {
             var errorEvent = new ErrorEvent("Twitch Client Callback OAuth", $"OAuth state does not match request state");

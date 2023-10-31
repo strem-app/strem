@@ -38,8 +38,8 @@ public class YoutubePluginStartup : IPluginStartup, IDisposable
     
     public async Task StartPlugin()
     {
-        Observable.Interval(TimeSpan.FromMinutes(YoutubePluginSettings.RevalidatePeriodInMins))
-            .Subscribe(_ => RefreshToken())
+        Observable.Timer(TimeSpan.FromMinutes(YoutubePluginSettings.RevalidatePeriodInMins))
+            .Subscribe(x => VerifyToken())
             .AddTo(_subs);
 
         EventBus.Receive<YoutubeOAuthSuccessEvent>()
@@ -48,16 +48,16 @@ public class YoutubePluginStartup : IPluginStartup, IDisposable
 
         try
         {
-            await RefreshToken();
+            await VerifyToken();
             await CacheUserData();
         }
         catch (Exception e)
-        { Logger.Warning($"Error setting up Twitter Plugin: {e.Message}"); }
+        { Logger.Warning($"Error setting up Youtube Plugin: {e.Message}"); }
     }
 
     private async Task CacheUserData()
     {
-        if (!AppState.HasYoutubeOAuth()) { return; }
+        if (!AppState.HasYoutubeAccessToken()) { return; }
 
         try
         {
@@ -75,10 +75,12 @@ public class YoutubePluginStartup : IPluginStartup, IDisposable
         }
     }
 
-    public async Task RefreshToken()
+    public async Task VerifyToken()
     {
-        if (!AppState.HasYoutubeOAuth()) { return; }
-        await YoutubeOAuthClient.RefreshToken();
+        Logger.Information("Revalidating Youtube Access Token");
+
+        if (AppState.HasYoutubeAccessToken())
+        { await YoutubeOAuthClient.ValidateToken(); }
     }
 
     public void Dispose()

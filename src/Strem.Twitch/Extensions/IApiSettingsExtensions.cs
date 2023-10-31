@@ -9,6 +9,6 @@ public static class IApiSettingsExtensions
     public static void SetCredentials(this IApiSettings settings, IApplicationConfig config, IAppState appState)
     {
         settings.ClientId = config.GetTwitchClientId();
-        settings.AccessToken = appState.GetTwitchOAuthToken();
+        settings.AccessToken = appState.GetTwitchAccessToken();
     }
 }

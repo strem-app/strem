@@ -1,13 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <OutputType>Library</OutputType>
         <Version>0.0.0</Version>
-        <IsPackable>false</IsPackable>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
-
 
     <ItemGroup>
         <SupportedPlatform Include="browser" />
@@ -15,7 +15,6 @@
 
     <ItemGroup>
         <PackageReference Include="Google.Apis.YouTube.v3" Version="1.62.1.3205" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.20" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="RestSharp" Version="108.0.1" />
     </ItemGroup>

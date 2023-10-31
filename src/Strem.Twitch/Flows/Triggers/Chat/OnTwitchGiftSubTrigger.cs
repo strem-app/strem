@@ -18,12 +18,12 @@ public class OnTwitchGiftSubTrigger : FlowTrigger<OnTwitchGiftSubTriggerData>
     public override string Code => OnTwitchGiftSubTriggerData.TriggerCode;
     public override string Version => OnTwitchGiftSubTriggerData.TriggerVersion;
 
-    public static VariableEntry GiftSubChannelVariable = new("gift.channel", TwitchVars.TwitchContext);
-    public static VariableEntry GiftSubGifterVariable = new("gift.gifter", TwitchVars.TwitchContext);
-    public static VariableEntry GiftSubReceiverVariable = new("gift.receiver", TwitchVars.TwitchContext);
-    public static VariableEntry GiftSubMonthsVariable = new("gift.months", TwitchVars.TwitchContext);
-    public static VariableEntry GiftSubTierVariable = new("gift.tier", TwitchVars.TwitchContext);
-    public static VariableEntry GiftSubTierNameVariable = new("gift.tier-name", TwitchVars.TwitchContext);
+    public static VariableEntry GiftSubChannelVariable = new("gift.channel", TwitchVars.Context);
+    public static VariableEntry GiftSubGifterVariable = new("gift.gifter", TwitchVars.Context);
+    public static VariableEntry GiftSubReceiverVariable = new("gift.receiver", TwitchVars.Context);
+    public static VariableEntry GiftSubMonthsVariable = new("gift.months", TwitchVars.Context);
+    public static VariableEntry GiftSubTierVariable = new("gift.tier", TwitchVars.Context);
+    public static VariableEntry GiftSubTierNameVariable = new("gift.tier-name", TwitchVars.Context);
     
     public override string Name => "On Twitch Gift Sub";
     public override string Category => "Twitch";
@@ -43,7 +43,7 @@ public class OnTwitchGiftSubTrigger : FlowTrigger<OnTwitchGiftSubTriggerData>
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ReadWhispers);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.ReadWhispers);
 
     public IVariables PopulateVariables(OnGiftedSubscriptionArgs arg)
     {

@@ -105,7 +105,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        IsTwitchAccountLinked = AppState.HasTwitchOAuth();
+        IsTwitchAccountLinked = AppState.HasTwitchAccessToken();
         Username = AppState.AppVariables.Get(TwitchVars.Username);
 
         if (IsTwitchAccountLinked)

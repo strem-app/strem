@@ -20,18 +20,18 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     public override string Code => OnTwitchChatMessageTriggerData.TriggerCode;
     public override string Version => OnTwitchChatMessageTriggerData.TriggerVersion;
 
-    public static VariableEntry ChatChannelVariable = new("chat.channel", TwitchVars.TwitchContext);
-    public static VariableEntry ChatMessageVariable = new("chat.message", TwitchVars.TwitchContext);
-    public static VariableEntry RawChatMessageVariable = new("chat.raw-message", TwitchVars.TwitchContext);
-    public static VariableEntry BitsSentVariable = new("chat.message.bits-sent", TwitchVars.TwitchContext);
-    public static VariableEntry BitsValueVariable = new("chat.message.bits-value", TwitchVars.TwitchContext);
-    public static VariableEntry RewardIdVariable = new("chat.message.reward-id", TwitchVars.TwitchContext);
-    public static VariableEntry IsNoisyVariable = new("chat.message.is-noisy", TwitchVars.TwitchContext);
-    public static VariableEntry SubscriptionLengthVariable = new("chat.message.subscription-length", TwitchVars.TwitchContext);
-    public static VariableEntry IsHighlightedVariable = new("chat.message.is-highlighted", TwitchVars.TwitchContext);
-    public static VariableEntry UserTypeVariable = new("chat.user-type", TwitchVars.TwitchContext);
-    public static VariableEntry UsernameVariable = new("chat.username", TwitchVars.TwitchContext);
-    public static VariableEntry UserIdVariable = new("chat.user-id", TwitchVars.TwitchContext);
+    public static VariableEntry ChatChannelVariable = new("chat.channel", TwitchVars.Context);
+    public static VariableEntry ChatMessageVariable = new("chat.message", TwitchVars.Context);
+    public static VariableEntry RawChatMessageVariable = new("chat.raw-message", TwitchVars.Context);
+    public static VariableEntry BitsSentVariable = new("chat.message.bits-sent", TwitchVars.Context);
+    public static VariableEntry BitsValueVariable = new("chat.message.bits-value", TwitchVars.Context);
+    public static VariableEntry RewardIdVariable = new("chat.message.reward-id", TwitchVars.Context);
+    public static VariableEntry IsNoisyVariable = new("chat.message.is-noisy", TwitchVars.Context);
+    public static VariableEntry SubscriptionLengthVariable = new("chat.message.subscription-length", TwitchVars.Context);
+    public static VariableEntry IsHighlightedVariable = new("chat.message.is-highlighted", TwitchVars.Context);
+    public static VariableEntry UserTypeVariable = new("chat.user-type", TwitchVars.Context);
+    public static VariableEntry UsernameVariable = new("chat.username", TwitchVars.Context);
+    public static VariableEntry UserIdVariable = new("chat.user-id", TwitchVars.Context);
     
     public override string Name => "On Twitch Chat Message";
     public override string Category => "Twitch";
@@ -52,7 +52,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ReadChat);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.ReadChat);
 
     public IVariables PopulateVariables(ChatMessage message)
     {

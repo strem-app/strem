@@ -28,7 +28,7 @@ public class SendTwitchChatMessageTask : FlowTask<SendTwitchChatMessageTaskData>
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.SendChat);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.SendChat);
 
     public override async Task<ExecutionResult> Execute(SendTwitchChatMessageTaskData data, IVariables flowVars)
     {

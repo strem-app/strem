@@ -5,8 +5,8 @@ namespace Strem.Twitch.Extensions;
 
 public static class IAppStateExtensions
 {
-    public static bool HasTwitchOAuth(this IAppState state) => state.AppVariables.Has(TwitchVars.OAuthToken);
-    public static string GetTwitchOAuthToken(this IAppState state) => state.AppVariables.Get(TwitchVars.OAuthToken);
+    public static bool HasTwitchAccessToken(this IAppState state) => state.AppVariables.Has(TwitchVars.OAuthToken);
+    public static string GetTwitchAccessToken(this IAppState state) => state.AppVariables.Get(TwitchVars.OAuthToken);
     public static string GetTwitchUsername(this IAppState state) => state.AppVariables.Get(TwitchVars.Username);
     public static string GetTwitchUserId(this IAppState state) => state.AppVariables.Get(TwitchVars.UserId);
     

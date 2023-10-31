@@ -28,7 +28,7 @@ public class CreateTwitchStreamMarkerTask : FlowTask<CreateTwitchStreamMarkerTas
         TwitchApi = twitchApi;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ApiScopes.ManageClips);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ManageClips);
     
     public override async Task<ExecutionResult> Execute(CreateTwitchStreamMarkerTaskData data, IVariables flowVars)
     {

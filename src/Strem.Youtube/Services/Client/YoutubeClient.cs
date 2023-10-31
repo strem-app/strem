@@ -22,8 +22,8 @@ public class AccessTokenUserCredential : IHttpExecuteInterceptor, IConfigurableH
     public async Task InterceptAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var accessToken = string.Empty;
-        if (AppState.HasYoutubeOAuth())
-        { accessToken = AppState.GetYoutubeOAuthToken(); }
+        if (AppState.HasYoutubeAccessToken())
+        { accessToken = AppState.GetYoutubeAccessToken(); }
         
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
     }

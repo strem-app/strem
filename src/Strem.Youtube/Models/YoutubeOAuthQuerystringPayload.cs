@@ -2,7 +2,7 @@
 
 namespace Strem.Youtube.Models;
 
-public class YoutubeOAuthAuthorizePayload
+public class YoutubeOAuthQuerystringPayload
 {
     public string? Code { get; set; }
     public string? Error { get; set; }

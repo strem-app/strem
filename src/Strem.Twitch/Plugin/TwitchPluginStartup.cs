@@ -74,7 +74,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public void AttemptToConnectToChat()
     {
         Logger.Information($"Checking if twitch chat can connect");
-        if(!AppState.HasTwitchOAuth()) { return; }
+        if(!AppState.HasTwitchAccessToken()) { return; }
         if(TwitchClient.Client.IsConnected) { return; }
         if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
         
@@ -102,7 +102,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     {
         Logger.Information("Revalidating Twitch Access Token");
 
-        if (AppState.HasTwitchOAuth())
+        if (AppState.HasTwitchAccessToken())
         { await TwitchOAuthClient.ValidateToken(); }
     }
 
@@ -110,11 +110,11 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     {
         Logger.Information("Refreshing Twitch Channel & Stream Information");
         
-        if (!AppState.HasTwitchOAuth()) { return; }
+        if (!AppState.HasTwitchAccessToken()) { return; }
         TwitchApi.Settings.SetCredentials(ApplicationConfig, AppState);
         
         var userId = AppState.AppVariables.Get(TwitchVars.UserId);
-        var accessToken = AppState.GetTwitchOAuthToken();
+        var accessToken = AppState.GetTwitchAccessToken();
 
         try
         {

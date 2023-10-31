@@ -4,6 +4,7 @@ using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
+using Strem.Youtube.Events.OAuth;
 using Strem.Youtube.Models;
 using Strem.Youtube.Services.OAuth;
 using Strem.Youtube.Variables;
@@ -29,27 +30,38 @@ public class YoutubeController : Controller
 
     [HttpGet]
     [Route("oauth")]
-    public async Task<IActionResult> OAuthYoutubeAuthorizeCallback([FromQuery]YoutubeOAuthAuthorizePayload? payload)
+    public IActionResult OAuthYoutubeCallback([FromQuery]YoutubeOAuthQuerystringPayload payload)
     {
-        if (!string.IsNullOrEmpty(payload?.Error))
+        if (payload != null && !string.IsNullOrEmpty(payload.Error))
         {
             var errorEvent = new ErrorEvent("Youtube OAuth", $"Error Approving OAuth: {payload.Error} | {payload.ErrorDescription}");
             this.PublishAsyncEvent(errorEvent);
             return View("OAuthFailed", errorEvent.Message);
         }
-        
+        return View("OAuthClient");
+    }
+    
+    [HttpPost]
+    [Route("oauth")]
+    public IActionResult OAuthLocalCallback(YoutubeOAuthClientPayload payload)
+    {
+        if (payload == null || string.IsNullOrEmpty(payload.AccessToken))
+        {
+            var errorEvent = new ErrorEvent("Youtube Client Callback OAuth", $"Error with clientside oauth extraction");
+            this.PublishAsyncEvent(errorEvent);
+            return BadRequest($"Youtube couldn't complete OAuth: {errorEvent.Message}");
+        }
+
         var existingState = AppState.TransientVariables.Get(CommonVariables.OAuthState, YoutubeVars.Context);
-        if (payload?.State != existingState)
+        if (payload.State != existingState)
         {
             var errorEvent = new ErrorEvent("Youtube Client Callback OAuth", $"OAuth state does not match request state");
             this.PublishAsyncEvent(errorEvent);
-            return View("OAuthFailed", errorEvent.Message);
+            return BadRequest($"Youtube couldn't complete OAuth: {errorEvent.Message}");
         }
 
-        var wasSuccessful = await OAuthClient.GetToken(payload.Code);
-        
-        return !wasSuccessful 
-            ? View("OAuthFailed", "Unable to retrieve token from Youtube api, please try again later") 
-            : View("OAuthSuccess");
+        AppState.AppVariables.Set(YoutubeVars.OAuthToken, payload.AccessToken);
+        this.PublishAsyncEvent(new YoutubeOAuthSuccessEvent());
+        return Ok("Punch It Chewie!");
     }
 }

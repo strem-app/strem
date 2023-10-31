@@ -27,7 +27,7 @@ public class SetStreamTitleTask : FlowTask<SetStreamTitleTaskData>
         TwitchApi = twitchApi;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ApiScopes.ManageChannelBroadcast);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ManageChannelBroadcast);
 
     public override async Task<ExecutionResult> Execute(SetStreamTitleTaskData data, IVariables flowVars)
     {
