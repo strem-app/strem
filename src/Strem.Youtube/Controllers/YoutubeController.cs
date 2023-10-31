@@ -16,12 +16,12 @@ namespace Strem.Youtube.Controllers;
 public class YoutubeController : Controller
 {
     public IAppState AppState { get; }
-    public IYoutubeOAuthClient OAuthClient { get; }
+    public ILogger<YoutubeController> Logger { get; }
     
     public YoutubeController()
     {
         AppState = this.GetService<IAppState>();
-        OAuthClient = this.GetService<IYoutubeOAuthClient>();
+        Logger = this.GetLogger<YoutubeController>();
     }
 
     [HttpGet]
@@ -34,10 +34,12 @@ public class YoutubeController : Controller
     {
         if (payload != null && !string.IsNullOrEmpty(payload.Error))
         {
-            var errorEvent = new ErrorEvent("Youtube OAuth", $"Error Approving OAuth: {payload.Error} | {payload.ErrorDescription}");
-            this.PublishAsyncEvent(errorEvent);
-            return View("OAuthFailed", errorEvent.Message);
+            var errorMessage = $"[Youtube OAuth]: Error Approving OAuth: {payload.Error} | {payload.ErrorDescription}";
+            Logger.Error(errorMessage);
+            return View("OAuthFailed", errorMessage);
         }
+        
+        Logger.Information("[Youtube OAuth]: Got callback, handling implicit flow");
         return View("OAuthClient");
     }
     
@@ -47,20 +49,29 @@ public class YoutubeController : Controller
     {
         if (payload == null || string.IsNullOrEmpty(payload.AccessToken))
         {
-            var errorEvent = new ErrorEvent("Youtube Client Callback OAuth", $"Error with clientside oauth extraction");
-            this.PublishAsyncEvent(errorEvent);
-            return BadRequest($"Youtube couldn't complete OAuth: {errorEvent.Message}");
+            var errorMessage = "[Youtube Client Callback OAuth]: Error with clientside oauth extraction";
+            Logger.Error(errorMessage);
+            return BadRequest(errorMessage);
         }
 
         var existingState = AppState.TransientVariables.Get(CommonVariables.OAuthState, YoutubeVars.Context);
         if (payload.State != existingState)
         {
-            var errorEvent = new ErrorEvent("Youtube Client Callback OAuth", $"OAuth state does not match request state");
-            this.PublishAsyncEvent(errorEvent);
-            return BadRequest($"Youtube couldn't complete OAuth: {errorEvent.Message}");
+            var errorMessage = "[Youtube Client Callback OAuth]: OAuth state does not match request state";
+            Logger.Error(errorMessage);
+            return BadRequest(errorMessage);
         }
 
         AppState.AppVariables.Set(YoutubeVars.OAuthToken, payload.AccessToken);
+
+        int.TryParse(payload.ExpiresIn, out var expiryTime);
+        var actualExpiry = DateTime.Now.AddSeconds(expiryTime);
+        AppState.AppVariables.Set(YoutubeVars.TokenExpiry, actualExpiry.ToString("u"));
+
+        var scopes = string.Join(",", payload.Scope);
+        AppState.AppVariables.Set(YoutubeVars.OAuthScopes, scopes);
+        
+        Logger.Information("[Youtube OAuth]: Successfully authenticated");
         this.PublishAsyncEvent(new YoutubeOAuthSuccessEvent());
         return Ok("Punch It Chewie!");
     }

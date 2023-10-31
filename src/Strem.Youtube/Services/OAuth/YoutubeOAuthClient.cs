@@ -70,9 +70,6 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
 
     public void UpdateTokenState(YoutubeOAuthValidationPayload payload)
     {
-        AppState.AppVariables.Set(YoutubeVars.Username, payload.Login);
-        AppState.AppVariables.Set(YoutubeVars.UserId, payload.UserId);
-
         var actualExpiry = DateTime.Now.AddSeconds(payload.ExpiresIn);
         AppState.AppVariables.Set(YoutubeVars.TokenExpiry, actualExpiry.ToString("u"));
 
@@ -130,6 +127,7 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
         if (!response.IsSuccessful)
         {
             Logger.Error($"Revoke Error: {response.Content ?? "unknown error revoking"}");
+            ClearTokenState();
             return false;
         }
         

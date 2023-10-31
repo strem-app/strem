@@ -4,5 +4,6 @@ namespace Strem.Youtube.Components;
 
 public class ScopeCollections
 {
-    public static string[] ChatScopes = new[] { Scopes.Profile };
+    public static string[] ManageChatScopes = new[] { Scopes.ManageYoutube };
+    public static string[] ReadChatScopes = new[] { Scopes.ReadYoutube };
 }

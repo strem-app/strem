@@ -6,9 +6,9 @@
             <div class="field">
                 <label class="label">Chat Permissions</label>
                 <div class="control">
-                    <p>TODO</p>
+                    <EnumSelectInput Value="@ChatAccess" ValueChanged="(ScopeAccess v) => { ChatAccess = v; RequestScopeChange(); }"/>
                 </div>
-                <HelperInfo>Chat permissions cover being able to read/wriote chat messages</HelperInfo>
+                <HelperInfo>Chat permissions cover being able to read/write chat messages</HelperInfo>
             </div>
         </div>
     </div>
@@ -16,7 +16,7 @@
 
 @code {
 
-    public ScopeAccess ChatScopes { get; set; }
+    public ScopeAccess ChatAccess { get; set; }
     
     [Parameter]
     public string[] ExistingScopes { get; set; } = Array.Empty<string>();
@@ -31,11 +31,24 @@
     
     protected override async Task OnInitializedAsync()
     {
-
+        if (HasScopesFor(ScopeCollections.ManageChatScopes)){ ChatAccess = ScopeAccess.Full; }
+        else if(HasScopesFor(ScopeCollections.ReadChatScopes)) { ChatAccess = ScopeAccess.ReadOnly; }
+        else { ChatAccess = ScopeAccess.None; }
     }
 
     public void RequestScopeChange()
     {
-        
+        var newScopes = new List<string>();
+        switch (ChatAccess)
+        {
+            case ScopeAccess.Full:
+                newScopes.AddRange(ScopeCollections.ReadChatScopes);
+                newScopes.AddRange(ScopeCollections.ManageChatScopes);
+                break;
+            case ScopeAccess.ReadOnly:
+                newScopes.AddRange(ScopeCollections.ReadChatScopes);
+                break;
+        }
+        OnScopesChanged.InvokeAsync(newScopes.ToArray());
     }
 }

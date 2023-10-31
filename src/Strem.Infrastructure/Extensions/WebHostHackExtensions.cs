@@ -14,4 +14,6 @@ public static class WebHostHackExtensions
     public static void PublishAsyncEvent<T>(this ControllerBase controller, T eventArgs) => EventBus.PublishAsync(eventArgs);
     public static T GetService<T>(this ControllerBase controller) => ServiceLocator.GetService<T>();
     public static T GetService<T>(this ComponentBase component) => ServiceLocator.GetService<T>();
+    public static ILogger<T> GetLogger<T>(this ControllerBase controller) => ServiceLocator.GetService<ILogger<T>>();
+    public static ILogger<T> GetLogger<T>(this ComponentBase component) => ServiceLocator.GetService<ILogger<T>>();
 }

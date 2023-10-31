@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Strem.Core.Events;
 using Strem.Core.Extensions;
 using Strem.Core.State;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
-using Strem.Twitch.Events;
 using Strem.Twitch.Events.OAuth;
-using Strem.Twitch.Extensions;
 using Strem.Twitch.Models;
 using Strem.Twitch.Variables;
 
@@ -17,10 +14,12 @@ namespace Strem.Twitch.Controllers;
 public class TwitchController : Controller
 {
     public IAppState AppState { get; }
+    public ILogger<TwitchController> Logger { get; }
     
     public TwitchController()
     {
         AppState = this.GetService<IAppState>();
+        Logger = this.GetLogger<TwitchController>();
     }
 
     [HttpGet]
@@ -33,10 +32,12 @@ public class TwitchController : Controller
     {
         if (payload != null && !string.IsNullOrEmpty(payload.Error))
         {
-            var errorEvent = new ErrorEvent("Twitch OAuth", $"Error Approving OAuth: {payload.Error} | {payload.ErrorDescription}");
-            this.PublishAsyncEvent(errorEvent);
-            return View("OAuthFailed", errorEvent.Message);
+            var errorMessage = $"[Twitch OAuth]: Error Approving OAuth: {payload.Error} | {payload.ErrorDescription}";
+            Logger.Error(errorMessage);
+            return View("OAuthFailed", errorMessage);
         }
+        
+        Logger.Information("[Twitch OAuth]: Got callback, handling implicit flow");
         return View("OAuthClient");
     }
     
@@ -46,20 +47,21 @@ public class TwitchController : Controller
     {
         if (payload == null || string.IsNullOrEmpty(payload.AccessToken))
         {
-            var errorEvent = new ErrorEvent("Twitch Client Callback OAuth", $"Error with clientside oauth extraction");
-            this.PublishAsyncEvent(errorEvent);
-            return BadRequest($"Twitch couldn't complete OAuth: {errorEvent.Message}");
+            var errorMessage = $"[Twitch Client Callback OAuth]: Error with clientside oauth extraction";
+            Logger.Error(errorMessage);
+            return BadRequest(errorMessage);
         }
 
         var existingState = AppState.TransientVariables.Get(CommonVariables.OAuthState, TwitchVars.Context);
         if (payload.State != existingState)
         {
-            var errorEvent = new ErrorEvent("Twitch Client Callback OAuth", $"OAuth state does not match request state");
-            this.PublishAsyncEvent(errorEvent);
-            return BadRequest($"Twitch couldn't complete OAuth: {errorEvent.Message}");
+            var errorMessage = $"[Twitch Client Callback OAuth]: OAuth state does not match request state";
+            Logger.Error(errorMessage);
+            return BadRequest(errorMessage);
         }
 
         AppState.AppVariables.Set(TwitchVars.OAuthToken, payload.AccessToken);
+        Logger.Information("[Twitch OAuth]: Successfully authenticated");
         this.PublishAsyncEvent(new TwitchOAuthSuccessEvent());
         return Ok("Punch It Chewie!");
     }

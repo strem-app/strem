@@ -50,6 +50,7 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         AppState.UserVariables.OnVariableChanged
             .Subscribe(x =>
             {
+                Logger.Information($"User Variables [{x.Key.Name}|{x.Key.Context}] Changed");
                 if (AppState.UserVariables.Has(x.Key))
                 { UserVariablesRepository.Upsert(x.Key, x); }
                 else
@@ -60,6 +61,7 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
         AppState.AppVariables.OnVariableChanged
             .Subscribe(x =>
             {
+                Logger.Information($"App Variables [{x.Key.Name}|{x.Key.Context}] Changed");
                 if (AppState.AppVariables.Has(x.Key))
                 { AppVariablesRepository.Upsert(x.Key, x); }
                 else
@@ -67,14 +69,6 @@ public class InfrastructurePluginStartup : IPluginStartup, IDisposable
             })
             .AddTo(_subs);
         
-        AppState.UserVariables.OnVariableChanged
-            .Subscribe(x => Logger.Information($"User Variables [{x.Key.Name}|{x.Key.Context}] Changed"))
-            .AddTo(_subs);
-
-        AppState.AppVariables.OnVariableChanged
-            .Subscribe(x => Logger.Information($"App Variables [{x.Key.Name}|{x.Key.Context}] Changed"))
-            .AddTo(_subs);
-
         EventBus.Receive<ErrorEvent>().Subscribe(x => Logger.Error($"[{x.Source}]: {x.Message}"));
 
         Logger.Information("Setting Up Integration Registries");
