@@ -22,7 +22,7 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
 
     public static readonly string ApiUrl = "https://accounts.google.com/o/oauth2";
     public static readonly string AuthorizeEndpoint = "v2/auth";
-    public static readonly string TokenEndpoint = "v4/token";
+    public static readonly string TokenEndpoint = "token";
     public static readonly string RevokeEndpoint = "revoke";
     public static readonly string UserInfoEndpoint = "v3/userinfo";
     
@@ -57,7 +57,7 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
         { completeScopes.Add(Scopes.Profile); }
         
         var scopeQueryData = Uri.EscapeDataString(string.Join(" ", completeScopes));
-        var challengeData = $"code_challenge={challengeCode}&code_challenge_method=plain";
+        var challengeData = $"code_challenge={challengeCode}&code_challenge_method=plain&access_type=offline";
         var queryData = $"client_id={AppConfig.GetYoutubeClientId()}&redirect_uri={OAuthCallbackUrl}&response_type=code&scope={scopeQueryData}&state={randomState}&{challengeData}";
         var completeUrl = $"{ApiUrl}/{AuthorizeEndpoint}?{queryData}";
         WebBrowser.LoadUrl(completeUrl);
