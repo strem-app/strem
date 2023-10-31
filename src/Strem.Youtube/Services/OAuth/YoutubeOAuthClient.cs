@@ -24,7 +24,6 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
     public static readonly string AuthorizeEndpoint = "v2/auth";
     public static readonly string ValidateEndpoint = "validate";
     public static readonly string RevokeEndpoint = "revoke";
-    public static readonly string UserInfoEndpoint = "v3/userinfo";
     
     public IWebBrowser WebBrowser { get; }
     public IAppState AppState { get; }
@@ -137,35 +136,5 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
         EventBus.PublishAsync(new YoutubeOAuthRevokedEvent());
         ClearTokenState();
         return true;
-    }
-
-    public async Task<GoogleUserInfo> GetUserInfo()
-    {
-        Logger.Information("Getting Youtube UserInfo");
-
-        var accessToken = AttemptGetAccessToken();
-        if (accessToken == null) { return null; }
-
-        var restClient = new RestClient(ApiUrl);
-        var restRequest = new RestRequest(UserInfoEndpoint, Method.Get);
-        restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-        restRequest.AddHeader("Authorization", $"Bearer {accessToken}");
-
-        var response = await restClient.ExecuteAsync(restRequest);
-        if (!response.IsSuccessful)
-        {
-            Logger.Error($"UserInfo Error: {response.Content ?? "unknown error getting user info"}");
-            return null;
-        }
-
-        try
-        {
-            return JsonConvert.DeserializeObject<GoogleUserInfo>(response.Content);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error($"UserInfo Error: Couldnt Deserialize Data {ex.Message}");
-            return null;
-        }
     }
 }

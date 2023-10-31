@@ -4,13 +4,13 @@ namespace Strem.Youtube.Services.Client;
 
 public class ObservableYoutubeClient : IObservableYoutubeClient
 {
-    public YouTubeService YouTubeService { get; }
+    public YouTubeService ApiClient { get; }
 
-    public ObservableYoutubeClient(YouTubeService youTubeService)
+    public ObservableYoutubeClient(YouTubeService youtubeClient)
     {
-        YouTubeService = youTubeService;
+        ApiClient = youtubeClient;
     }
-    
+
     public void SetupObservables()
     {
        

@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Microsoft.Extensions.Logging;
+using Google.Apis.PeopleService.v1;
+using Google.Apis.PeopleService.v1.Data;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
@@ -19,15 +20,17 @@ public class YoutubePluginStartup : IPluginStartup, IDisposable
     
     public IYoutubeOAuthClient YoutubeOAuthClient { get; }
     public IObservableYoutubeClient YoutubeClient { get; }
+    public PeopleServiceService PeopleService { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
     public ILogger<YoutubePluginStartup> Logger { get; }
 
-    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
+    public string[] RequiredConfigurationKeys { get; } = new[] { YoutubePluginSettings.YoutubeClientIdKey };
 
-    public YoutubePluginStartup(IEventBus eventBus, IAppState appState, ILogger<YoutubePluginStartup> logger, IObservableYoutubeClient youtubeClient, IYoutubeOAuthClient youtubeOAuthClient)
+    public YoutubePluginStartup(IEventBus eventBus, IAppState appState, ILogger<YoutubePluginStartup> logger, IObservableYoutubeClient youtubeClient, IYoutubeOAuthClient youtubeOAuthClient, PeopleServiceService peopleService)
     {
         YoutubeOAuthClient = youtubeOAuthClient;
+        PeopleService = peopleService;
         EventBus = eventBus;
         AppState = appState;
         Logger = logger;
@@ -61,14 +64,17 @@ public class YoutubePluginStartup : IPluginStartup, IDisposable
 
         try
         {
-            var userDetails = await YoutubeOAuthClient.GetUserInfo();
-            AppState.TransientVariables.Set(YoutubeVars.UserId, userDetails.Id);
-            AppState.TransientVariables.Set(YoutubeVars.Username, userDetails.Name);
-            AppState.AppVariables.Set(YoutubeVars.Username, userDetails.Name);
+            var personRequest = PeopleService.People.Get("people/me");
+            personRequest.PersonFields = "names";
+            var person = await personRequest.ExecuteAsync();
+            var name = person.Names.FirstOrDefault(new Name() { DisplayName = "Unknown User - No Names Listed"}).DisplayName;
+            AppState.TransientVariables.Set(YoutubeVars.UserId, person.ResourceName);
+            AppState.TransientVariables.Set(YoutubeVars.Username, name);
+            AppState.AppVariables.Set(YoutubeVars.Username, name);
         }
         catch (Exception e)
         {
-            Logger.Warning($"Unable to get user details from google/youtube: {e.Message}");
+            Logger.Warning($"Unable to get user details from google: {e.Message}");
             AppState.TransientVariables.Set(YoutubeVars.UserId, string.Empty);
             AppState.TransientVariables.Set(YoutubeVars.Username, "Unknown User - Missing Permissions");
             AppState.AppVariables.Set(YoutubeVars.Username, "Unknown User - Missing Permissions");

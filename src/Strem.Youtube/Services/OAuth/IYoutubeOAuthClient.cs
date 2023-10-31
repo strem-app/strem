@@ -7,5 +7,4 @@ public interface IYoutubeOAuthClient
     void StartAuthorisationProcess(string[] requiredScopes);
     Task<bool> ValidateToken();
     Task<bool> RevokeToken();
-    Task<GoogleUserInfo> GetUserInfo();
 }

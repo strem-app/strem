@@ -16,6 +16,7 @@ using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;
 using Strem.OBS.Plugin;
 using Strem.StreamElements.Plugin;
+using Strem.Youtube.Plugin;
 
 namespace Strem.Application;
 
@@ -51,6 +52,7 @@ public class PluginHandler : IPluginRegistry
         _ = typeof(PortalsModule).Assembly;
         _ = typeof(TodoModule).Assembly;
         _ = typeof(TwitchModule).Assembly;
+        _ = typeof(YoutubeModule).Assembly;
         _ = typeof(OBSModule).Assembly;
         _ = typeof(StreamElementsModule).Assembly;
     }

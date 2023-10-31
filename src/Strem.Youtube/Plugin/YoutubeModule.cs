@@ -1,4 +1,5 @@
-﻿using Google.Apis.Services;
+﻿using Google.Apis.PeopleService.v1;
+using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.DependencyInjection;
 using Strem.Core.Plugins;
@@ -23,6 +24,7 @@ public class YoutubeModule : IRequiresApiHostingModule
         // General
         services.AddSingleton<AccessTokenUserCredential>();
         services.AddSingleton<YouTubeService>(CreateYoutubeClient);
+        services.AddSingleton<PeopleServiceService>(CreatePeopleService);
         services.AddSingleton<IObservableYoutubeClient, ObservableYoutubeClient>();
         
         // Components
@@ -38,5 +40,11 @@ public class YoutubeModule : IRequiresApiHostingModule
     {
         var credentialHandler = services.GetService<AccessTokenUserCredential>();
         return new YouTubeService(new BaseClientService.Initializer(){ HttpClientInitializer = credentialHandler });
+    }
+
+    public PeopleServiceService CreatePeopleService(IServiceProvider services)
+    {
+        var credentialHandler = services.GetService<AccessTokenUserCredential>();
+        return new PeopleServiceService(new BaseClientService.Initializer() { HttpClientInitializer = credentialHandler });
     }
 }
