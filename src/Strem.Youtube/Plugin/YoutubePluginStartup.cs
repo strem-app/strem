@@ -24,7 +24,7 @@ public class YoutubePluginStartup : IPluginStartup, IDisposable
     public IAppState AppState { get; }
     public ILogger<YoutubePluginStartup> Logger { get; }
 
-    public string[] RequiredConfigurationKeys { get; } = new[] { YoutubePluginSettings.YoutubeClientIdKey };
+    public string[] RequiredConfigurationKeys { get; } = Array.Empty<string>();
 
     public YoutubePluginStartup(IEventBus eventBus, IAppState appState, ILogger<YoutubePluginStartup> logger, IObservableYoutubeClient youtubeClient, IYoutubeOAuthClient youtubeOAuthClient)
     {

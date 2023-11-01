@@ -9,6 +9,11 @@ public class ObservableYoutubeClient : IObservableYoutubeClient
 {
     public YouTubeService YoutubeApiClient { get; }
     public PeopleServiceService PeopleApiService { get; }
+    
+    public DateTime LastChatUpdateTime { get; set; }
+    
+    /// <summary>Occurs when [on channel state changed].</summary>
+    public IObservable<LiveChatMessage> OnChannelStateChanged { get; private set; }
 
     public ObservableYoutubeClient(YouTubeService youtubeClient, PeopleServiceService peopleClient)
     {
@@ -34,5 +39,13 @@ public class ObservableYoutubeClient : IObservableYoutubeClient
         channelRequest.Mine = true;
         var result = await channelRequest.ExecuteAsync();
         return result.Items;
+    }
+
+    public void StartListeningForChatMessagesOn(string liveChatId)
+    {
+        LastChatUpdateTime = new DateTime();
+        var request = YoutubeApiClient.LiveChatMessages.List(liveChatId, "id, snippet");
+        var a = request.Execute();
+        
     }
 }

@@ -45,7 +45,6 @@ public class StremApplication
     public void RegisterConfiguration()
     {
         AppConfig.Add(TwitchPluginSettings.TwitchClientIdKey, ConfigData.TwitchClientId);
-        AppConfig.Add(YoutubePluginSettings.YoutubeClientIdKey, ConfigData.YoutubeClientId);
         AppConfig.Add(InfrastructurePluginSettings.EncryptionKeyKey, ConfigData.EncryptionKey);
         AppConfig.Add(InfrastructurePluginSettings.EncryptionIVKey, ConfigData.EncryptionIV);
     }
