@@ -15,8 +15,9 @@ public class YoutubeVars
     
     // App
     public static readonly VariableEntry ClientId = new("client-id", Context);
+    public static readonly VariableEntry ClientSecret = new("client-secret", Context);
     
     // User (app)
-    public static readonly VariableEntry UserId = new("userId", Context);
+    public static readonly VariableEntry ChannelId = new("channelId", Context);
     public static readonly VariableEntry Username = new("username", Context);
 }

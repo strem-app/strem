@@ -17,62 +17,45 @@ public class YoutubeController : Controller
 {
     public IAppState AppState { get; }
     public ILogger<YoutubeController> Logger { get; }
-    
+    public IYoutubeOAuthClient OAuthClient { get; }
+
     public YoutubeController()
     {
         AppState = this.GetService<IAppState>();
+        OAuthClient = this.GetService<IYoutubeOAuthClient>();
         Logger = this.GetLogger<YoutubeController>();
     }
 
     [HttpGet]
     public IActionResult Index()
-    { return Ok("Youtube Works Fine"); }
+    { return Ok("Youtube OAuth Works Fine"); }
 
     [HttpGet]
     [Route("oauth")]
-    public IActionResult OAuthYoutubeCallback([FromQuery]YoutubeOAuthQuerystringPayload payload)
+    public async Task<IActionResult> OAuthYoutubeAuthorizeCallback([FromQuery]YoutubeOAuthAuthorizePayload? payload)
     {
-        if (payload != null && !string.IsNullOrEmpty(payload.Error))
+        if (!string.IsNullOrEmpty(payload?.Error))
         {
             var errorMessage = $"[Youtube OAuth]: Error Approving OAuth: {payload.Error} | {payload.ErrorDescription}";
             Logger.Error(errorMessage);
             return View("OAuthFailed", errorMessage);
         }
         
-        Logger.Information("[Youtube OAuth]: Got callback, handling implicit flow");
-        return View("OAuthClient");
-    }
-    
-    [HttpPost]
-    [Route("oauth")]
-    public IActionResult OAuthLocalCallback(YoutubeOAuthClientPayload payload)
-    {
-        if (payload == null || string.IsNullOrEmpty(payload.AccessToken))
-        {
-            var errorMessage = "[Youtube Client Callback OAuth]: Error with clientside oauth extraction";
-            Logger.Error(errorMessage);
-            return BadRequest(errorMessage);
-        }
-
         var existingState = AppState.TransientVariables.Get(CommonVariables.OAuthState, YoutubeVars.Context);
-        if (payload.State != existingState)
+        if (payload?.State != existingState)
         {
-            var errorMessage = "[Youtube Client Callback OAuth]: OAuth state does not match request state";
+            var errorMessage = $"[Youtube OAuth]: Client callback issue, OAuth state does not match request state:";
             Logger.Error(errorMessage);
-            return BadRequest(errorMessage);
+            return View("OAuthFailed", errorMessage);
         }
 
-        AppState.AppVariables.Set(YoutubeVars.OAuthToken, payload.AccessToken);
+        Logger.Information("[Youtube OAuth]: Got callback, handling code exchange");
+        var wasSuccessful = await OAuthClient.GetToken(payload.Code);
 
-        int.TryParse(payload.ExpiresIn, out var expiryTime);
-        var actualExpiry = DateTime.Now.AddSeconds(expiryTime);
-        AppState.AppVariables.Set(YoutubeVars.TokenExpiry, actualExpiry.ToString("u"));
-
-        var scopes = string.Join(",", payload.Scope);
-        AppState.AppVariables.Set(YoutubeVars.OAuthScopes, scopes);
-        
-        Logger.Information("[Youtube OAuth]: Successfully authenticated");
-        this.PublishAsyncEvent(new YoutubeOAuthSuccessEvent());
-        return Ok("Punch It Chewie!");
+        var logText = wasSuccessful ? "succeeded" : "failed";
+        Logger.Information($"[Youtube OAuth]: Code exchange {logText}");
+        return !wasSuccessful 
+            ? View("OAuthFailed", "Unable to retrieve token from Youtube api, please try again later") 
+            : View("OAuthSuccess");
     }
 }

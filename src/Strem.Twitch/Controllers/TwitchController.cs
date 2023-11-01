@@ -47,7 +47,7 @@ public class TwitchController : Controller
     {
         if (payload == null || string.IsNullOrEmpty(payload.AccessToken))
         {
-            var errorMessage = $"[Twitch Client Callback OAuth]: Error with clientside oauth extraction";
+            var errorMessage = $"[Twitch OAuth]: Client Callback Error with clientside oauth extraction";
             Logger.Error(errorMessage);
             return BadRequest(errorMessage);
         }
@@ -55,7 +55,7 @@ public class TwitchController : Controller
         var existingState = AppState.TransientVariables.Get(CommonVariables.OAuthState, TwitchVars.Context);
         if (payload.State != existingState)
         {
-            var errorMessage = $"[Twitch Client Callback OAuth]: OAuth state does not match request state";
+            var errorMessage = $"[Twitch OAuth]: Client Callback OAuth state does not match request state";
             Logger.Error(errorMessage);
             return BadRequest(errorMessage);
         }

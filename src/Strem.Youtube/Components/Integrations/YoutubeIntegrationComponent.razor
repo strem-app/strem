@@ -17,6 +17,19 @@
 <div class="columns">
     
     <div class="column">
+        <label class="label">Youtube App Details</label>
+        <div class="field">
+            <div class="control is-expanded">
+                <TextInput placeholder="Client Id" @bind-Value="@ClientId"/>
+            </div>
+        </div>
+        <div class="field">
+            <div class="control is-expanded">
+                <TextInput placeholder="Client Secret" @bind-Value="@ClientSecret"/>
+            </div>
+            <HelperInfo>See readme for why we need these and how to get your client id/secret for use here</HelperInfo>
+        </div>
+        
         <label class="label">Connected Account</label>
         <div class="field has-addons">
             <div class="control is-expanded">
@@ -29,11 +42,11 @@
                 }
                 else if (IsYoutubeAccountLinked && HavePermissionsChanged)
                 {
-                    <a class="button is-warning" @onclick="ConnectToYoutube">Request New Permissions</a>
+                    <a class="button is-warning" disabled="@(!HasClientDetails)" @onclick="ConnectToYoutube">Request New Permissions</a>
                 }
                 else
                 {
-                    <a class="button is-success" @onclick="ConnectToYoutube">Connect To Youtube</a>
+                    <a class="button is-success" disabled="@(!HasClientDetails)" @onclick="ConnectToYoutube">Connect To Youtube</a>
                 }
             </div>
         </div>
@@ -54,6 +67,19 @@
     public string[] CurrentScopes { get; set; } = Array.Empty<string>();
     public string[] NewScopes { get; set; } = Array.Empty<string>();
     
+    public string ClientId
+    {
+        get => AppState.AppVariables.Get(YoutubeVars.ClientId);
+        set => AppState.AppVariables.Set(YoutubeVars.ClientId, value);
+    }
+    
+    public string ClientSecret
+    {
+        get => AppState.AppVariables.Get(YoutubeVars.ClientSecret);
+        set => AppState.AppVariables.Set(YoutubeVars.ClientSecret, value);
+    }
+
+    public bool HasClientDetails => !string.IsNullOrEmpty(ClientId) && !string.IsNullOrEmpty(ClientSecret);
     
     protected override async Task OnInitializedAsync()
     {

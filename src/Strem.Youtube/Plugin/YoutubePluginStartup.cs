@@ -68,14 +68,14 @@ public class YoutubePluginStartup : IPluginStartup, IDisposable
         {
             var currentUser = await YoutubeClient.GetCurrentUser();
             var name = currentUser.Names.FirstOrDefault(new Name() { DisplayName = "Unknown User - No Names Listed"}).DisplayName;
-            AppState.TransientVariables.Set(YoutubeVars.UserId, currentUser.ResourceName);
+            AppState.TransientVariables.Set(YoutubeVars.ChannelId, currentUser.ResourceName);
             AppState.TransientVariables.Set(YoutubeVars.Username, name);
             AppState.AppVariables.Set(YoutubeVars.Username, name);
         }
         catch (Exception e)
         {
             Logger.Warning($"Unable to get user details from google: {e.Message}");
-            AppState.TransientVariables.Set(YoutubeVars.UserId, string.Empty);
+            AppState.TransientVariables.Set(YoutubeVars.ChannelId, string.Empty);
             AppState.TransientVariables.Set(YoutubeVars.Username, "Unknown User - Missing Permissions");
             AppState.AppVariables.Set(YoutubeVars.Username, "Unknown User - Missing Permissions");
         }
@@ -85,8 +85,8 @@ public class YoutubePluginStartup : IPluginStartup, IDisposable
     {
         Logger.Information("Revalidating Youtube Access Token");
 
-        //if (AppState.HasYoutubeAccessToken())
-        //{ await YoutubeOAuthClient.ValidateToken(); }
+        if (AppState.HasYoutubeAccessToken())
+        { await YoutubeOAuthClient.RefreshToken(); }
     }
 
     public async Task RefreshStreamDetails()

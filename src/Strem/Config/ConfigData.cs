@@ -10,8 +10,7 @@
 public class ConfigData
 {
     public static readonly string TwitchClientId = "yejalwgrfnh5vcup3db5bdxkko2xh1";
-    public static readonly string YoutubeClientId = "532292894946-jfbkcg182spl3k9ncg5vtinu3kcuvve4.apps.googleusercontent.com";
-
+    
     public static readonly string EncryptionKey = "UxRBN8hfjzTG86d6SkSSNzyUhERGu5Zj";
     public static readonly string EncryptionIV = "7cA8jkRMJGZ8iMeJ";
 }

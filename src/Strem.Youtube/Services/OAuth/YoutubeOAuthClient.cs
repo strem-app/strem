@@ -22,7 +22,7 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
 
     public static readonly string ApiUrl = "https://accounts.google.com/o/oauth2";
     public static readonly string AuthorizeEndpoint = "v2/auth";
-    public static readonly string ValidateEndpoint = "validate";
+    public static readonly string TokenEndpoint = "token";
     public static readonly string RevokeEndpoint = "revoke";
     
     public IWebBrowser WebBrowser { get; }
@@ -44,61 +44,42 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
 
     public void StartAuthorisationProcess(string[] requiredScopes)
     {
-        Logger.Information("Starting Youtube Implicit OAuth Process");
+        Logger.Information("Starting Youtube PKCE OAuth Process");
 
         var randomState = Randomizer.RandomString();
+        var challengeCode = Randomizer.RandomString();
         AppState.TransientVariables.Set(CommonVariables.OAuthState, YoutubeVars.Context, randomState);
+        AppState.TransientVariables.Set(CommonVariables.OAuthChallengeCode, YoutubeVars.Context, challengeCode);
+
+        var clientId = AppState.AppVariables.Get(YoutubeVars.ClientId);
         
         var completeScopes = requiredScopes.ToList();
         if(!completeScopes.Contains(Scopes.Profile))
         { completeScopes.Add(Scopes.Profile); }
         
         var scopeQueryData = Uri.EscapeDataString(string.Join(" ", completeScopes));
-        var queryData = $"client_id={AppConfig.GetYoutubeClientId()}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";
+        var challengeData = $"code_challenge={challengeCode}&code_challenge_method=plain";
+        var queryData = $"client_id={clientId}&redirect_uri={OAuthCallbackUrl}&response_type=code&scope={scopeQueryData}&state={randomState}&{challengeData}";
         var completeUrl = $"{ApiUrl}/{AuthorizeEndpoint}?{queryData}";
         WebBrowser.LoadUrl(completeUrl);
     }
 
-    public string AttemptGetAccessToken()
+    public async Task<bool> GetToken(string code)
     {
-        if (AppState.HasYoutubeAccessToken())
-        { return AppState.GetYoutubeAccessToken(); }
-        
-        Logger.Error("Cannot find OAuth Token In Vars for request to Youtube OAuth API");
-        return null;
-    }
-
-    public void UpdateTokenState(YoutubeOAuthValidationPayload payload)
-    {
-        var actualExpiry = DateTime.Now.AddSeconds(payload.ExpiresIn);
-        AppState.AppVariables.Set(YoutubeVars.TokenExpiry, actualExpiry.ToString("u"));
-
-        var scopes = string.Join(",", payload.Scopes);
-        AppState.AppVariables.Set(YoutubeVars.OAuthScopes, scopes);
-    }
-
-    public void ClearTokenState()
-    {
-        AppState.AppVariables.Delete(YoutubeVars.Username);
-        AppState.AppVariables.Delete(YoutubeVars.UserId);
-        AppState.AppVariables.Delete(YoutubeVars.TokenExpiry);
-        AppState.AppVariables.Delete(YoutubeVars.OAuthScopes);
-        AppState.AppVariables.Delete(YoutubeVars.OAuthToken);
-    }
-    
-    public async Task<bool> ValidateToken()
-    {
-        Logger.Information("Validating Youtube Token");
-
-        var accessToken = AttemptGetAccessToken();
-        if (accessToken == null) { return false; }
-
         var restClient = new RestClient(ApiUrl);
-        var restRequest = new RestRequest(ValidateEndpoint, Method.Get);
-        restRequest.AddHeader("Authorization", $"OAuth {accessToken}");
-
-        var response = await restClient.ExecuteAsync(restRequest);
+        var restRequest = new RestRequest(TokenEndpoint, Method.Post);
+        restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
         
+        var clientId = AppState.AppVariables.Get(YoutubeVars.ClientId);
+        var clientSecret = AppState.AppVariables.Get(YoutubeVars.ClientSecret);
+        
+        var clientContent = $"client_id={clientId}&client_secret={clientSecret}&redirect_uri={OAuthCallbackUrl}";
+        var challengeCode = AppState.TransientVariables.Get(CommonVariables.OAuthChallengeCode, YoutubeVars.Context);
+        var codeContent = $"grant_type=authorization_code&code={code}&code_verifier={challengeCode}";
+        var completeBody = $"{clientContent}&{codeContent}";
+        restRequest.AddStringBody(completeBody, DataFormat.None);
+        
+        var response = await restClient.ExecuteAsync(restRequest);
         if (!response.IsSuccessful)
         {
             Logger.Error($"Validation Error: {response.Content ?? "unknown error validating"}");
@@ -106,22 +87,72 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
             return false;
         }
 
-        var payload = JsonConvert.DeserializeObject<YoutubeOAuthValidationPayload>(response.Content);
-        UpdateTokenState(payload);
+        var payload = JsonConvert.DeserializeObject<YoutubeOAuthTokenPayload>(response.Content);
+        if (string.IsNullOrEmpty(payload?.AccessToken))
+        {
+            Logger.Error($"Payload Validation Error: {response.Content ?? "unknown error validating"}");
+            ClearTokenState();
+            return false;
+        }
+
+        RefreshTokenState(payload);
+        EventBus.PublishAsync(new YoutubeOAuthSuccessEvent());
         return true;
     }
     
+    public async Task<bool> RefreshToken()
+    {
+        Logger.Information("Refreshing Youtube Token");
+        
+        var refreshToken = AppState.AppVariables.Get(YoutubeVars.OAuthRefreshToken);
+        if (string.IsNullOrEmpty(refreshToken))
+        { return false; }
+        
+        var restClient = new RestClient(ApiUrl);
+        var restRequest = new RestRequest(TokenEndpoint, Method.Post);
+        restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        var clientId = AppState.AppVariables.Get(YoutubeVars.ClientId);
+        
+        var clientContent = $"client_id={clientId}";
+        var codeContent = $"grant_type=refresh_token&refresh_token={refreshToken}";
+        var totalContent = $"{clientContent}&{codeContent}";
+        restRequest.AddStringBody(totalContent, DataFormat.None);
+        
+        var response = await restClient.ExecuteAsync(restRequest);
+        if (!response.IsSuccessful)
+        {
+            Logger.Error($"Validation Error: {response.Content ?? "unknown error validating"}");
+            ClearTokenState();
+            return false;
+        }
+
+        var payload = JsonConvert.DeserializeObject<YoutubeOAuthTokenPayload>(response.Content);
+        if (string.IsNullOrEmpty(payload?.AccessToken))
+        {
+            Logger.Error($"Payload Validation Error: {response.Content ?? "unknown error validating"}");
+            ClearTokenState();
+            return false;
+        }
+
+        RefreshTokenState(payload);
+        EventBus.PublishAsync(new YoutubeOAuthSuccessEvent());
+        return true;
+    }
+
     public async Task<bool> RevokeToken()
     {
-        Logger.Information("Revoking Youtube Token");
+        Logger.Information("Revoking Twitter Token");
 
         var accessToken = AttemptGetAccessToken();
         if (accessToken == null) { return false; }
 
+        var clientId = AppState.AppVariables.Get(YoutubeVars.ClientId);
+        
         var restClient = new RestClient(ApiUrl);
         var restRequest = new RestRequest(RevokeEndpoint, Method.Post);
         restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-        restRequest.AddStringBody($"client_id={AppConfig.GetYoutubeClientId()}&token={accessToken}", DataFormat.None);
+        restRequest.AddStringBody($"token={accessToken}", DataFormat.None);
 
         var response = await restClient.ExecuteAsync(restRequest);
         if (!response.IsSuccessful)
@@ -134,5 +165,36 @@ public class YoutubeOAuthClient : IYoutubeOAuthClient
         EventBus.PublishAsync(new YoutubeOAuthRevokedEvent());
         ClearTokenState();
         return true;
+    }
+    
+    public string AttemptGetAccessToken()
+    {
+        if (AppState.HasYoutubeAccessToken())
+        { return AppState.GetYoutubeAccessToken(); }
+        
+        Logger.Error("Cannot find OAuth Token In Vars for request to Youtube OAuth API");
+        return null;
+    }
+
+    public void RefreshTokenState(YoutubeOAuthTokenPayload payload)
+    {
+        AppState.AppVariables.Set(YoutubeVars.OAuthToken, payload.AccessToken);
+        AppState.AppVariables.Set(YoutubeVars.OAuthRefreshToken, payload.RefreshToken);
+
+        var scopes = payload.Scope.Replace(" ", ",");
+        AppState.AppVariables.Set(YoutubeVars.OAuthScopes, scopes);
+        
+        var actualExpiry = DateTime.Now.AddSeconds(payload.ExpiresIn);
+        AppState.AppVariables.Set(YoutubeVars.TokenExpiry, actualExpiry.ToString("u"));
+    }
+    
+    public void ClearTokenState()
+    {
+        AppState.AppVariables.Delete(YoutubeVars.Username);
+        AppState.AppVariables.Delete(YoutubeVars.TokenExpiry);
+        AppState.AppVariables.Delete(YoutubeVars.OAuthScopes);
+        AppState.AppVariables.Delete(YoutubeVars.OAuthToken);
+        AppState.AppVariables.Delete(YoutubeVars.OAuthRefreshToken);
+        AppState.AppVariables.Delete(CommonVariables.OAuthChallengeCode, YoutubeVars.Context);
     }
 }
