@@ -27,7 +27,7 @@ public class SendTwitchWhisperMessageTask : FlowTask<SendTwitchWhisperMessageTas
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.SendWhisper);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.SendWhisper);
 
     public override async Task<ExecutionResult> Execute(SendTwitchWhisperMessageTaskData data, IVariables flowVars)
     {

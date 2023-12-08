@@ -45,7 +45,7 @@ public class TwitchOAuthClient : ITwitchOAuthClient
         Logger.Information("Starting Twitch Implicit OAuth Process");
 
         var randomState = Randomizer.RandomString();
-        AppState.TransientVariables.Set(CommonVariables.OAuthState, TwitchVars.TwitchContext, randomState);
+        AppState.TransientVariables.Set(CommonVariables.OAuthState, TwitchVars.Context, randomState);
         
         var scopeQueryData = Uri.EscapeDataString(string.Join(" ", requiredScopes));
         var queryData = $"client_id={AppConfig.GetTwitchClientId()}&redirect_uri={OAuthCallbackUrl}&response_type=token&scope={scopeQueryData}&state={randomState}";
@@ -55,8 +55,8 @@ public class TwitchOAuthClient : ITwitchOAuthClient
 
     public string AttemptGetAccessToken()
     {
-        if (AppState.HasTwitchOAuth())
-        { return AppState.GetTwitchOAuthToken(); }
+        if (AppState.HasTwitchAccessToken())
+        { return AppState.GetTwitchAccessToken(); }
         
         Logger.Error("Cannot find OAuth Token In Vars for request to Twitch OAuth API");
         return null;

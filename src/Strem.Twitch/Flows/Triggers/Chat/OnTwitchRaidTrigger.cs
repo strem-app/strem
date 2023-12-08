@@ -20,9 +20,9 @@ public class OnTwitchRaidTrigger : FlowTrigger<OnTwitchRaidTriggerData>
     public override string Code => OnTwitchRaidTriggerData.TriggerCode;
     public override string Version => OnTwitchRaidTriggerData.TriggerVersion;
 
-    public static VariableEntry RaidChannelVariable = new("raid.channel", TwitchVars.TwitchContext);
-    public static VariableEntry RaidUsernameVariable = new("raid.username", TwitchVars.TwitchContext);
-    public static VariableEntry RaidCountVariable = new("raid.count", TwitchVars.TwitchContext);
+    public static VariableEntry RaidChannelVariable = new("raid.channel", TwitchVars.Context);
+    public static VariableEntry RaidUsernameVariable = new("raid.username", TwitchVars.Context);
+    public static VariableEntry RaidCountVariable = new("raid.count", TwitchVars.Context);
     
     public override string Name => "On Twitch Raid";
     public override string Category => "Twitch";
@@ -41,7 +41,7 @@ public class OnTwitchRaidTrigger : FlowTrigger<OnTwitchRaidTriggerData>
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ReadWhispers);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.ReadWhispers);
 
     public IVariables PopulateVariables(OnRaidNotificationArgs arg)
     {

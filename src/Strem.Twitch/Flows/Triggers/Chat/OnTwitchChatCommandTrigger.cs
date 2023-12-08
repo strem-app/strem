@@ -19,15 +19,15 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
     public override string Code => OnTwitchChatCommandTriggerData.TriggerCode;
     public override string Version => OnTwitchChatCommandTriggerData.TriggerVersion;
 
-    public static VariableEntry ChatChannelVariable = new("chat.channel", TwitchVars.TwitchContext);
-    public static VariableEntry ChatCommandVariable = new("chat.command", TwitchVars.TwitchContext);
-    public static VariableEntry ChatCommandArgsVariable = new("chat.command.args", TwitchVars.TwitchContext);
-    public static VariableEntry RawChatMessageVariable = new("chat.raw-message", TwitchVars.TwitchContext);
-    public static VariableEntry BitsSentVariable = new("chat.message.bits-sent", TwitchVars.TwitchContext);
-    public static VariableEntry BitsValueVariable = new("chat.message.bits-value", TwitchVars.TwitchContext);
-    public static VariableEntry UserTypeVariable = new("chat.user-type", TwitchVars.TwitchContext);
-    public static VariableEntry UsernameVariable = new("chat.username", TwitchVars.TwitchContext);
-    public static VariableEntry UserIdVariable = new("chat.user-id", TwitchVars.TwitchContext);
+    public static VariableEntry ChatChannelVariable = new("chat.channel", TwitchVars.Context);
+    public static VariableEntry ChatCommandVariable = new("chat.command", TwitchVars.Context);
+    public static VariableEntry ChatCommandArgsVariable = new("chat.command.args", TwitchVars.Context);
+    public static VariableEntry RawChatMessageVariable = new("chat.raw-message", TwitchVars.Context);
+    public static VariableEntry BitsSentVariable = new("chat.message.bits-sent", TwitchVars.Context);
+    public static VariableEntry BitsValueVariable = new("chat.message.bits-value", TwitchVars.Context);
+    public static VariableEntry UserTypeVariable = new("chat.user-type", TwitchVars.Context);
+    public static VariableEntry UsernameVariable = new("chat.username", TwitchVars.Context);
+    public static VariableEntry UserIdVariable = new("chat.user-id", TwitchVars.Context);
     
     public override string Name => "On Twitch Chat Command";
     public override string Category => "Twitch";
@@ -49,7 +49,7 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
         CommandStringProcessor = commandStringProcessor;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ReadChat);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.ReadChat);
 
     public IVariables PopulateVariables(ChatMessage message)
     {

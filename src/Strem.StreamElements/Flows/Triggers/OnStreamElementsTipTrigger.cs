@@ -17,10 +17,10 @@ public class OnStreamElementsTipTrigger : FlowTrigger<OnStreamElementsTipTrigger
     public override string Code => OnStreamElementsTipTriggerData.TriggerCode;
     public override string Version => OnStreamElementsTipTriggerData.TriggerVersion;
 
-    public static VariableEntry TipUsernameVariable = new("tip.username", StreamElementsVars.StreamElementsContext);
-    public static VariableEntry TipMessageVariable = new("tip.message", StreamElementsVars.StreamElementsContext);
-    public static VariableEntry TipAmountVariable = new("tip.amount", StreamElementsVars.StreamElementsContext);
-    public static VariableEntry TipCurrencyVariable = new("tip.currency", StreamElementsVars.StreamElementsContext);
+    public static VariableEntry TipUsernameVariable = new("tip.username", StreamElementsVars.Context);
+    public static VariableEntry TipMessageVariable = new("tip.message", StreamElementsVars.Context);
+    public static VariableEntry TipAmountVariable = new("tip.amount", StreamElementsVars.Context);
+    public static VariableEntry TipCurrencyVariable = new("tip.currency", StreamElementsVars.Context);
     
     public override string Name => "On StreamElements Tip";
     public override string Category => "StreamElements";

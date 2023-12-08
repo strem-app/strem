@@ -19,11 +19,11 @@ public class OnTwitchWhisperMessageTrigger : FlowTrigger<OnTwitchWhisperMessageT
     public override string Code => OnTwitchWhisperMessageTriggerData.TriggerCode;
     public override string Version => OnTwitchWhisperMessageTriggerData.TriggerVersion;
 
-    public static VariableEntry ChatMessageVariable = new("chat.message", TwitchVars.TwitchContext);
-    public static VariableEntry RawChatMessageVariable = new("chat.raw-message", TwitchVars.TwitchContext);
-    public static VariableEntry UserTypeVariable = new("chat.user-type", TwitchVars.TwitchContext);
-    public static VariableEntry UsernameVariable = new("chat.username", TwitchVars.TwitchContext);
-    public static VariableEntry UserIdVariable = new("chat.user-id", TwitchVars.TwitchContext);
+    public static VariableEntry ChatMessageVariable = new("chat.message", TwitchVars.Context);
+    public static VariableEntry RawChatMessageVariable = new("chat.raw-message", TwitchVars.Context);
+    public static VariableEntry UserTypeVariable = new("chat.user-type", TwitchVars.Context);
+    public static VariableEntry UsernameVariable = new("chat.username", TwitchVars.Context);
+    public static VariableEntry UserIdVariable = new("chat.user-id", TwitchVars.Context);
     
     public override string Name => "On Twitch Whisper Message";
     public override string Category => "Twitch";
@@ -42,7 +42,7 @@ public class OnTwitchWhisperMessageTrigger : FlowTrigger<OnTwitchWhisperMessageT
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ReadWhispers);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.ReadWhispers);
 
     public IVariables PopulateVariables(WhisperMessage message)
     {

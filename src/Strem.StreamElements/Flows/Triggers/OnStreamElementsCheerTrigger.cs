@@ -17,10 +17,10 @@ public class OnStreamElementsCheerTrigger : FlowTrigger<OnStreamElementsCheerTri
     public override string Code => OnStreamElementsCheerTriggerData.TriggerCode;
     public override string Version => OnStreamElementsCheerTriggerData.TriggerVersion;
 
-    public static VariableEntry CheerUsernameVariable = new("cheer.username", StreamElementsVars.StreamElementsContext);
-    public static VariableEntry CheerMessageVariable = new("cheer.message", StreamElementsVars.StreamElementsContext);
-    public static VariableEntry CheerAmountVariable = new("cheer.amount", StreamElementsVars.StreamElementsContext);
-    public static VariableEntry CheerDisplayNameVariable = new("cheer.displayname", StreamElementsVars.StreamElementsContext);
+    public static VariableEntry CheerUsernameVariable = new("cheer.username", StreamElementsVars.Context);
+    public static VariableEntry CheerMessageVariable = new("cheer.message", StreamElementsVars.Context);
+    public static VariableEntry CheerAmountVariable = new("cheer.amount", StreamElementsVars.Context);
+    public static VariableEntry CheerDisplayNameVariable = new("cheer.displayname", StreamElementsVars.Context);
     
     public override string Name => "On StreamElements Cheer";
     public override string Category => "StreamElements";

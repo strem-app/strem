@@ -67,7 +67,7 @@ public static class InputExtensions
         if(modifier == ModifierMask.LeftMeta) { return KeyCode.VcLeftMeta; }
         if(modifier == ModifierMask.RightMeta) { return KeyCode.VcRightMeta; }
 
-        return KeyCode.CharUndefined;
+        return KeyCode.VcUndefined;
     }
     
     public static ModifierMask ToModifier(this KeyCode key)

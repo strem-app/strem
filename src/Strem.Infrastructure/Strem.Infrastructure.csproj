@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <OutputType>Library</OutputType>
         <Version>0.0.0</Version>
         <IsPackable>true</IsPackable>
+        <LangVersion>12</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,7 +18,7 @@
 
     <ItemGroup>
       <PackageReference Include="Glob" Version="1.1.9" />
-      <PackageReference Include="LiteDB" Version="5.0.16" />
+      <PackageReference Include="LiteDB" Version="5.0.17" />
       <PackageReference Include="Persistity.Flow" Version="2.0.47" />
       <PackageReference Include="Persistity.Serializers.Json" Version="2.0.47" />
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />

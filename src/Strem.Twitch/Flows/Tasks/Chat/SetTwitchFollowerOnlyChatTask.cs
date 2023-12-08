@@ -31,7 +31,7 @@ public class SetTwitchFollowerOnlyChatTask : FlowTask<SetTwitchFollowerOnlyChatT
         TwitchClient = twitchClient;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchOAuth() && AppState.HasTwitchScope(ChatScopes.ModerateChannel);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.ModerateChannel);
 
     public override async Task<ExecutionResult> Execute(SetTwitchFollowerOnlyChatTaskData data, IVariables flowVars)
     {

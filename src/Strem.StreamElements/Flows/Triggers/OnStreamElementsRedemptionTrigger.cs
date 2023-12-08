@@ -17,10 +17,10 @@ public class OnStreamElementsRedemptionTrigger : FlowTrigger<OnStreamElementsRed
     public override string Code => OnStreamElementsRedemptionTriggerData.TriggerCode;
     public override string Version => OnStreamElementsRedemptionTriggerData.TriggerVersion;
 
-    public static VariableEntry RedemptionUserVariable = new("redemption.user", StreamElementsVars.StreamElementsContext);
-    public static VariableEntry RedemptionStoreItemVariable = new("redemption.item-name", StreamElementsVars.StreamElementsContext);
-    public static VariableEntry RedemptionMessageVariable = new("redemption.message", StreamElementsVars.StreamElementsContext);
-    public static VariableEntry RedemptionStoreItemIdVariable = new("redemption.item-id", StreamElementsVars.StreamElementsContext);
+    public static VariableEntry RedemptionUserVariable = new("redemption.user", StreamElementsVars.Context);
+    public static VariableEntry RedemptionStoreItemVariable = new("redemption.item-name", StreamElementsVars.Context);
+    public static VariableEntry RedemptionMessageVariable = new("redemption.message", StreamElementsVars.Context);
+    public static VariableEntry RedemptionStoreItemIdVariable = new("redemption.item-id", StreamElementsVars.Context);
     
     public override string Name => "On StreamElements Redemption";
     public override string Category => "StreamElements";
