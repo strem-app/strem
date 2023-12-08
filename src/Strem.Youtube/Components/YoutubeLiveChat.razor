@@ -1,0 +1,10 @@
+﻿<div class="container">
+   <iframe width="560" height="315" src="@EmbedUrl" allow="autoplay; encrypted-media"></iframe>
+</div>
+
+@code {
+    [Parameter]
+    public string ChannelId { get; set; }
+
+    public string EmbedUrl => $"https://www.youtube.com/live_chat?v={ChannelId}&embed_domain=localhost";
+}

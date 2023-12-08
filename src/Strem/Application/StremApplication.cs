@@ -11,7 +11,6 @@ using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
 using Strem.Twitch.Plugin;
-using Strem.Youtube.Plugin;
 
 namespace Strem.Application;
 
