@@ -6,10 +6,12 @@ using Strem.Core.Events;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
 using Strem.Core.Plugins;
+using Strem.Core.Services.Browsers.File;
 using Strem.Core.Variables;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services.Api;
+using Strem.Services.Dialogs;
 using Strem.Twitch.Plugin;
 
 namespace Strem.Application;
@@ -57,6 +59,9 @@ public class StremApplication
 
     public void LoadPlugins(IServiceCollection services)
     {
+        // File Browsing
+        services.AddSingleton<IFileBrowser, FileBrowser>();
+        
         // Config
         PreStartupLogs.Add("Setting up Application Config");
         services.AddSingleton<IApplicationConfig>(AppConfig);
