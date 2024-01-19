@@ -54,6 +54,10 @@ jobs:
           asset_paths: '["./dist/*.zip"]'
       - name: Publish To Nuget
         run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+      - name: GitHub Tag Check
+        run: |
+          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
       - name: Release To WinGet
         uses: vedantmgoyal2009/winget-releaser@v2
         with:
