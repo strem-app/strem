@@ -60,7 +60,7 @@ public class StremApplication
     public void LoadPlugins(IServiceCollection services)
     {
         // File Browsing
-        services.AddSingleton<IFileBrowser, FileBrowser>();
+        services.AddSingleton<IFileBrowser, BlazorNativeFileBrowser>();
         
         // Config
         PreStartupLogs.Add("Setting up Application Config");

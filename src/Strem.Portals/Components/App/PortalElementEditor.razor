@@ -73,7 +73,7 @@
             <label class="label">Icon Image</label>
             <div class="field">
                 <div class="control">
-                    <FileInputBrowser Value="@Data.DefaultStyles.ImageUrl()" ValueChanged="x => Data.DefaultStyles.ImageUrl(x)" placeholder="i.e http://some-site.com/some-image.png or c:/some-file.png" />
+                    <FileInputBrowser FileFilter="Image Files (*.jpg;*.jpeg;*.png;*.gif;)|*.jpg;*.jpeg;*.png;*.gif;" Value="@Data.DefaultStyles.ImageUrl()" ValueChanged="x => Data.DefaultStyles.ImageUrl(x)" placeholder="i.e http://some-site.com/some-image.png or c:/some-file.png" />
                 </div>
                 <HelperInfo>This can be a url to a file online or a local file, local files need more processing though so the larger they are the longer they will take to load, try to keep sizes below 256x256 pixels</HelperInfo>
             </div>
@@ -124,10 +124,8 @@
     </div>
 </div>
 
-@code {
-    [Parameter] 
-    public EventCallback OnClosed { get; set; }
-    
-    [Parameter]
-    public EventCallback<Guid> RequestedDeletion { get; set; }
+@code 
+{
+    [Parameter] public EventCallback OnClosed { get; set; }
+    [Parameter] public EventCallback<Guid> RequestedDeletion { get; set; }
 }

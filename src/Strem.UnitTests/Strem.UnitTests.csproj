@@ -30,6 +30,7 @@
       <ProjectReference Include="..\Strem.Flows.Default\Strem.Flows.Default.csproj" />
       <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
       <ProjectReference Include="..\Strem.Twitch\Strem.Twitch.csproj" />
+      <ProjectReference Include="..\Strem\Strem.csproj" />
     </ItemGroup>
 
     <ItemGroup>
