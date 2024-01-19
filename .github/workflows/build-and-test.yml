@@ -54,3 +54,9 @@ jobs:
           asset_paths: '["./dist/*.zip"]'
       - name: Publish To Nuget
         run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+      - uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: Strem.App
+          max-versions-to-keep: 5
+          installers-regex: '\.zip$'
+          token: ${{ secrets.WINGET_TOKEN }}
