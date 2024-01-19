@@ -59,7 +59,7 @@ jobs:
         with:
           identifier: Strem.App
           max-versions-to-keep: 5
-          release-repository: ${{ github.repository }}
+          release-repository: 'strem'
           release-tag: ${{ github.ref_name }}
           installers-regex: '\.zip$'
           token: ${{ secrets.WINGET_TOKEN }}
