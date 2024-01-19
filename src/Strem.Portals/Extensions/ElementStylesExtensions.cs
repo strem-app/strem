@@ -43,5 +43,5 @@ public static class ElementStylesExtensions
     }
     
     public static void ButtonType(this ElementStyles elementStyles, ButtonType buttonType)
-    { SetFromKey(elementStyles, SliderCellSizeKey, ((int)buttonType).ToString()); }
+    { SetFromKey(elementStyles, ButtonTypeKey, ((int)buttonType).ToString()); }
 }

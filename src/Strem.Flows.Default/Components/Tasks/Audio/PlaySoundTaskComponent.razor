@@ -4,9 +4,9 @@
 @inject IAudioHandler AudioHandler 
 
 <div class="field">
-    <label class="label">Flow</label>
+    <label class="label">Sound File</label>
     <div class="control">
-        <FileInputBrowser @bind-Value="Data.SoundFile" FileFilter="wav,mp3,ogg,midi,aac"></FileInputBrowser>
+        <FileInputBrowser @bind-Value="Data.SoundFile" FileFilter="Audio Files (*.wav;*.mp3;*.ogg;*.midi;*.acc;*.opus)|*.wav;*.mp3;*.ogg;*.midi;*.acc;*.opus"></FileInputBrowser>
     </div>
 </div>
 <div class="field">

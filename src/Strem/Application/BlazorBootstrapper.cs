@@ -36,7 +36,6 @@ public class BlazorBootstrapper
         appLauncher = appLauncher.SetDevToolsEnabled(false);
         appLauncher = appLauncher.SetContextMenuEnabled(false);
 #endif
-        appLauncher.Load(rootIndexPage);
     }
 
     public void SetupApp(Action<IServiceCollection> beforeCreated, Func<PhotinoBlazorApp, Task> afterCreated)
