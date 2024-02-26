@@ -72,7 +72,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IDataValidator, DataValidator>();
         
         // Input
-        services.AddSingleton<IReactiveGlobalHook, SimpleReactiveGlobalHook>();
+        services.AddSingleton<IReactiveGlobalHook>(_ => new SimpleReactiveGlobalHook(GlobalHookType.Keyboard));
         services.AddSingleton<IEventSimulator, EventSimulator>();
         services.AddSingleton<IInputHandler, DefaultInputHandler>();
         
