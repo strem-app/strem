@@ -99,7 +99,7 @@ public class InfrastructureModule : IRequiresApiHostingModule
 
         // State/Stores
         services.AddSingleton(LoadAppState);
-
+        
         // Registries
         services.AddSingleton<IIntegrationRegistry, IntegrationRegistry>();
         services.AddSingleton<IMenuRegistry, MenuRegistry>();
