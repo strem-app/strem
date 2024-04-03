@@ -18,6 +18,7 @@ public class VoiceRecognition : IVoiceRecognition
     public SpeechRecognitionEngine SpeechRecognitionEngine { get; private set; }
     public IObservable<SpeechRecognizedEventArgs> OnRecognizedTerm { get; private set; }
     public bool IsActive { get; private set; }
+    public bool IsInitialized { get; private set; }
     
     public List<string> KnownPhrases { get; } = new();
     private bool _isAwaitingUpdate;
@@ -26,22 +27,33 @@ public class VoiceRecognition : IVoiceRecognition
     public VoiceRecognition(ILogger<IVoiceRecognition> logger)
     {
         Logger = logger;
-        
-        // TODO: Not sure how many cultures are supported by this
-        SpeechRecognitionEngine = new SpeechRecognitionEngine(CultureInfo.CurrentCulture);
-        
-        SpeechRecognitionEngine.SetInputToDefaultAudioDevice();
-        
-        var noiseSink = new DictationGrammar("grammar:dictation#pronunciation") { Name = NoiseSink };
-        SpeechRecognitionEngine.LoadGrammar(noiseSink);
 
-        SpeechRecognitionEngine.RecognizerUpdateReached += OnUpdateGrammer;
+        try
+        {
+            // TODO: Not sure how many cultures are supported by this
+            SpeechRecognitionEngine = new SpeechRecognitionEngine(CultureInfo.CurrentCulture);
+            SpeechRecognitionEngine.SetInputToDefaultAudioDevice();
+            
+            var noiseSink = new DictationGrammar("grammar:dictation#pronunciation") { Name = NoiseSink };
+            SpeechRecognitionEngine.LoadGrammar(noiseSink);
+
+            SpeechRecognitionEngine.RecognizerUpdateReached += OnUpdateGrammer;
         
-        OnRecognizedTerm = Observable.FromEventPattern<SpeechRecognizedEventArgs>(
-                x => SpeechRecognitionEngine.SpeechRecognized += x,
-                x => SpeechRecognitionEngine.SpeechRecognized -= x)
-            .Select(x => x.EventArgs)
-            .Where(ConfirmNotNoiseSink);
+            OnRecognizedTerm = Observable.FromEventPattern<SpeechRecognizedEventArgs>(
+                    x => SpeechRecognitionEngine.SpeechRecognized += x,
+                    x => SpeechRecognitionEngine.SpeechRecognized -= x)
+                .Select(x => x.EventArgs)
+                .Where(ConfirmNotNoiseSink);
+
+            IsInitialized = true;
+            Logger.Information($"Speech Recognition has initialized for culture [{CultureInfo.CurrentCulture.Name}], with Recognizer [{SpeechRecognitionEngine.RecognizerInfo.Name} | {SpeechRecognitionEngine.RecognizerInfo.Description}]");
+        }
+        catch (Exception ex)
+        {
+            IsInitialized = false;
+            Logger.Error($"Unable to initialize Voice Recognition for Culture [{CultureInfo.CurrentCulture.Name}], native error was [{ex.Message}]");
+            Logger.Information("This may be due to you not having speech recognition runtimes installed, go to https://www.microsoft.com/en-us/download/details.aspx?id=27224");
+        }
     }
 
     private bool ConfirmNotNoiseSink(SpeechRecognizedEventArgs arg)
@@ -92,6 +104,12 @@ public class VoiceRecognition : IVoiceRecognition
     
     public IObservable<TermRecognized> ListenForTerm(string term, bool exact)
     {
+        if (!IsInitialized)
+        {
+            Logger.Warning($"Tried to listen for term [{term}], but the speech recognition is not initialized");
+            return Observable.Empty<TermRecognized>();
+        }
+        
         if (!KnownPhrases.Contains(term, StringComparer.OrdinalIgnoreCase))
         { UpdateTerms(term); }
         
@@ -101,5 +119,5 @@ public class VoiceRecognition : IVoiceRecognition
     }
 
     public void Dispose()
-    { SpeechRecognitionEngine.Dispose(); }
+    { SpeechRecognitionEngine?.Dispose(); }
 }
