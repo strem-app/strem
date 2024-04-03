@@ -74,17 +74,34 @@ public class FlowsPluginStartup : IPluginStartup, IDisposable
 
     public void StartRegistries()
     {
+        SetupTaskDescriptors();
+        SetupTriggerDescriptors();
+    }
+
+    public void SetupTaskDescriptors()
+    {
         try
         {
             var taskDescriptors = Services.GetServices<TaskDescriptor>();
             TaskRegistry?.AddMany(taskDescriptors);
-            
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Unable to initialize task descriptors, error listed: {e.Message}");
+            throw;
+        }
+    }
+    
+    public void SetupTriggerDescriptors()
+    {
+        try
+        {
             var triggerDescriptors = Services.GetServices<TriggerDescriptor>();
             TriggerRegistry?.AddMany(triggerDescriptors);
         }
         catch (Exception e)
         {
-            Logger.Error(e.Message);
+            Logger.Error($"Unable to initialize trigger descriptors, error listed: {e.Message}");
             throw;
         }
     }
