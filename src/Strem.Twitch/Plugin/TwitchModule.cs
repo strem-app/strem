@@ -12,6 +12,8 @@ using TwitchLib.Client.Enums;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Models;
+using TwitchLib.PubSub;
+using TwitchLib.PubSub.Interfaces;
 
 namespace Strem.Twitch.Plugin;
 
@@ -25,7 +27,9 @@ public class TwitchModule : IRequiresApiHostingModule
         // General
         services.AddSingleton<ITwitchAPI, TwitchAPI>();
         services.AddSingleton<ITwitchClient>(CreateTwitchClient);
+        services.AddSingleton<ITwitchPubSub, TwitchPubSub>();
         services.AddSingleton<IObservableTwitchClient, ObservableTwitchClient>();
+        services.AddSingleton<IObservableTwitchPubSub, ObservableTwitchPubSub>();
         
         // OAuth
         services.AddSingleton<ITwitchOAuthClient, TwitchOAuthClient>();

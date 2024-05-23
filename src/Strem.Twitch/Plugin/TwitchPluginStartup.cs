@@ -22,6 +22,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public ITwitchOAuthClient TwitchOAuthClient { get; }
     public ITwitchAPI TwitchApi { get; }
     public IObservableTwitchClient TwitchClient { get; }
+    public IObservableTwitchPubSub TwitchPubSub { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
     public IApplicationConfig ApplicationConfig { get; }
@@ -29,11 +30,12 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
 
     public string[] RequiredConfigurationKeys { get; } = new[] { TwitchPluginSettings.TwitchClientIdKey };
 
-    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger, IApplicationConfig applicationConfig)
+    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IObservableTwitchPubSub twitchPubSub, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger, IApplicationConfig applicationConfig)
     {
         TwitchOAuthClient = twitchOAuthClient;
         TwitchApi = twitchApi;
         TwitchClient = twitchClient;
+        TwitchPubSub = twitchPubSub;
         EventBus = eventBus;
         AppState = appState;
         Logger = logger;
@@ -86,6 +88,17 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         { Logger.LogError($"Unable to connect to twitch chat/pubsub due to error: {result.message}"); }
     }
 
+    public void AttemptToConnectToPubSub()
+    {
+        Logger.Information($"Checking if twitch pubsub can connect");
+        if(!AppState.HasTwitchAccessToken()) { return; }
+        if(TwitchClient.Client.IsConnected) { return; }
+        if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
+            
+        Logger.Information($"Connecting to twitch pubsub");
+        TwitchPubSub.PubSub.Connect();
+    }
+
     public async Task VerifyAndSetupConnections()
     {
         await VerifyToken();
@@ -96,6 +109,8 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     {
         if(TwitchClient.Client.IsConnected)
         { TwitchClient.Client.Disconnect(); }
+
+        TwitchPubSub.PubSub.Disconnect();
     }
 
     public async Task VerifyToken()
