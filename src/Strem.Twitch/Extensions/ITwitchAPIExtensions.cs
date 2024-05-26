@@ -8,7 +8,7 @@ public static class ITwitchAPIExtensions
     {
         if (string.IsNullOrEmpty(username)) { return null; }
 
-        var response = await twitchApi.Helix.Users.GetUsersAsync(logins: new() { username });
+        var response = await twitchApi.Helix.Users.GetUsersAsync(logins: [username]);
         if (response?.Users == null || response.Users.Length == 0) { return null; }
 
         return response.Users[0].Id;

@@ -23,6 +23,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public ITwitchAPI TwitchApi { get; }
     public IObservableTwitchClient TwitchClient { get; }
     public IObservableTwitchPubSub TwitchPubSub { get; }
+    public IObservableTwitchEventSub TwitchEventSub { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
     public IApplicationConfig ApplicationConfig { get; }
@@ -30,7 +31,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
 
     public string[] RequiredConfigurationKeys { get; } = new[] { TwitchPluginSettings.TwitchClientIdKey };
 
-    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IObservableTwitchPubSub twitchPubSub, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger, IApplicationConfig applicationConfig)
+    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IObservableTwitchPubSub twitchPubSub, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger, IApplicationConfig applicationConfig, IObservableTwitchEventSub twitchEventSub)
     {
         TwitchOAuthClient = twitchOAuthClient;
         TwitchApi = twitchApi;
@@ -40,6 +41,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         AppState = appState;
         Logger = logger;
         ApplicationConfig = applicationConfig;
+        TwitchEventSub = twitchEventSub;
     }
     
     public Task SetupPlugin() => Task.CompletedTask;
@@ -60,6 +62,10 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
 
         TwitchClient.OnChannelStateChanged
             .Subscribe(x => RefreshChannelDetails())
+            .AddTo(_subs);
+
+        TwitchEventSub.OnError
+            .Subscribe(x => Logger.LogError($"Error with Twitch EventSub [{x.Exception}]"))
             .AddTo(_subs);
         
         EventBus.Receive<TwitchOAuthSuccessEvent>()
@@ -92,17 +98,43 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     {
         Logger.Information($"Checking if twitch pubsub can connect");
         if(!AppState.HasTwitchAccessToken()) { return; }
-        if(TwitchClient.Client.IsConnected) { return; }
         if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
             
         Logger.Information($"Connecting to twitch pubsub");
         TwitchPubSub.PubSub.Connect();
     }
+    
+    public async Task AttemptToConnectToEventSub()
+    {
+        Logger.Information($"Checking if twitch EventSub can connect");
+        if(!AppState.HasTwitchAccessToken()) { return; }
+        if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
+            
+        Logger.Information($"Connecting to twitch EventSub");
+        var connected = await TwitchEventSub.Client.ConnectAsync(new Uri("wss://eventsub.wss.twitch.tv/ws"));
+
+        if (connected)
+        {
+            Logger.Information("Connected to twitch EventSub");
+            
+            Logger.Information("Subscribing to Channel Updates");
+            var userId = AppState.AppVariables.Get(TwitchVars.Username);
+            var subscribed = await TwitchEventSub.SubscribeOnChannel(EventSubTypes.ChannelUpdate, userId, "2");
+            if(subscribed)
+            { Logger.Information("EventSub Channel Update Subscription Successful"); }
+            else
+            { Logger.Error($"Unable to subscribe to channel [{userId}] on EventSub"); }
+        }
+        else
+        { Logger.Information("Could not connect to twitch EventSub"); }
+    }
 
     public async Task VerifyAndSetupConnections()
     {
         await VerifyToken();
+        AttemptToAuthorizeApi();
         AttemptToConnectToChat();
+        await AttemptToConnectToEventSub();
     }
 
     public async Task DisconnectEverything()
@@ -110,6 +142,8 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         if(TwitchClient.Client.IsConnected)
         { TwitchClient.Client.Disconnect(); }
 
+        await TwitchEventSub.Client.DisconnectAsync();
+        
         TwitchPubSub.PubSub.Disconnect();
     }
 
@@ -121,12 +155,17 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         { await TwitchOAuthClient.ValidateToken(); }
     }
 
+    public void AttemptToAuthorizeApi()
+    {
+        if (!AppState.HasTwitchAccessToken()) { return; }
+        TwitchApi.Settings.SetCredentials(ApplicationConfig, AppState);
+    }
+    
     public async Task RefreshChannelDetails()
     {
         Logger.Information("Refreshing Twitch Channel & Stream Information");
         
         if (!AppState.HasTwitchAccessToken()) { return; }
-        TwitchApi.Settings.SetCredentials(ApplicationConfig, AppState);
         
         var userId = AppState.AppVariables.Get(TwitchVars.UserId);
         var accessToken = AppState.GetTwitchAccessToken();
@@ -148,7 +187,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         
         try
         {
-            var streamInformation = await TwitchApi.Helix.Streams.GetStreamsAsync(userIds: new List<string> { userId });
+            var streamInformation = await TwitchApi.Helix.Streams.GetStreamsAsync(userIds: [userId]);
             if (streamInformation != null && streamInformation.Streams.Length > 0)
             {
                 var streamData = streamInformation.Streams[0];

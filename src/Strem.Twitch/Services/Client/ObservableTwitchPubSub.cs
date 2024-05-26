@@ -1,5 +1,6 @@
 ﻿using System.Reactive;
 using System.Reactive.Linq;
+using TwitchLib.Api.Interfaces;
 using TwitchLib.PubSub.Events;
 using TwitchLib.PubSub.Interfaces;
 using OnEmoteOnlyArgs = TwitchLib.PubSub.Events.OnEmoteOnlyArgs;
