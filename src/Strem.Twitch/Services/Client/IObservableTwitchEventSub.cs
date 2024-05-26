@@ -136,6 +136,8 @@ public interface IObservableTwitchEventSub
     /// </summary>
     IObservable<ChannelHypeTrainBeginArgs> OnChannelHypeTrainBegin { get; }
 
+    bool IsConnected { get; }
+
     Task<bool> SubscribeOnChannel(string subType, string channelName, string version = "1");
     bool HasSubscribedTo(string subType, string channelName);
 }

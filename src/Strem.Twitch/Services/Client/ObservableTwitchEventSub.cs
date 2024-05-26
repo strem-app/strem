@@ -1,12 +1,12 @@
 ﻿using System.Reactive;
 using System.Reactive.Linq;
+using System.Reflection;
 using Strem.Core.Extensions;
-using Strem.Core.State;
-using Strem.Core.Variables;
 using Strem.Twitch.Extensions;
 using TwitchLib.Api.Core.Enums;
 using TwitchLib.Api.Interfaces;
 using TwitchLib.EventSub.Websockets;
+using TwitchLib.EventSub.Websockets.Client;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Stream;
@@ -18,8 +18,6 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
 {
     public EventSubWebsocketClient Client { get; }
     public ITwitchAPI TwitchApi { get; }
-    public IAppState AppState { get; }
-    public IApplicationConfig AppConfig { get; }
     public ILogger<ObservableTwitchEventSub> Logger { get; }
 
     private Dictionary<string, List<string>> _subscriptions = new();
@@ -147,15 +145,19 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
     /// </summary>
     public IObservable<ChannelHypeTrainBeginArgs> OnChannelHypeTrainBegin { get; private set; }
 
-    public ObservableTwitchEventSub(EventSubWebsocketClient client, ITwitchAPI twitchApi, IAppState appState, IApplicationConfig appConfig, ILogger<ObservableTwitchEventSub> logger)
+    private FieldInfo _webSocketFieldInfo;
+
+    public ObservableTwitchEventSub(EventSubWebsocketClient client, ITwitchAPI twitchApi, ILogger<ObservableTwitchEventSub> logger)
     {
         Client = client;
         TwitchApi = twitchApi;
-        AppState = appState;
-        AppConfig = appConfig;
         Logger = logger;
         SetupObservables();
+
+        _webSocketFieldInfo = typeof(EventSubWebsocketClient).GetField("_websocketClient", BindingFlags.Instance | BindingFlags.NonPublic);
     }
+
+    public bool IsConnected => ((WebsocketClient)_webSocketFieldInfo.GetValue(Client))?.IsConnected ?? false;
     
     public void SetupObservables()
     {
@@ -365,12 +367,14 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
                 { "broadcaster_user_id", userId }
             };
 
-            var clientId = AppConfig.GetTwitchClientId();
-            var twitchAccessToken = AppState.GetTwitchAccessToken();
+            Logger.Information($"Attempting to Subscribe to [{channelName}] for [{subType}]");
+            
             await TwitchApi.Helix.EventSub.CreateEventSubSubscriptionAsync(subType, version, conditions,
                 EventSubTransportMethod.Websocket, Client.SessionId);
 
             _subscriptions[channelName].Add(subType);
+            
+            Logger.Information($"Successfully Subscribed to [{channelName}] for [{subType}]");
             return true;
         }
         catch (Exception ex)

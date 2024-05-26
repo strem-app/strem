@@ -48,15 +48,19 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     
     public async Task StartPlugin()
     {
-        Observable.Timer(TimeSpan.FromMinutes(TwitchPluginSettings.RevalidatePeriodInMins))
+        Observable.Interval(TimeSpan.FromMinutes(TwitchPluginSettings.RevalidatePeriodInMins))
             .Subscribe(x => VerifyToken())
             .AddTo(_subs);
         
-        Observable.Timer(TimeSpan.FromMinutes(TwitchPluginSettings.ChatReconnectInMins))
+        Observable.Interval(TimeSpan.FromMinutes(TwitchPluginSettings.ChatReconnectInMins))
             .Subscribe(x => AttemptToConnectToChat())
             .AddTo(_subs);
         
-        Observable.Timer(TimeSpan.FromMinutes(TwitchPluginSettings.RefreshChannelPeriodInMins))
+        Observable.Interval(TimeSpan.FromMinutes(TwitchPluginSettings.EventSubReconnectInMins))
+            .Subscribe(x => AttemptToConnectToEventSub())
+            .AddTo(_subs);
+        
+        Observable.Interval(TimeSpan.FromMinutes(TwitchPluginSettings.RefreshChannelPeriodInMins))
             .Subscribe(x => RefreshChannelDetails())
             .AddTo(_subs);
 
@@ -81,9 +85,10 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
 
     public void AttemptToConnectToChat()
     {
+        if(TwitchClient.Client.IsConnected) { return; }
+        
         Logger.Information($"Checking if twitch chat can connect");
         if(!AppState.HasTwitchAccessToken()) { return; }
-        if(TwitchClient.Client.IsConnected) { return; }
         if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
         
         Logger.Information($"Connecting to twitch chat");
@@ -91,7 +96,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         if(result.success)
         { Logger.Information($"Connected to twitch chat"); }
         else
-        { Logger.LogError($"Unable to connect to twitch chat/pubsub due to error: {result.message}"); }
+        { Logger.LogError($"Unable to connect to twitch chat due to error: {result.message}"); }
     }
 
     public void AttemptToConnectToPubSub()
@@ -106,6 +111,8 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     
     public async Task AttemptToConnectToEventSub()
     {
+        if(TwitchEventSub.IsConnected) { return; }
+        
         Logger.Information($"Checking if twitch EventSub can connect");
         if(!AppState.HasTwitchAccessToken()) { return; }
         if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
@@ -132,7 +139,6 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public async Task VerifyAndSetupConnections()
     {
         await VerifyToken();
-        AttemptToAuthorizeApi();
         AttemptToConnectToChat();
         await AttemptToConnectToEventSub();
     }
@@ -153,6 +159,8 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
 
         if (AppState.HasTwitchAccessToken())
         { await TwitchOAuthClient.ValidateToken(); }
+        
+        AttemptToAuthorizeApi();
     }
 
     public void AttemptToAuthorizeApi()
