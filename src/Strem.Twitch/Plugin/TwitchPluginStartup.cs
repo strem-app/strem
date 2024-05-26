@@ -145,7 +145,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
 
     public async Task DisconnectEverything()
     {
-        if(TwitchClient.Client.IsConnected)
+        if(TwitchClient.IsConnected)
         { TwitchClient.Client.Disconnect(); }
 
         await TwitchEventSub.Client.DisconnectAsync();

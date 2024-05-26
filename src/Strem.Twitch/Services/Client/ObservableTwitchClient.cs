@@ -145,6 +145,8 @@ public class ObservableTwitchClient : IObservableTwitchClient
     /// </summary>
     public IObservable<OnBannedEmailAliasArgs> OnBannedEmailAlias { get; private set; }
 
+    public bool IsConnected => Client.IsConnected;
+    
     public ObservableTwitchClient(ITwitchClient client)
     {
         Client = client;
