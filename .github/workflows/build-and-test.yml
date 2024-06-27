@@ -55,7 +55,7 @@ jobs:
       - name: Publish To Nuget
         run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
       - name: Release To WinGet
-        uses: vedantmgoyal2009/winget-releaser@v2
+        uses: vedantmgoyal9/winget-releaser@main
         with:
           identifier: Strem.App
           max-versions-to-keep: 5
