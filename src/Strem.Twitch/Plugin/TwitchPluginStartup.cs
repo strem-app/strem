@@ -22,7 +22,6 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public ITwitchOAuthClient TwitchOAuthClient { get; }
     public ITwitchAPI TwitchApi { get; }
     public IObservableTwitchClient TwitchClient { get; }
-    public IObservableTwitchPubSub TwitchPubSub { get; }
     public IObservableTwitchEventSub TwitchEventSub { get; }
     public IEventBus EventBus { get; }
     public IAppState AppState { get; }
@@ -31,12 +30,11 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
 
     public string[] RequiredConfigurationKeys { get; } = new[] { TwitchPluginSettings.TwitchClientIdKey };
 
-    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IObservableTwitchPubSub twitchPubSub, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger, IApplicationConfig applicationConfig, IObservableTwitchEventSub twitchEventSub)
+    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger, IApplicationConfig applicationConfig, IObservableTwitchEventSub twitchEventSub)
     {
         TwitchOAuthClient = twitchOAuthClient;
         TwitchApi = twitchApi;
         TwitchClient = twitchClient;
-        TwitchPubSub = twitchPubSub;
         EventBus = eventBus;
         AppState = appState;
         Logger = logger;
@@ -87,7 +85,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     {
         if(TwitchClient.Client.IsConnected) { return; }
         
-        Logger.Information($"Checking if twitch chat can connect");
+        Logger.Information($"Checking to see if twitch Chat needs re/connecting");
         if(!AppState.HasTwitchAccessToken()) { return; }
         if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
         
@@ -98,22 +96,12 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         else
         { Logger.LogError($"Unable to connect to twitch chat due to error: {result.message}"); }
     }
-
-    public void AttemptToConnectToPubSub()
-    {
-        Logger.Information($"Checking if twitch pubsub can connect");
-        if(!AppState.HasTwitchAccessToken()) { return; }
-        if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
-            
-        Logger.Information($"Connecting to twitch pubsub");
-        TwitchPubSub.PubSub.Connect();
-    }
     
     public async Task AttemptToConnectToEventSub()
     {
         if(TwitchEventSub.IsConnected) { return; }
         
-        Logger.Information($"Checking if twitch EventSub can connect");
+        Logger.Information($"Checking to see if twitch EventSub needs re/connecting");
         if(!AppState.HasTwitchAccessToken()) { return; }
         if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
             
@@ -148,9 +136,8 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         if(TwitchClient.IsConnected)
         { TwitchClient.Client.Disconnect(); }
 
-        await TwitchEventSub.Client.DisconnectAsync();
-        
-        TwitchPubSub.PubSub.Disconnect();
+        if (TwitchEventSub.IsConnected)
+        { await TwitchEventSub.Client.DisconnectAsync(); }
     }
 
     public async Task VerifyToken()

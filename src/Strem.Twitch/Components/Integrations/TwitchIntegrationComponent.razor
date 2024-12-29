@@ -18,10 +18,10 @@
 @implements IDisposable
 
 @inject ITwitchClient TwitchClient
+@inject IObservableTwitchEventSub TwitchEventSub
 @inject IObservableTwitchClient ObservableTwitchClient
 
 <div class="columns">
-    
     <div class="column">
         <label class="label">Connected Account</label>
         <div class="field has-addons">
@@ -44,51 +44,52 @@
             </div>
         </div>
     </div>
-    
-    <div class="column">
-        <div class="field">
-            <label class="label">Chat Connection</label>
-            <div class="control">
-                @if (TwitchClient.IsConnected)
-                {
-                    <button class="button is-success" disabled="@(!CanStartTwitchChat)">
-                        <span class="icon">
-                            <i class="fas fa-check"></i>
-                        </span>
-                        <span>Chat Connected</span>
-                    </button>
-                }
-                else
-                {
-                    <button class="button is-danger" @onclick="AttemptChatConnect" disabled="@(!CanStartTwitchChat)">
-                        <span class="icon">
-                            <i class="fas fa-xmark"></i>
-                        </span>
-                        <span>Chat Disconnected</span>
-                    </button>
-                }
-            </div>
-        </div>
-    </div>
-    
-    <div class="column">
-        <div class="field">
-            <label class="label">Channels Joined</label>
-            <div class="control">
-                <div class="tags">
-                    @foreach (var joinedChannel in TwitchClient.JoinedChannels)
-                    {
-                        <span class="tag is-success">@joinedChannel.Channel</span>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 <label class="label">Requested Privilages</label>
 <TwitchScopes ExistingScopes="CurrentScopes" OnScopesChanged="RequestNewScopeAccess"></TwitchScopes>
+
+<label class="label">Twitch Connection Information</label>
+<div class="box">
+    <div class="columns">
+        <div class="column is-one-third">
+            <div class="field">
+                <label class="label">Chat Channels Joined</label>
+                <div class="control">
+                    <div class="tags">
+                        @if (!TwitchEventSub.IsConnected) { <span class="tag is-danger">Not Connected</span> }
+                        @foreach (var joinedChannel in TwitchClient.JoinedChannels)
+                        {
+                            <span class="tag is-success">@joinedChannel.Channel</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-two-thirds">
+            <label class="label">EventSub Subscriptions</label>
+            <div class="field is-grouped is-grouped-multiline">
+                @if (!TwitchEventSub.IsConnected)
+                {
+                    <span class="tag is-danger">Not Connected</span>
+                }
+
+                @foreach (var channelSubs in TwitchEventSub.Subscriptions)
+                {
+                    foreach (var subscription in channelSubs.Value)
+                    {
+                        <div class="control">
+                            <div class="tags has-addons">
+                                <span class="tag is-success">@channelSubs.Key</span>
+                                <span class="tag is-info">@subscription</span>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     

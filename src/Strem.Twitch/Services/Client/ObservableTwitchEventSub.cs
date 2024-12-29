@@ -21,6 +21,8 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
     public ILogger<ObservableTwitchEventSub> Logger { get; }
 
     private Dictionary<string, List<string>> _subscriptions = new();
+
+    public IReadOnlyDictionary<string, List<string>> Subscriptions => _subscriptions;
     
     /// <summary>Occurs when [on channel state changed].</summary>
     public IObservable<ChannelHypeTrainEndArgs> OnChannelHypeTrainEnd { get; private set; }
