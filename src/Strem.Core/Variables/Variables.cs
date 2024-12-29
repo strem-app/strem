@@ -14,7 +14,7 @@ public class Variables : IVariables
     [JsonIgnore]
     public IObservable<KeyValuePair<VariableEntry, string>> OnVariableChanged => OnChangedSubject;
    
-    public Variables(Dictionary<VariableEntry, string> state = null)
+    public Variables(Dictionary<VariableEntry, string>? state = null)
     { Data = state ?? new Dictionary<VariableEntry, string>(); }
 
     public VariableEntry FindFullyQualifiedEntry(string variableName)
