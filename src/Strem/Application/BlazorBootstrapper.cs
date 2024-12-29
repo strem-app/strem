@@ -19,6 +19,7 @@ public class BlazorBootstrapper
     {
         var appLauncher = app.MainWindow
             .SetTitle("Strem")
+            .SetJavascriptClipboardAccessEnabled(true)
             
 #if DEBUG
             .SetLogVerbosity(3)

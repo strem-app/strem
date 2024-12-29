@@ -9,6 +9,10 @@
         <ApplicationIcon>strem.ico</ApplicationIcon>
         <IsPackable>false</IsPackable>
         <LangVersion>12</LangVersion>
+        <WasmFingerprintAssets>false</WasmFingerprintAssets>
+        <StaticWebAssetFingerprintingEnabled>false</StaticWebAssetFingerprintingEnabled>
+        <StaticWebAssetsFingerprintContent>false</StaticWebAssetsFingerprintContent>
+        <DisableBuildCompression>true</DisableBuildCompression>
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
