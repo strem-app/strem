@@ -1,12 +1,11 @@
 ﻿@using Strem.Core.Extensions
-@using Strem.Core.Events.Bus
 @using System.Reactive.Disposables
 @using Strem.Core.Services.Browsers.File
 @using Strem.Core.Services.UI.Modal
 @using Strem.Core.Services.UI.Notifications
-@using Strem.Flows.Services.Data
 @using Strem.Portals.Data
-@using Strem.Portals.Events
+@using Strem.Portals.Data.Overrides
+@using Strem.Portals.Extensions
 @using Strem.Portals.Services.Data
 @using Strem.Portals.Services.Stores
 
@@ -15,6 +14,7 @@
 @inject IFileBrowser FileBrowser;
 @inject IPortalImporter PortalImporter;
 @inject IPortalExporter PortalExporter;
+@inject GridElementRuntimeStyles GridElementRuntimeStyles 
 
 @implements IDisposable
 
@@ -119,6 +119,8 @@
   public void OnPortalCreated(PortalData newPortal)
   {
     PortalStore.Add(newPortal);
+    GridElementRuntimeStyles.RefreshStylesFor(newPortal);
+    
     SelectPortal(newPortal);
     ModalService.CloseModal();
   }
