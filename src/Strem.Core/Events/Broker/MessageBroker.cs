@@ -9,7 +9,7 @@ public class MessageBroker : IMessageBroker, IDisposable
 
     public void Publish<T>(T message)
     {
-        object notifier;
+        object? notifier;
         lock (_notifiers)
         {
             if (_isDisposed) { return; }

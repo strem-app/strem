@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <Version>0.0.0</Version>
@@ -9,6 +9,10 @@
         <ApplicationIcon>strem.ico</ApplicationIcon>
         <IsPackable>false</IsPackable>
         <LangVersion>12</LangVersion>
+        <WasmFingerprintAssets>false</WasmFingerprintAssets>
+        <StaticWebAssetFingerprintingEnabled>false</StaticWebAssetFingerprintingEnabled>
+        <StaticWebAssetsFingerprintContent>false</StaticWebAssetsFingerprintContent>
+        <DisableBuildCompression>true</DisableBuildCompression>
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -19,10 +23,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BlazorMonaco" Version="3.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="8.0.0" />
-        <PackageReference Include="Photino.Blazor" Version="2.7.0" />
-        <PackageReference Include="System.Reactive" Version="6.0.0" />
+        <PackageReference Include="BlazorMonaco" Version="3.3.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="9.0.0" />
+        <PackageReference Include="Photino.Blazor" Version="3.2.0" />
+        <PackageReference Include="System.Reactive" Version="6.0.1" />
     </ItemGroup>
     
     <ItemGroup>

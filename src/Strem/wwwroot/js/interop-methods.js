@@ -72,16 +72,18 @@ function showNotification(text, type, duration)
     bulmaToast.toast({ message: text, type: type, duration: duration });
 }
 
-function animateElement(element, animation, prefix = 'animate__') {
+function animateElement(element, animation, duration = '1s', prefix = 'animate__') {
     // We create a Promise and return it
     new Promise((resolve, reject) => {
         const animationName = `${prefix}${animation}`;
+        element.style.setProperty('--animate-duration', duration);
         element.classList.add(`${prefix}animated`, animationName);
-        
+                
         // When the animation ends, we clean the classes and resolve the Promise
         function handleAnimationEnd(event) {
             event.stopPropagation();
             element.classList.remove(`${prefix}animated`, animationName);
+            element.style.removeProperty(`--animate-duration`);
             resolve('Animation ended');
         }
         
@@ -89,9 +91,9 @@ function animateElement(element, animation, prefix = 'animate__') {
     });
 }
 
-function animateElementById(elementId, animation, prefix = 'animate__') {
+function animateElementById(elementId, animation, duration = '1s', prefix = 'animate__') {
     const element = document.getElementById(elementId);
-    animateElement(element, animation, prefix);
+    animateElement(element, animation, duration, prefix);
 }
 
 function setNoSleepButton(element) {
