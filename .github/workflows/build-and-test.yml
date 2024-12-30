@@ -12,7 +12,7 @@ jobs:
       - name: Run Build Script
         shell: pwsh
         run: |
-          ./build.ps1 --buildNo='0.9.${{github.run_number}}' --target='build-and-test'
+          ./build.ps1 --buildNo='0.10.${{github.run_number}}' --target='build-and-test'
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Package App Script
         shell: pwsh
-        run: ./build.ps1 --buildNo='0.9.${{github.run_number}}' --target='publish'
+        run: ./build.ps1 --buildNo='0.10.${{github.run_number}}' --target='publish'
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
