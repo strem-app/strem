@@ -8,7 +8,6 @@ public class StringExtensionTests
     [Theory]
     [InlineData("", "", TextMatchType.None, true)]
     [InlineData("a", "b", TextMatchType.None, true)]
-    [InlineData("", "", TextMatchType.None, true)]
     [InlineData("", null, TextMatchType.None, true)]
     [InlineData(null, null, TextMatchType.None, true)]
     [InlineData("a", "b", TextMatchType.ExactMatch, false)]
