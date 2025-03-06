@@ -60,7 +60,10 @@ public class OnTwitchRewardRedeemedTrigger : FlowTrigger<OnTwitchRewardRedeemedT
             { return false; }
         }
         
-        return string.Equals(args.Notification.Payload.Event.Reward.Title, data.RequiredRewardName, StringComparison.OrdinalIgnoreCase);
+        if(!string.IsNullOrEmpty(data.RequiredRewardName))
+        { return string.Equals(args.Notification.Payload.Event.Reward.Title, data.RequiredRewardName, StringComparison.OrdinalIgnoreCase); }
+
+        return true;
     }
     
     public async void SubscribeToEventIfNeeded(OnTwitchRewardRedeemedTriggerData data)
