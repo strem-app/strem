@@ -17,7 +17,7 @@ jobs:
         shell: pwsh
         run: |
           ./build.ps1 --buildNo='${{ env.BuildVersion }}' --target='build-and-test'
-            - name: Test Report
+      - name: Test Report
         uses: dorny/test-reporter@v1
         with:
           name: Unit Test Summary
