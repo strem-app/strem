@@ -4,7 +4,7 @@ namespace Strem.Core.Services.Validation.Attributes;
 
 public class IsFloatAttribute : ValidationAttribute
 {
-    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null) { return ValidationResult.Success;}
         

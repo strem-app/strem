@@ -18,15 +18,24 @@ public static class ButtonRuntimeStylesExtensions
         return buttonRuntimeStyles;
     }
     
+    public static void RefreshStylesFor(this GridElementRuntimeStyles styles, PortalData portalData)
+    {
+        if (!styles.RuntimeStyles.ContainsKey(portalData.Id))
+        { styles.RuntimeStyles.Add(portalData.Id, new Dictionary<Guid, ElementStyles>()); }
+
+        var portalRuntimeStyles = styles.RuntimeStyles[portalData.Id];
+        portalRuntimeStyles.Clear();
+
+        foreach (var elementData in portalData.Elements)
+        { portalRuntimeStyles.Add(elementData.Id, new ElementStyles(elementData.DefaultStyles)); }
+    }
+    
     public static void RefreshStylesFor(this GridElementRuntimeStyles styles, Guid portalId, GridElementData gridElement)
     {
         if(!styles.RuntimeStyles.ContainsKey(portalId))
-        { return; }
+        { styles.RuntimeStyles.Add(portalId, new Dictionary<Guid, ElementStyles>()); }
 
         var portalStyles = styles.RuntimeStyles[portalId];
-        if(!portalStyles.ContainsKey(gridElement.Id))
-        { return; }
-
         portalStyles[gridElement.Id] = new ElementStyles(gridElement.DefaultStyles);
     }
     

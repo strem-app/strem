@@ -17,9 +17,9 @@ public class BlazorBootstrapper
 
     public void SetupWindow(PhotinoBlazorApp app)
     {
-        var rootIndexPage = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot\\_content\\Strem\\index.html");
         var appLauncher = app.MainWindow
             .SetTitle("Strem")
+            .SetJavascriptClipboardAccessEnabled(true)
             
 #if DEBUG
             .SetLogVerbosity(3)

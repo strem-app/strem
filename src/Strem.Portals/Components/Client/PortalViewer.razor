@@ -224,7 +224,7 @@
     public async Task NotifyButtonPressed(GridElementData gridElementData)
     {
         EventBus.PublishAsync(new PortalElementPressedEvent(Portal.Id, Portal.Name, gridElementData.Id, gridElementData.Name));
-        await Js.InvokeVoidAsync("animateElementById", gridElementData.Id, "heartBeat");
+        await Js.InvokeVoidAsync("animateElementById", gridElementData.Id, "pulse", "1s");
     }
     
     public void NotifySliderValueChanged(GridElementData gridElementData, int value)
