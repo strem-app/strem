@@ -5,12 +5,14 @@ using Strem.Core.Extensions;
 using Strem.Twitch.Extensions;
 using TwitchLib.Api.Core.Enums;
 using TwitchLib.Api.Interfaces;
+using TwitchLib.EventSub.Core;
 using TwitchLib.EventSub.Websockets;
 using TwitchLib.EventSub.Websockets.Client;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Stream;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.User;
+using TwitchLib.PubSub.Models.Responses.Messages.AutomodCaughtMessage;
 
 namespace Strem.Twitch.Services.Client;
 
@@ -163,195 +165,195 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
     
     public void SetupObservables()
     {
-        OnConnected = Observable.FromEventPattern<WebsocketConnectedArgs>(
-                e => Client.WebsocketConnected += e,
-                e => Client.WebsocketConnected -= e)
-            .Select(x => x.EventArgs);
+        OnConnected = Observable.FromEvent<AsyncEventHandler<WebsocketConnectedArgs>, WebsocketConnectedArgs>(
+            h => async (_, args) => h(args),
+            h => Client.WebsocketConnected += h,
+            h => Client.WebsocketConnected -= h);
         
-        OnDisconnected = Observable.FromEventPattern(
-                e => Client.WebsocketDisconnected += e,
-                e => Client.WebsocketDisconnected -= e)
-            .ToUnit();
+        OnDisconnected = Observable.FromEvent<AsyncEventHandler, Unit>(
+            h => async (_, args) => h(Unit.Default),
+            h => Client.WebsocketDisconnected += h,
+            h => Client.WebsocketDisconnected -= h);
         
-        OnError = Observable.FromEventPattern<ErrorOccuredArgs>(
-                e => Client.ErrorOccurred += e,
-                e => Client.ErrorOccurred -= e)
-            .Select(x => x.EventArgs);
+        OnError = Observable.FromEvent<AsyncEventHandler<ErrorOccuredArgs>, ErrorOccuredArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ErrorOccurred += h,
+            h => Client.ErrorOccurred -= h);
         
-        OnReconnected = Observable.FromEventPattern(
-                e => Client.WebsocketReconnected += e,
-                e => Client.WebsocketReconnected -= e)
-            .ToUnit();
+        OnReconnected = Observable.FromEvent<AsyncEventHandler, Unit>(
+            h => async (_, args) => h(Unit.Default),
+            h => Client.WebsocketReconnected += h,
+            h => Client.WebsocketReconnected -= h);
         
-        OnChannelBan = Observable.FromEventPattern<ChannelBanArgs>(
-                e => Client.ChannelBan += e,
-                e => Client.ChannelBan -= e)
-            .Select(x => x.EventArgs);
-        
-        OnChannelUnban = Observable.FromEventPattern<ChannelUnbanArgs>(
-                e => Client.ChannelUnban += e,
-                e => Client.ChannelUnban -= e)
-            .Select(x => x.EventArgs);
-        
-        OnChannelCheer = Observable.FromEventPattern<ChannelCheerArgs>(
-                e => Client.ChannelCheer += e,
-                e => Client.ChannelCheer -= e)
-            .Select(x => x.EventArgs);
-        
-        OnChannelFollow = Observable.FromEventPattern<ChannelFollowArgs>(
-                e => Client.ChannelFollow += e,
-                e => Client.ChannelFollow -= e)
-            .Select(x => x.EventArgs);
-        
-        OnChannelRaid = Observable.FromEventPattern<ChannelRaidArgs>(
-                e => Client.ChannelRaid += e,
-                e => Client.ChannelRaid -= e)
-            .Select(x => x.EventArgs);
+        OnChannelBan = Observable.FromEvent<AsyncEventHandler<ChannelBanArgs>, ChannelBanArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelBan += h,
+            h => Client.ChannelBan -= h);
 
-        OnChannelSubscribe = Observable.FromEventPattern<ChannelSubscribeArgs>(
-                e => Client.ChannelSubscribe += e,
-                e => Client.ChannelSubscribe -= e)
-            .Select(x => x.EventArgs);
+        OnChannelUnban = Observable.FromEvent<AsyncEventHandler<ChannelUnbanArgs>, ChannelUnbanArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelUnban += h,
+            h => Client.ChannelUnban -= h);
         
-        OnChannelUpdate = Observable.FromEventPattern<ChannelUpdateArgs>(
-                e => Client.ChannelUpdate += e,
-                e => Client.ChannelUpdate -= e)
-            .Select(x => x.EventArgs);
+        OnChannelCheer = Observable.FromEvent<AsyncEventHandler<ChannelCheerArgs>, ChannelCheerArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelCheer += h,
+            h => Client.ChannelCheer -= h);
         
-        OnStreamOffline = Observable.FromEventPattern<StreamOfflineArgs>(
-                e => Client.StreamOffline += e,
-                e => Client.StreamOffline -= e)
-            .Select(x => x.EventArgs);
+        OnChannelFollow = Observable.FromEvent<AsyncEventHandler<ChannelFollowArgs>, ChannelFollowArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelFollow += h,
+            h => Client.ChannelFollow -= h);
         
-        OnStreamOnline = Observable.FromEventPattern<StreamOnlineArgs>(
-                e => Client.StreamOnline += e,
-                e => Client.StreamOnline -= e)
-            .Select(x => x.EventArgs);
+        OnChannelRaid = Observable.FromEvent<AsyncEventHandler<ChannelRaidArgs>, ChannelRaidArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelRaid += h,
+            h => Client.ChannelRaid -= h);
         
-        OnUserUpdate = Observable.FromEventPattern<UserUpdateArgs>(
-                e => Client.UserUpdate += e,
-                e => Client.UserUpdate -= e)
-            .Select(x => x.EventArgs);
+        OnChannelSubscribe = Observable.FromEvent<AsyncEventHandler<ChannelSubscribeArgs>, ChannelSubscribeArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelSubscribe += h,
+            h => Client.ChannelSubscribe -= h);
         
-        OnChannelGoalBegin = Observable.FromEventPattern<ChannelGoalBeginArgs>(
-                e => Client.ChannelGoalBegin += e,
-                e => Client.ChannelGoalBegin -= e)
-            .Select(x => x.EventArgs);
+        OnChannelUpdate = Observable.FromEvent<AsyncEventHandler<ChannelUpdateArgs>, ChannelUpdateArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelUpdate += h,
+            h => Client.ChannelUpdate -= h);
         
-        OnChannelGoalEnd = Observable.FromEventPattern<ChannelGoalEndArgs>(
-                e => Client.ChannelGoalEnd += e,
-                e => Client.ChannelGoalEnd -= e)
-            .Select(x => x.EventArgs);
+        OnStreamOffline = Observable.FromEvent<AsyncEventHandler<StreamOfflineArgs>, StreamOfflineArgs>(
+            h => async (_, args) => h(args),
+            h => Client.StreamOffline += h,
+            h => Client.StreamOffline -= h);
         
-        OnChannelGoalProgress = Observable.FromEventPattern<ChannelGoalProgressArgs>(
-                e => Client.ChannelGoalProgress += e,
-                e => Client.ChannelGoalProgress -= e)
-            .Select(x => x.EventArgs);
+        OnStreamOnline = Observable.FromEvent<AsyncEventHandler<StreamOnlineArgs>, StreamOnlineArgs>(
+            h => async (_, args) => h(args),
+            h => Client.StreamOnline += h,
+            h => Client.StreamOnline -= h);
         
-        OnModeratorAdd = Observable.FromEventPattern<ChannelModeratorArgs>(
-                e => Client.ChannelModeratorAdd += e,
-                e => Client.ChannelModeratorAdd -= e)
-            .Select(x => x.EventArgs);
+        OnUserUpdate = Observable.FromEvent<AsyncEventHandler<UserUpdateArgs>, UserUpdateArgs>(
+            h => async (_, args) => h(args),
+            h => Client.UserUpdate += h,
+            h => Client.UserUpdate -= h);
         
-        OnModeratorRemove = Observable.FromEventPattern<ChannelModeratorArgs>(
-                e => Client.ChannelModeratorRemove += e,
-                e => Client.ChannelModeratorRemove -= e)
-            .Select(x => x.EventArgs);
+        OnChannelGoalBegin = Observable.FromEvent<AsyncEventHandler<ChannelGoalBeginArgs>, ChannelGoalBeginArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelGoalBegin += h,
+            h => Client.ChannelGoalBegin -= h);
         
-        OnChannelPollBegin = Observable.FromEventPattern<ChannelPollBeginArgs>(
-                e => Client.ChannelPollBegin += e,
-                e => Client.ChannelPollBegin -= e)
-            .Select(x => x.EventArgs);
+        OnChannelGoalEnd = Observable.FromEvent<AsyncEventHandler<ChannelGoalEndArgs>, ChannelGoalEndArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelGoalEnd += h,
+            h => Client.ChannelGoalEnd -= h);
         
-        OnChannelPollEnd = Observable.FromEventPattern<ChannelPollEndArgs>(
-                e => Client.ChannelPollEnd += e,
-                e => Client.ChannelPollEnd -= e)
-            .Select(x => x.EventArgs);
+        OnChannelGoalProgress = Observable.FromEvent<AsyncEventHandler<ChannelGoalProgressArgs>, ChannelGoalProgressArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelGoalProgress += h,
+            h => Client.ChannelGoalProgress -= h);
+        
+        OnModeratorAdd = Observable.FromEvent<AsyncEventHandler<ChannelModeratorArgs>, ChannelModeratorArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelModeratorAdd += h,
+            h => Client.ChannelModeratorAdd -= h);
+        
+        OnModeratorRemove = Observable.FromEvent<AsyncEventHandler<ChannelModeratorArgs>, ChannelModeratorArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelModeratorRemove += h,
+            h => Client.ChannelModeratorRemove -= h);
 
-        OnChannelPollProgress = Observable.FromEventPattern<ChannelPollProgressArgs>(
-                e => Client.ChannelPollProgress += e,
-                e => Client.ChannelPollProgress -= e)
-            .Select(x => x.EventArgs);
+        OnChannelPollBegin = Observable.FromEvent<AsyncEventHandler<ChannelPollBeginArgs>, ChannelPollBeginArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPollBegin += h,
+            h => Client.ChannelPollBegin -= h);
         
-        OnChannelPredictionBegin = Observable.FromEventPattern<ChannelPredictionBeginArgs>(
-                e => Client.ChannelPredictionBegin += e,
-                e => Client.ChannelPredictionBegin -= e)
-            .Select(x => x.EventArgs);
+        OnChannelPollEnd = Observable.FromEvent<AsyncEventHandler<ChannelPollEndArgs>, ChannelPollEndArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPollEnd += h,
+            h => Client.ChannelPollEnd -= h);
         
-        OnChannelPredictionEnd = Observable.FromEventPattern<ChannelPredictionEndArgs>(
-                e => Client.ChannelPredictionEnd += e,
-                e => Client.ChannelPredictionEnd -= e)
-            .Select(x => x.EventArgs);
+        OnChannelPollProgress = Observable.FromEvent<AsyncEventHandler<ChannelPollProgressArgs>, ChannelPollProgressArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPollProgress += h,
+            h => Client.ChannelPollProgress -= h);
+
+        OnChannelPredictionBegin = Observable.FromEvent<AsyncEventHandler<ChannelPredictionBeginArgs>, ChannelPredictionBeginArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPredictionBegin += h,
+            h => Client.ChannelPredictionBegin -= h);
         
-        OnChannelPredictionLock = Observable.FromEventPattern<ChannelPredictionLockArgs>(
-                e => Client.ChannelPredictionLock += e,
-                e => Client.ChannelPredictionLock -= e)
-            .Select(x => x.EventArgs);        
+        OnChannelPredictionEnd = Observable.FromEvent<AsyncEventHandler<ChannelPredictionEndArgs>, ChannelPredictionEndArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPredictionEnd += h,
+            h => Client.ChannelPredictionEnd -= h);
         
-        OnChannelPredictionProgress = Observable.FromEventPattern<ChannelPredictionProgressArgs>(
-                e => Client.ChannelPredictionProgress += e,
-                e => Client.ChannelPredictionProgress -= e)
-            .Select(x => x.EventArgs);
+        OnChannelPredictionLock = Observable.FromEvent<AsyncEventHandler<ChannelPredictionLockArgs>, ChannelPredictionLockArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPredictionLock += h,
+            h => Client.ChannelPredictionLock -= h);
         
-        OnChannelSubscriptionEnd = Observable.FromEventPattern<ChannelSubscriptionEndArgs>(
-                e => Client.ChannelSubscriptionEnd += e,
-                e => Client.ChannelSubscriptionEnd -= e)
-            .Select(x => x.EventArgs);
+        OnChannelPredictionProgress = Observable.FromEvent<AsyncEventHandler<ChannelPredictionProgressArgs>, ChannelPredictionProgressArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPredictionProgress += h,
+            h => Client.ChannelPredictionProgress -= h);    
         
-        OnChannelSubscriptionGift = Observable.FromEventPattern<ChannelSubscriptionGiftArgs>(
-                e => Client.ChannelSubscriptionGift += e,
-                e => Client.ChannelSubscriptionGift -= e)
-            .Select(x => x.EventArgs);
+        OnChannelSubscriptionEnd = Observable.FromEvent<AsyncEventHandler<ChannelSubscriptionEndArgs>, ChannelSubscriptionEndArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelSubscriptionEnd += h,
+            h => Client.ChannelSubscriptionEnd -= h);  
         
-        OnChannelSubscriptionMessage = Observable.FromEventPattern<ChannelSubscriptionMessageArgs>(
-                e => Client.ChannelSubscriptionMessage += e,
-                e => Client.ChannelSubscriptionMessage -= e)
-            .Select(x => x.EventArgs);
+        OnChannelSubscriptionGift = Observable.FromEvent<AsyncEventHandler<ChannelSubscriptionGiftArgs>, ChannelSubscriptionGiftArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelSubscriptionGift += h,
+            h => Client.ChannelSubscriptionGift -= h);  
         
-        OnChannelCharityCampaignDonate = Observable.FromEventPattern<ChannelCharityCampaignDonateArgs>(
-                e => Client.ChannelCharityCampaignDonate += e,
-                e => Client.ChannelCharityCampaignDonate -= e)
-            .Select(x => x.EventArgs);
+        OnChannelSubscriptionMessage = Observable.FromEvent<AsyncEventHandler<ChannelSubscriptionMessageArgs>, ChannelSubscriptionMessageArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelSubscriptionMessage += h,
+            h => Client.ChannelSubscriptionMessage -= h);  
         
-        OnChannelHypeTrainBegin = Observable.FromEventPattern<ChannelHypeTrainBeginArgs>(
-                e => Client.ChannelHypeTrainBegin += e,
-                e => Client.ChannelHypeTrainBegin -= e)
-            .Select(x => x.EventArgs);
+        OnChannelCharityCampaignDonate = Observable.FromEvent<AsyncEventHandler<ChannelCharityCampaignDonateArgs>, ChannelCharityCampaignDonateArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelCharityCampaignDonate += h,
+            h => Client.ChannelCharityCampaignDonate -= h);  
         
-        OnChannelHypeTrainEnd = Observable.FromEventPattern<ChannelHypeTrainEndArgs>(
-                e => Client.ChannelHypeTrainEnd += e,
-                e => Client.ChannelHypeTrainEnd -= e)
-            .Select(x => x.EventArgs);
+        OnChannelHypeTrainBegin = Observable.FromEvent<AsyncEventHandler<ChannelHypeTrainBeginArgs>, ChannelHypeTrainBeginArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelHypeTrainBegin += h,
+            h => Client.ChannelHypeTrainBegin -= h);  
         
-        OnChannelHypeTrainProgress = Observable.FromEventPattern<ChannelHypeTrainProgressArgs>(
-                e => Client.ChannelHypeTrainProgress += e,
-                e => Client.ChannelHypeTrainProgress -= e)
-            .Select(x => x.EventArgs);
+        OnChannelHypeTrainEnd = Observable.FromEvent<AsyncEventHandler<ChannelHypeTrainEndArgs>, ChannelHypeTrainEndArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelHypeTrainEnd += h,
+            h => Client.ChannelHypeTrainEnd -= h);  
         
-        OnChannelPointsCustomRewardAdd = Observable.FromEventPattern<ChannelPointsCustomRewardArgs>(
-                e => Client.ChannelPointsCustomRewardAdd += e,
-                e => Client.ChannelPointsCustomRewardAdd -= e)
-            .Select(x => x.EventArgs);
+        OnChannelHypeTrainProgress = Observable.FromEvent<AsyncEventHandler<ChannelHypeTrainProgressArgs>, ChannelHypeTrainProgressArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelHypeTrainProgress += h,
+            h => Client.ChannelHypeTrainProgress -= h);  
         
-        OnChannelPointsCustomRewardRemove = Observable.FromEventPattern<ChannelPointsCustomRewardArgs>(
-                e => Client.ChannelPointsCustomRewardRemove += e,
-                e => Client.ChannelPointsCustomRewardRemove -= e)
-            .Select(x => x.EventArgs);
+        OnChannelPointsCustomRewardAdd = Observable.FromEvent<AsyncEventHandler<ChannelPointsCustomRewardArgs>, ChannelPointsCustomRewardArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPointsCustomRewardAdd += h,
+            h => Client.ChannelPointsCustomRewardAdd -= h);  
         
-        OnChannelPointsCustomRewardUpdate = Observable.FromEventPattern<ChannelPointsCustomRewardArgs>(
-                e => Client.ChannelPointsCustomRewardUpdate += e,
-                e => Client.ChannelPointsCustomRewardUpdate -= e)
-            .Select(x => x.EventArgs);
+        OnChannelPointsCustomRewardRemove = Observable.FromEvent<AsyncEventHandler<ChannelPointsCustomRewardArgs>, ChannelPointsCustomRewardArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPointsCustomRewardRemove += h,
+            h => Client.ChannelPointsCustomRewardRemove -= h);  
         
-        OnChannelPointsCustomRewardRedemptionAdd = Observable.FromEventPattern<ChannelPointsCustomRewardRedemptionArgs>(
-                e => Client.ChannelPointsCustomRewardRedemptionAdd += e,
-                e => Client.ChannelPointsCustomRewardRedemptionAdd -= e)
-            .Select(x => x.EventArgs);
+        OnChannelPointsCustomRewardUpdate = Observable.FromEvent<AsyncEventHandler<ChannelPointsCustomRewardArgs>, ChannelPointsCustomRewardArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPointsCustomRewardUpdate += h,
+            h => Client.ChannelPointsCustomRewardUpdate -= h);  
         
-        OnChannelPointsCustomRewardRedemptionUpdate = Observable.FromEventPattern<ChannelPointsCustomRewardRedemptionArgs>(
-                e => Client.ChannelPointsCustomRewardRedemptionUpdate += e,
-                e => Client.ChannelPointsCustomRewardRedemptionUpdate -= e)
-            .Select(x => x.EventArgs);
+        OnChannelPointsCustomRewardRedemptionAdd = Observable.FromEvent<AsyncEventHandler<ChannelPointsCustomRewardRedemptionArgs>, ChannelPointsCustomRewardRedemptionArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPointsCustomRewardRedemptionAdd += h,
+            h => Client.ChannelPointsCustomRewardRedemptionAdd -= h);  
+        
+        OnChannelPointsCustomRewardRedemptionUpdate = Observable.FromEvent<AsyncEventHandler<ChannelPointsCustomRewardRedemptionArgs>, ChannelPointsCustomRewardRedemptionArgs>(
+            h => async (_, args) => h(args),
+            h => Client.ChannelPointsCustomRewardRedemptionUpdate += h,
+            h => Client.ChannelPointsCustomRewardRedemptionUpdate -= h);
     }
 
     public async Task<bool> SubscribeOnChannel(string subType, string channelName, string version = "1")
