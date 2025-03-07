@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 using Strem.Core.Components.Elements.Drag;
 using Strem.Core.Extensions;
@@ -28,6 +29,7 @@ public class InternalWebHost : IInternalWebHost
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddRouting();
         builder.Services.AddRazorPages();
+
 #if DEBUG
         builder.Services.AddServerSideBlazor().AddCircuitOptions(x => x.DetailedErrors = true);
 #else
@@ -71,6 +73,12 @@ public class InternalWebHost : IInternalWebHost
         }
         
         app.UseRouting();
+        app.UseCors(x => x
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin()
+            .SetIsOriginAllowed(o => true));
+        
         app.UseStaticFiles();
         app.UseStaticFiles(new StaticFileOptions
         {

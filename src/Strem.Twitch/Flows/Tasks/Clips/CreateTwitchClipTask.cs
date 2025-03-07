@@ -86,14 +86,12 @@ public class CreateTwitchClipTask : FlowTask<CreateTwitchClipTaskData>
         if (!string.IsNullOrEmpty(data.Channel))
         {
             var processedChannel = FlowStringProcessor.Process(data.Channel, flowVars);
-            var userDetails = await TwitchApi.Helix.Users.GetUsersAsync(logins: new () { processedChannel });
-            if (userDetails.Users.Length == 0)
+            userId = await TwitchApi.GetUserIdFromName(processedChannel);
+            if (string.IsNullOrEmpty(userId))
             {
                 Logger.Warning($"Couldnt Find UserId For Use [{ processedChannel }]");
                 return ExecutionResult.Failed($"Couldnt Find UserId For Use [{ processedChannel }]");
             }
-
-            userId = userDetails.Users[0].Id;
         }
         
         var clip = await TwitchApi.Helix.Clips.CreateClipAsync(userId);

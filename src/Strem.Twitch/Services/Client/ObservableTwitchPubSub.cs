@@ -1,6 +1,6 @@
 ﻿using System.Reactive;
 using System.Reactive.Linq;
-using TwitchLib.Client.Events;
+using TwitchLib.Api.Interfaces;
 using TwitchLib.PubSub.Events;
 using TwitchLib.PubSub.Interfaces;
 using OnEmoteOnlyArgs = TwitchLib.PubSub.Events.OnEmoteOnlyArgs;
@@ -12,7 +12,7 @@ class ObservableTwitchPubSub : IObservableTwitchPubSub
 {
     public ITwitchPubSub PubSub { get; }
     
-/// <summary>Occurs when [on ban].</summary>
+    /// <summary>Occurs when [on ban].</summary>
     public IObservable<OnBanArgs> OnBan { get; private set; }
 
     /// <summary>Occurs when [on bits received].</summary>
@@ -98,6 +98,9 @@ class ObservableTwitchPubSub : IObservableTwitchPubSub
 
     /// <summary>Occurs when [on reward redeemed]</summary>
     public IObservable<OnRewardRedeemedArgs> OnRewardRedeemed { get; private set; }
+    
+    /// <summary>Occurs when [on channel points reward redeemed]</summary>
+    public IObservable<OnChannelPointsRewardRedeemedArgs> OnChannelPointsRewardRedeemed { get; private set; }
 
     /// <summary>Occurs when [on leaderboard subs].</summary>
     public IObservable<OnLeaderboardEventArgs> OnLeaderboardSubs { get; private set; }
@@ -134,6 +137,51 @@ class ObservableTwitchPubSub : IObservableTwitchPubSub
         OnBan = Observable.FromEventPattern<OnBanArgs>(
                 e => PubSub.OnBan += e,
                 e => PubSub.OnBan -= e)
+            .Select(x => x.EventArgs);
+        
+        OnBitsReceived = Observable.FromEventPattern<OnBitsReceivedArgs>(
+                e => PubSub.OnBitsReceived += e,
+                e => PubSub.OnBitsReceived -= e)
+            .Select(x => x.EventArgs);
+        
+        OnChannelExtensionBroadcast = Observable.FromEventPattern<OnChannelExtensionBroadcastArgs>(
+                e => PubSub.OnChannelExtensionBroadcast += e,
+                e => PubSub.OnChannelExtensionBroadcast -= e)
+            .Select(x => x.EventArgs);
+        
+        OnChannelSubscription = Observable.FromEventPattern<OnChannelSubscriptionArgs>(
+                e => PubSub.OnChannelSubscription += e,
+                e => PubSub.OnChannelSubscription -= e)
+            .Select(x => x.EventArgs);
+        
+        OnEmoteOnly = Observable.FromEventPattern<OnEmoteOnlyArgs>(
+                e => PubSub.OnEmoteOnly += e,
+                e => PubSub.OnEmoteOnly -= e)
+            .Select(x => x.EventArgs);
+        
+        OnEmoteOnlyOff = Observable.FromEventPattern<OnEmoteOnlyOffArgs>(
+                e => PubSub.OnEmoteOnlyOff += e,
+                e => PubSub.OnEmoteOnlyOff -= e)
+            .Select(x => x.EventArgs);
+        
+        OnFollow = Observable.FromEventPattern<OnFollowArgs>(
+                e => PubSub.OnFollow += e,
+                e => PubSub.OnFollow -= e)
+            .Select(x => x.EventArgs);
+        
+        OnSubscribersOnly = Observable.FromEventPattern<OnSubscribersOnlyArgs>(
+                e => PubSub.OnSubscribersOnly += e,
+                e => PubSub.OnSubscribersOnly -= e)
+            .Select(x => x.EventArgs);
+        
+        OnSubscribersOnlyOff = Observable.FromEventPattern<OnSubscribersOnlyOffArgs>(
+                e => PubSub.OnSubscribersOnlyOff += e,
+                e => PubSub.OnSubscribersOnlyOff -= e)
+            .Select(x => x.EventArgs);
+        
+        OnChannelPointsRewardRedeemed = Observable.FromEventPattern<OnChannelPointsRewardRedeemedArgs>(
+                e => PubSub.OnChannelPointsRewardRedeemed += e,
+                e => PubSub.OnChannelPointsRewardRedeemed -= e)
             .Select(x => x.EventArgs);
         
         // Todo: Add More Here

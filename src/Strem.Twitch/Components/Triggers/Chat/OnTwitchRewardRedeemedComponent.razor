@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Types
+@using TwitchLib.Client.Enums
+
+@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Chat.OnTwitchRewardRedeemedTriggerData>
+
+<div class="field">
+    <label class="label">Required Channel</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.RequiredChannel" Placeholder="i.e A channel name, or leave blank for yours"></ProcessedInput>
+    </div>
+    <HelperInfo>This is optional and lets you only trigger if it matches a specific channel, leave blank to trigger on your own channel</HelperInfo>
+</div>
+
+<div class="field">
+    <label class="label">Reward Name</label>
+    <div class="control">
+        <ProcessedInput @bind-Value="Data.RequiredRewardName" Placeholder="i.e The name of your reward in twitch"></ProcessedInput>
+    </div>
+</div>
+
+@code {
+    public override string Title => GenerateTitle();
+    
+    public string GenerateTitle()
+    {
+        var channelBlurb =  !string.IsNullOrEmpty(Data.RequiredChannel) ? $"On Channel {Data.RequiredChannel}" : "";
+        return $"Trigger On Reward Redemption <strong>{channelBlurb}</strong>";
+    }
+}

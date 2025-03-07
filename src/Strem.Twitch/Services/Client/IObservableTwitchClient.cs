@@ -142,4 +142,6 @@ public interface IObservableTwitchClient
     /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
     /// </summary>
     IObservable<OnBannedEmailAliasArgs> OnBannedEmailAlias { get; }
+
+    bool IsConnected { get; }
 }
