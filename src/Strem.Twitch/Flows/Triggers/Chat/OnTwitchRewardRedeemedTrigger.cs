@@ -13,7 +13,7 @@ using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Chat;
 
-public class OnTwitchRewardRedeemedTrigger : FlowTrigger<OnTwitchRewardRedeemedTriggerData>
+public class OnTwitchRewardRedeemedTrigger : FlowTrigger<OnTwitchRewardRedeemedTriggerData>, IUsesTwitchEventSub<OnTwitchRewardRedeemedTriggerData>
 {
     public override string Code => OnTwitchRewardRedeemedTriggerData.TriggerCode;
     public override string Version => OnTwitchRewardRedeemedTriggerData.TriggerVersion;
@@ -66,7 +66,7 @@ public class OnTwitchRewardRedeemedTrigger : FlowTrigger<OnTwitchRewardRedeemedT
         return true;
     }
     
-    public async void SubscribeToEventIfNeeded(OnTwitchRewardRedeemedTriggerData data)
+    public async Task SetupEventSubscriptions(OnTwitchRewardRedeemedTriggerData data)
     {
         var isDefaultChannel = string.IsNullOrEmpty(data.RequiredChannel);
         var channelToUse = isDefaultChannel ? AppState.GetTwitchUsername() : data.RequiredChannel;
@@ -78,7 +78,7 @@ public class OnTwitchRewardRedeemedTrigger : FlowTrigger<OnTwitchRewardRedeemedT
 
     public override async Task<IObservable<IVariables>> Execute(OnTwitchRewardRedeemedTriggerData data)
     {
-        SubscribeToEventIfNeeded(data);
+        await SetupEventSubscriptions(data);
         
         return TwitchEventSub.OnChannelPointsCustomRewardRedemptionAdd
             .Where(x => DoesRewardMeetCriteria(data, x))

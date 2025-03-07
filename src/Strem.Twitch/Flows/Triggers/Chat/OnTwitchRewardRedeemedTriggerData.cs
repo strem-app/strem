@@ -2,7 +2,7 @@
 
 namespace Strem.Twitch.Flows.Triggers.Chat;
 
-public class OnTwitchRewardRedeemedTriggerData : IFlowTriggerData
+public class OnTwitchRewardRedeemedTriggerData : ITwitchEventSubTriggerData
 {
     public static readonly string TriggerCode = "on-twitch-reward-redeemed";
     public static readonly string TriggerVersion = "1.0.0";

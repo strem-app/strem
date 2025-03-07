@@ -5,8 +5,11 @@ using Strem.Core.Extensions;
 using Strem.Core.Plugins;
 using Strem.Core.State;
 using Strem.Core.Variables;
+using Strem.Flows.Events.Triggers;
+using Strem.Flows.Services.Stores;
 using Strem.Twitch.Events.OAuth;
 using Strem.Twitch.Extensions;
+using Strem.Twitch.Flows.Triggers;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Services.OAuth;
 using Strem.Twitch.Types;
@@ -27,10 +30,11 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public IAppState AppState { get; }
     public IApplicationConfig ApplicationConfig { get; }
     public ILogger<TwitchPluginStartup> Logger { get; }
-
+    public IFlowStore FlowStore { get; }
+    
     public string[] RequiredConfigurationKeys { get; } = new[] { TwitchPluginSettings.TwitchClientIdKey };
 
-    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger, IApplicationConfig applicationConfig, IObservableTwitchEventSub twitchEventSub)
+    public TwitchPluginStartup(ITwitchOAuthClient twitchOAuthClient, ITwitchAPI twitchApi, IObservableTwitchClient twitchClient, IEventBus eventBus, IAppState appState, ILogger<TwitchPluginStartup> logger, IApplicationConfig applicationConfig, IObservableTwitchEventSub twitchEventSub, IFlowStore flowStore)
     {
         TwitchOAuthClient = twitchOAuthClient;
         TwitchApi = twitchApi;
@@ -40,6 +44,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         Logger = logger;
         ApplicationConfig = applicationConfig;
         TwitchEventSub = twitchEventSub;
+        FlowStore = flowStore;
     }
     
     public Task SetupPlugin() => Task.CompletedTask;
@@ -119,9 +124,24 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
             { Logger.Information("EventSub Channel Update Subscription Successful"); }
             else
             { Logger.Error($"Unable to subscribe to channel [{userId}] on EventSub"); }
+
+            ResetTwitchEventSubTriggers();
         }
         else
         { Logger.Information("Could not connect to twitch EventSub"); }
+    }
+
+    public void ResetTwitchEventSubTriggers()
+    {
+        var flowsWithTwitchEventSubTriggers = FlowStore.Data
+            .Where(x => x.TriggerData.Any(trigger => trigger is ITwitchEventSubTriggerData));
+
+        foreach (var flowWithEventSubTrigger in flowsWithTwitchEventSubTriggers)
+        {
+            // TODO: For now it resets at flow level not trigger level, in future will need to do each individually
+            var twitchEventSubTrigger = flowWithEventSubTrigger.TriggerData.First(x => x is ITwitchEventSubTriggerData);
+            EventBus.PublishAsync(new FlowTriggerChangedEvent(flowWithEventSubTrigger.Id, twitchEventSubTrigger.Id));
+        }
     }
 
     public async Task VerifyAndSetupConnections()
