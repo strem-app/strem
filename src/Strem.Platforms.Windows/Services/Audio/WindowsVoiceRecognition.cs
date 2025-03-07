@@ -8,7 +8,7 @@ using Strem.Core.Services.Audio;
 
 namespace Strem.Platforms.Windows.Services.Audio;
 
-public class VoiceRecognition : IVoiceRecognition
+public class WindowsVoiceRecognition : IVoiceRecognition
 {
     public const string NoiseSink = "noise-sink";
     public const string TermsGrammarName = "terms";
@@ -24,7 +24,7 @@ public class VoiceRecognition : IVoiceRecognition
     private bool _isAwaitingUpdate;
     private Grammar _termsGrammar;
 
-    public VoiceRecognition(ILogger<IVoiceRecognition> logger)
+    public WindowsVoiceRecognition(ILogger<IVoiceRecognition> logger)
     {
         Logger = logger;
 

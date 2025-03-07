@@ -110,6 +110,8 @@ public class StremApplication
         Logger.Information($"Started Internal Host: http://localhost:{InternalWebHostConfiguration.ApiHostPort}");
         
         Logger.Information("Strem Initialized");
+        // TODO: No idea why but in Linux the UI hasnt loaded by the time this is triggered, so for now a delay is added
+        await Task.Delay(1000);
         EventBus.PublishAsync(new ApplicationStartedEvent());
     }
     

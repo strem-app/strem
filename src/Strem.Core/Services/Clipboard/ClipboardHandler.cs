@@ -1,7 +1,6 @@
-﻿using Strem.Core.Services.Clipboard;
-using TextCopy;
+﻿using TextCopy;
 
-namespace Strem.Platforms.Windows.Services.Clipboard;
+namespace Strem.Core.Services.Clipboard;
 
 public class ClipboardHandler : IClipboardHandler
 {

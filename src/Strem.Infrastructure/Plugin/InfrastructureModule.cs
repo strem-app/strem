@@ -14,6 +14,7 @@ using Strem.Core.Events.Broker;
 using Strem.Core.Events.Bus;
 using Strem.Core.Plugins;
 using Strem.Core.Services.Browsers.Web;
+using Strem.Core.Services.Clipboard;
 using Strem.Core.Services.Execution;
 using Strem.Core.Services.Input;
 using Strem.Core.Services.Registries.Integrations;
@@ -31,6 +32,7 @@ using Strem.Flows.Variables;
 using Strem.Infrastructure.Extensions;
 using Strem.Infrastructure.Services;
 using Strem.Infrastructure.Services.Api;
+using TextCopy;
 using JsonSerializer = Persistity.Serializers.Json.JsonSerializer;
 using VariableEntryConvertor = Strem.Core.Variables.VariableEntryConvertor;
 
@@ -75,6 +77,9 @@ public class InfrastructureModule : IRequiresApiHostingModule
         services.AddSingleton<IReactiveGlobalHook>(_ => new SimpleReactiveGlobalHook(GlobalHookType.Keyboard));
         services.AddSingleton<IEventSimulator, EventSimulator>();
         services.AddSingleton<IInputHandler, DefaultInputHandler>();
+        
+        // Clipboard
+        services.AddSingleton<IClipboardHandler, ClipboardHandler>();
         
         // UI
         services.AddTransient<INotifier, Notifier>();
