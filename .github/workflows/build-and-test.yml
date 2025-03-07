@@ -6,6 +6,7 @@ env:
 
 jobs:
   build-and-test:
+    name: "Build & Test App"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -56,9 +57,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-windows
-          path: '/dist/Strem-${{ env.BuildVersion }}'
+          path: './dist/Strem-${{ env.BuildVersion }}'
           
   package-and-release:
+    name: "Package App/Libs & Release"
     runs-on: windows-latest
     if: startsWith(github.event.ref, 'refs/tags/')
     needs: [build-and-test]
