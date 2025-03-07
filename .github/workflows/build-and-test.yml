@@ -33,9 +33,7 @@ jobs:
           format: markdown
           indicators: true
       - name: Add Coverage Summary
-        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-      
-      
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY     
       
   package-app-windows:
     name: "Package App - Windows"
@@ -49,14 +47,58 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
-      - name: Create Windows Build
+      - name: Create Build
         shell: pwsh
         run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --platform='win-x64' --zipApp='false' --target='publish-app'
         
-      - name: Publish App Artifact For Windows
+      - name: Publish App Artifact
         uses: actions/upload-artifact@v4
         with:
           name: 'Strem-${{ env.BuildVersion }}-windows'
+          path: './dist/Strem-${{ env.BuildVersion }}'
+          
+  package-app-linux:
+    name: "Package App - Linux"
+    runs-on: windows-latest
+    needs: [ build-and-test ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET 9.0
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Create Build
+        shell: pwsh
+        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --platform='linux-x64' --zipApp='false' --target='publish-app'
+
+      - name: Publish App Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'Strem-${{ env.BuildVersion }}-linux'
+          path: './dist/Strem-${{ env.BuildVersion }}'
+  
+  package-app-osx:
+    name: "Package App - OSX"
+    runs-on: windows-latest
+    needs: [ build-and-test ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET 9.0
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Create Build
+        shell: pwsh
+        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --platform='osx-x64' --zipApp='false' --target='publish-app'
+
+      - name: Publish App Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'Strem-${{ env.BuildVersion }}-osx'
           path: './dist/Strem-${{ env.BuildVersion }}'
           
   package-and-release:
