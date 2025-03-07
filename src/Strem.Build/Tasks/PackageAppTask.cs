@@ -19,7 +19,7 @@ public class PackageAppTask : FrostingTask<BuildContext>
         var publishSettings = new DotNetPublishSettings
         {
             Configuration = "Release",
-            Runtime = "win-x64",
+            Runtime = context.Platform,
             OutputDirectory = outputDirectory,
             SelfContained = true,
             MSBuildSettings = new DotNetMSBuildSettings

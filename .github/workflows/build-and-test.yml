@@ -35,6 +35,29 @@ jobs:
         run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
       
       
+      
+  package-app-windows:
+    name: "Package App - Windows"
+    runs-on: windows-latest
+    needs: [ build-and-test ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET 9.0
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Create Windows Build
+        shell: pwsh
+        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --platform='win-x64' --target='publish'
+        
+      - name: Publish App Artifact For Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-windows
+          path: '/dist/*.zip'
+          
   package-and-release:
     runs-on: windows-latest
     if: startsWith(github.event.ref, 'refs/tags/')
