@@ -65,7 +65,7 @@ jobs:
     runs-on: windows-latest
     steps:      
       - name: "Build Application"
-        uses: .github/actions/build-app
+        uses: ./.github/actions/build-app
         with:
           platform: 'win-x64'
           version: '${{env.BuildVersion}}'
@@ -87,7 +87,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: "Build Application"
-        uses: .github/actions/build-app
+        uses: ./.github/actions/build-app
         with:
           platform: 'linux-x64'
           version: '${{env.BuildVersion}}'
@@ -98,7 +98,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: "Build Application"
-        uses: .github/actions/build-app
+        uses: ./.github/actions/build-app
         with:
           platform: 'linux-x64'
           version: '${{env.BuildVersion}}'
