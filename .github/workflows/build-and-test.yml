@@ -1,4 +1,4 @@
-name: Build And Test
+name: "Build, Test, Publish"
 on: [push]
 
 env:
@@ -33,86 +33,23 @@ jobs:
           format: markdown
           indicators: true
       - name: Add Coverage Summary
-        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY     
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY  
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md
       
-  package-app-windows:
-    name: "Package App - Windows"
-    runs-on: windows-latest
-    needs: [ build-and-test ]
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup .NET 9.0
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 9.0.x
-
-      - name: Create Build
-        shell: pwsh
-        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --platform='win-x64' --zipApp='false' --target='publish-app'
-        
-      - name: Publish App Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'Strem-${{ env.BuildVersion }}-windows'
-          path: './dist/Strem-${{ env.BuildVersion }}'
-          
-  package-app-linux:
-    name: "Package App - Linux"
-    runs-on: windows-latest
-    needs: [ build-and-test ]
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup .NET 9.0
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 9.0.x
-
-      - name: Create Build
-        shell: pwsh
-        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --platform='linux-x64' --zipApp='false' --target='publish-app'
-
-      - name: Publish App Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'Strem-${{ env.BuildVersion }}-linux'
-          path: './dist/Strem-${{ env.BuildVersion }}'
   
-  package-app-osx:
-    name: "Package App - OSX"
+  create-release:
+    name: "Create Release For Tags"
     runs-on: windows-latest
     needs: [ build-and-test ]
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup .NET 9.0
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 9.0.x
-
-      - name: Create Build
-        shell: pwsh
-        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --platform='osx-x64' --zipApp='false' --target='publish-app'
-
-      - name: Publish App Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'Strem-${{ env.BuildVersion }}-osx'
-          path: './dist/Strem-${{ env.BuildVersion }}'
-          
-  package-and-release:
-    name: "Package App/Libs & Release"
-    runs-on: windows-latest
-    if: startsWith(github.event.ref, 'refs/tags/')
-    needs: [build-and-test]
-    steps:
-      - uses: actions/checkout@v3
-      - name: Package App Script
-        shell: pwsh
-        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --target='publish'
       - name: Create Release
         id: create_release
+        if: startsWith(github.event.ref, 'refs/tags/')
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -121,14 +58,26 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Upload App Release
-        uses: alexellis/upload-assets@0.2.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  package-app-windows:
+    name: "Package App - Windows"
+    needs: [ build-and-test, create-release ]
+    uses: ./.github/workflows/build-app.yml
+    with:
+      platform: 'win-x64'
+      
+      
+  winget-release:
+    name: "Update WinGet Release"
+    needs: [package-app-windows]
+    runs-on: windows-latest
+    if: startsWith(github.event.ref, 'refs/tags/')
+    steps:
+      - name: "Get Windows Release Artifact"
+        uses: actions/download-artifact@v4
         with:
-          asset_paths: '["./dist/*.zip"]'
-      - name: Publish To Nuget
-        run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+          name: "Strem-${{ env.BuildVersion }}-win-x64"
+          path: "dist"
       - name: Release To WinGet
         uses: vedantmgoyal9/winget-releaser@main
         with:
@@ -139,3 +88,39 @@ jobs:
           release-tag: ${{ github.ref_name }}
           installers-regex: '\.zip$'
           token: ${{ secrets.WINGET_TOKEN }}
+          
+          
+          
+  package-app-linux:
+    name: "Package App - Linux"
+    needs: [ build-and-test, create-release ]
+    uses: ./.github/workflows/build-app.yml
+    with:
+      platform: 'linux-x64'
+  
+  package-app-osx:
+    name: "Package App - Linux"
+    needs: [ build-and-test, create-release ]
+    uses: ./.github/workflows/build-app.yml
+    with:
+      platform: 'osx-x64'
+          
+          
+  package-libs:
+    name: "Package Libs"
+    runs-on: windows-latest
+    if: startsWith(github.event.ref, 'refs/tags/')
+    needs: [build-and-test]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Package App Script
+        shell: pwsh
+        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --target='publish-libs'
+      - name: Publish Editor Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nuget Packages
+          path: "**/*.nupkg"
+      - name: Publish To Nuget
+        if: startsWith(github.event.ref, 'refs/tags/')
+        run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json

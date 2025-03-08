@@ -1,0 +1,26 @@
+﻿on:
+  workflow_call:
+    inputs:
+      platform:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET 9.0
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Create Build
+        shell: pwsh
+        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --platform='${{ inputs.platform }}' --target='publish-app'
+
+      - name: Publish App Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'Strem-${{ env.BuildVersion }}-${{ inputs.platform }}'
+          path: './dist/Strem-${{ env.BuildVersion }}'

@@ -30,8 +30,7 @@ public class PackageAppTask : FrostingTask<BuildContext>
         context.DotNetPublish(appProject, publishSettings);
         MoveStaticIntoContent(context, outputDirectory);
         
-        if(context.ShouldZipApp)
-        { context.Zip(outputDirectory, $"{outputDirectory}.zip"); }
+        context.Zip(Directories.Dist, $"{outputDirectory}.zip");
     }
 
     public void MoveStaticIntoContent(BuildContext context, string outputDirectory)
