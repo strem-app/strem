@@ -63,7 +63,8 @@ jobs:
     name: "Package App - Windows"
     needs: [ build-and-test, create-release ]
     runs-on: windows-latest
-    steps:      
+    steps:
+      - uses: actions/checkout@v3
       - name: "Build Application"
         uses: ./.github/actions/build-app
         with:
@@ -86,6 +87,7 @@ jobs:
     needs: [ build-and-test, create-release ]
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v3
       - name: "Build Application"
         uses: ./.github/actions/build-app
         with:
@@ -97,6 +99,7 @@ jobs:
     needs: [ build-and-test, create-release ]
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v3
       - name: "Build Application"
         uses: ./.github/actions/build-app
         with:
