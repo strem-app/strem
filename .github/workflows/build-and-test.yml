@@ -103,7 +103,7 @@ jobs:
       - name: "Build Application"
         uses: ./.github/actions/build-app
         with:
-          platform: 'linux-x64'
+          platform: 'osx-x64'
           version: '${{env.BuildVersion}}'
           
           
