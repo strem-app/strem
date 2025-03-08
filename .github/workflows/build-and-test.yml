@@ -62,23 +62,15 @@ jobs:
   package-app-windows:
     name: "Package App - Windows"
     needs: [ build-and-test, create-release ]
-    uses: ./.github/workflows/build-app.yml
-    with:
-      platform: 'win-x64'
-      
-      
-  winget-release:
-    name: "Update WinGet Release"
-    needs: [package-app-windows]
     runs-on: windows-latest
-    if: startsWith(github.event.ref, 'refs/tags/')
-    steps:
-      - name: "Get Windows Release Artifact"
-        uses: actions/download-artifact@v4
+    steps:      
+      - name: "Build Application"
+        uses: .github/actions/build-app
         with:
-          name: "Strem-${{ env.BuildVersion }}-win-x64"
-          path: "dist"
+          platform: 'win-x64'
+          version: '${{env.BuildVersion}}'
       - name: Release To WinGet
+        if: startsWith(github.event.ref, 'refs/tags/')    
         uses: vedantmgoyal9/winget-releaser@main
         with:
           identifier: Strem.App
@@ -89,27 +81,32 @@ jobs:
           installers-regex: '\.zip$'
           token: ${{ secrets.WINGET_TOKEN }}
           
-          
-          
   package-app-linux:
     name: "Package App - Linux"
     needs: [ build-and-test, create-release ]
-    uses: ./.github/workflows/build-app.yml
-    with:
-      platform: 'linux-x64'
+    runs-on: windows-latest
+    steps:
+      - name: "Build Application"
+        uses: .github/actions/build-app
+        with:
+          platform: 'linux-x64'
+          version: '${{env.BuildVersion}}'
   
   package-app-osx:
     name: "Package App - Linux"
     needs: [ build-and-test, create-release ]
-    uses: ./.github/workflows/build-app.yml
-    with:
-      platform: 'osx-x64'
+    runs-on: windows-latest
+    steps:
+      - name: "Build Application"
+        uses: .github/actions/build-app
+        with:
+          platform: 'linux-x64'
+          version: '${{env.BuildVersion}}'
           
           
   package-libs:
     name: "Package Libs"
     runs-on: windows-latest
-    if: startsWith(github.event.ref, 'refs/tags/')
     needs: [build-and-test]
     steps:
       - uses: actions/checkout@v3

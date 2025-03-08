@@ -1,0 +1,29 @@
+﻿name: "Create App Platform Release"
+description: "Creates a release for a given platform (outputs directory & zip in dist)"
+
+inputs:
+  platform:
+    required: true
+    type: string
+  version:
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET 9.0
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 9.0.x
+  
+    - name: Create Build
+      shell: pwsh
+      run: ./build.ps1 --buildNo='${{ inputs.version }}' --platform='${{ inputs.platform }}' --target='publish-app'
+  
+    - name: Publish App Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: 'Strem-${{ inputs.version }}-${{ inputs.platform }}'
+        path: './dist/Strem-${{ inputs.version }}'
