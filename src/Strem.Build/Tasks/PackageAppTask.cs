@@ -19,7 +19,7 @@ public class PackageAppTask : FrostingTask<BuildContext>
         var publishSettings = new DotNetPublishSettings
         {
             Configuration = "Release",
-            Runtime = "win-x64",
+            Runtime = context.Platform,
             OutputDirectory = outputDirectory,
             SelfContained = true,
             MSBuildSettings = new DotNetMSBuildSettings
@@ -29,7 +29,8 @@ public class PackageAppTask : FrostingTask<BuildContext>
         };
         context.DotNetPublish(appProject, publishSettings);
         MoveStaticIntoContent(context, outputDirectory);
-        context.Zip(outputDirectory, $"{outputDirectory}.zip");
+        
+        context.Zip(Directories.Dist, $"{outputDirectory}.zip");
     }
 
     public void MoveStaticIntoContent(BuildContext context, string outputDirectory)

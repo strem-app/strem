@@ -1,4 +1,4 @@
-name: Build And Test
+name: "Build, Test, Publish"
 on: [push]
 
 env:
@@ -6,6 +6,7 @@ env:
 
 jobs:
   build-and-test:
+    name: "Build & Test App"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,20 +33,23 @@ jobs:
           format: markdown
           indicators: true
       - name: Add Coverage Summary
-        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY  
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md
       
-      
-  package-and-release:
+  
+  create-release:
+    name: "Create Release For Tags"
     runs-on: windows-latest
-    if: startsWith(github.event.ref, 'refs/tags/')
-    needs: [build-and-test]
+    needs: [ build-and-test ]
     steps:
-      - uses: actions/checkout@v3
-      - name: Package App Script
-        shell: pwsh
-        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --target='publish'
       - name: Create Release
         id: create_release
+        if: startsWith(github.event.ref, 'refs/tags/')
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,15 +58,27 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Upload App Release
+  
+  package-app-windows:
+    name: "Package App - Windows"
+    needs: [ build-and-test, create-release ]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Build Application"
+        uses: ./.github/actions/build-app
+        with:
+          platform: 'win-x64'
+          version: '${{env.BuildVersion}}'
+      - name: Upload App To Release
+        if: startsWith(github.event.ref, 'refs/tags/')
         uses: alexellis/upload-assets@0.2.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           asset_paths: '["./dist/*.zip"]'
-      - name: Publish To Nuget
-        run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
       - name: Release To WinGet
+        if: startsWith(github.event.ref, 'refs/tags/')    
         uses: vedantmgoyal9/winget-releaser@main
         with:
           identifier: Strem.App
@@ -72,3 +88,59 @@ jobs:
           release-tag: ${{ github.ref_name }}
           installers-regex: '\.zip$'
           token: ${{ secrets.WINGET_TOKEN }}
+          
+  package-app-linux:
+    name: "Package App - Linux"
+    needs: [ build-and-test, create-release ]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Build Application"
+        uses: ./.github/actions/build-app
+        with:
+          platform: 'linux-x64'
+          version: '${{env.BuildVersion}}'
+      - name: Upload App To Release
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: alexellis/upload-assets@0.2.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_paths: '["./dist/*.zip"]'
+  
+  package-app-osx:
+    name: "Package App - Linux"
+    needs: [ build-and-test, create-release ]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Build Application"
+        uses: ./.github/actions/build-app
+        with:
+          platform: 'osx-x64'
+          version: '${{env.BuildVersion}}'
+      - name: Upload App To Release
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: alexellis/upload-assets@0.2.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_paths: '["./dist/*.zip"]'          
+          
+  package-libs:
+    name: "Package Libs"
+    runs-on: windows-latest
+    needs: [build-and-test]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Package App Script
+        shell: pwsh
+        run: ./build.ps1 --buildNo='${{ env.BuildVersion }}' --target='publish-libs'
+      - name: Publish Editor Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nuget Packages
+          path: "**/*.nupkg"
+      - name: Publish To Nuget
+        if: startsWith(github.event.ref, 'refs/tags/')
+        run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json

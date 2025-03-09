@@ -20,22 +20,20 @@ public class BlazorBootstrapper
         var appLauncher = app.MainWindow
             .SetTitle("Strem")
             .SetJavascriptClipboardAccessEnabled(true)
+            .SetFileSystemAccessEnabled(true)
             
 #if DEBUG
             .SetLogVerbosity(3)
+            .SetDevToolsEnabled(true)
 #else
             .SetLogVerbosity(0)
+            .SetDevToolsEnabled(false)
+            .SetContextMenuEnabled(false)
 #endif
             
             .SetSize(1920, 1080)
             .SetUseOsDefaultSize(false)
             .SetIconFile(Path.GetFullPath($"{StremPathHelper.AppPath}/strem.ico"));
-#if DEBUG
-        appLauncher = appLauncher.SetDevToolsEnabled(true);
-#else
-        appLauncher = appLauncher.SetDevToolsEnabled(false);
-        appLauncher = appLauncher.SetContextMenuEnabled(false);
-#endif
     }
 
     public void SetupApp(Action<IServiceCollection> beforeCreated, Func<PhotinoBlazorApp, Task> afterCreated)

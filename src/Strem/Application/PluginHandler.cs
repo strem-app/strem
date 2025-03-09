@@ -10,12 +10,19 @@ using Strem.Flows.Default.Plugins;
 using Strem.Flows.Plugins;
 using Strem.Infrastructure.Plugin;
 using Strem.Infrastructure.Services;
-using Strem.Platforms.Windows.Plugin;
 using Strem.Portals.Plugin;
 using Strem.Todos.Plugin;
 using Strem.Twitch.Plugin;
 using Strem.OBS.Plugin;
 using Strem.StreamElements.Plugin;
+
+#if OS_WINDOWS
+using Strem.Platforms.Windows.Plugin;
+#elif OS_LINUX
+using Strem.Platforms.Linux.Plugin;
+#elif OS_OSX
+using Strem.Platforms.OSX.Plugin;
+#endif
 
 namespace Strem.Application;
 
@@ -46,7 +53,7 @@ public class PluginHandler : IPluginRegistry
         Assembly _;
         _ = typeof(FlowsModule).Assembly;
         _ = typeof(DefaultFlowsModule).Assembly;
-        _ = typeof(WindowsPlatformModule).Assembly;
+        _ = typeof(PlatformModule).Assembly;
         _ = typeof(InfrastructureModule).Assembly;
         _ = typeof(PortalsModule).Assembly;
         _ = typeof(TodoModule).Assembly;

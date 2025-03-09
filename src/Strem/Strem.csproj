@@ -18,7 +18,7 @@
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
         <OutputType>Exe</OutputType>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <OutputType>WinExe</OutputType>
     </PropertyGroup>
 
@@ -31,14 +31,25 @@
     
     <ItemGroup>
         <ProjectReference Include="..\Strem.Infrastructure\Strem.Infrastructure.csproj" />
-        <ProjectReference Include="..\Strem.Platforms.Windows\Strem.Platforms.Windows.csproj" />
         <ProjectReference Include="..\Strem.Portals\Strem.Portals.csproj" />
         <ProjectReference Include="..\Strem.StreamElements\Strem.StreamElements.csproj" />
         <ProjectReference Include="..\Strem.UI\Strem.UI.csproj" />
         <ProjectReference Include="..\Strem.Flows.Default\Strem.Flows.Default.csproj" />
         <ProjectReference Include="..\Strem.Twitch\Strem.Twitch.csproj" />
-        <ProjectReference Include="..\Strem.OBS\Strem.OBS.csproj" />
+        <ProjectReference Include="..\Strem.OBS\Strem.OBS.csproj"  />
     </ItemGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\Strem.Platforms.Windows\Strem.Platforms.Windows.csproj" Condition="'$(RuntimeIdentifier)' == 'win-x64' or '$(RuntimeIdentifier)' == ''"/>
+        <ProjectReference Include="..\Strem.Platforms.Linux\Strem.Platforms.Linux.csproj" Condition="'$(RuntimeIdentifier)' == 'linux-x64'"/>
+        <ProjectReference Include="..\Strem.Platforms.OSX\Strem.Platforms.OSX.csproj" Condition="'$(RuntimeIdentifier)' == 'osx-x64'"/>
+    </ItemGroup>
+
+    <PropertyGroup >
+        <DefineConstants Condition="'$(RuntimeIdentifier)' == 'win-x64' or '$(RuntimeIdentifier)' == ''">OS_WINDOWS</DefineConstants>
+        <DefineConstants Condition="'$(RuntimeIdentifier)' == 'linux-x64'">OS_LINUX</DefineConstants>
+        <DefineConstants Condition="'$(RuntimeIdentifier)' == 'osx-x64'">OS_OSX</DefineConstants>
+    </PropertyGroup>
     
     <ItemGroup>
       <None Update="strem.ico">

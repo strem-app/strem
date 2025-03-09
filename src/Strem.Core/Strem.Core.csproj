@@ -16,6 +16,7 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="SharpHook.Reactive" Version="5.3.8" />
       <PackageReference Include="System.Reactive" Version="6.0.1" />
+      <PackageReference Include="TextCopy" Version="6.2.1" />
     </ItemGroup>
     
 </Project>
