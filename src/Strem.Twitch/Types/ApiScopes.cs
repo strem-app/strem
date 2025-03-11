@@ -5,6 +5,7 @@ public class ApiScopes
     public static readonly string ReadAnalyticsExtensions = "analytics:read:extensions";
     public static readonly string ReadAnalyticsGames = "analytics:read:games";
     public static readonly string ReadBits = "bits:read";
+    public static readonly string ReadCharity = "channel:read:charity";
     public static readonly string RunChannelCommercials = "channel:edit:commercial";
     public static readonly string ManageChannelBroadcast = "channel:manage:broadcast";
     public static readonly string ManageChannelExtensions = "channel:manage:extensions";
