@@ -21,7 +21,7 @@ public class OnTwitchHypeTrainStartTrigger : FlowTrigger<OnTwitchHypeTrainStartT
     public static VariableEntry HypeChannelVariable = new("hypetrain.channel", TwitchVars.Context);
     public static VariableEntry HypeTrainExpiryVariable = new("hypetrain.expiry", TwitchVars.Context);
     
-    public override string Name => "On Twitch Hype Train Starting";
+    public override string Name => "On Twitch Hype Train Started";
     public override string Category => "Twitch";
     public override string Description => "Triggers when a hype train starts";
 

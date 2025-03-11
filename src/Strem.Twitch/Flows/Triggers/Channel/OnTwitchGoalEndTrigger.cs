@@ -26,9 +26,9 @@ public class OnTwitchGoalEndTrigger : FlowTrigger<OnTwitchGoalEndTriggerData>, I
     public static VariableEntry GoalTotalAmountVariable = new("goal.total-amount", TwitchVars.Context);
     public static VariableEntry GoalAchievedVariable = new("goal.achieved", TwitchVars.Context);
     
-    public override string Name => "On Twitch Goal Started";
+    public override string Name => "On Twitch Goal Ended";
     public override string Category => "Twitch";
-    public override string Description => "Triggers when a channel goal starts";
+    public override string Description => "Triggers when a channel goal ends";
 
     public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {
