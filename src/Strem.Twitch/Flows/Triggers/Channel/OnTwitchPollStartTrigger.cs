@@ -45,7 +45,7 @@ public class OnTwitchPollStartTrigger : FlowTrigger<OnTwitchPollStartTriggerData
         TwitchEventSub = twitchEventSub;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadChannelGoals);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadChannelPolls);
 
     public IVariables PopulateVariables(ChannelPollBeginArgs arg)
     {
