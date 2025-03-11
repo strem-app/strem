@@ -30,7 +30,7 @@ public class OnTwitchCheerTrigger : FlowTrigger<OnTwitchCheerTriggerData>, IUses
     public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {
         CheerChannelVariable.ToDescriptor(), CheerUsernameVariable.ToDescriptor(), 
-        CheerAtVariable.ToDescriptor()
+        CheerAtVariable.ToDescriptor(), CheerBitsVariable.ToDescriptor()
     };
 
     public IObservableTwitchEventSub TwitchEventSub { get; set; }

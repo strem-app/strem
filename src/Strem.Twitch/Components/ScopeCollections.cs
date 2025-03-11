@@ -12,7 +12,7 @@ public class ScopeCollections
     {
         ApiScopes.ReadChannelGoals, ApiScopes.ReadBits, ApiScopes.ReadChannelPolls, ApiScopes.ReadChannelPredictions, 
         ApiScopes.ReadChannelRedemptions, ApiScopes.ReadChannelSubscriptions, ApiScopes.ReadChannelVips,
-        ApiScopes.ReadChannelHypeTrain
+        ApiScopes.ReadChannelHypeTrain, ApiScopes.ReadCharity
     };
     
     public static string[] ManageChannelScopes = new[]
