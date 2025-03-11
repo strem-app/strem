@@ -1,19 +1,17 @@
 ﻿using System.Reactive.Linq;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Flows.Processors;
-using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
-using Strem.Core.Types;
 using Strem.Core.Variables;
+using Strem.Flows.Data.Triggers;
+using Strem.Flows.Processors;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
 using TwitchLib.Client.Events;
-using TwitchLib.Client.Models;
 
-namespace Strem.Twitch.Flows.Triggers.Chat;
+namespace Strem.Twitch.Flows.Triggers.Channel;
 
 public class OnTwitchRaidTrigger : FlowTrigger<OnTwitchRaidTriggerData>
 {

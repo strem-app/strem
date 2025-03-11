@@ -1,10 +1,10 @@
 ﻿using Strem.Flows.Data.Triggers;
 
-namespace Strem.Twitch.Flows.Triggers.Chat;
+namespace Strem.Twitch.Flows.Triggers.Subs;
 
-public class OnTwitchGiftSubTriggerData : IFlowTriggerData
+public class OnTwitchNewSubTriggerData : IFlowTriggerData
 {
-    public static readonly string TriggerCode = "on-twitch-gift-sub";
+    public static readonly string TriggerCode = "on-twitch-new-sub";
     public static readonly string TriggerVersion = "1.0.0";
 
     public Guid Id { get; set; } = Guid.NewGuid();

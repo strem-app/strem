@@ -1,10 +1,8 @@
-﻿using Strem.Flows.Data.Triggers;
+﻿namespace Strem.Twitch.Flows.Triggers.Channel;
 
-namespace Strem.Twitch.Flows.Triggers.Chat;
-
-public class OnTwitchSubTriggerData : IFlowTriggerData
+public class OnTwitchRewardRedeemedTriggerData : ITwitchEventSubTriggerData
 {
-    public static readonly string TriggerCode = "on-twitch-sub";
+    public static readonly string TriggerCode = "on-twitch-reward-redeemed";
     public static readonly string TriggerVersion = "1.0.0";
 
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -12,4 +10,5 @@ public class OnTwitchSubTriggerData : IFlowTriggerData
     public string Version { get; set; } = TriggerVersion;
 
     public string RequiredChannel { get; set; }
+    public string RequiredRewardName { get; set; }
 }

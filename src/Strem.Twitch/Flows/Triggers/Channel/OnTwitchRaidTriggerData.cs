@@ -1,6 +1,6 @@
 ﻿using Strem.Flows.Data.Triggers;
 
-namespace Strem.Twitch.Flows.Triggers.Chat;
+namespace Strem.Twitch.Flows.Triggers.Channel;
 
 public class OnTwitchRaidTriggerData : IFlowTriggerData
 {

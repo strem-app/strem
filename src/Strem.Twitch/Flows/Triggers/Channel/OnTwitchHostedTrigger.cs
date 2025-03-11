@@ -1,29 +1,29 @@
 ﻿using System.Reactive.Linq;
 using Strem.Core.Events.Bus;
 using Strem.Core.Extensions;
-using Strem.Flows.Processors;
-using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
 using Strem.Core.Variables;
+using Strem.Flows.Data.Triggers;
+using Strem.Flows.Processors;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
 using TwitchLib.Client.Events;
 
-namespace Strem.Twitch.Flows.Triggers.Chat;
+namespace Strem.Twitch.Flows.Triggers.Channel;
 
-public class OnTwitchHostingTrigger : FlowTrigger<OnTwitchHostingTriggerData>
+public class OnTwitchHostedTrigger : FlowTrigger<OnTwitchHostedTriggerData>
 {
-    public override string Code => OnTwitchHostingTriggerData.TriggerCode;
-    public override string Version => OnTwitchHostingTriggerData.TriggerVersion;
+    public override string Code => OnTwitchHostedTriggerData.TriggerCode;
+    public override string Version => OnTwitchHostedTriggerData.TriggerVersion;
 
     public static VariableEntry HostingChannelVariable = new("hosting.channel", TwitchVars.Context);
     public static VariableEntry HostedChannelVariable = new("hosted.channel", TwitchVars.Context);
     
-    public override string Name => "On Twitch Hosting";
+    public override string Name => "On Twitch Hosted";
     public override string Category => "Twitch";
-    public override string Description => "Triggers when a channel is hosting";
+    public override string Description => "Triggers when a channel is hosted";
 
     public override VariableDescriptor[] VariableOutputs { get; } = new[]
     {
@@ -32,7 +32,7 @@ public class OnTwitchHostingTrigger : FlowTrigger<OnTwitchHostingTriggerData>
 
     public IObservableTwitchClient TwitchClient { get; set; }
     
-    public OnTwitchHostingTrigger(ILogger<FlowTrigger<OnTwitchHostingTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableTwitchClient twitchClient) : base(logger, flowStringProcessor, appState, eventBus)
+    public OnTwitchHostedTrigger(ILogger<FlowTrigger<OnTwitchHostedTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableTwitchClient twitchClient) : base(logger, flowStringProcessor, appState, eventBus)
     {
         TwitchClient = twitchClient;
     }
@@ -47,7 +47,7 @@ public class OnTwitchHostingTrigger : FlowTrigger<OnTwitchHostingTriggerData>
         return flowVars;
     }
 
-    public bool DoesMessageMeetCriteria(OnTwitchHostingTriggerData data, OnNowHostingArgs args)
+    public bool DoesMessageMeetCriteria(OnTwitchHostedTriggerData data, OnNowHostingArgs args)
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
@@ -58,7 +58,7 @@ public class OnTwitchHostingTrigger : FlowTrigger<OnTwitchHostingTriggerData>
         return true;
     }
 
-    public override async Task<IObservable<IVariables>> Execute(OnTwitchHostingTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnTwitchHostedTriggerData data)
     {
         return TwitchClient.OnNowHosting
             .Where(x => DoesMessageMeetCriteria(data, x))

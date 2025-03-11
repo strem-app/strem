@@ -2,7 +2,7 @@
 @using Strem.Core.Types
 @using TwitchLib.Client.Enums
 
-@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Chat.OnTwitchHostedTriggerData>
+@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Channel.OnTwitchHypeTrainStartTriggerData>
 
 <div class="field">
     <label class="label">Required Channel</label>
@@ -17,7 +17,7 @@
     
     public string GenerateTitle()
     {
-        var channelBlurb =  !string.IsNullOrEmpty(Data.RequiredChannel) ? $"To Channel {Data.RequiredChannel}" : "";
-        return $"Trigger On Hosted <strong>{channelBlurb}</strong>";
+        var channelBlurb =  !string.IsNullOrEmpty(Data.RequiredChannel) ? $"On Channel {Data.RequiredChannel}" : "";
+        return $"Trigger On Hype Train Started <strong>{channelBlurb}</strong>";
     }
 }
