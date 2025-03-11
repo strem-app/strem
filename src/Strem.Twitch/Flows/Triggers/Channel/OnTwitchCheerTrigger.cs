@@ -13,10 +13,10 @@ using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
-public class OnTwitchChannelCheerTrigger : FlowTrigger<OnTwitchChannelCheerTriggerData>, IUsesTwitchEventSub<OnTwitchChannelCheerTriggerData>
+public class OnTwitchCheerTrigger : FlowTrigger<OnTwitchCheerTriggerData>, IUsesTwitchEventSub<OnTwitchCheerTriggerData>
 {
-    public override string Code => OnTwitchChannelCheerTriggerData.TriggerCode;
-    public override string Version => OnTwitchChannelCheerTriggerData.TriggerVersion;
+    public override string Code => OnTwitchCheerTriggerData.TriggerCode;
+    public override string Version => OnTwitchCheerTriggerData.TriggerVersion;
 
     public static VariableEntry CheerChannelVariable = new("cheer.channel", TwitchVars.Context);
     public static VariableEntry CheerUsernameVariable = new("cheer.username", TwitchVars.Context);
@@ -35,12 +35,12 @@ public class OnTwitchChannelCheerTrigger : FlowTrigger<OnTwitchChannelCheerTrigg
 
     public IObservableTwitchEventSub TwitchEventSub { get; set; }
     
-    public OnTwitchChannelCheerTrigger(ILogger<FlowTrigger<OnTwitchChannelCheerTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableTwitchEventSub twitchEventSub) : base(logger, flowStringProcessor, appState, eventBus)
+    public OnTwitchCheerTrigger(ILogger<FlowTrigger<OnTwitchCheerTriggerData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, IObservableTwitchEventSub twitchEventSub) : base(logger, flowStringProcessor, appState, eventBus)
     {
         TwitchEventSub = twitchEventSub;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadChannelRedemptions);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadBits);
 
     public IVariables PopulateVariables(ChannelCheerArgs arg)
     {
@@ -52,7 +52,7 @@ public class OnTwitchChannelCheerTrigger : FlowTrigger<OnTwitchChannelCheerTrigg
         return flowVars;
     }
 
-    public bool DoesEventMeetCriteria(OnTwitchChannelCheerTriggerData data, ChannelCheerArgs args)
+    public bool DoesEventMeetCriteria(OnTwitchCheerTriggerData data, ChannelCheerArgs args)
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
@@ -63,7 +63,7 @@ public class OnTwitchChannelCheerTrigger : FlowTrigger<OnTwitchChannelCheerTrigg
         return true;
     }
     
-    public async Task SetupEventSubscriptions(OnTwitchChannelCheerTriggerData data)
+    public async Task SetupEventSubscriptions(OnTwitchCheerTriggerData data)
     {
         var isDefaultChannel = string.IsNullOrEmpty(data.RequiredChannel);
         var channelToUse = isDefaultChannel ? AppState.GetTwitchUsername() : data.RequiredChannel;
@@ -72,7 +72,7 @@ public class OnTwitchChannelCheerTrigger : FlowTrigger<OnTwitchChannelCheerTrigg
         await TwitchEventSub.SubscribeOnChannelIfNeeded(EventSubTypes.ChannelCheer, processedChannel);
     }
 
-    public override async Task<IObservable<IVariables>> Execute(OnTwitchChannelCheerTriggerData data)
+    public override async Task<IObservable<IVariables>> Execute(OnTwitchCheerTriggerData data)
     {
         await SetupEventSubscriptions(data);
         

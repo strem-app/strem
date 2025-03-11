@@ -37,7 +37,7 @@ public class OnTwitchHypeTrainStartTrigger : FlowTrigger<OnTwitchHypeTrainStartT
         TwitchEventSub = twitchEventSub;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadChannelRedemptions);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadChannelHypeTrain);
 
     public IVariables PopulateVariables(ChannelHypeTrainBeginArgs arg)
     {

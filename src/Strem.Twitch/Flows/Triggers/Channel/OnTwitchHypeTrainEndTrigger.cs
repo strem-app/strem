@@ -19,8 +19,8 @@ public class OnTwitchHypeTrainEndTrigger : FlowTrigger<OnTwitchHypeTrainEndTrigg
     public override string Version => OnTwitchHypeTrainEndTriggerData.TriggerVersion;
 
     public static VariableEntry HypeChannelVariable = new("hypetrain.channel", TwitchVars.Context);
-    public static VariableEntry HypeTrainEndedAtVariable = new("hypetrain.endedAt", TwitchVars.Context);
-    public static VariableEntry HypeTrainCooldownEndsAtVariable = new("hypetrain.cooldownEndsAt", TwitchVars.Context);
+    public static VariableEntry HypeTrainEndedAtVariable = new("hypetrain.ended-at", TwitchVars.Context);
+    public static VariableEntry HypeTrainCooldownEndsAtVariable = new("hypetrain.cooldown-ends-at", TwitchVars.Context);
     
     public override string Name => "On Twitch Hype Train Ended";
     public override string Category => "Twitch";
@@ -39,7 +39,7 @@ public class OnTwitchHypeTrainEndTrigger : FlowTrigger<OnTwitchHypeTrainEndTrigg
         TwitchEventSub = twitchEventSub;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadChannelRedemptions);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadChannelHypeTrain);
 
     public IVariables PopulateVariables(ChannelHypeTrainEndArgs arg)
     {

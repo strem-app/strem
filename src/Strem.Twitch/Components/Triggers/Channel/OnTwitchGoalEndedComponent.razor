@@ -2,7 +2,7 @@
 @using Strem.Core.Types
 @using TwitchLib.Client.Enums
 
-@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Channel.OnTwitchCheerTriggerData>
+@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Channel.OnTwitchGoalEndTriggerData>
 
 <div class="field">
     <label class="label">Required Channel</label>
@@ -18,6 +18,6 @@
     public string GenerateTitle()
     {
         var channelBlurb =  !string.IsNullOrEmpty(Data.RequiredChannel) ? $"On Channel {Data.RequiredChannel}" : "";
-        return $"Trigger On Cheer <strong>{channelBlurb}</strong>";
+        return $"Trigger On Goal Ended <strong>{channelBlurb}</strong>";
     }
 }

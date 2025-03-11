@@ -39,7 +39,7 @@ public class OnTwitchChannelFollowedTrigger : FlowTrigger<OnTwitchChannelFollowe
         TwitchEventSub = twitchEventSub;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadChannelRedemptions);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadUsersFollows);
 
     public IVariables PopulateVariables(ChannelFollowArgs arg)
     {
