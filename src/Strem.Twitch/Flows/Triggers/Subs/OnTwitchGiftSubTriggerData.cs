@@ -1,6 +1,6 @@
 ﻿using Strem.Flows.Data.Triggers;
 
-namespace Strem.Twitch.Flows.Triggers.Channel;
+namespace Strem.Twitch.Flows.Triggers.Subs;
 
 public class OnTwitchGiftSubTriggerData : IFlowTriggerData
 {

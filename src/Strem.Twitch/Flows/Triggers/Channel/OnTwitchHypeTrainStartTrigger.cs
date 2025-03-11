@@ -63,8 +63,7 @@ public class OnTwitchHypeTrainStartTrigger : FlowTrigger<OnTwitchHypeTrainStartT
         var channelToUse = isDefaultChannel ? AppState.GetTwitchUsername() : data.RequiredChannel;
         
         var processedChannel = FlowStringProcessor.Process(channelToUse, new Core.Variables.Variables());
-        if (!TwitchEventSub.HasSubscribedTo(EventSubTypes.ChannelHypeTrainBegin, processedChannel))
-        { await TwitchEventSub.SubscribeOnChannel(EventSubTypes.ChannelHypeTrainBegin, processedChannel); }
+        await TwitchEventSub.SubscribeOnChannelIfNeeded(EventSubTypes.ChannelHypeTrainBegin, processedChannel);
     }
 
     public override async Task<IObservable<IVariables>> Execute(OnTwitchHypeTrainStartTriggerData data)

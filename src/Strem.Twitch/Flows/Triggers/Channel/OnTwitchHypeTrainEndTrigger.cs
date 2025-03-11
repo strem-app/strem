@@ -66,8 +66,7 @@ public class OnTwitchHypeTrainEndTrigger : FlowTrigger<OnTwitchHypeTrainEndTrigg
         var channelToUse = isDefaultChannel ? AppState.GetTwitchUsername() : data.RequiredChannel;
         
         var processedChannel = FlowStringProcessor.Process(channelToUse, new Core.Variables.Variables());
-        if (!TwitchEventSub.HasSubscribedTo(EventSubTypes.ChannelHypeTrainBegin, processedChannel))
-        { await TwitchEventSub.SubscribeOnChannel(EventSubTypes.ChannelHypeTrainBegin, processedChannel); }
+        await TwitchEventSub.SubscribeOnChannelIfNeeded(EventSubTypes.ChannelHypeTrainEnd, processedChannel);
     }
 
     public override async Task<IObservable<IVariables>> Execute(OnTwitchHypeTrainEndTriggerData data)

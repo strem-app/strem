@@ -11,7 +11,7 @@ using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
 using TwitchLib.Client.Events;
 
-namespace Strem.Twitch.Flows.Triggers.Channel;
+namespace Strem.Twitch.Flows.Triggers.Subs;
 
 public class OnTwitchGiftSubTrigger : FlowTrigger<OnTwitchGiftSubTriggerData>
 {

@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Components
+@using Strem.Core.Types
+@using TwitchLib.Client.Enums
 
-@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Subs.OnTwitchGiftSubTriggerData>
+@inherits CustomTriggerComponent<Strem.Twitch.Flows.Triggers.Channel.OnTwitchChannelCheerTriggerData>
 
 <div class="field">
     <label class="label">Required Channel</label>
@@ -15,7 +17,7 @@
     
     public string GenerateTitle()
     {
-        var channelBlurb =  !string.IsNullOrEmpty(Data.RequiredChannel) ? $"For Channel {Data.RequiredChannel}" : "";
-        return $"Trigger On Gift Sub <strong>{channelBlurb}</strong>";
+        var channelBlurb =  !string.IsNullOrEmpty(Data.RequiredChannel) ? $"On Channel {Data.RequiredChannel}" : "";
+        return $"Trigger On Cheer <strong>{channelBlurb}</strong>";
     }
 }

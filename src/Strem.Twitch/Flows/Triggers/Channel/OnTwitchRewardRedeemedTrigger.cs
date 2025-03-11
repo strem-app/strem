@@ -72,8 +72,7 @@ public class OnTwitchRewardRedeemedTrigger : FlowTrigger<OnTwitchRewardRedeemedT
         var channelToUse = isDefaultChannel ? AppState.GetTwitchUsername() : data.RequiredChannel;
         
         var processedChannel = FlowStringProcessor.Process(channelToUse, new Core.Variables.Variables());
-        if (!TwitchEventSub.HasSubscribedTo(EventSubTypes.ChannelPointsCustomRewardRedemptionAdd, processedChannel))
-        { await TwitchEventSub.SubscribeOnChannel(EventSubTypes.ChannelPointsCustomRewardRedemptionAdd, processedChannel); }
+        await TwitchEventSub.SubscribeOnChannelIfNeeded(EventSubTypes.ChannelPointsCustomRewardRedemptionAdd, processedChannel);
     }
 
     public override async Task<IObservable<IVariables>> Execute(OnTwitchRewardRedeemedTriggerData data)
