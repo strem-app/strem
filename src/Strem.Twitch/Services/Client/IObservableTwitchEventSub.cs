@@ -1,10 +1,10 @@
 ﻿using System.Reactive;
 using TwitchLib.Api.Interfaces;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Stream;
+using TwitchLib.EventSub.Core.EventArgs.User;
 using TwitchLib.EventSub.Websockets;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Stream;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.User;
 
 namespace Strem.Twitch.Services.Client;
 
@@ -14,13 +14,13 @@ public interface IObservableTwitchEventSub
     ITwitchAPI TwitchApi { get; }
 
     /// <summary>Occurs when [on channel state changed].</summary>
-    IObservable<ChannelHypeTrainEndArgs> OnChannelHypeTrainEnd { get; }
+    IObservable<ChannelHypeTrainEndV2Args> OnChannelHypeTrainEnd { get; }
 
     /// <summary>Occurs when [on chat cleared].</summary>
     IObservable<ChannelUnbanArgs> OnChannelUnban { get; }
 
     /// <summary>Occurs when [on chat color changed].</summary>
-    IObservable<ChannelHypeTrainProgressArgs> OnChannelHypeTrainProgress { get; }
+    IObservable<ChannelHypeTrainProgressV2Args> OnChannelHypeTrainProgress { get; }
 
     /// <summary>Occurs when [on chat command received].</summary>
     IObservable<ChannelPointsCustomRewardArgs> OnChannelPointsCustomRewardAdd { get; }
@@ -134,7 +134,7 @@ public interface IObservableTwitchEventSub
     /// <summary>
     /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
     /// </summary>
-    IObservable<ChannelHypeTrainBeginArgs> OnChannelHypeTrainBegin { get; }
+    IObservable<ChannelHypeTrainBeginV2Args> OnChannelHypeTrainBegin { get; }
 
     bool IsConnected { get; }
     IReadOnlyDictionary<string, List<string>> Subscriptions { get; }

@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Subs;
 
@@ -44,9 +44,9 @@ public class OnTwitchChannelFollowedTrigger : FlowTrigger<OnTwitchChannelFollowe
     public IVariables PopulateVariables(ChannelFollowArgs arg)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(FollowChannelVariable, arg.Notification.Payload.Event.BroadcasterUserName);
-        flowVars.Set(FollowUsernameVariable, arg.Notification.Payload.Event.UserName);
-        flowVars.Set(FollowAtVariable, arg.Notification.Payload.Event.FollowedAt);
+        flowVars.Set(FollowChannelVariable, arg.Payload.Event.BroadcasterUserName);
+        flowVars.Set(FollowUsernameVariable, arg.Payload.Event.UserName);
+        flowVars.Set(FollowAtVariable, arg.Payload.Event.FollowedAt);
         return flowVars;
     }
 
@@ -54,7 +54,7 @@ public class OnTwitchChannelFollowedTrigger : FlowTrigger<OnTwitchChannelFollowe
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         

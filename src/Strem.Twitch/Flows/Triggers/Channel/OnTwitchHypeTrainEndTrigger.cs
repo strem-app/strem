@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
@@ -41,20 +41,20 @@ public class OnTwitchHypeTrainEndTrigger : FlowTrigger<OnTwitchHypeTrainEndTrigg
 
     public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ReadChannelHypeTrain);
 
-    public IVariables PopulateVariables(ChannelHypeTrainEndArgs arg)
+    public IVariables PopulateVariables(ChannelHypeTrainEndV2Args arg)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(HypeChannelVariable, arg.Notification.Payload.Event.BroadcasterUserName);
-        flowVars.Set(HypeTrainEndedAtVariable, arg.Notification.Payload.Event.EndedAt);
-        flowVars.Set(HypeTrainCooldownEndsAtVariable, arg.Notification.Payload.Event.CooldownEndsAt);
+        flowVars.Set(HypeChannelVariable, arg.Payload.Event.BroadcasterUserName);
+        flowVars.Set(HypeTrainEndedAtVariable, arg.Payload.Event.EndedAt);
+        flowVars.Set(HypeTrainCooldownEndsAtVariable, arg.Payload.Event.CooldownEndsAt);
         return flowVars;
     }
 
-    public bool DoesEventMeetCriteria(OnTwitchHypeTrainEndTriggerData data, ChannelHypeTrainEndArgs args)
+    public bool DoesEventMeetCriteria(OnTwitchHypeTrainEndTriggerData data, ChannelHypeTrainEndV2Args args)
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         return true;

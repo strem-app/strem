@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
@@ -45,10 +45,10 @@ public class OnTwitchRewardRedeemedTrigger : FlowTrigger<OnTwitchRewardRedeemedT
     public IVariables PopulateVariables(ChannelPointsCustomRewardRedemptionArgs arg)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(RewardChannelVariable, arg.Notification.Payload.Event.BroadcasterUserName);
-        flowVars.Set(RewardUsernameVariable, arg.Notification.Payload.Event.UserName);
-        flowVars.Set(RewardNameVariable, arg.Notification.Payload.Event.Reward.Title);
-        flowVars.Set(RewardIdVariable, arg.Notification.Payload.Event.Reward.Id);
+        flowVars.Set(RewardChannelVariable, arg.Payload.Event.BroadcasterUserName);
+        flowVars.Set(RewardUsernameVariable, arg.Payload.Event.UserName);
+        flowVars.Set(RewardNameVariable, arg.Payload.Event.Reward.Title);
+        flowVars.Set(RewardIdVariable, arg.Payload.Event.Reward.Id);
         return flowVars;
     }
 
@@ -56,12 +56,12 @@ public class OnTwitchRewardRedeemedTrigger : FlowTrigger<OnTwitchRewardRedeemedT
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         
         if(!string.IsNullOrEmpty(data.RequiredRewardName))
-        { return string.Equals(args.Notification.Payload.Event.Reward.Title, data.RequiredRewardName, StringComparison.OrdinalIgnoreCase); }
+        { return string.Equals(args.Payload.Event.Reward.Title, data.RequiredRewardName, StringComparison.OrdinalIgnoreCase); }
 
         return true;
     }

@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
@@ -45,10 +45,10 @@ public class OnTwitchCheerTrigger : FlowTrigger<OnTwitchCheerTriggerData>, IUses
     public IVariables PopulateVariables(ChannelCheerArgs arg)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(CheerChannelVariable, arg.Notification.Payload.Event.BroadcasterUserName);
-        flowVars.Set(CheerUsernameVariable, arg.Notification.Payload.Event.UserName ?? "Anon");
+        flowVars.Set(CheerChannelVariable, arg.Payload.Event.BroadcasterUserName);
+        flowVars.Set(CheerUsernameVariable, arg.Payload.Event.UserName ?? "Anon");
         flowVars.Set(CheerAtVariable, DateTime.Now);
-        flowVars.Set(CheerBitsVariable, arg.Notification.Payload.Event.Bits);
+        flowVars.Set(CheerBitsVariable, arg.Payload.Event.Bits);
         return flowVars;
     }
 
@@ -56,7 +56,7 @@ public class OnTwitchCheerTrigger : FlowTrigger<OnTwitchCheerTriggerData>, IUses
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         

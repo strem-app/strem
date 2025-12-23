@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
@@ -45,10 +45,10 @@ public class OnTwitchGoalStartTrigger : FlowTrigger<OnTwitchGoalStartTriggerData
     public IVariables PopulateVariables(ChannelGoalBeginArgs arg)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(GoalChannelVariable, arg.Notification.Payload.Event.BroadcasterUserName);
-        flowVars.Set(GoalTypeVariable, arg.Notification.Payload.Event.Type);
-        flowVars.Set(GoalStartedAtVariable, arg.Notification.Payload.Event.StartedAt);
-        flowVars.Set(GoalTotalAmountVariable, arg.Notification.Payload.Event.TargetAmount);
+        flowVars.Set(GoalChannelVariable, arg.Payload.Event.BroadcasterUserName);
+        flowVars.Set(GoalTypeVariable, arg.Payload.Event.Type);
+        flowVars.Set(GoalStartedAtVariable, arg.Payload.Event.StartedAt);
+        flowVars.Set(GoalTotalAmountVariable, arg.Payload.Event.TargetAmount);
         return flowVars;
     }
 
@@ -56,7 +56,7 @@ public class OnTwitchGoalStartTrigger : FlowTrigger<OnTwitchGoalStartTriggerData
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         

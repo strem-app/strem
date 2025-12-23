@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
@@ -50,13 +50,13 @@ public class OnTwitchPollStartTrigger : FlowTrigger<OnTwitchPollStartTriggerData
     public IVariables PopulateVariables(ChannelPollBeginArgs arg)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(PollChannelVariable, arg.Notification.Payload.Event.BroadcasterUserName);
-        flowVars.Set(PollTitleVariable, arg.Notification.Payload.Event.Title);
-        flowVars.Set(PollStartedAtVariable, arg.Notification.Payload.Event.StartedAt);
-        flowVars.Set(PollEndsAtVariable, arg.Notification.Payload.Event.EndsAt);
-        flowVars.Set(PollChoicesVariable, string.Join(",", arg.Notification.Payload.Event.Choices.Select(x => x.Title)));
-        flowVars.Set(PollBitsPerVoteVariable, arg.Notification.Payload.Event.BitsVoting.AmountPerVote);
-        flowVars.Set(PollChannelPointsPerVoteVariable, arg.Notification.Payload.Event.ChannelPointsVoting.AmountPerVote);
+        flowVars.Set(PollChannelVariable, arg.Payload.Event.BroadcasterUserName);
+        flowVars.Set(PollTitleVariable, arg.Payload.Event.Title);
+        flowVars.Set(PollStartedAtVariable, arg.Payload.Event.StartedAt);
+        flowVars.Set(PollEndsAtVariable, arg.Payload.Event.EndsAt);
+        flowVars.Set(PollChoicesVariable, string.Join(",", arg.Payload.Event.Choices.Select(x => x.Title)));
+        flowVars.Set(PollBitsPerVoteVariable, arg.Payload.Event.BitsVoting.AmountPerVote);
+        flowVars.Set(PollChannelPointsPerVoteVariable, arg.Payload.Event.ChannelPointsVoting.AmountPerVote);
         return flowVars;
     }
 
@@ -64,7 +64,7 @@ public class OnTwitchPollStartTrigger : FlowTrigger<OnTwitchPollStartTriggerData
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         

@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
@@ -47,11 +47,11 @@ public class OnTwitchPredictionStartTrigger : FlowTrigger<OnTwitchPredictionStar
     public IVariables PopulateVariables(ChannelPredictionBeginArgs arg)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(PredictionChannelVariable, arg.Notification.Payload.Event.BroadcasterUserName);
-        flowVars.Set(PredictionTitleVariable, arg.Notification.Payload.Event.Title);
-        flowVars.Set(PredictionStartedAtVariable, arg.Notification.Payload.Event.StartedAt);
-        flowVars.Set(PredictionEndsAtVariable, arg.Notification.Payload.Event.LocksAt);
-        flowVars.Set(PredictionChoicesVariable, string.Join(",", arg.Notification.Payload.Event.Outcomes.Select(x => x.Title)));
+        flowVars.Set(PredictionChannelVariable, arg.Payload.Event.BroadcasterUserName);
+        flowVars.Set(PredictionTitleVariable, arg.Payload.Event.Title);
+        flowVars.Set(PredictionStartedAtVariable, arg.Payload.Event.StartedAt);
+        flowVars.Set(PredictionEndsAtVariable, arg.Payload.Event.LocksAt);
+        flowVars.Set(PredictionChoicesVariable, string.Join(",", arg.Payload.Event.Outcomes.Select(x => x.Title)));
         return flowVars;
     }
 
@@ -59,7 +59,7 @@ public class OnTwitchPredictionStartTrigger : FlowTrigger<OnTwitchPredictionStar
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         

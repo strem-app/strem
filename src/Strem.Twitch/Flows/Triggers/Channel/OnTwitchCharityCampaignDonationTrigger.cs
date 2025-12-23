@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
@@ -48,7 +48,7 @@ public class OnTwitchCharityCampaignDonationTrigger : FlowTrigger<OnTwitchCharit
     public IVariables PopulateVariables(ChannelCharityCampaignDonateArgs arg)
     {
         var flowVars = new Core.Variables.Variables();
-        var eventData = arg.Notification.Payload.Event;
+        var eventData = arg.Payload.Event;
         flowVars.Set(DonationChannelVariable, eventData.BroadcasterName);
         flowVars.Set(DonationCharityNameVariable, eventData.CharityName);
         flowVars.Set(DonationUsernameVariable, eventData.UserName);
@@ -56,7 +56,7 @@ public class OnTwitchCharityCampaignDonationTrigger : FlowTrigger<OnTwitchCharit
         flowVars.Set(DonationCampaignIdVariable, eventData.CampaignId);
 
         var majorCurrency = eventData.Amount.Value.ProcessTwitchCurrency(eventData.Amount.DecimalPlaces);
-        var donationAmount = $"{majorCurrency} {arg.Notification.Payload.Event.Amount.Currency}";
+        var donationAmount = $"{majorCurrency} {arg.Payload.Event.Amount.Currency}";
         flowVars.Set(DonationAmountVariable, donationAmount);
         return flowVars;
     }
@@ -65,7 +65,7 @@ public class OnTwitchCharityCampaignDonationTrigger : FlowTrigger<OnTwitchCharit
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         
@@ -87,6 +87,6 @@ public class OnTwitchCharityCampaignDonationTrigger : FlowTrigger<OnTwitchCharit
         
         return TwitchEventSub.OnChannelCharityCampaignDonate
             .Where(x => DoesEventMeetCriteria(data, x))
-            .Select(PopulateVariables);
+            .Select(x => PopulateVariables(x));
     }
 }

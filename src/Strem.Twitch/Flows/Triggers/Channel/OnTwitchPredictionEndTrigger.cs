@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
@@ -50,15 +50,15 @@ public class OnTwitchPredictionEndTrigger : FlowTrigger<OnTwitchPredictionEndTri
     public IVariables PopulateVariables(ChannelPredictionEndArgs arg)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(PredictionChannelVariable, arg.Notification.Payload.Event.BroadcasterUserName);
-        flowVars.Set(PredictionTitleVariable, arg.Notification.Payload.Event.Title);
-        flowVars.Set(PredictionStartedAtVariable, arg.Notification.Payload.Event.StartedAt);
-        flowVars.Set(PredictionEndedAtVariable, arg.Notification.Payload.Event.EndedAt);
-        flowVars.Set(PredictionChoicesVariable, string.Join(",", arg.Notification.Payload.Event.Outcomes.Select(x => x.Title)));
-        flowVars.Set(PredictionWinningIdVariable, arg.Notification.Payload.Event.WinningOutcomeId);
+        flowVars.Set(PredictionChannelVariable, arg.Payload.Event.BroadcasterUserName);
+        flowVars.Set(PredictionTitleVariable, arg.Payload.Event.Title);
+        flowVars.Set(PredictionStartedAtVariable, arg.Payload.Event.StartedAt);
+        flowVars.Set(PredictionEndedAtVariable, arg.Payload.Event.EndedAt);
+        flowVars.Set(PredictionChoicesVariable, string.Join(",", arg.Payload.Event.Outcomes.Select(x => x.Title)));
+        flowVars.Set(PredictionWinningIdVariable, arg.Payload.Event.WinningOutcomeId);
 
-        var winningOutcome = arg.Notification.Payload.Event.Outcomes
-            .SingleOrDefault(x => x.Id == arg.Notification.Payload.Event.WinningOutcomeId);
+        var winningOutcome = arg.Payload.Event.Outcomes
+            .SingleOrDefault(x => x.Id == arg.Payload.Event.WinningOutcomeId);
         flowVars.Set(PredictionWinningTextVariable, winningOutcome?.Title ?? "Unknown Outcome");
         return flowVars;
     }
@@ -67,7 +67,7 @@ public class OnTwitchPredictionEndTrigger : FlowTrigger<OnTwitchPredictionEndTri
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         

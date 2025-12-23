@@ -9,7 +9,7 @@ using Strem.Twitch.Extensions;
 using Strem.Twitch.Services.Client;
 using Strem.Twitch.Types;
 using Strem.Twitch.Variables;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace Strem.Twitch.Flows.Triggers.Channel;
 
@@ -50,13 +50,13 @@ public class OnTwitchGoalEndTrigger : FlowTrigger<OnTwitchGoalEndTriggerData>, I
     public IVariables PopulateVariables(ChannelGoalEndArgs arg)
     {
         var flowVars = new Core.Variables.Variables();
-        flowVars.Set(GoalChannelVariable, arg.Notification.Payload.Event.BroadcasterUserName);
-        flowVars.Set(GoalTypeVariable, arg.Notification.Payload.Event.Type);
-        flowVars.Set(GoalStartedAtVariable, arg.Notification.Payload.Event.StartedAt);
-        flowVars.Set(GoalEndedAtVariable, arg.Notification.Payload.Event.EndedAt);
-        flowVars.Set(GoalCurrentAmountVariable, arg.Notification.Payload.Event.CurrentAmount);
-        flowVars.Set(GoalTotalAmountVariable, arg.Notification.Payload.Event.TargetAmount);
-        flowVars.Set(GoalAchievedVariable, arg.Notification.Payload.Event.IsAchieved);
+        flowVars.Set(GoalChannelVariable, arg.Payload.Event.BroadcasterUserName);
+        flowVars.Set(GoalTypeVariable, arg.Payload.Event.Type);
+        flowVars.Set(GoalStartedAtVariable, arg.Payload.Event.StartedAt);
+        flowVars.Set(GoalEndedAtVariable, arg.Payload.Event.EndedAt);
+        flowVars.Set(GoalCurrentAmountVariable, arg.Payload.Event.CurrentAmount);
+        flowVars.Set(GoalTotalAmountVariable, arg.Payload.Event.TargetAmount);
+        flowVars.Set(GoalAchievedVariable, arg.Payload.Event.IsAchieved);
         return flowVars;
     }
 
@@ -64,7 +64,7 @@ public class OnTwitchGoalEndTrigger : FlowTrigger<OnTwitchGoalEndTriggerData>, I
     {
         if (!string.IsNullOrEmpty(data.RequiredChannel))
         {
-            if(!data.RequiredChannel.Equals(args.Notification.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
+            if(!data.RequiredChannel.Equals(args.Payload.Event.BroadcasterUserName, StringComparison.OrdinalIgnoreCase))
             { return false; }
         }
         

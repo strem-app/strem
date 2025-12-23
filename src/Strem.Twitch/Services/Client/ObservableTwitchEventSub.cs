@@ -6,13 +6,12 @@ using Strem.Twitch.Extensions;
 using TwitchLib.Api.Core.Enums;
 using TwitchLib.Api.Interfaces;
 using TwitchLib.EventSub.Core;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Stream;
+using TwitchLib.EventSub.Core.EventArgs.User;
 using TwitchLib.EventSub.Websockets;
 using TwitchLib.EventSub.Websockets.Client;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Stream;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.User;
-using TwitchLib.PubSub.Models.Responses.Messages.AutomodCaughtMessage;
 
 namespace Strem.Twitch.Services.Client;
 
@@ -27,13 +26,13 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
     public IReadOnlyDictionary<string, List<string>> Subscriptions => _subscriptions;
     
     /// <summary>Occurs when [on channel state changed].</summary>
-    public IObservable<ChannelHypeTrainEndArgs> OnChannelHypeTrainEnd { get; private set; }
+    public IObservable<ChannelHypeTrainEndV2Args> OnChannelHypeTrainEnd { get; private set; }
 
     /// <summary>Occurs when [on chat cleared].</summary>
     public IObservable<ChannelUnbanArgs> OnChannelUnban { get; private set; }
 
     /// <summary>Occurs when [on chat color changed].</summary>
-    public IObservable<ChannelHypeTrainProgressArgs> OnChannelHypeTrainProgress { get; private set; }
+    public IObservable<ChannelHypeTrainProgressV2Args> OnChannelHypeTrainProgress { get; private set; }
 
     /// <summary>Occurs when [on chat command received].</summary>
     public IObservable<ChannelPointsCustomRewardArgs> OnChannelPointsCustomRewardAdd { get; private set; }
@@ -147,7 +146,7 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
     /// <summary>
     /// Occurs when chatting in a channel that the user is banned in bcs of an already banned alias with the same Email
     /// </summary>
-    public IObservable<ChannelHypeTrainBeginArgs> OnChannelHypeTrainBegin { get; private set; }
+    public IObservable<ChannelHypeTrainBeginV2Args> OnChannelHypeTrainBegin { get; private set; }
 
     private FieldInfo _webSocketFieldInfo;
 
@@ -170,7 +169,7 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
             h => Client.WebsocketConnected += h,
             h => Client.WebsocketConnected -= h);
         
-        OnDisconnected = Observable.FromEvent<AsyncEventHandler, Unit>(
+        OnDisconnected = Observable.FromEvent<AsyncEventHandler<WebsocketDisconnectedArgs>, Unit>(
             h => async (_, args) => h(Unit.Default),
             h => Client.WebsocketDisconnected += h,
             h => Client.WebsocketDisconnected -= h);
@@ -180,7 +179,7 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
             h => Client.ErrorOccurred += h,
             h => Client.ErrorOccurred -= h);
         
-        OnReconnected = Observable.FromEvent<AsyncEventHandler, Unit>(
+        OnReconnected = Observable.FromEvent<AsyncEventHandler<WebsocketReconnectedArgs>, Unit>(
             h => async (_, args) => h(Unit.Default),
             h => Client.WebsocketReconnected += h,
             h => Client.WebsocketReconnected -= h);
@@ -315,20 +314,20 @@ public class ObservableTwitchEventSub : IObservableTwitchEventSub
             h => Client.ChannelCharityCampaignDonate += h,
             h => Client.ChannelCharityCampaignDonate -= h);  
         
-        OnChannelHypeTrainBegin = Observable.FromEvent<AsyncEventHandler<ChannelHypeTrainBeginArgs>, ChannelHypeTrainBeginArgs>(
+        OnChannelHypeTrainBegin = Observable.FromEvent<AsyncEventHandler<ChannelHypeTrainBeginV2Args>, ChannelHypeTrainBeginV2Args>(
             h => async (_, args) => h(args),
-            h => Client.ChannelHypeTrainBegin += h,
-            h => Client.ChannelHypeTrainBegin -= h);  
+            h => Client.ChannelHypeTrainBeginV2 += h,
+            h => Client.ChannelHypeTrainBeginV2 -= h);  
         
-        OnChannelHypeTrainEnd = Observable.FromEvent<AsyncEventHandler<ChannelHypeTrainEndArgs>, ChannelHypeTrainEndArgs>(
+        OnChannelHypeTrainEnd = Observable.FromEvent<AsyncEventHandler<ChannelHypeTrainEndV2Args>, ChannelHypeTrainEndV2Args>(
             h => async (_, args) => h(args),
-            h => Client.ChannelHypeTrainEnd += h,
-            h => Client.ChannelHypeTrainEnd -= h);  
+            h => Client.ChannelHypeTrainEndV2 += h,
+            h => Client.ChannelHypeTrainEndV2 -= h);  
         
-        OnChannelHypeTrainProgress = Observable.FromEvent<AsyncEventHandler<ChannelHypeTrainProgressArgs>, ChannelHypeTrainProgressArgs>(
+        OnChannelHypeTrainProgress = Observable.FromEvent<AsyncEventHandler<ChannelHypeTrainProgressV2Args>, ChannelHypeTrainProgressV2Args>(
             h => async (_, args) => h(args),
-            h => Client.ChannelHypeTrainProgress += h,
-            h => Client.ChannelHypeTrainProgress -= h);  
+            h => Client.ChannelHypeTrainProgressV2 += h,
+            h => Client.ChannelHypeTrainProgressV2 -= h);  
         
         OnChannelPointsCustomRewardAdd = Observable.FromEvent<AsyncEventHandler<ChannelPointsCustomRewardArgs>, ChannelPointsCustomRewardArgs>(
             h => async (_, args) => h(args),
