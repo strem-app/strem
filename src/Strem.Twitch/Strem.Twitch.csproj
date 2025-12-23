@@ -14,7 +14,7 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="RestSharp" Version="113.0.0" />
       <PackageReference Include="System.Reactive" Version="6.1.0" />
-      <PackageReference Include="TwitchLib.Api" Version="3.9.0" />
+      <PackageReference Include="TwitchLib.Api" Version="3.10.2" />
       <PackageReference Include="TwitchLib.Client" Version="3.3.1" />
       <PackageReference Include="TwitchLib.EventSub.Websockets" Version="0.5.0" />
       <PackageReference Include="TwitchLib.PubSub" Version="3.2.6" />
