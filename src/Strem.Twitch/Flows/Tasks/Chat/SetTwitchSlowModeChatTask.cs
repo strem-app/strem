@@ -9,6 +9,9 @@ using Strem.Core.Variables;
 using Strem.Flows.Extensions;
 using Strem.Twitch.Extensions;
 using Strem.Twitch.Types;
+using TwitchLib.Api.Helix.Models.Chat.ChatSettings;
+using TwitchLib.Api.Interfaces;
+using TwitchLib.Client;
 using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Interfaces;
 
@@ -23,14 +26,14 @@ public class SetTwitchSlowModeChatTask : FlowTask<SetTwitchSlowModeChatTaskData>
     public override string Category => "Twitch";
     public override string Description => "Enables or Disables slow mode on chat for a channel";
 
-    public ITwitchClient TwitchClient { get; }
+    public ITwitchAPI TwitchApi { get; }
 
-    public SetTwitchSlowModeChatTask(ILogger<FlowTask<SetTwitchSlowModeChatTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, ITwitchClient twitchClient) : base(logger, flowStringProcessor, appState, eventBus)
+    public SetTwitchSlowModeChatTask(ILogger<FlowTask<SetTwitchSlowModeChatTaskData>> logger, IFlowStringProcessor flowStringProcessor, IAppState appState, IEventBus eventBus, ITwitchAPI twitchApi) : base(logger, flowStringProcessor, appState, eventBus)
     {
-        TwitchClient = twitchClient;
+        TwitchApi = twitchApi;
     }
 
-    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ChatScopes.ModerateChannel);
+    public override bool CanExecute() => AppState.HasTwitchAccessToken() && AppState.HasTwitchScope(ApiScopes.ManageModerationChatSettings);
 
     public override async Task<ExecutionResult> Execute(SetTwitchSlowModeChatTaskData data, IVariables flowVars)
     {
@@ -43,13 +46,16 @@ public class SetTwitchSlowModeChatTask : FlowTask<SetTwitchSlowModeChatTaskData>
             timeValue = 1;
             hadIssue = true;
         }
-
-        var timeout = data.TimeoutUnit.ToTimeSpan(timeValue);
         
-        if(data.SetSlowMode)
-        { TwitchClient.SlowModeOn(processedChannel, timeout); }
-        else
-        { TwitchClient.SlowModeOff(processedChannel); }
+        var destinationUserId = await TwitchApi.GetUserIdFromName(processedChannel);
+        if (destinationUserId is null)
+        { return ExecutionResult.Failed($"Couldnt Find UserId For Channel [{ processedChannel }]"); }
+
+        var userId = AppState.GetTwitchUserId();
+        var newChatSettings = new ChatSettings() { SlowMode = data.SetSlowMode, SlowModeWaitTime = timeValue};
+
+        try { await TwitchApi.Helix.Chat.UpdateChatSettingsAsync(destinationUserId, userId, newChatSettings); }
+        catch (Exception e) { return ExecutionResult.Failed($"Unable to set slow mode only chat: {e.Message}"); }
         
         return hadIssue ? ExecutionResult.FailedButContinue("Couldnt process number correctly, defaulted to 1") : ExecutionResult.Success();
     }

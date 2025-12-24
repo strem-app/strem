@@ -87,7 +87,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         return true;
     }
 
-    public void JoinChannelIfNeeded(OnTwitchChatMessageTriggerData data)
+    public async Task JoinChannelIfNeeded(OnTwitchChatMessageTriggerData data)
     {
         var isDefaultChannel = string.IsNullOrEmpty(data.Channel);
         if(isDefaultChannel){ return; }
@@ -95,7 +95,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
         var processedChannel = FlowStringProcessor.Process(data.Channel ?? string.Empty, new Core.Variables.Variables());
         if (!TwitchClient.Client.HasJoinedChannel(processedChannel))
         {
-            TwitchClient.Client.JoinChannel(processedChannel);
+            await TwitchClient.Client.JoinChannelAsync(processedChannel);
             Logger.Information($"[{data.Code}:{data.Id}] has joined twitch channel: {processedChannel}");
         }
     }
@@ -104,8 +104,8 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
     {
         if(!DoesChannelMatch(data, message)){ return false; }        
         if(!IsUserAboveMinimumRequired(data.MinimumUserType, message.UserType)) { return false; }
-        if(data.IsVip && !message.IsVip) { return false; }
-        if(data.IsSubscriber && !message.IsSubscriber) { return false; }
+        if(data.IsVip && !message.UserDetail.IsVip) { return false; }
+        if(data.IsSubscriber && !message.UserDetail.IsSubscriber) { return false; }
         if(data.HasBits && message.Bits <= 0) { return false; }
         if(data.HasChannelReward && string.IsNullOrEmpty(message.CustomRewardId)) { return false; }
         if (!DoesMessageTextMeetRequirements(data.MatchType, data.MatchText, message.Message)) { return false; }
@@ -115,7 +115,7 @@ public class OnTwitchChatMessageTrigger : FlowTrigger<OnTwitchChatMessageTrigger
 
     public override async Task<IObservable<IVariables>> Execute(OnTwitchChatMessageTriggerData data)
     {
-        JoinChannelIfNeeded(data);
+        await JoinChannelIfNeeded(data);
         
         return TwitchClient.OnMessageReceived
             .Where(x => DoesMessageMeetCriteria(data, x.ChatMessage))

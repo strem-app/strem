@@ -93,7 +93,7 @@ public class SendTwitchChatMessageTaskTests
         var task = new SendTwitchChatMessageTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
         await task.Execute(taskData, flowVars);
         
-        mockTwitchClient.Verify(x => x.SendMessage(expectedChannel, expectedString, false), Times.Once());
+        mockTwitchClient.Verify(x => x.SendMessageAsync(expectedChannel, expectedString, false), Times.Once());
     }
     
      
@@ -129,6 +129,6 @@ public class SendTwitchChatMessageTaskTests
         var task = new SendTwitchChatMessageTask(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
         await task.Execute(taskData, flowVars);
         
-        mockTwitchClient.Verify(x => x.SendMessage(expectedChannel, expectedMessage, false), Times.Once());
+        mockTwitchClient.Verify(x => x.SendMessageAsync(expectedChannel, expectedMessage, false), Times.Once());
     }
 }

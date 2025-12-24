@@ -6,7 +6,7 @@ public class ScopeCollections
 {
     public static string[] ReadChatScopes = new[] { ChatScopes.ReadChat, ChatScopes.ReadWhispers };
     
-    public static string[] ManageChatScopes = new[] { ChatScopes.SendChat, ChatScopes.SendWhisper, ChatScopes.ModerateChannel };
+    public static string[] ManageChatScopes = new[] { ChatScopes.SendChat };
     
     public static string[] ReadChannelScopes = new[]
     {

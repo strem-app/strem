@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Strem.Core.Events.Bus;
-using Strem.Core.Extensions;
 using Strem.Flows.Processors;
 using Strem.Flows.Data.Triggers;
 using Strem.Core.State;
@@ -16,12 +15,17 @@ using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
-using TwitchLib.Client.Models.Builders;
 
 namespace Strem.UnitTests.Twitch.Triggers;
 
 public class OnTwitchChatMessageTriggerTests
 {
+    public ChatMessage CreateMessageForChannel(string expectedChannel)
+    {
+        return new ChatMessage("", "", "", "", "", null, "", UserType.Viewer, expectedChannel, "", 0, "",
+            false, false, Noisy.NotSet, "", "", null, null, 0, 0, new UserDetail());
+    }
+    
     [Fact]
     public void should_not_trigger_when_no_oauth_token_is_available()
     {
@@ -109,7 +113,7 @@ public class OnTwitchChatMessageTriggerTests
 
         var wasCalled = false;
         var sub = observable.Subscribe(x => wasCalled = true);
-        onChatMessageSubject.OnNext(new OnMessageReceivedArgs { ChatMessage = ChatMessageBuilder.Create().WithChannel(expectedChannel).Build() });
+        onChatMessageSubject.OnNext(new OnMessageReceivedArgs(CreateMessageForChannel(expectedChannel)));
         
         Assert.True(wasCalled);
     }
@@ -140,7 +144,7 @@ public class OnTwitchChatMessageTriggerTests
 
         var wasCalled = false;
         var sub = observable.Subscribe(x => wasCalled = true);
-        onChatMessageSubject.OnNext(new OnMessageReceivedArgs { ChatMessage = ChatMessageBuilder.Create().WithChannel(expectedChannel).Build() });
+        onChatMessageSubject.OnNext(new OnMessageReceivedArgs(CreateMessageForChannel(expectedChannel)));
         
         Assert.False(wasCalled);
     }
@@ -167,7 +171,7 @@ public class OnTwitchChatMessageTriggerTests
             .Returns(expectedChannel);
         
         var trigger = new OnTwitchChatMessageTrigger(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
-        var meetsCriteria = trigger.DoesMessageMeetCriteria(triggerData, ChatMessageBuilder.Create().WithChannel(expectedChannel).Build());
+        var meetsCriteria = trigger.DoesMessageMeetCriteria(triggerData, CreateMessageForChannel(expectedChannel));
         Assert.True(meetsCriteria);
     }
     
@@ -187,7 +191,7 @@ public class OnTwitchChatMessageTriggerTests
             MinimumUserType = UserType.Viewer
         };
         var trigger = new OnTwitchChatMessageTrigger(mockLogger.Object, mockFlowStringProcessor.Object, dummyAppState, mockEventBus.Object, mockTwitchClient.Object);
-        var meetsCriteria = trigger.DoesMessageMeetCriteria(triggerData, ChatMessageBuilder.Create().WithChannel(expectedChannel).Build());
+        var meetsCriteria = trigger.DoesMessageMeetCriteria(triggerData, CreateMessageForChannel(expectedChannel));
         Assert.False(meetsCriteria);
     }
     

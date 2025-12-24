@@ -34,7 +34,7 @@ public class JoinTwitchChannelTask : FlowTask<JoinTwitchChannelTaskData>
         if(TwitchClient.HasJoinedChannel(processedChannel))
         { return ExecutionResult.FailedButContinue("Already within channel, continuing"); }
         
-        TwitchClient.JoinChannel(processedChannel);
+        await TwitchClient.JoinChannelAsync(processedChannel);
         return ExecutionResult.Success();
     }
 }

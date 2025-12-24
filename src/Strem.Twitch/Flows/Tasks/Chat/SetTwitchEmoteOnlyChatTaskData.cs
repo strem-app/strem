@@ -5,7 +5,7 @@ namespace Strem.Twitch.Flows.Tasks.Chat;
 public class SetTwitchEmoteOnlyChatTaskData : IFlowTaskData
 {
     public static readonly string TaskCode = "set-twitch-emote-only-chat";
-    public static readonly string TaskVersion = "1.0.0";
+    public static readonly string TaskVersion = "1.0.1";
     
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;

@@ -7,7 +7,7 @@ namespace Strem.Twitch.Flows.Tasks.Stream;
 public class PlayTwitchCommercialTaskData : IFlowTaskData
 {
     public static readonly string TaskCode = "play-twitch-commercial";
-    public static readonly string TaskVersion = "1.0.0";
+    public static readonly string TaskVersion = "1.0.1";
     
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Code => TaskCode;
@@ -16,5 +16,5 @@ public class PlayTwitchCommercialTaskData : IFlowTaskData
     public string Channel { get; set; }
     
     [Required]
-    public CommercialLength CommercialLength { get; set; }
+    public int CommercialLength { get; set; }
 }

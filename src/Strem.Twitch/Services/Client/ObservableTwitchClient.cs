@@ -294,7 +294,7 @@ public class ObservableTwitchClient : IObservableTwitchClient
         
         OnWhisperCommandReceived = Observable.FromEvent<AsyncEventHandler<OnWhisperCommandReceivedArgs>, OnWhisperCommandReceivedArgs>(
             h => async (_, args) => h(args),
-            h => Client.OnNowHosting += h,
-            h => Client.OnNowHosting -= h);
+            h => Client.OnWhisperCommandReceived += h,
+            h => Client.OnWhisperCommandReceived -= h);
     }
 }

@@ -10,6 +10,7 @@ using TwitchLib.Api.Interfaces;
 using TwitchLib.Client;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Interfaces;
+using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Models;
 using TwitchLib.EventSub.Websockets.Extensions;
@@ -49,12 +50,10 @@ public class TwitchModule : IRequiresApiHostingModule
 
     public ITwitchClient CreateTwitchClient(IServiceProvider services)
     {
-        var clientOptions = new ClientOptions
-        {
-            MessagesAllowedInPeriod = 750,
-            ThrottlingPeriod = TimeSpan.FromSeconds(30)
-        };
+        var clientOptions = new ClientOptions();
+        var sendOptions = new SendOptions();
         var socketClient = new WebSocketClient(clientOptions);
-        return new TwitchClient(socketClient, ClientProtocol.WebSocket, services.GetService<ILogger<TwitchClient>>());
+        var loggerFactory = services.GetService<ILoggerFactory>();
+        return new TwitchClient(socketClient, ClientProtocol.WebSocket, sendOptions, loggerFactory);
     }
 }

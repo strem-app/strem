@@ -86,7 +86,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         await VerifyAndSetupConnections();
     }
 
-    public void AttemptToConnectToChat()
+    public async Task AttemptToConnectToChat()
     {
         if(TwitchClient.Client.IsConnected) { return; }
         
@@ -95,7 +95,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
         if(!AppState.HasTwitchScope(ChatScopes.ReadChat)) { return; }
         
         Logger.Information($"Connecting to twitch chat");
-        var result = TwitchClient.Client.ConnectOrRefresh(AppState);
+        var result = await TwitchClient.Client.ConnectOrRefresh(AppState);
         if(result.success)
         { Logger.Information($"Connected to twitch chat"); }
         else
@@ -154,7 +154,7 @@ public class TwitchPluginStartup : IPluginStartup, IDisposable
     public async Task DisconnectEverything()
     {
         if(TwitchClient.IsConnected)
-        { TwitchClient.Client.Disconnect(); }
+        { await TwitchClient.Client.DisconnectAsync(); }
 
         if (TwitchEventSub.IsConnected)
         { await TwitchEventSub.Client.DisconnectAsync(); }

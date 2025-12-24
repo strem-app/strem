@@ -84,8 +84,8 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
     {
         if(!DoesChannelMatch(data, message)){ return false; }
         if(!IsUserAboveMinimumRequired(data.MinimumUserType, message.UserType)) { return false; }
-        if(data.IsVip && !message.IsVip) { return false; }
-        if(data.IsSubscriber && !message.IsSubscriber) { return false; }
+        if(data.IsVip && !message.UserDetail.IsVip) { return false; }
+        if(data.IsSubscriber && !message.UserDetail.IsSubscriber) { return false; }
         if(data.HasBits && message.Bits <= 0) { return false; }
 
         var parsedCommand = CommandStringProcessor.Process(message.Message);
@@ -95,7 +95,7 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
         return data.CommandName.Equals(parsedCommand.CommandName, StringComparison.OrdinalIgnoreCase);
     }
     
-    public void JoinChannelIfNeeded(OnTwitchChatCommandTriggerData data)
+    public async Task JoinChannelIfNeeded(OnTwitchChatCommandTriggerData data)
     {
         var isDefaultChannel = string.IsNullOrEmpty(data.Channel);
         if(isDefaultChannel){ return; }
@@ -103,14 +103,14 @@ public class OnTwitchChatCommandTrigger : FlowTrigger<OnTwitchChatCommandTrigger
         var processedChannel = FlowStringProcessor.Process(data.Channel ?? string.Empty, new Core.Variables.Variables());
         if (!TwitchClient.Client.HasJoinedChannel(processedChannel))
         {
-            TwitchClient.Client.JoinChannel(processedChannel);
+            await TwitchClient.Client.JoinChannelAsync(processedChannel);
             Logger.Information($"[{data.Code}:{data.Id}] has joined twitch channel: {processedChannel}");
         }
     }
 
     public override async Task<IObservable<IVariables>> Execute(OnTwitchChatCommandTriggerData data)
     {
-        JoinChannelIfNeeded(data);
+        await JoinChannelIfNeeded(data);
             
         return TwitchClient.OnMessageReceived
             .Where(x => DoesMessageMeetCriteria(data, x.ChatMessage))

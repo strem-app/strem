@@ -38,11 +38,11 @@ public class SendTwitchChatMessageTask : FlowTask<SendTwitchChatMessageTaskData>
 
         if (TwitchClient.HasJoinedChannel(processedChannel))
         { 
-            TwitchClient.SendMessage(processedChannel, processedMessage);
+            await TwitchClient.SendMessageAsync(processedChannel, processedMessage);
             return ExecutionResult.Success();
         }
         
-        TwitchClient.TemporarilyJoinChannelFor(channel, () => TwitchClient.SendMessage(processedChannel, processedMessage));
+        TwitchClient.TemporarilyJoinChannelFor(channel, () => TwitchClient.SendMessageAsync(processedChannel, processedMessage));
         return ExecutionResult.Success();
     }
 }

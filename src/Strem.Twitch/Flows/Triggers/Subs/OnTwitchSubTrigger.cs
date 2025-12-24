@@ -49,9 +49,9 @@ public class OnTwitchSubTrigger : FlowTrigger<OnTwitchSubTriggerData>
         var flowVars = new Core.Variables.Variables();
         flowVars.Set(SubChannelVariable, arg.Channel);
         flowVars.Set(SubReceiverVariable, arg.ReSubscriber.DisplayName);
-        flowVars.Set(SubMonthsVariable, arg.ReSubscriber.Months);
-        flowVars.Set(SubTierVariable, arg.ReSubscriber.SubscriptionPlan.ToString());
-        flowVars.Set(SubTierNameVariable, arg.ReSubscriber.SubscriptionPlanName);
+        flowVars.Set(SubMonthsVariable, arg.ReSubscriber.MsgParamCumulativeMonths);
+        flowVars.Set(SubTierVariable, arg.ReSubscriber.MsgParamSubPlan.ToString());
+        flowVars.Set(SubTierNameVariable, arg.ReSubscriber.MsgParamSubPlanName);
         return flowVars;
     }
 

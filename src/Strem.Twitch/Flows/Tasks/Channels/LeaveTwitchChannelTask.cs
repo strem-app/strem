@@ -34,7 +34,7 @@ public class LeaveTwitchChannelTask : FlowTask<LeaveTwitchChannelTaskData>
         if(!TwitchClient.HasJoinedChannel(processedChannel))
         { return ExecutionResult.FailedButContinue("Not connected to channel so skipping"); }
         
-        TwitchClient.LeaveChannel(processedChannel);
+        await TwitchClient.LeaveChannelAsync(processedChannel);
         return ExecutionResult.Success();
     }
 }
